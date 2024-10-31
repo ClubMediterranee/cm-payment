@@ -1,0 +1,8 @@
+{
+  "name": "@clubmed/root",
+  "description": "Root package.json",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*"
+  ]
+}
