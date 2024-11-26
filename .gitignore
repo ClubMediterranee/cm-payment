@@ -1,6 +1,7 @@
 ### Node template
 .tmp
 .nx
+.env
 # Logs
 logs
 *.log

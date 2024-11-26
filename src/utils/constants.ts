@@ -1,0 +1,2 @@
+export const SERVER_VALIDATION_PROVIDERS = ["EIXOPAY"];
+export const IFRAME_PROVIDERS = ["EIXOPAY"];
