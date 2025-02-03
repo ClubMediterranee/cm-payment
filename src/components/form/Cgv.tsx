@@ -7,8 +7,8 @@ export const Cgv = () => {
 
   return (
     <div>
-      <h2 className="text-h3 mb-16 font-serif">
-        Conditions Générales de Vente Modifiées 2
+      <h2 className="text-h5 mb-16 font-serif">
+        Conditions Générales de Vente
       </h2>
       <Card icon="Edit" title={"Conditions Générales de Vente Modifiées 2"}>
         <Checkbox

@@ -1,17 +1,20 @@
-import { PropsWithChildren, useRef } from "react";
+import { lazy, PropsWithChildren, Suspense, useRef } from "react";
 import { SubmitButton } from "./SubmitButton";
 import { usePaymentRedirect } from "../../data/usePaymentRedirect";
 import { FormProvider, useForm } from "react-hook-form";
-import { Loader } from "@clubmed/trident-ui/molecules/Loader";
-
-import { Popin } from "@clubmed/trident-ui/molecules/Popin";
 import { useDisclosure } from "../../hooks/useDisclosure";
 import { IframeProvider } from "./IframeProvider";
+import { useAppContext } from "../../hooks/useAppContext";
+
+const Loader = lazy(async () => ({
+  default: (await import("@clubmed/trident-ui/molecules/Loader")).Loader,
+}));
 
 export function Form({ children }: PropsWithChildren) {
   const formRef = useRef(null);
   const methods = useForm();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen } = useDisclosure();
+  const { isIframe } = useAppContext();
   const { mutate, isSuccess, isPending, error } = usePaymentRedirect({
     onError: onOpen,
     onSuccess: (url) => {
@@ -19,18 +22,16 @@ export function Form({ children }: PropsWithChildren) {
     },
   });
 
-  if (isPending || isSuccess) {
-    return <Loader isVisible label="Your payment is in progress..." />;
+  if (!isIframe && (isPending || isSuccess)) {
+    return (
+      <Suspense fallback={null}>
+        <Loader isVisible label="Your payment is in progress..." />
+      </Suspense>
+    );
   }
 
   return (
     <FormProvider {...methods}>
-      <Popin
-        title={error?.message}
-        isVisible={isOpen}
-        onClose={onClose}
-        closeLabel="Close"
-      />
       <form
         onSubmit={methods.handleSubmit(mutate)}
         ref={formRef}
@@ -44,6 +45,9 @@ export function Form({ children }: PropsWithChildren) {
         />
         <IframeProvider />
       </form>
+      {isOpen && (
+        <p className="text-red font-semibold my-4">{error?.message}</p>
+      )}
     </FormProvider>
   );
 }

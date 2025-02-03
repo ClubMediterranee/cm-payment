@@ -2,25 +2,32 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import basicSsl from "@vitejs/plugin-basic-ssl";
 import path from "path";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    lib: {
+      entry: path.resolve(__dirname, "src/lib.ts"),
+      fileName: (format) => `cmpayment.${format}.js`,
+      formats: ["es"],
+    },
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, "index.html"),
-        "load-client": path.resolve(__dirname, "src/scripts/load-client.js"),
-      },
       output: {
         entryFileNames: (chunk) => {
           return chunk.facadeModuleId?.includes("src/scripts")
             ? "public/[name].js"
             : "[name].js";
         },
+        globals: {
+          react: "React",
+          "react-dom": "ReactDOM",
+        },
+        format: "umd",
       },
     },
   },
-  plugins: [react(), basicSsl()],
+  plugins: [react(), basicSsl(), visualizer({ open: true })],
   server: {
     host: "cm-payment",
   },

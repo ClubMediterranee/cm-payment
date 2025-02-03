@@ -8,6 +8,7 @@ import {
   getV3CustomersCustomerIdBookingsBookingId,
   StayStatuses,
 } from "../api";
+import { useAuth } from "react-oidc-context";
 
 const getAction = (status: string) => {
   switch (status) {
@@ -23,11 +24,15 @@ const getAction = (status: string) => {
 export const useStay = () => {
   const { id, type, setAction } = useAppContext();
   const userId = useUserId();
+  const { user } = useAuth();
+  const profile = user?.profile.type;
 
   const getRequest = () =>
     type === "booking"
-      ? getV3CustomersCustomerIdBookingsBookingId(userId, id)
-      : getV2ProposalsProposalId(id);
+      ? getV3CustomersCustomerIdBookingsBookingId(userId, id, {
+          withAuth: true,
+        })
+      : getV2ProposalsProposalId(id, { withAuth: !!profile });
 
   const { data: stay } = useSuspenseQuery({
     queryKey: ["stay", id],

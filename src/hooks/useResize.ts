@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { sendMessage } from "./useMessage";
 
 export const useResize = () => {
-  const [height, setHeight] = useState(0);
+  useEffect(() => {
+    if (window.top !== window.self) {
+      document.getElementsByTagName("html")[0].style.overflow = "hidden";
+      sendMessage("loaded_end");
+    }
+  }, []);
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
-      setHeight(document.documentElement.scrollHeight);
+      sendMessage("resize", { height: document.body.scrollHeight + 1 });
     });
     observer.observe(document.body, {
       childList: true,
@@ -14,9 +19,7 @@ export const useResize = () => {
       attributes: true,
       characterData: true,
     });
-  }, []);
 
-  useEffect(() => {
-    sendMessage("resize", { height: height + 1 });
-  }, [height]);
+    return () => observer.disconnect();
+  }, []);
 };

@@ -1,5 +1,5 @@
 {
-  "name": "cm-payment-1",
+  "name": "cm-payment",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -40,6 +40,7 @@
     "orval": "^7.3.0",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
+    "rollup-plugin-visualizer": "^5.13.1",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.7.0",

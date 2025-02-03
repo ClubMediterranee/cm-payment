@@ -24,7 +24,10 @@ export const PaymentSchedule = () => {
               onChange={setValue}
               checked={amount === watchedAmount}
             >
-              Je paye le montant de {amount} {currency}{" "}
+              Je paie le montant de{" "}
+              <span className="font-bold text-sienna mx-4">
+                {amount} {currency}
+              </span>
               {deadline ? ` avant le ${deadline}` : ""}
             </Checkbox>
           </Card>

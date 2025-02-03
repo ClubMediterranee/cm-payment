@@ -2,10 +2,8 @@ import { useAppContext } from "../hooks/useAppContext";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useUserId } from "../hooks/useUserId";
 import {
-  CustomerBookingPaymentSchedule,
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
-  ProposalPaymentScheduleModelV1,
 } from "../api";
 
 export const usePaymentSchedule = () => {
@@ -14,16 +12,16 @@ export const usePaymentSchedule = () => {
 
   const getPaymentSchedule = () =>
     type === "booking"
-      ? getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules(userId, id)
+      ? getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules(userId, id, {
+          withAuth: true,
+        })
       : getV1ProposalsProposalIdPaymentSchedule(id);
 
   const { data: paymentSchedule } = useSuspenseQuery({
     queryKey: ["paymentSchedule"],
     queryFn: getPaymentSchedule,
     retry: false,
-    select: (
-      data: CustomerBookingPaymentSchedule | ProposalPaymentScheduleModelV1
-    ) => {
+    select: (data) => {
       const mappedSchedule = {
         ...data,
         ...data.households?.[0],

@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 
 const useMessage = <TData extends { type: string }>(
   type: string,
-  callback: (data: TData) => void,
+  callback: (data: TData) => void
 ) => {
   const handleListener = useCallback(
     (event: { data: TData; origin: string; type: string }) => {
@@ -12,7 +12,7 @@ const useMessage = <TData extends { type: string }>(
         }
       }
     },
-    [callback, type],
+    [callback, type]
   );
 
   useEffect(() => {

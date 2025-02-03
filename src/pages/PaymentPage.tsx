@@ -10,6 +10,7 @@ import { useAppContext } from "../hooks/useAppContext";
 import { PaymentSchedule } from "../components/form/PaymentSchedule";
 import { useStay } from "../data/useStay";
 import classNames from "classnames";
+import { ContactChoice } from "../components/form/ContactChoice";
 
 export function PaymentPage() {
   const { isIframe } = useAppContext();
@@ -33,17 +34,22 @@ export function PaymentPage() {
       )}
       <Form>
         <div className="w-full">
-          <h2 className="text-h3 mb-16 font-serif">Quel echeancier ?</h2>
+          <h2 className="text-h5 mb-16 font-serif">
+            Choisissez l'échéancier de paiement
+          </h2>
           <Suspense fallback={<PaymentProviderPlaceholder />}>
             <PaymentSchedule />
           </Suspense>
         </div>
         <div className="w-full">
-          <h2 className="text-h3 mb-16 font-serif">Quel moyen de paiement ?</h2>
+          <h2 className="text-h5 mb-16 font-serif">
+            Quel moyen de paiement souhaitez-vous utiliser ?
+          </h2>
           <Suspense fallback={<PaymentProviderPlaceholder />}>
             <PaymentProviders />
           </Suspense>
         </div>
+        <ContactChoice />
         <Cgv />
       </Form>
     </div>

@@ -1,8 +1,8 @@
 import { User } from "oidc-client-ts";
-import Cookies from "js-cookie";
+import { getParams } from "./router";
 
 function getAccessToken() {
-  const issuer = Cookies.get("issuer");
+  const { issuer } = getParams();
   const storageKey =
     issuer === "gm"
       ? `oidc.user:${import.meta.env.VITE_OIDC_CLIENT}:${import.meta.env.VITE_OIDC_CLIENT_ID}`
@@ -19,10 +19,7 @@ export const fetcher = async <T>(
   init?: RequestInit & { withAuth?: boolean }
 ): Promise<T> => {
   const accessToken = getAccessToken();
-  const issuer = Cookies.get("issuer");
-  const locale = new URL(window.location.href).pathname
-    .split("/")
-    .filter(Boolean)[2];
+  const { issuer, locale } = getParams();
 
   const response = await fetch(
     `${import.meta.env.VITE_API_ENDPOINT}${path}?api_key=${issuer === "gm" ? import.meta.env.VITE_API_KEY : import.meta.env.VITE_SELLER_API_KEY}`,
@@ -36,7 +33,7 @@ export const fetcher = async <T>(
         ...(init?.withAuth && accessToken
           ? { Authorization: `Bearer ${accessToken}` }
           : {}),
-        "accept-language": locale,
+        "accept-language": locale || "fr-FR",
       },
     }
   );

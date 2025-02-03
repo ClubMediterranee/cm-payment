@@ -52,10 +52,10 @@ export const PaymentProviders = () => {
 
 export const PaymentProviderPlaceholder = () => {
   return (
-    <>
+    <div id="test">
       {Array.from({ length: 3 }).map((_, index) => (
         <Card key={index} />
       ))}
-    </>
+    </div>
   );
 };
