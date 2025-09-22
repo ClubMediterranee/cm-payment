@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     <ReactOidcContext
       {...config}
       onSigninCallback={(u) => {
-        console.log(u);
         Cookies.set("neolane_id", u?.state.neolane_id, {
           sameSite: "none",
           secure: true,

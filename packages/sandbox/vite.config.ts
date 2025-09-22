@@ -1,33 +1,21 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import basicSsl from "@vitejs/plugin-basic-ssl";
-import path from "path";
-import { visualizer } from "rollup-plugin-visualizer";
+import {defineConfig, type PluginOption} from 'vite'
+import react from '@vitejs/plugin-react-swc'
+import tsconfigPaths from 'vite-tsconfig-paths'
+import {join} from 'node:path'
 
+const root = import.meta.dirname
+console.log(join(root, '../../tsconfig.json'))
+// https://vite.dev/config/
 export default defineConfig({
-  build: {
-    lib: {
-      entry: path.resolve(__dirname, "src/main.ts"),
-      fileName: (format) => `cmpayment.${format}.js`,
-      formats: ["es"],
-    },
-    rollupOptions: {
-      output: {
-        entryFileNames: (chunk) => {
-          return chunk.facadeModuleId?.includes("src/scripts")
-            ? "public/[name].js"
-            : "[name].js";
-        },
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
-        },
-        format: "umd",
-      },
-    },
+  resolve: {
+    alias: {
+      "@clubmed/payment-sdk": join(root, "../payment-sdk/dist"),
+    }
   },
-  plugins: [react(), basicSsl(), visualizer({ open: true })],
-  server: {
-    host: "cm-payment",
-  },
-});
+  plugins: [
+    react(),
+    tsconfigPaths({
+      projects: [join(root, '../../tsconfig.app.json')],
+    })
+  ] as PluginOption[],
+})

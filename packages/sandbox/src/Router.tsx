@@ -6,8 +6,8 @@ import { Route, Switch, useRoute, useSearch } from "wouter";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { AppProvider } from "./providers/AppProvider";
 import { RedirectPage } from "./pages/RedirectPage";
-import { paymentSDK } from "@cm-payment/sdk/src";
 import { getAccessToken, getApiKey } from "./utils/fetcher";
+import {paymentSDK} from "@clubmed/payment-sdk/utils/sdk.js";
 
 const Loader = lazy(async () => ({
   default: (await import("@clubmed/trident-ui/molecules/Loader")).Loader,

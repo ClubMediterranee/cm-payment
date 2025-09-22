@@ -1,14 +1,15 @@
-import { useParams } from "wouter";
-import { lazy, Suspense } from "react";
-import {  usePaymentConfirmation } from "@cm-payment/sdk/src";
+import {useParams} from "wouter";
+import {lazy, Suspense} from "react";
+import {usePaymentConfirmation} from "@clubmed/payment-sdk/hooks/usePaymentConfirmation.js";
 
 const Loader = lazy(async () => ({
   default: (await import("@clubmed/trident-ui/molecules/Loader")).Loader,
 }));
 
 export const RedirectPage = () => {
-  const { paymentId = "" } = useParams();
-  usePaymentConfirmation({ paymentId }); 
+  const {paymentId = ""} = useParams<{paymentId?: string}>();
+
+  usePaymentConfirmation({paymentId});
 
   return (
     <Suspense fallback={null}>

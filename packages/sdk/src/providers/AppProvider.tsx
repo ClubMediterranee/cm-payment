@@ -2,7 +2,7 @@ import {
   createContext,
   PropsWithChildren,
 } from "react";
-import { Action, BookingStatus } from "../gen";
+import { Action, BookingStatus } from "../__generated__";
 
 type AppContextType = {
   id: string;

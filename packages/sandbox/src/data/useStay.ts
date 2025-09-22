@@ -4,7 +4,7 @@ import { useUserId } from "../hooks/useUserId";
 import {
   getV2ProposalsProposalId,
   getV3CustomersCustomerIdBookingsBookingId,
-} from "../api";
+} from "../__generated__";
 import { useAuth } from "react-oidc-context";
 
 export const useStay = () => {

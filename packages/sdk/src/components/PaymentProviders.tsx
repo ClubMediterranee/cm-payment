@@ -3,7 +3,7 @@ import { Checkbox } from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
 import { AVAILABLE_ICONS } from "../constants";
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
-import { usePaymentProviders } from "../data/usePaymentProviders";
+import { usePaymentProviders } from "../hooks/usePaymentProviders";
 import { Component_Key } from "../utils/constants";
 export const PaymentProviders = () => {
   const { data: paymentProviders = [], isSuccess } = usePaymentProviders();

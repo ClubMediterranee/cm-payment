@@ -63,6 +63,7 @@ export const fetcher = async <T>(
   });
 
   const response = await fetch(
+    // import.meta.env.VITE_API_ENDPOINT Must be passed by the React Provider configuration.
     `${import.meta.env.VITE_API_ENDPOINT}${url}${`?${pathParams.toString()}`}`,
     {
       method,

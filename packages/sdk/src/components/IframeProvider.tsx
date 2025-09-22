@@ -1,15 +1,18 @@
 import { useFormContext, useWatch } from "react-hook-form";
-import { usePaymentRedirect } from "../data/usePaymentRedirect";
+import { usePaymentRedirect } from "../hooks/usePaymentRedirect";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@clubmed/trident-ui/molecules/Spinner";
 import classNames from "classnames";
 import { Component_Key, IFRAME_PROVIDERS } from "../utils/constants";
 
+// Rename by SdkIframePayment ?
 export const IframeProvider = () => {
-  const iframeRef = useRef(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const { mutate, isPending } = usePaymentRedirect({
     onSuccess: (url) => {
-      iframeRef.current.src = url;
+      if (iframeRef.current) {
+        iframeRef.current.src = url;
+      }
     },
     onError: () => {},
   });

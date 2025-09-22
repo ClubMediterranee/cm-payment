@@ -1,7 +1,7 @@
 import { Card } from "@clubmed/trident-ui/molecules/Card";
 import { Checkbox } from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
 import { useFormContext } from "react-hook-form";
-import { usePaymentSchedule } from "../data/usePaymentSchedule";
+import { usePaymentSchedule } from "../hooks/usePaymentSchedule";
 import { useEffect } from "react";
 import { Component_Key } from "../utils/constants";
 

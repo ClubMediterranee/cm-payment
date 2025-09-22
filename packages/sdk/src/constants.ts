@@ -1,4 +1,4 @@
-import { IconicNames } from "@clubmed/trident-ui/atoms/Icons/Iconics";
+import { IconicNames } from "@clubmed/trident-icons";
 
 export const AVAILABLE_ICONS: Record<string, IconicNames> = {
   ArrowDefaultLeft: "ArrowDefaultLeft",
