@@ -28,12 +28,17 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^9.11.1",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-formatter-gitlab": "^6.0.1",
     "eslint-plugin-react-hooks": "5.2.0",
     "eslint-plugin-react-refresh": "^0.4.12",
-    "eslint-formatter-gitlab": "^6.0.1",
+    "@testing-library/jest-dom": "6.8.0",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/user-event": "14.6.1",
+    "@vitest/coverage-v8": "^3.2.4",
     "globals": "^15.9.0",
     "globby": "^14.1.0",
     "husky": "^9.0.11",
+    "jsdom": "^27.0.0",
     "lint-staged": "16.2.0",
     "orval": "^7.3.0",
     "postcss": "^8.4.47",
@@ -52,7 +57,6 @@
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.2.4"
   },
-
   "lint-staged": {
     "*.(js,ts,tsx)": "eslint --fix",
     "!*.(js,ts,tsx)": "prettier --write --ignore-unknown"

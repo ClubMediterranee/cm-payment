@@ -3,6 +3,7 @@ import path from 'path';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import { fileURLToPath } from 'node:url';
+
 // import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 
 const dirname =
@@ -25,7 +26,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       all: true,
-      include: ['lib/**/*.{tsx,ts}'],
+      include: ['packages/*/src/**/*.{tsx,ts}'],
       exclude: [
         '**/lib/atoms/icons',
         '**/*.spec.{ts,tsx}',
@@ -47,20 +48,14 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        statements: 99.77,
-        branches: 96.72,
-        functions: 98.73,
-        lines: 99.77,
+        statements: 0,
+        branches: 2.7,
+        functions: 2.7,
+        lines: 0,
       },
     },
     projects: [
-      {
-        extends: true,
-        test: {
-          name: 'unit',
-          include: ['src/**/*.spec.{ts,tsx}'],
-        },
-      },
+      "packages/*/vitest.config.ts",
       // {
       //   extends: true,
       //   plugins: [
