@@ -1,8 +1,8 @@
-import {TOKENS} from "@clubmed/payment-sdk/types/Tokens.js";
-import {PaymentProviderCheckbox} from "@clubmed/payment-sdk/components/providers/PaymentProviderCheckbox.js";
+import {TOKENS} from "@clubmed/payment-sdk/types/Tokens";
+import {PaymentProviderCheckbox} from "@clubmed/payment-sdk/components/providers/PaymentProviderCheckbox";
 import {
   usePaymentProvidersCheckboxes
-} from "@clubmed/payment-sdk/components/providers/usePaymentProvidersCheckboxes.js";
+} from "@clubmed/payment-sdk/components/providers/usePaymentProvidersCheckboxes";
 
 export const PaymentProvidersCheckboxes = () => {
   const {paymentProviders, register, setValue, trigger, watchedProviderId} = usePaymentProvidersCheckboxes();

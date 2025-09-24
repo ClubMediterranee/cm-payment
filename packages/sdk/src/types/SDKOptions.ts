@@ -3,7 +3,7 @@ import {Action} from "@clubmed/payment-sdk/__generated__/index.js";
 export enum OidcIssuerTypes {
   GM = "GM",
   GO = "GO",
-  PARTNER = "PARTNER"
+  PARTNERS = "PARTNERS"
 }
 
 export type OidcSettings = {

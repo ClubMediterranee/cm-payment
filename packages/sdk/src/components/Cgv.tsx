@@ -1,7 +1,7 @@
 import {Card} from "@clubmed/trident-ui/molecules/Card";
 import {Checkbox} from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
 import {useFormContext} from "react-hook-form";
-import {TOKENS} from "@clubmed/payment-sdk/types/Tokens.js";
+import {TOKENS} from "@clubmed/payment-sdk/types/Tokens";
 
 export const Cgv = () => {
   const {register, setValue, trigger} = useFormContext();

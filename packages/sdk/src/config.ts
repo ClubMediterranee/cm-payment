@@ -19,6 +19,6 @@ export const GLOBAL_SDK_SETTINGS = Object.freeze({
       TOKENS.PaymentProviders,
       TOKENS.IframeProvider,
     ],
-    [OidcIssuerTypes.PARTNER]: []
+    [OidcIssuerTypes.PARTNERS]: []
   } as const as Record<OidcIssuerTypes, symbol[]>
 })

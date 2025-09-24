@@ -3,7 +3,7 @@ import {Checkbox} from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
 import {useFormContext} from "react-hook-form";
 import {usePaymentSchedule} from "../hooks/usePaymentSchedule";
 import {useEffect} from "react";
-import {TOKENS} from "@clubmed/payment-sdk/types/Tokens.js";
+import {TOKENS} from "@clubmed/payment-sdk/types/Tokens";
 
 export const PaymentSchedule = () => {
   const {paymentSchedule} = usePaymentSchedule();

@@ -1,5 +1,5 @@
 import {Checkbox, type CheckboxProps} from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
-import type {PaymentProvider1} from "@clubmed/payment-sdk/__generated__/index.js";
+import type {PaymentProvider1} from "../../__generated__";
 import {useIcon} from "@clubmed/trident-icons/hooks/useIcon";
 import {Card} from "@clubmed/trident-ui/molecules/Card";
 import type {IconicNames} from "@clubmed/trident-icons";

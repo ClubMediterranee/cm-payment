@@ -1,17 +1,23 @@
 import {defineConfig, type PluginOption} from "vite";
 import react from "@vitejs/plugin-react-swc";
-import {dirname, extname, relative, resolve} from "node:path";
+import {dirname, extname, join, relative, resolve} from "node:path";
 import {fileURLToPath} from 'node:url';
 import {visualizer} from "rollup-plugin-visualizer";
 import {viteStaticCopy} from "vite-plugin-static-copy";
 import dts from 'vite-plugin-dts';
 import preserveDirectives from 'rollup-preserve-directives';
 import {globbySync} from "globby";
+import tsconfigPaths from "vite-tsconfig-paths";
+
+const root = import.meta.dirname
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    tsconfigPaths({
+      projects: [join(root, '../../tsconfig.app.json')],
+    }),
     dts({
       aliasesExclude: [/@clubmed\/payment-sdk.*/],
       include: ['src'],
@@ -36,7 +42,6 @@ export default defineConfig({
       '@clubmed/trident-ui': dirname(
         fileURLToPath(import.meta.resolve('@clubmed/trident-ui')),
       ),
-      '@': resolve('src'),
     },
   },
   build: {

@@ -14,6 +14,12 @@
       "import": "./dist/components/*.js",
       "default": "./dist/components/*.js"
     },
+    "./contexts/*": {
+      "source": "./src/contexts/*",
+      "types": "./contexts/*.d.ts",
+      "import": "./contexts/*.js",
+      "default": "./contexts/*.js"
+    },
     "./providers/*": {
       "source": "./src/providers/*",
       "types": "./providers/*.d.ts",
@@ -25,10 +31,10 @@
       "import": "./dist/hooks/*.js",
       "default": "./dist/hooks/*.js"
     },
-    "./utils/*": {
-      "types": "./dist/utils/*.d.ts",
-      "import": "./dist/utils/*.js",
-      "default": "./dist/utils/*.js"
+    "./types/*": {
+      "types": "./dist/types/*.d.ts",
+      "import": "./dist/types/*.js",
+      "default": "./dist/types/*.js"
     }
   },
   "scripts": {

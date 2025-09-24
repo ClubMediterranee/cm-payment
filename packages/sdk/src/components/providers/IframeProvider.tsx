@@ -3,7 +3,7 @@ import {useEffect, useRef} from "react";
 import {Spinner} from "@clubmed/trident-ui/molecules/Spinner";
 import classNames from "classnames";
 import {GLOBAL_SDK_SETTINGS} from "@clubmed/payment-sdk/config";
-import {usePaymentRedirect} from "@clubmed/payment-sdk/hooks/usePaymentRedirect.js";
+import {usePaymentRedirect} from "@clubmed/payment-sdk/hooks/usePaymentRedirect";
 
 // Rename by SdkIframePayment ?
 export const IframeProvider = () => {

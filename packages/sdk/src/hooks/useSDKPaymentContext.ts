@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import {SDKConfigContext} from "@clubmed/payment-sdk/contexts/SDKConfigContext.js";
+import {SDKConfigContext} from "@clubmed/payment-sdk/providers/SDKConfigProvider";
 
 export const useSDKPaymentContext = () => {
   return useContext(SDKConfigContext);
@@ -8,7 +8,7 @@ export const useSDKPaymentContext = () => {
 export const useOidcContext = () => {
   const {oidc} = useContext(SDKConfigContext);
 
-  const withAuth = oidc.issuerType === "GO" || oidc.issuerType === "PARTNER";
+  const withAuth = oidc.issuerType === "GO" || oidc.issuerType === "PARTNERS";
 
   return {
     withAuth,

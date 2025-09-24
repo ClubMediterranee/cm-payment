@@ -1,7 +1,7 @@
 import {PropsWithChildren, useEffect} from "react";
 import {type GetPaymentRedirectUrlParams, usePaymentRedirect} from "../hooks/usePaymentRedirect";
 import {useFormContext} from "react-hook-form";
-import {IframeProvider} from "@clubmed/payment-sdk/components/providers/IframeProvider.js";
+import {IframeProvider} from "@clubmed/payment-sdk/components/providers/IframeProvider";
 
 type Props = {
   /**
