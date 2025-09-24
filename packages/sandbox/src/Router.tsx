@@ -1,26 +1,23 @@
-import { hasAuthParams, useAuth } from "react-oidc-context";
+import {hasAuthParams, useAuth} from "react-oidc-context";
 import "./App.css";
-import { Header } from "./components/Header";
-import { PaymentPage } from "./pages/PaymentPage";
-import { Route, Switch, useRoute, useSearch } from "wouter";
-import { lazy, Suspense, useEffect, useState } from "react";
-import { AppProvider } from "./providers/AppProvider";
-import { RedirectPage } from "./pages/RedirectPage";
-import { getAccessToken, getApiKey } from "./utils/fetcher";
-import {paymentSDK} from "@clubmed/payment-sdk/utils/sdk.js";
+// import {Header} from "./components/Header";
+// import {PaymentPage} from "./pages/PaymentPage";
+import {Route, Switch, useRoute} from "wouter";
+import {useEffect, useState} from "react";
+import {AppProvider} from "./providers/AppProvider.js";
+import {SigninRedirectPage} from "./pages/SigninRedirectPage.js";
+import {Header} from "./components/Header.js";
+import {PaymentPage} from "./pages/PaymentPage.js";
+// import {AppProvider} from "./providers/AppProvider";
+// import {RedirectPage} from "./pages/RedirectPage";
 
-const Loader = lazy(async () => ({
-  default: (await import("@clubmed/trident-ui/molecules/Loader")).Loader,
-}));
 
 export const Router = () => {
   const [isAuthRequired] = useRoute("/*/booking/*");
   const auth = useAuth();
-  const search = useSearch();
-  const neolaneId = new URLSearchParams(search).get("neolane_id") || "";
+  // const search = useSearch();
+  // const customerId = new URLSearchParams(search).get("customer_id") || "";
   const [hasInitSignin, setHasInitSignin] = useState(false);
-
-  paymentSDK.setFetchOptions({ apiKey: getApiKey(), getAccessToken: getAccessToken });
 
   useEffect(() => {
     if (
@@ -31,44 +28,43 @@ export const Router = () => {
       !auth.isLoading &&
       !hasInitSignin
     ) {
-
       auth.signinRedirect({
-        state: { return_url: window.location.href, neolane_id: neolaneId },
+        state: {return_url: window.location.href},
       });
       setHasInitSignin(true);
     }
-  }, [isAuthRequired, auth, hasInitSignin, neolaneId]);
+  }, [isAuthRequired, auth, hasInitSignin]);
 
   return (
-    <Switch>
-      <Route path={"/:issuer/redirect/:paymentId/:locale?"}>
-        <RedirectPage />
-      </Route>
-      <Route path={"/:issuer/:type/:id/:locale?"}>
-        <AppProvider>
-        <Header />
-          <main className="flex flex-col gap-8 row-start-2">
-            <PaymentPage />
-          </main>
-        </AppProvider>
-      </Route>
-      <Route path={"/confirmation"}>
-        <div>confirmation</div>        
-      </Route>
-      <Route path={"/signin_redirect"}>
-        <Suspense fallback={null}>
-          <Loader
-            isVisible
-            label="This is like elevator music but for your eyes. Please wait while we load your content."
-          />
-        </Suspense>
-      </Route>
-      <Route>
-        <div className="min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
-          <Header />  
-          <div className="flex justify-center font-semibold">404 not found</div>
-        </div>
-      </Route>
-    </Switch>
+    <AppProvider>
+      <Header/>
+      <main className="flex flex-col gap-8 row-start-2">
+        <Switch>
+          <Route path={"/:issuer/:type/:id"}>
+            <PaymentPage/>
+          </Route>
+
+          <Route path={"/:issuer/redirect/:paymentId/:locale?"}>
+            {/*<RedirectPage/>*/}
+          </Route>
+
+          <Route path={"/confirmation"}>
+            <div>confirmation</div>
+          </Route>
+
+
+          <Route path={"/:issuer/signin_redirect"}>
+            <SigninRedirectPage/>
+          </Route>
+
+          <Route>
+            <div className="min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
+              {/*<Header/>*/}
+              <div className="flex justify-center font-semibold">404 not found</div>
+            </div>
+          </Route>
+        </Switch>
+      </main>
+    </AppProvider>
   );
 };

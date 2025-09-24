@@ -1,56 +1,79 @@
-import { User } from "oidc-client-ts";
-import { getParams } from "./router";
-
-export function getAccessToken() {
-  const { issuer } = getParams();
-  const storageKey =
-    issuer === "gm"
-      ? `oidc.user:${import.meta.env.VITE_OIDC_CLIENT}:${import.meta.env.VITE_OIDC_CLIENT_ID}`
-      : `oidc.user:${import.meta.env.VITE_GO_OIDC_CLIENT}:${import.meta.env.VITE_GO_OIDC_CLIENT_ID}`;
-
-  const oidcStorage = sessionStorage.getItem(storageKey);
-
-  if (!oidcStorage) {
-    return "";
-  }
-
-  return User.fromStorageString(oidcStorage).access_token;
-}
-
-export const getApiKey = () => {
-  const { issuer } = getParams();
-  return issuer === "gm"
-    ? import.meta.env.VITE_API_KEY
-    : import.meta.env.VITE_SELLER_API_KEY;
-};
+import {getSDKPaymentOptions} from "@clubmed/payment-sdk/providers/SDKConfigProvider.js";
 
 export const fetcher = async <T>(
-  path: string,
-  init?: RequestInit & { withAuth?: boolean }
+  {
+    url,
+    method,
+    params = {},
+    headers,
+    data,
+  }: {
+    url: string;
+    method: string;
+    headers?: Record<string, string>;
+    params?: Record<string, unknown>;
+    data?: unknown;
+  },
+  auth?: { withAuth: boolean }
 ): Promise<T> => {
-  const accessToken = getAccessToken();
-  const { locale } = getParams();
-
-  const response = await fetch(
-    `${import.meta.env.VITE_API_ENDPOINT}${path}?api_key=${getApiKey()}`,
-    {
-      method: "GET",
-      ...init,
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        ...init?.headers,
-        ...(init?.withAuth && accessToken
-          ? { Authorization: `Bearer ${accessToken}` }
-          : {}),
-        "accept-language": locale || "fr-FR",
-      },
+  const withAuth = auth?.withAuth || false;
+  const {
+    locale,
+    oidc: {accessToken},
+    api: {
+      url: apiUrl,
+      apiKey
     }
-  );
+  } = getSDKPaymentOptions();
+  console.log({
+    locale,
+    oidc: {accessToken},
+    api: {
+      url: apiUrl,
+      apiKey
+    }
+  })
+  // if (withAuth && !accessToken) {
+  //   throw new Error("No access token provided");
+  // }
+
+  const queryParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      queryParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  // queryParams.append("api_key", apiKey);
+
+  const endpoint = `${apiUrl}${url}?${queryParams.toString()}`
+
+
+  const opts = {
+    method,
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      ...(withAuth && accessToken
+        ? {Authorization: `Bearer ${accessToken}`}
+        : {}),
+      ...(data ? {body: JSON.stringify(data)} : {}),
+      "accept-language": locale,
+      ...headers,
+    },
+  }
+
+  const response = await fetch(endpoint, opts);
 
   const json = await response.json();
 
   if (!response.ok) {
+    if (json.status_code === 404) {
+      throw new Error(json.error_description);
+    }
+
     throw new Error(json.errors[0].error_description);
   }
 

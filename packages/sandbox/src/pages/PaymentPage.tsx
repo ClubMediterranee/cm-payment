@@ -1,26 +1,21 @@
 import {Suspense, useEffect, useRef, useState} from "react";
 import {Stay, StayPlaceholder} from "../components/Stay";
-import {useAppContext} from "../hooks/useAppContext";
-import {useStay} from "../data/useStay";
+import {useStay} from "../hooks/useStay";
 import classNames from "classnames";
 import {Button} from "@clubmed/trident-ui/molecules/Buttons/Button";
-import {getParams} from "../utils/router";
-import {useUserId} from "../hooks/useUserId";
-import {Loader} from "@clubmed/trident-ui/molecules/Loader";
 import {useDisclosure} from "@clubmed/payment-sdk/hooks/useDisclosure";
 import {Cgv} from "@clubmed/payment-sdk/components/Cgv";
-import {FormProvider} from "@clubmed/payment-sdk/components/FormProvider";
 import {PaymentSchedule} from "@clubmed/payment-sdk/components/PaymentSchedule";
-import {PaymentProviders} from "@clubmed/payment-sdk/components/PaymentProviders";
-import {IframeProvider} from "@clubmed/payment-sdk/components/IframeProvider.js";
+import {PaymentProvidersCheckboxes} from "@clubmed/payment-sdk/components/providers/PaymentProvidersCheckboxes.js";
+import {IframeProvider} from "@clubmed/payment-sdk/components/providers/IframeProvider.js";
+import {SDKFormProvider} from "@clubmed/payment-sdk/providers/SDKFormProvider.js";
+import {LoadingPage} from "./LoadingPage.js";
 
 export function PaymentPage() {
-  const {id, type} = useAppContext();
-  const {issuer} = getParams();
-  const {stay} = useStay();
-  const userId = useUserId();
+  const {isLoading, stay, status} = useStay();
+  const {isOpen, onOpen: onLoad, onClose: onLoadEnd} = useDisclosure();
+
   const ref = useRef<HTMLParagraphElement | null>(null);
-  const {isOpen: isLoading, onOpen: onLoad, onClose: onLoadEnd} = useDisclosure();
   const [error, setError] = useState<Error>();
 
   useEffect(() => {
@@ -30,14 +25,23 @@ export function PaymentPage() {
   }, [error]);
 
 
-  if (isLoading) {
-    return (
-      <Suspense fallback={null}>
-        <Loader
-          isVisible
-          label="This is like elevator music but for your eyes. Please wait while we load your content."
-        />
-      </Suspense>)
+  if (isLoading || isOpen) {
+    return <LoadingPage/>
+  }
+
+  if (status === "error") {
+    return <div
+      className={classNames(
+        "flex flex-col gap-8 row-start-2 items-center mx-auto w-10/12 md:max-w-1/2",
+      )}
+    >
+      <div>
+        <h1 className="text-h3 w-full mb-8">Payment</h1>
+
+        <p>Nous ne parvenons pas à récupérer les informations de votre séjour.</p>
+        <p>Merci de réessayer ultérieurement.</p>
+      </div>
+    </div>
   }
 
   return (
@@ -48,11 +52,10 @@ export function PaymentPage() {
     >
       <h1 className="text-h3 w-full mb-8">Payment</h1>
       <Suspense fallback={<StayPlaceholder/>}>
-        <Stay stay={stay}/>
+        <Stay stay={stay!}/>
       </Suspense>
-      <FormProvider id={id} type={type} status={stay.booking_status} issuer={issuer} customerId={userId}
-                    callbackUrl={`${import.meta.env.VITE_DOMAIN}/confirmation`} onLoad={onLoad} onLoadEnd={onLoadEnd}
-                    onError={setError}>
+
+      <SDKFormProvider onError={setError} onLoad={onLoad} onLoadEnd={onLoadEnd}>
         <div className="w-full">
           <h2 className="text-h5 mb-16 font-serif">
             Choisissez l'échéancier de paiement
@@ -65,8 +68,8 @@ export function PaymentPage() {
           <h2 className="text-h5 mb-16 font-serif">
             Quel moyen de paiement souhaitez-vous utiliser ?
           </h2>
-          <Suspense fallback={<div>loadign</div>}>
-            <PaymentProviders/>
+          <Suspense fallback={<div>Loading</div>}>
+            <PaymentProvidersCheckboxes/>
           </Suspense>
         </div>
         <Cgv/>
@@ -75,7 +78,7 @@ export function PaymentPage() {
         <Button type="submit" className="my-8">
           Payer
         </Button>
-      </FormProvider>
+      </SDKFormProvider>
     </div>
   );
 }

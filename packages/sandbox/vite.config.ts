@@ -2,20 +2,34 @@ import {defineConfig, type PluginOption} from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import {join} from 'node:path'
+import dotenv from "dotenv-flow";
+import basicSsl from "@vitejs/plugin-basic-ssl";
 
 const root = import.meta.dirname
-console.log(join(root, '../../tsconfig.json'))
+
+dotenv.config({
+  path: join(root, './config'),
+});
+
 // https://vite.dev/config/
 export default defineConfig({
-  resolve: {
-    alias: {
-      "@clubmed/payment-sdk": join(root, "../payment-sdk/dist"),
-    }
-  },
+  base: "/",
   plugins: [
     react(),
     tsconfigPaths({
       projects: [join(root, '../../tsconfig.app.json')],
-    })
+    }),
+    process.env.NODE_ENV !== "test" ? (basicSsl as any)() : undefined
   ] as PluginOption[],
+  server: {
+    host: process.env.HOST,
+    proxy: {
+      '/api': {
+        target: "https://api.integ.clubmed.com",
+        secure: false,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      }
+    }
+  }
 })

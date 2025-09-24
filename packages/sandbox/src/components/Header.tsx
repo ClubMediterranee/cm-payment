@@ -1,10 +1,10 @@
-import { Icon } from "@clubmed/trident-ui/atoms/Icons";
-import { Breadcrumb } from "@clubmed/trident-ui/molecules/Breadcrumb";
-import { useAppContext } from "../hooks/useAppContext";
-import { useSearch } from "wouter";
+import {Icon} from "@clubmed/trident-icons";
+import {Breadcrumb} from "@clubmed/trident-ui/molecules/Breadcrumb";
+import {useSearch} from "wouter";
+import {useSDKPaymentContext} from "@clubmed/payment-sdk/hooks/useSDKPaymentContext.js";
 
 export const Header = () => {
-  const { type, id } = useAppContext();
+  const context = useSDKPaymentContext()
   const search = useSearch();
   const backUrl = new URLSearchParams(search).get("back_url");
 
@@ -12,15 +12,15 @@ export const Header = () => {
     <div className="w-full">
       <header
         className="bg-white p-4 shadow-md flex items-center justify-center border-b border-saffron"
-        style={{ height: 60 }}
+        style={{height: 60}}
       >
         <div
-          className="flex justify-between items-center font-semibold flex-row-reverse"
-          style={{ width: 1200 }}
+          className="flex justify-between items-center font-semibold flex-row"
+          style={{width: 1200}}
         >
-          <Icon name="ClubMed" height={120} width={120} />
+          <Icon name="ClubMed" width="120px"/>
           <span className="flex justify-center items-center">
-            {type?.toUpperCase()} {id}
+            {context?.oidc?.issuerType?.toUpperCase()} {context?.bookingId || context?.proposalId}
           </span>
         </div>
       </header>
@@ -29,15 +29,15 @@ export const Header = () => {
           items={
             backUrl
               ? [
-                  {
-                    href: backUrl || "#",
-                    label: "Retour",
-                  },
-                  {
-                    href: "#",
-                    label: "Payment",
-                  },
-                ]
+                {
+                  href: backUrl || "#",
+                  label: "Retour",
+                },
+                {
+                  href: "#",
+                  label: "Payment",
+                },
+              ]
               : []
           }
         />

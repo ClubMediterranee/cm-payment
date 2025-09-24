@@ -1,26 +1,22 @@
-import { Card } from "@clubmed/trident-ui/molecules/Card";
-import { useProduct } from "../data/useProduct";
+import {Card} from "@clubmed/trident-ui/molecules/Card";
+import {useProduct} from "../hooks/useProduct";
+import type {StayModel} from "../hooks/useStay.js";
 
 export const StayPlaceholder = () => {
   return (
     <div className="w-full">
-      <Card />
+      <Card title="Stay placeholder" icon="Trident"/>
     </div>
   );
 };
 
-export const Stay = ({
-  stay,
-}: {
-  stay: {
-    product_id: string;
-    resort_arrival_date: string;
-    resort_departure_date: string;
-    accommodations: string[];
-  };
-}) => {
-  const { data: product } = useProduct({ productId: stay.product_id });
-  
+export type StayProps = {
+  stay: StayModel;
+}
+
+export const Stay = ({stay}: StayProps) => {
+  const {data: product} = useProduct(stay);
+
 
   return (
     <div className="w-full pb-20">
@@ -34,15 +30,15 @@ export const Stay = ({
               {product?.accommodations_introduction?.description}
             </p>
             <p className="font-bold">
-              Du {stay.resort_arrival_date} au {stay.resort_departure_date}
+              Du {stay.resortArrivalDate} au {stay.resortDepartureDate}
             </p>
-            <p>{stay.accommodations.length} chambre(s)</p>
+            <p>{stay.nbAccommodations} chambre(s)</p>
           </div>
           <img
-            src={product.immersive_image}
+            src={product.media?.immersive_image}
             alt={product.destination?.countries?.[0].label}
             className="rounded-16 w-full"
-            style={{ height: 200 }}
+            style={{height: 200}}
           />
         </div>
       </Card>

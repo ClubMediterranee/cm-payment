@@ -1,49 +1,41 @@
-import {
-  createContext,
-  PropsWithChildren,
-} from "react";
-import { useAuth } from "react-oidc-context";
-import { useLocation, useParams } from "wouter";
-import { z } from "zod";
-
-const paramsSchema = z.object({
-  id: z.number(),
-  type: z.enum(["proposal", "booking"]),
-});
+import {createContext, PropsWithChildren,} from "react";
+import {SDKConfigProvider} from "@clubmed/payment-sdk/providers/SDKConfigProvider.js";
+import {useAppParams} from "../hooks/useAppParams.js";
+import {LoadingPage} from "../pages/LoadingPage.js";
 
 type AppContextType = {
   isIframe: boolean;
-  id: string;
-  type: string;
-  locale: string;
 };
 
 export const AppContext = createContext<AppContextType>({
-  isIframe: false,
-  id: "",
-  type: "",
-  locale: "fr-FR",
+  isIframe: false
 });
 
-export const AppProvider = ({ children }: PropsWithChildren) => {
-  const isIframe = window.top !== window.self;
-  const { id = "", type = "", locale = "fr-FR" } = useParams();
-  const auth = useAuth();
-  const [, setLocation] = useLocation();
+export const AppProvider = ({children}: PropsWithChildren) => {
+  const {isIframe, url, values, api, oidc, callbackUrl} = useAppParams();
 
-  if (type === "booking" && !auth.isAuthenticated) {
-    return null;
-  }
-
-  if (!paramsSchema.safeParse({ id: Number(id), type }).success) {
-    setLocation("/404");
+  if (!values) {
+    return <LoadingPage/>;
   }
 
   return (
     <AppContext.Provider
-      value={{ isIframe, id, type, locale }}
+      value={{
+        isIframe
+      }}
     >
-      {children}
+      <SDKConfigProvider
+        url={url}
+        locale={values.locale}
+        proposalId={values.proposalId}
+        bookingId={values.bookingId}
+        customerId={values.customerId}
+        api={api}
+        oidc={oidc}
+        callbackUrl={callbackUrl}
+      >
+        {children}
+      </SDKConfigProvider>
     </AppContext.Provider>
   );
 };

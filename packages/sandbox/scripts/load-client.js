@@ -1,3 +1,4 @@
+// TODO Jerome est-ce que c'est utile ? c'est quoi l'objectif de ce fichier ?
 class CMPayment {
   constructor({ containerId, onLoad, onLoadEnd }) {
     if (!containerId) {

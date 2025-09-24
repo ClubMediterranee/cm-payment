@@ -2,6 +2,10 @@ import { useAuth } from "react-oidc-context";
 import Cookies from "js-cookie";
 import { useSearch } from "wouter";
 
+/**
+ * Not needed, the page won't have access to the B2C/B2C cookies
+ * Also, neolane_id is not the appropriate name. Use customer_id instead.
+ */
 export const useUserId = () => {
   const { user } = useAuth();
 
