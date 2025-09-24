@@ -1,0 +1,319 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+<div className="flex items-center justify-center mb-16">
+  <img
+    src="https://ns.clubmed.com/fbs/RWD/branding2023/Logo/MicrosoftTeams-image%20(9).png"
+    width="200"
+    alt="Club Med"
+  />
+</div>
+
+<div className="pt-16">
+  <h1 className="text-center">@clubmed/trident-ui</h1>
+  <hr />
+  <div className="flex items-center justify-center gap-4 pt-16">
+    <a href="https://badge.fury.io/js/%40clubmed%2Ftrident-ui" target="_top" rel="nofollow">
+      <img src="https://badge.fury.io/js/%40clubmed%2Ftrident-ui.svg" alt="npm version" />
+    </a>
+    <a href="https://github.com/semantic-release/semantic-release" target="_top" rel="nofollow">
+      <img
+        src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg"
+        alt="semantic-release"
+      />
+    </a>
+    <a href="https://github.com/prettier/prettier" target="_top" rel="nofollow">
+      <img
+        src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square"
+        alt="code style:
+prettier"
+      />
+    </a>
+  </div>
+</div>
+
+## What it is
+
+React UI components is a library of reusable components for building web applications using the Club Med brand guidelines.
+
+## Useful links
+
+- [Figma Trident UI](https://www.figma.com/@clubmed)
+- [Board Jira](https://clubmed.atlassian.net/jira/software/c/projects/SCL/boards/122)
+- [Storybook stable version](https://latest.trident-ui.pro.clubmed/?path=/docs/introduction--docs)
+- [Storybook dev version](https://develop.trident-ui.pro.clubmed/?path=/docs/introduction--docs)
+
+## Requirements
+
+- React 18
+- Tailwind 3
+
+## Installation
+
+```sh
+npm install --save @clubmed/trident-ui react react-dom
+npm install --save-dev tailwindcss postcss autoprefixer
+```
+
+## Tailwind configuration
+
+This package exports a `tailwind.preset` file that you can use to extend your own configuration.
+
+Edit your `tailwind.config.ts` file and add the following line:
+
+```ts
+import type { Config } from 'tailwindcss';
+import { tailwindPreset } from '@clubmed/trident-ui/tailwind'; // add this line
+
+const config = {
+  presets: [tailwindPreset as unknown as Config],
+  content: [
+    './doc/**/*.mdx',
+    './lib/**/*.{ts,tsx,mdx}', // adapt this line to your project
+    '**/node_modules/@clubmed/trident-ui/**/*.js',
+  ],
+} satisfies Config;
+
+export default config;
+```
+
+> Note: If you have a TypeScript issue when you import the `tailwind.preset` file, you can add the following line in your `tsconfig.json` file:
+
+```json
+{
+  "include": ["tailwind.config.ts"]
+}
+```
+
+Then you have to configure your `postcss.config.ts` file to use the `tailwind.config.cts` file:
+
+```ts
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+```
+
+Then add the styles to your `index.css` file:
+
+```css
+@import '@clubmed/trident-ui/style.css';
+```
+
+or in your `main.tsx` file:
+
+```tsx
+import '@clubmed/trident-ui/style.css';
+```
+
+## Usage
+
+You can import any components directly from is directory. For example the Button component can be imported and
+used as follows:
+
+```tsx
+import { useState } from 'react';
+import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <>
+      <h1>Vite + React</h1>
+      <div class="card">
+        <Button onClick={() => setCount((count) => count + 1)}>count is {count}</Button>
+      </div>
+    </>
+  );
+}
+```
+
+## Library Configuration
+
+you can use the `TridentUIConfigProvider` to configure some option of the Trident UI library:
+
+```tsx
+import './index.css';
+import App from './App';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { TridentUIConfigProvider } from '@clubmed/trident-ui';
+import { IconsProvider } from '@clubmed/trident-ui/atoms/Icons/contexts/IconsContext.js';
+import Actions from '@clubmed/trident-ui/atoms/Icons/svg/Actions';
+
+const baseName = (window as any).basename || '/';
+
+createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <TridentUIConfigProvider
+      value={{
+        locale: 'fr-FR',
+      }}
+    >
+      <IconsProvider icons={[Actions]}>
+        <App />
+      </IconsProvider>
+    </TridentUIConfigProvider>
+  </React.StrictMode>,
+);
+```
+
+### Options
+
+- `locale` - The locale to use for the components. Default to `fr-FR`.
+
+## Icons configuration
+
+Trident UI provide a new way to load icons. You can use the `IconProvider` component to load icons from a specific group.
+Currently, there is two icons provider available:
+
+- SvgIconProvider: Use lazy loaded SVG to display icons.
+- SvgUseIconProvider: Use native Svg.use property to load and display icons.
+- FontIconProvider: Use font icons to display icons.
+
+For each provider, you have subset of icons split by groups name:
+
+- Actions
+- Activities
+- Brand
+- Covid
+- Food
+- HappyToCare
+- Places
+- Resort \* (only available for SVG)
+- Room
+- Services
+- Socials
+- Transports
+- Utilities
+
+By default, no icons provider is set. You have to import a subset icons in your code as follows:
+
+Svg mode:
+
+```tsx
+import Actions from '@clubmed/trident-ui/atoms/Icons/svg/Actions'; // load only the Actions subset using SVG mode
+import { Icon } from '@clubmed/trident-ui/atoms/Icons/Icon';
+
+function App() {
+  return (
+    <IconsProvider icons={[Actions]}>
+      <Icon name="ArrowDefaultLeft" />
+    </IconsProvider>
+  );
+}
+```
+
+Fonts mode:
+
+```tsx
+import Actions from '@clubmed/trident-ui/atoms/Icons/fonts/Actions'; // load the Actions subset
+import '@clubmed/trident-ui/fonts/tui-actions.css'; // load css rules for Actions
+import { Icon } from '@clubmed/trident-ui/atoms/Icons/Icon';
+
+function App() {
+  return (
+    <IconsProvider icons={[Actions]}>
+      <Icon name="ArrowDefaultLeft" />
+    </IconsProvider>
+  );
+}
+```
+
+You can mix usage of SVG and fonts mode:
+
+```tsx
+import Actions from '@clubmed/trident-ui/atoms/Icons/fonts/Actions'; // load the Actions subset
+import '@clubmed/trident-ui/fonts/tui-actions.css'; // load css rules for Actions
+import Brand from '@clubmed/trident-ui/Icons/svg/Brand';
+
+function App() {
+  return (
+    <IconsProvider icons={[Actions, Brand]}>
+      <Icon name="ArrowDefaultLeft" />
+      <Icon name="ClubMed" />
+    </IconsProvider>
+  );
+}
+```
+
+> In this case, Icon component will automatically use the appropriate IconResolver to load and display the icon.
+
+### Register custom icons
+
+Trident UI provide function to register any external Svg icons (or font) without having redevelop
+a custom Icon component. Just use `registerSvgIcon` or `registerFontIcon` to add your new icon:
+
+```tsx
+import { resolver } from '@/atoms/Icons/svg/SvgIconResolver';
+import { lazy } from 'react';
+
+const CustomIcons = resolver([
+  {
+    name: 'MyCustomIcon',
+    group: 'custom',
+    element: lazy(() => import('./MyCustomIcon.svg?react')),
+    // viewBox: '0 0 30 30', // default '0 0 30 30'
+    // aspectRatio: 1, // default '1'
+    // orientation: 'left' // apply rotation to the icon
+  },
+]);
+
+function App() {
+  return (
+    <IconsProvider icons={[CustomIcons]}>
+      <Icon name="MyCustomIcon" />
+    </IconsProvider>
+  );
+}
+```
+
+### Generate fonts from icons (dev)
+
+The project have a builder to compile svg to font. Just add Svg inside `atoms/Icons/svg` then
+run the following command:
+
+```sh
+npm run build:fonts
+```
+
+### Know issues
+
+Currently, some icons in Font mode aren't correctly rendered because the SVG source aren't correctly
+cleaned. This mode will be removed from the library in the future.
+
+## Jest configuration
+
+if you are using Jest, you can add the following configuration to your `jest.config.js` file:
+
+```js
+export default {
+  moduleNameMapper: {
+    '^@clubmed/trident-ui/(.*)$': dirname(require.resolve('@clubmed/trident-ui')) + '$1',
+  },
+  // add also this line can solve issue:
+  transformIgnorePatterns: ['/node_modules/(?!@clubmed/trident-ui)/.*'],
+};
+```
+
+## Contributing
+
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## License
+
+Copyright 2024 - Today | Club Med
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

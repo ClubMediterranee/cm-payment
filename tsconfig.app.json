@@ -29,11 +29,13 @@
     }
   },
   "include": [
+    ".storybook/**/*",
     "packages/*/src/**/*.ts",
     "packages/*/src/**/*.tsx",
   ],
   "exclude": [
     "node_modules",
+    "**/node_modules",
     "packages/*/src/**/*.spec.ts",
     "packages/*/src/**/*.spec.tsx"
   ]
