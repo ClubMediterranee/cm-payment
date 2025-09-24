@@ -31,9 +31,9 @@ include:
     file: 'CI/library/gitlab-api-utils.yaml'
   - local: '.gitlab/ci/commons.yml'
   - local: '.gitlab/ci/ci-lint.yml'
-  - local: '.gitlab/ci/dev-branches.yml'
-  - local: '.gitlab/ci/release.yml'
-  - local: '.gitlab/ci/tags.yml'
+  #  - local: '.gitlab/ci/dev-branches.yml'
+  #  - local: '.gitlab/ci/release.yml'
+  #  - local: '.gitlab/ci/tags.yml'
   - local: '.gitlab/ci/proxy.yml'
   - local: '.gitlab/ci/node.yml'
 
@@ -68,13 +68,13 @@ workflow:
 stages:
   - test_ci
   - test
-  - storybook:dev
-  - version:bump
-  - version:storybook
-  - version:publish
-  - version:lifecycle
-  - release:make
-  - release:publish
+#  - storybook:dev
+#  - version:bump
+#  - version:storybook
+#  - version:publish
+#  - version:lifecycle
+#  - release:make
+#  - release:publish
 
 cache:
   - key:
@@ -106,22 +106,22 @@ lint:
       when: never
     - when: always
 build:
-    extends: .node_install_dependencies
-    stage: test
-    script:
-        - pnpm run build
-    artifacts:
-        when: always
-        paths:
-        - packages/sdk/dist/
-        - packages/sandbox/dist/
-        expire_in: 1 week
-    rules:
-      - if: '$CI_COMMIT_TAG'
-        when: always
-      - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
-        when: never
-      - when: always
+  extends: .node_install_dependencies
+  stage: test
+  script:
+    - pnpm run build
+  artifacts:
+    when: always
+    paths:
+      - packages/sdk/dist/
+      - packages/sandbox/dist/
+    expire_in: 1 week
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
+      when: never
+    - when: always
 test:
   extends: .node_install_dependencies
   stage: test
