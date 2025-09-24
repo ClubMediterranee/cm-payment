@@ -1,19 +1,4 @@
-let fetchOptions = {
-  apiKey: "",
-  getAccessToken: () => "",
-  locale: "fr-FR",
-};
-
-export const setFetchOptions = (options: {
-  apiKey?: string;
-  getAccessToken?: () => string;
-  locale?: string;
-}) => {
-  fetchOptions = {
-    ...fetchOptions,
-    ...options,
-  };
-};
+import {getSDKPaymentOptions} from "@clubmed/payment-sdk/providers/SDKConfigProvider.js";
 
 export const fetcher = async <T>(
   {
@@ -32,14 +17,19 @@ export const fetcher = async <T>(
   auth?: { withAuth: boolean }
 ): Promise<T> => {
   const withAuth = auth?.withAuth || false;
-  const accessToken = fetchOptions.getAccessToken?.();
-  const { apiKey, locale } = fetchOptions;
+  const {
+    locale,
+    oidc: {accessToken},
+    api: {
+      url: apiUrl,
+      apiKey
+    }
+  } = getSDKPaymentOptions();
 
   if (withAuth && !accessToken) {
     throw new Error("No access token provided");
   }
 
-  params.api_key = apiKey;
   const pathParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -48,36 +38,24 @@ export const fetcher = async <T>(
     }
   });
 
-  console.log(url, {
+  const endpoint = `${apiUrl}${url}?${pathParams.toString()}`
+
+  const opts = {
     method,
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
+      "x-api-key": apiKey,
       ...(withAuth && accessToken
-        ? { Authorization: `Bearer ${accessToken}` }
+        ? {Authorization: `Bearer ${accessToken}`}
         : {}),
-      ...(data ? { body: JSON.stringify(data) } : {}),
+      ...(data ? {body: JSON.stringify(data)} : {}),
       "accept-language": locale,
       ...headers,
     },
-  });
+  }
 
-  const response = await fetch(
-    // import.meta.env.VITE_API_ENDPOINT Must be passed by the React Provider configuration.
-    `${import.meta.env.VITE_API_ENDPOINT}${url}${`?${pathParams.toString()}`}`,
-    {
-      method,
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        ...(withAuth && accessToken
-          ? { Authorization: `Bearer ${accessToken}` }
-          : {}),
-        "accept-language": locale,
-      },
-      ...(data ? { body: JSON.stringify(data) } : {}),
-    }
-  );
+  const response = await fetch(endpoint, opts);
 
   const json = await response.json();
 

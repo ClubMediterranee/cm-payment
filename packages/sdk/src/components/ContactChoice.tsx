@@ -1,9 +1,10 @@
-import { Card } from "@clubmed/trident-ui/molecules/Card";
-import { Checkbox } from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
-import { useFormContext } from "react-hook-form";
-import { Icon } from "@clubmed/trident-ui/atoms/Icons";
-import { TextField } from "@clubmed/trident-ui/molecules/Forms/TextField";
-import { Component_Key, WITH_CONTACT_METHODS_PROVIDERS } from "../utils/constants";
+import {Card} from "@clubmed/trident-ui/molecules/Card";
+import {Checkbox} from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
+import {useFormContext} from "react-hook-form";
+import {Icon} from "@clubmed/trident-icons";
+import {TextField} from "@clubmed/trident-ui/molecules/Forms/TextField";
+import {TOKENS} from "@clubmed/payment-sdk/types/Tokens";
+import {GLOBAL_SDK_SETTINGS} from "@clubmed/payment-sdk/config";
 
 const CONTACT_CHOICE = [
   {
@@ -23,11 +24,11 @@ const CONTACT_CHOICE = [
 ];
 
 export const ContactChoice = () => {
-  const { register, setValue, watch } = useFormContext();
+  const {register, setValue, watch} = useFormContext();
   const watchedTemplateId = watch("template_id");
   const watchedProviderId = watch("provider_id");
 
-  const displayContactChoice = WITH_CONTACT_METHODS_PROVIDERS.find((id) =>
+  const displayContactChoice = GLOBAL_SDK_SETTINGS.withContactMethodProviders.find((id) =>
     watchedProviderId?.includes(id)
   );
 
@@ -38,7 +39,7 @@ export const ContactChoice = () => {
   return (
     <div className="w-full">
       <h2 className="text-h3 mb-16 font-serif">Quel type de canal ?</h2>
-      {CONTACT_CHOICE.map(({ id, name, type, icon, label }) => {
+      {CONTACT_CHOICE.map(({id, name, type, icon, label}) => {
         const isChecked = id === watchedTemplateId;
         return (
           <Card title="" key={id} icon={icon as keyof typeof Icon}>
@@ -66,4 +67,4 @@ export const ContactChoice = () => {
   );
 };
 
-ContactChoice.COMPONENT_KEY = Component_Key.ContactChoice
+ContactChoice.COMPONENT_KEY = TOKENS.ContactChoice

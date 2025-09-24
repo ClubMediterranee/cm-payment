@@ -1,73 +1,79 @@
-import { useMutation } from "@tanstack/react-query";
-import { useAppContext } from "../hooks/useAppContext";
-import Cookies from "js-cookie";
-import {
-  getV2ProposalsProposalId,
-  postV0PaymentsPaymentIdRedirectRequest,
-  postV1Payments,
-  postV3Bookings,
-} from "../__generated__";
+import {noop, useMutation} from "@tanstack/react-query";
+import {useOidcContext, useSDKPaymentContext} from "./useSDKPaymentContext.js";
+import {type BillingDetailsModel, postV0PaymentsPaymentIdRedirectRequest, postV1Payments,} from "../__generated__";
+import {createBookingFromProposal} from "@clubmed/payment-sdk/services/createBookingFromProposal.js";
+import {setCallbackUrl} from "@clubmed/payment-sdk/services/cookies.js";
+import {getRedirectPaymentCallbackUrl} from "@clubmed/payment-sdk/services/getRedirectPaymentCallbackUrl.js";
 
-export const usePaymentRedirect = (
-  {
-    onError,
-    onSuccess,
-  }: { onError: (error: Error) => void; onSuccess: (url: string) => void } = {
-    onError: () => {},
-    onSuccess: () => {},
-  }
-) => {
-  const { id, type, action, issuer, customerId, callbackUrl, onLoadEnd } =
-    useAppContext();
-  const withAuth = issuer === "go" || issuer === "partners";
-  Cookies.set("callback_url", callbackUrl, {
-    sameSite: "none",
-    secure: true,
-    expires: 1 / 48,
-  });
+export interface GetPaymentRedirectUrlParams {
+  amount: number;
+  provider_id: string;
+  template_id: string;
+  billingDetails: BillingDetailsModel;
+}
 
-  const getPaymentRedirect = async (params) => {
-    let customer_id = "";
-    let booking_id = "";
+type Props = {
+  onError?: (error: Error) => void;
+  onSuccess?: (url: string) => void;
+  onLoadEnd?: () => void;
+}
 
-    if (type === "proposal") {
-      const proposal = await getV2ProposalsProposalId(id);
-      customer_id = proposal?.households?.[0]?.attendees?.[0].customer_id || "";
-      const booking = await postV3Bookings({
-        proposal_id: id,
-      });
-      booking_id = booking.booking_id;
-    } else if (type === "booking") {
-      booking_id = id;
+export const usePaymentRedirect = ({
+                                     onError = noop,
+                                     onSuccess = noop,
+                                     onLoadEnd = noop,
+                                   }: Props = {}) => {
+  const {proposalId, bookingId, action, customerId, callbackUrl} = useSDKPaymentContext();
+
+  const {withAuth} = useOidcContext();
+
+  // not sure to understand why we set the cookie here
+  setCallbackUrl(callbackUrl);
+
+  const getPaymentRedirect = async (
+    params: GetPaymentRedirectUrlParams) => {
+    let customer_id = customerId;
+    let booking_id = bookingId;
+
+    if (!bookingId) {
+      if (!proposalId) {
+        throw new Error("You must provide a proposalId or a bookingId");
+      }
+
+      const {customerId, bookingId} = await createBookingFromProposal(proposalId);
       customer_id = customerId;
+      booking_id = bookingId;
     }
 
-    const { id: paymentId } = await postV1Payments(
+    const {id: paymentId} = await postV1Payments(
       {
-        booking_id,
+        booking_id: booking_id!,
         customer_id,
         currency: "EUR",
         action,
         amount: params.amount,
         provider_id: params.provider_id,
       },
-      { withAuth }
+      {withAuth}
     );
 
-    const callbackUrl = `${import.meta.env.VITE_DOMAIN}/${issuer}/redirect/${paymentId}?provider_id=${params.provider_id}${type === "proposal" ? `&proposal_id=${id}` : ""}`;
-    const { url, body } = await postV0PaymentsPaymentIdRedirectRequest(
+
+    const callbackUrl = getRedirectPaymentCallbackUrl(paymentId, params.provider_id);
+
+    const {url, body} = await postV0PaymentsPaymentIdRedirectRequest(
       paymentId,
       {
         callback_url: callbackUrl || "",
         template_id: params.template_id,
-        billing_details: params.billing_details,
+        billing_details: params.billingDetails,
       },
-      { withAuth }
+      {withAuth}
     );
 
     if (!url) {
-      throw new Error("Something went wrong");
+      throw new Error("Payment redirect URL not found");
     }
+
     return `${url}?${body}`;
   };
 

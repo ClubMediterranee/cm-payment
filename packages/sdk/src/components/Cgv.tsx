@@ -1,10 +1,10 @@
-import { Card } from "@clubmed/trident-ui/molecules/Card";
-import { Checkbox } from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
-import { useFormContext } from "react-hook-form";
-import { Component_Key } from "../utils/constants";
+import {Card} from "@clubmed/trident-ui/molecules/Card";
+import {Checkbox} from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
+import {useFormContext} from "react-hook-form";
+import {TOKENS} from "@clubmed/payment-sdk/types/Tokens.js";
 
 export const Cgv = () => {
-  const { register, setValue, trigger } = useFormContext();
+  const {register, setValue, trigger} = useFormContext();
 
   return (
     <div>
@@ -37,4 +37,4 @@ export const Cgv = () => {
   );
 };
 
-Cgv.COMPONENT_KEY = Component_Key.Cgv
+Cgv.COMPONENT_KEY = TOKENS.Cgv;

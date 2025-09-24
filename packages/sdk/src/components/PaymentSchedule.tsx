@@ -1,13 +1,13 @@
-import { Card } from "@clubmed/trident-ui/molecules/Card";
-import { Checkbox } from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
-import { useFormContext } from "react-hook-form";
-import { usePaymentSchedule } from "../hooks/usePaymentSchedule";
-import { useEffect } from "react";
-import { Component_Key } from "../utils/constants";
+import {Card} from "@clubmed/trident-ui/molecules/Card";
+import {Checkbox} from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
+import {useFormContext} from "react-hook-form";
+import {usePaymentSchedule} from "../hooks/usePaymentSchedule";
+import {useEffect} from "react";
+import {TOKENS} from "@clubmed/payment-sdk/types/Tokens.js";
 
 export const PaymentSchedule = () => {
-  const { paymentSchedule } = usePaymentSchedule();
-  const { register, setValue, watch } = useFormContext();
+  const {paymentSchedule} = usePaymentSchedule();
+  const {register, setValue, watch} = useFormContext();
   const watchedAmount = watch("amount");
 
   useEffect(() => {
@@ -16,20 +16,20 @@ export const PaymentSchedule = () => {
 
   return (
     <>
-      {paymentSchedule.map(({ amount, currency, deadline }) => {
+      {paymentSchedule.map((props) => {
         return (
-          <Card title="" key={amount} icon={"Clipboard"}>
+          <Card title="" key={props.amount} icon={"Clipboard"}>
             <Checkbox
-              value={amount}
+              value={props.amount}
               {...register("amount")}
               onChange={setValue}
-              checked={amount === watchedAmount}
+              checked={props.amount === watchedAmount}
             >
               Je paie le montant de{" "}
               <span className="font-bold text-sienna mx-4">
-                {amount} {currency}
+                {props.amount} {props.currency}
               </span>
-              {deadline ? ` avant le ${deadline}` : ""}
+              {"deadline" in props ? ` avant le ${props.deadline}` : ""}
             </Checkbox>
           </Card>
         );
@@ -37,14 +37,4 @@ export const PaymentSchedule = () => {
     </>
   );
 }
-PaymentSchedule.COMPONENT_KEY = Component_Key.PaymentSchedule
-
-export const PaymentSchedulePlaceholder = () => {
-  return (
-    <>
-      {Array.from({ length: 3 }).map((_, index) => (
-        <Card key={index} />
-      ))}
-    </>
-  );
-};
+PaymentSchedule.COMPONENT_KEY = TOKENS.PaymentSchedule

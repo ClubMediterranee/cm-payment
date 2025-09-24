@@ -1,36 +1,37 @@
-import { useFormContext, useWatch } from "react-hook-form";
-import { usePaymentRedirect } from "../hooks/usePaymentRedirect";
-import { useEffect, useRef } from "react";
-import { Spinner } from "@clubmed/trident-ui/molecules/Spinner";
+import {useFormContext, useWatch} from "react-hook-form";
+import {useEffect, useRef} from "react";
+import {Spinner} from "@clubmed/trident-ui/molecules/Spinner";
 import classNames from "classnames";
-import { Component_Key, IFRAME_PROVIDERS } from "../utils/constants";
+import {GLOBAL_SDK_SETTINGS} from "@clubmed/payment-sdk/config";
+import {usePaymentRedirect} from "@clubmed/payment-sdk/hooks/usePaymentRedirect.js";
 
 // Rename by SdkIframePayment ?
 export const IframeProvider = () => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const { mutate, isPending } = usePaymentRedirect({
+  const {mutate, isPending} = usePaymentRedirect({
     onSuccess: (url) => {
       if (iframeRef.current) {
         iframeRef.current.src = url;
       }
     },
-    onError: () => {},
+    onError: () => {
+    },
   });
 
   const {
-    formState: { isValid },
+    formState: {isValid},
     watch,
     getValues,
     control,
   } = useFormContext();
-  const watchedForm = useWatch({ control });
+  const watchedForm = useWatch({control});
 
   const displayProviderIframe =
-    isValid && IFRAME_PROVIDERS.includes(watch("provider_id"));
+    isValid && GLOBAL_SDK_SETTINGS.iframeProviders.includes(watch("provider_id"));
 
   useEffect(() => {
     if (displayProviderIframe) {
-      mutate(getValues());
+      mutate(getValues() as never);
     }
   }, [displayProviderIframe, getValues, mutate, watchedForm]);
 
@@ -47,7 +48,7 @@ export const IframeProvider = () => {
       />
       <iframe
         ref={iframeRef}
-        style={{ height: "910px" }}
+        style={{height: "910px"}}
         className={classNames("w-full overflow-hidden", {
           hidden: isPending,
         })}
@@ -57,4 +58,4 @@ export const IframeProvider = () => {
   );
 };
 
-IframeProvider.COMPONENT_KEY = Component_Key.IframeProvider;
+IframeProvider.COMPONENT_KEY = Symbol.for("IframeProvider");
