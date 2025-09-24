@@ -1,15 +1,16 @@
-import {defineConfig, type PluginOption} from "vite";
-import react from "@vitejs/plugin-react-swc";
-import {dirname, extname, join, relative, resolve} from "node:path";
-import {fileURLToPath} from 'node:url';
-import {visualizer} from "rollup-plugin-visualizer";
-import {viteStaticCopy} from "vite-plugin-static-copy";
-import dts from 'vite-plugin-dts';
-import preserveDirectives from 'rollup-preserve-directives';
-import {globbySync} from "globby";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { dirname, extname, join, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = import.meta.dirname
+import react from '@vitejs/plugin-react-swc';
+import { globbySync } from 'globby';
+import { visualizer } from 'rollup-plugin-visualizer';
+import preserveDirectives from 'rollup-preserve-directives';
+import { defineConfig, type PluginOption } from 'vite';
+import dts from 'vite-plugin-dts';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+const root = import.meta.dirname;
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -26,22 +27,20 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         // {src: './styles', dest: './'}, // ENABLE IT if you want to distribute css files
-        {src: './package.json', dest: '.'},
-        {src: '.npmignore', dest: '.'},
-        {src: 'README.md', dest: '.'},
+        { src: './package.json', dest: '.' },
+        { src: '.npmignore', dest: '.' },
+        { src: 'README.md', dest: '.' },
         // { src: 'CHANGELOG.md', dest: '.' },
       ],
     }),
-    visualizer({open: false, filename: "dist/stats.html"}),
+    visualizer({ open: false, filename: 'dist/stats.html' }),
   ] as PluginOption[],
   resolve: {
     alias: {
       '@clubmed/trident-icons': dirname(
         fileURLToPath(import.meta.resolve('@clubmed/trident-icons')),
       ),
-      '@clubmed/trident-ui': dirname(
-        fileURLToPath(import.meta.resolve('@clubmed/trident-ui')),
-      ),
+      '@clubmed/trident-ui': dirname(fileURLToPath(import.meta.resolve('@clubmed/trident-ui'))),
     },
   },
   build: {
@@ -82,6 +81,6 @@ export default defineConfig({
           react: 'React',
         },
       },
-    }
-  }
+    },
+  },
 });

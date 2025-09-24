@@ -1,16 +1,16 @@
-import "./Select.css";
+import './Select.css';
 
-import type {IconicNames} from "@clubmed/trident-ui/atoms/Icons";
-import {FormControl} from "@clubmed/trident-ui/molecules/Forms/FormControl";
-import {useId} from "react";
-import ReactSelect from "react-select";
-import makeAnimated from "react-select/animated";
+import type { IconicNames } from '@clubmed/trident-ui/atoms/Icons';
+import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
+import { useId } from 'react';
+import ReactSelect from 'react-select';
+import makeAnimated from 'react-select/animated';
 
-import {AllSelectProps, SelectOptionProps} from "./Select.interfaces";
+import { AllSelectProps, SelectOptionProps } from './Select.interfaces';
 
 const animatedComponents = makeAnimated();
 
-export interface SelectProps extends Omit<React.HTMLAttributes<HTMLSelectElement>, "onChange"> {
+export interface SelectProps extends Omit<React.HTMLAttributes<HTMLSelectElement>, 'onChange'> {
   /**
    * name
    */
@@ -22,7 +22,7 @@ export interface SelectProps extends Omit<React.HTMLAttributes<HTMLSelectElement
   /**
    * Status of the input
    */
-  status?: "error" | "success" | "default";
+  status?: 'error' | 'success' | 'default';
   /**
    * Icon name
    */
@@ -45,21 +45,21 @@ export function Select(props: AllSelectProps) {
   const uniqId = useId();
   const {
     className,
-    name = "",
+    name = '',
     id = `field-select-${name || uniqId}`,
     label,
-    status = "default",
+    status = 'default',
     errorMessage,
     disabled = false,
-    description = "",
-    dataTestId = "SelectField"
+    description = '',
+    dataTestId = 'SelectField',
   } = props;
 
   return (
     <FormControl
       className={className}
       dataTestId={dataTestId}
-      dataName={"Select"}
+      dataName="Select"
       label={label}
       description={description}
       validationStatus={status}
@@ -80,9 +80,9 @@ export function Select(props: AllSelectProps) {
           const v = (
             props.multiple
               ? []
-                .concat(value as never)
-                .filter(Boolean)
-                .map((v: { value: unknown }) => v.value)
+                  .concat(value as never)
+                  .filter(Boolean)
+                  .map((v: { value: unknown }) => v.value)
               : (value as any).value
           ) as any;
 

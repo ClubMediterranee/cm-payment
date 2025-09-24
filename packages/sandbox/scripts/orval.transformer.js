@@ -1,12 +1,11 @@
-
 export const ENDPOINTS = [
-  "GET /v2/products/{product_id}",
-  "GET /v3/customers/{customer_id}/bookings/{booking_id}",
-  "GET /v2/proposals/{proposal_id}"
-]
+  'GET /v2/products/{product_id}',
+  'GET /v3/customers/{customer_id}/bookings/{booking_id}',
+  'GET /v2/proposals/{proposal_id}',
+];
 
 export default function (schema) {
-  const paths = {}
+  const paths = {};
 
   Object.entries(schema.paths).forEach(([path, value]) => {
     Object.entries(value).forEach(([method, operation]) => {
@@ -18,15 +17,13 @@ export default function (schema) {
       paths[path][method] = operation;
 
       if (operation.parameters) {
-        operation.parameters = operation.parameters.filter(
-          (param) => param.name !== "api_key"
-        );
+        operation.parameters = operation.parameters.filter((param) => param.name !== 'api_key');
       }
     });
   });
 
   return {
     ...schema,
-    paths
+    paths,
   };
 }

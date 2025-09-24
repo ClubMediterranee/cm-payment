@@ -1,27 +1,28 @@
-import {createContext, PropsWithChildren,} from "react";
-import {SDKConfigProvider} from "@clubmed/payment-sdk/providers/SDKConfigProvider.js";
-import {useAppParams} from "../hooks/useAppParams.js";
-import {LoadingPage} from "../pages/LoadingPage.js";
+import { SDKConfigProvider } from '@clubmed/payment-sdk/providers/SDKConfigProvider.js';
+import { createContext, PropsWithChildren } from 'react';
+
+import { useAppParams } from '../hooks/useAppParams.js';
+import { LoadingPage } from '../pages/LoadingPage.js';
 
 type AppContextType = {
   isIframe: boolean;
 };
 
 export const AppContext = createContext<AppContextType>({
-  isIframe: false
+  isIframe: false,
 });
 
-export const AppProvider = ({children}: PropsWithChildren) => {
-  const {isIframe, url, values, api, oidc, callbackUrl} = useAppParams();
+export const AppProvider = ({ children }: PropsWithChildren) => {
+  const { isIframe, url, values, api, oidc, callbackUrl } = useAppParams();
 
   if (!values) {
-    return <LoadingPage/>;
+    return <LoadingPage />;
   }
 
   return (
     <AppContext.Provider
       value={{
-        isIframe
+        isIframe,
       }}
     >
       <SDKConfigProvider

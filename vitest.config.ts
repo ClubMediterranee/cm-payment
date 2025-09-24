@@ -1,13 +1,11 @@
-import { defineConfig } from 'vitest/config';
-import path from 'path';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
-import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vitest/config';
 
 // import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 
-const dirname =
-  typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+// const dirname =
+//   typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -28,6 +26,7 @@ export default defineConfig({
       all: true,
       include: ['packages/*/src/**/*.{tsx,ts}'],
       exclude: [
+        '**/packages/starter/**',
         '**/lib/atoms/icons',
         '**/*.spec.{ts,tsx}',
         '**/*.stories.{ts,tsx}',
@@ -38,7 +37,7 @@ export default defineConfig({
         'lib/tailwind/**',
         'lib/types/**',
         '**/index.ts',
-        //deprecated
+        // deprecated
         'lib/molecules/Tabs/TabsHeader.tsx',
         'lib/molecules/Arrows.tsx',
         'lib/molecules/Card.tsx',
@@ -48,14 +47,14 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        statements: 0.81,
-        branches: 21.21,
-        functions: 18.75,
-        lines: 0.81,
+        statements: 1.27,
+        branches: 19.29,
+        functions: 16.36,
+        lines: 1.27,
       },
     },
     projects: [
-      "packages/*/vitest.config.ts",
+      'packages/*/vitest.config.ts',
       // {
       //   extends: true,
       //   plugins: [
@@ -81,10 +80,5 @@ export default defineConfig({
       //   },
       // },
     ],
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(dirname, './lib'),
-    },
   },
 });

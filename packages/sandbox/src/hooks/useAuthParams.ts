@@ -1,15 +1,12 @@
-import {OidcIssuerTypes} from "@clubmed/payment-sdk/types/SDKOptions";
-import {z} from "zod";
-import {useRoute} from "wouter";
-import {User} from "oidc-client-ts";
-import {AppSettings} from "../config.js";
+import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions';
+import { User } from 'oidc-client-ts';
+import { useRoute } from 'wouter';
+import { z } from 'zod';
+
+import { AppSettings } from '../config.js';
 
 const ParamsSchema = z.object({
-  issuer: z.enum([
-    OidcIssuerTypes.GM,
-    OidcIssuerTypes.GO,
-    OidcIssuerTypes.PARTNERS
-  ]).optional(),
+  issuer: z.enum([OidcIssuerTypes.GM, OidcIssuerTypes.GO, OidcIssuerTypes.PARTNERS]).optional(),
   // id: z.string().regex(/[0-9]+/).optional(),
   // type: z.enum(["booking", "proposal"]).optional(),
   // customer_id: z.string().regex(/[0-9]+/).optional(),
@@ -19,9 +16,11 @@ const ParamsSchema = z.object({
 // type AppQueryParams = z.infer<typeof ParamsSchema>;
 
 export function useAuthParams() {
-  const url = import.meta.env.VITE_DOMAIN || window.location.origin
+  const url = import.meta.env.VITE_DOMAIN || window.location.origin;
 
-  const [isMatch, result] = useRoute<{ id: string; issuer: OidcIssuerTypes, type: string }>("/:issuer/*");
+  const [isMatch, result] = useRoute<{ id: string; issuer: OidcIssuerTypes; type: string }>(
+    '/:issuer/*',
+  );
 
   // const {
   //   locale,
@@ -30,19 +29,18 @@ export function useAuthParams() {
 
   const initialValues = {
     issuer: result?.issuer?.toUpperCase(),
-  }
+  };
 
   // meaning it's a valid URL to trigger the payment Flow
   if (isMatch) {
     if (!ParamsSchema.safeParse(initialValues).success) {
-      throw new Error("Invalid parameters in URL");
+      throw new Error('Invalid parameters in URL');
     }
   }
 
   function onSigninCallback(u: User | undefined) {
     if (u) {
-
-      const {return_url} = u.state as { return_url: string };
+      const { return_url } = u.state as { return_url: string };
 
       window.location.href = return_url;
     }
@@ -55,6 +53,6 @@ export function useAuthParams() {
       issuerType: initialValues.issuer as OidcIssuerTypes,
       ...AppSettings.oidc[initialValues.issuer as OidcIssuerTypes],
     },
-    onSigninCallback
-  }
+    onSigninCallback,
+  };
 }

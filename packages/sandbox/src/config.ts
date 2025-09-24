@@ -1,8 +1,7 @@
-import {OidcIssuerTypes} from "@clubmed/payment-sdk/types/SDKOptions.js";
+import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
 
 const commonConfig = {
-
-  scope: "openid profile email clubmed",
+  scope: 'openid profile email clubmed',
 };
 
 export const AppSettings = {
@@ -19,7 +18,7 @@ export const AppSettings = {
     [OidcIssuerTypes.PARTNERS]: {
       url: import.meta.env.VITE_API_ENDPOINT,
       apiKey: import.meta.env.VITE_SELLER_API_KEY,
-    }
+    },
   },
   oidc: {
     [OidcIssuerTypes.GM]: {
@@ -38,7 +37,7 @@ export const AppSettings = {
       authority: import.meta.env.VITE_GO_OIDC_URL,
       client_id: import.meta.env.VITE_GO_OIDC_CLIENT_ID,
       redirect_uri: `${import.meta.env.VITE_DOMAIN}/partners/signin_redirect`,
-      ...commonConfig
+      ...commonConfig,
     },
-  }
-}
+  },
+};

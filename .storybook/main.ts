@@ -1,14 +1,17 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 
-
 const config: StorybookConfig = {
-  stories: ['../doc/**/*.mdx', {
-    directory: '../packages/sdk/src',
-    titlePrefix: 'SDK',
-  }, {
-    directory: '../packages/sandbox/src',
-    titlePrefix: 'Sandbox',
-  }],
+  stories: [
+    '../doc/**/*.mdx',
+    {
+      directory: '../packages/sdk/src',
+      titlePrefix: 'SDK',
+    },
+    {
+      directory: '../packages/sandbox/src',
+      titlePrefix: 'Sandbox',
+    },
+  ],
 
   addons: [
     '@storybook/addon-links',
@@ -16,7 +19,7 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
     '@storybook/addon-a11y',
     '@storybook/addon-themes',
-    '@storybook/addon-vitest'
+    '@storybook/addon-vitest',
   ],
   typescript: {
     reactDocgen: 'react-docgen',

@@ -1,3 +1,3 @@
 export enum PspProviders {
-  EIXOPAY = "EIXOPAY"
+  EIXOPAY = 'EIXOPAY',
 }

@@ -1,40 +1,41 @@
-import {Card} from "@clubmed/trident-ui/molecules/Card";
-import {Checkbox} from "@clubmed/trident-ui/molecules/Forms/Checkboxes";
-import {useFormContext} from "react-hook-form";
-import {usePaymentSchedule} from "../hooks/usePaymentSchedule";
-import {useEffect} from "react";
-import {TOKENS} from "@clubmed/payment-sdk/types/Tokens";
+import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
+import { Card } from '@clubmed/trident-ui/molecules/Card';
+import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
+import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { usePaymentSchedule } from '../hooks/usePaymentSchedule';
 
 export const PaymentSchedule = () => {
-  const {paymentSchedule} = usePaymentSchedule();
-  const {register, setValue, watch} = useFormContext();
-  const watchedAmount = watch("amount");
+  const { paymentSchedule } = usePaymentSchedule();
+  const { register, setValue, watch } = useFormContext();
+  const watchedAmount = watch('amount');
 
   useEffect(() => {
-    setValue("amount", paymentSchedule[0]?.amount);
+    setValue('amount', paymentSchedule[0]?.amount);
   }, [paymentSchedule, setValue]);
 
   return (
     <>
       {paymentSchedule.map((props) => {
         return (
-          <Card title="" key={props.amount} icon={"Clipboard"}>
+          <Card title="" key={props.amount} icon="Clipboard">
             <Checkbox
               value={props.amount}
-              {...register("amount")}
+              {...register('amount')}
               onChange={setValue}
               checked={props.amount === watchedAmount}
             >
-              Je paie le montant de{" "}
+              Je paie le montant de{' '}
               <span className="font-bold text-sienna mx-4">
                 {props.amount} {props.currency}
               </span>
-              {"deadline" in props ? ` avant le ${props.deadline}` : ""}
+              {'deadline' in props ? ` avant le ${props.deadline}` : ''}
             </Checkbox>
           </Card>
         );
       })}
     </>
   );
-}
-PaymentSchedule.COMPONENT_KEY = TOKENS.PaymentSchedule
+};
+PaymentSchedule.COMPONENT_KEY = TOKENS.PaymentSchedule;

@@ -1,7 +1,8 @@
-import "./App.css";
-import {RootProviders} from "./providers/RootProvider";
-import {FormStarter} from "./components/FormStarter";
-import {PageLayout} from "./components/PageLayout.js";
+import './App.css';
+
+import { FormStarter } from './components/FormStarter';
+import { PageLayout } from './components/PageLayout.js';
+import { RootProviders } from './providers/RootProvider';
 
 function App() {
   return (

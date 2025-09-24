@@ -1,11 +1,8 @@
-
-
-
 /**
  * Session Storage utilities for storing and retrieving JSON data
  */
 
-import type {SessionStorageValues} from "../types/SessionStorage.js";
+import type { SessionStorageValues } from '../types/SessionStorage.js';
 
 /**
  * Store a JSON object in session storage with the given key
@@ -13,7 +10,10 @@ import type {SessionStorageValues} from "../types/SessionStorage.js";
  * @param data - The data to store (will be JSON stringified)
  * @returns true if successful, false otherwise
  */
-export function setSessionItem<Key extends keyof SessionStorageValues, Value = SessionStorageValues[Key]>(key: Key, data: Value): boolean {
+export function setSessionItem<
+  Key extends keyof SessionStorageValues,
+  Value = SessionStorageValues[Key],
+>(key: Key, data: Value): boolean {
   try {
     const jsonString = JSON.stringify(data);
     sessionStorage.setItem(key, jsonString);
@@ -29,7 +29,10 @@ export function setSessionItem<Key extends keyof SessionStorageValues, Value = S
  * @param key - The key to retrieve data from
  * @returns The parsed data or null if not found or invalid
  */
-export function getSessionItem<Key extends keyof SessionStorageValues, Value = SessionStorageValues[Key]>(key: Key): Value | null {
+export function getSessionItem<
+  Key extends keyof SessionStorageValues,
+  Value = SessionStorageValues[Key],
+>(key: Key): Value | null {
   try {
     const jsonString = sessionStorage.getItem(key);
     if (jsonString === null) {

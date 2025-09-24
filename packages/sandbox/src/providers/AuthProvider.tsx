@@ -1,18 +1,13 @@
-import {AuthProvider as ReactOidcContext} from "react-oidc-context";
-import {PropsWithChildren} from "react";
-import {useAuthParams} from "../hooks/useAuthParams.js";
+import { PropsWithChildren } from 'react';
+import { AuthProvider as ReactOidcContext } from 'react-oidc-context';
 
-export const AuthProvider = ({children}: PropsWithChildren) => {
-  const {
-    oidc,
-    onSigninCallback
-  } = useAuthParams();
+import { useAuthParams } from '../hooks/useAuthParams.js';
+
+export const AuthProvider = ({ children }: PropsWithChildren) => {
+  const { oidc, onSigninCallback } = useAuthParams();
 
   return (
-    <ReactOidcContext
-      {...oidc}
-      onSigninCallback={onSigninCallback}
-    >
+    <ReactOidcContext {...oidc} onSigninCallback={onSigninCallback}>
       {children}
     </ReactOidcContext>
   );

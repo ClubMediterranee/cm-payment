@@ -1,6 +1,6 @@
-import { useAuth } from "react-oidc-context";
-import Cookies from "js-cookie";
-import { useSearch } from "wouter";
+import Cookies from 'js-cookie';
+import { useAuth } from 'react-oidc-context';
+import { useSearch } from 'wouter';
 
 /**
  * Not needed, the page won't have access to the B2C/B2C cookies
@@ -11,8 +11,6 @@ export const useUserId = () => {
 
   const search = useSearch();
   const neolaneId =
-    Cookies.get("neolane_id") ||
-    new URLSearchParams(search).get("neolane_id") ||
-    "";
-  return user?.profile.type ? neolaneId : user?.profile.sub || "";
+    Cookies.get('neolane_id') || new URLSearchParams(search).get('neolane_id') || '';
+  return user?.profile.type ? neolaneId : user?.profile.sub || '';
 };

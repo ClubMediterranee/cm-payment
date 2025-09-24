@@ -1,5 +1,5 @@
-import type {IconicNames} from "@clubmed/trident-icons";
-import {ReactNode} from "react";
+import type { IconicNames } from '@clubmed/trident-icons';
+import { ReactNode } from 'react';
 
 export interface SelectOptionProps<Data = any> extends Record<string, any> {
   label: string | ReactNode;
@@ -11,7 +11,7 @@ export interface SelectOptionProps<Data = any> extends Record<string, any> {
   template?: (item: SelectOptionProps<Data>) => ReactNode;
 }
 
-export interface SelectProps extends Omit<React.HTMLAttributes<HTMLSelectElement>, "onChange"> {
+export interface SelectProps extends Omit<React.HTMLAttributes<HTMLSelectElement>, 'onChange'> {
   /**
    * name
    */
@@ -23,7 +23,7 @@ export interface SelectProps extends Omit<React.HTMLAttributes<HTMLSelectElement
   /**
    * Status of the input
    */
-  status?: "error" | "success" | "default";
+  status?: 'error' | 'success' | 'default';
   /**
    * Icon name
    */

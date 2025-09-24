@@ -1,6 +1,6 @@
-import {defineConfig} from 'vitest/config';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
+import { defineConfig } from 'vitest/config';
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -35,11 +35,11 @@ export default defineConfig({
         functions: 98.73,
         lines: 99.77,
       },
-    }
+    },
   },
   resolve: {
     alias: {
       '@clubmed/payment-sdk': 'src',
-    }
-  }
+    },
+  },
 });

@@ -1,4 +1,4 @@
-import type {OidcIssuerTypes} from "@clubmed/payment-sdk/types/SDKOptions.js";
+import type { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
 
 export interface AppState {
   issuerType: OidcIssuerTypes;

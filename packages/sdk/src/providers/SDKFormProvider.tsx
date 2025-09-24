@@ -1,15 +1,19 @@
-import type {ComponentProps, PropsWithChildren} from "react";
-import {FormProvider as ReactHookFormProvider, useForm} from "react-hook-form";
-import {SDKForm} from "../components/SDKForm";
-import {validateComponents} from "@clubmed/payment-sdk/utils/validateComponents";
-import {useSDKPaymentContext} from "@clubmed/payment-sdk/hooks/useSDKPaymentContext";
+import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/useSDKPaymentContext';
+import { validateComponents } from '@clubmed/payment-sdk/utils/validateComponents';
+import type { ComponentProps, PropsWithChildren } from 'react';
+import { FormProvider as ReactHookFormProvider, useForm } from 'react-hook-form';
+
+import { SDKForm } from '../components/SDKForm';
 
 /**
  * Check the presence of required components based on the issuer type and provide form context
  */
-export function SDKFormProvider({children, ...props}: PropsWithChildren<ComponentProps<typeof SDKForm>>) {
+export function SDKFormProvider({
+  children,
+  ...props
+}: PropsWithChildren<ComponentProps<typeof SDKForm>>) {
   const methods = useForm();
-  const {oidc} = useSDKPaymentContext()
+  const { oidc } = useSDKPaymentContext();
 
   validateComponents(oidc.issuerType, children);
 

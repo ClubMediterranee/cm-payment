@@ -1,9 +1,9 @@
-import { afterEach, vi, beforeAll } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import { Globals } from '@react-spring/web';
-
 import '@testing-library/jest-dom/vitest';
+
+import { Globals } from '@react-spring/web';
+import { cleanup } from '@testing-library/react';
 import { toHaveNoViolations } from 'jest-axe';
+import { afterEach, beforeAll, vi } from 'vitest';
 
 expect.extend(toHaveNoViolations);
 

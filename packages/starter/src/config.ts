@@ -1,4 +1,4 @@
-import {OidcIssuerTypes} from "@clubmed/payment-sdk/types/SDKOptions.js";
+import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
 
 export const AppSettings = {
   oidc: [
@@ -12,12 +12,12 @@ export const AppSettings = {
     },
     {
       label: OidcIssuerTypes.PARTNERS,
-      value: OidcIssuerTypes.PARTNERS
-    }
+      value: OidcIssuerTypes.PARTNERS,
+    },
   ],
   locales: [
-    { label: "fr-FR", value: "fr-FR" },
-    { label: "en-US", value: "en-US" },
-    { label: "en-GB", value: "en-GB" }
-  ]
-}
+    { label: 'fr-FR', value: 'fr-FR' },
+    { label: 'en-US', value: 'en-US' },
+    { label: 'en-GB', value: 'en-GB' },
+  ],
+};

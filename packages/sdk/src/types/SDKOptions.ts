@@ -1,9 +1,9 @@
-import {Action} from "@clubmed/payment-sdk/__generated__/index.js";
+import { Action } from '@clubmed/payment-sdk/__generated__/index.js';
 
 export enum OidcIssuerTypes {
-  GM = "GM",
-  GO = "GO",
-  PARTNERS = "PARTNERS"
+  GM = 'GM',
+  GO = 'GO',
+  PARTNERS = 'PARTNERS',
 }
 
 export type OidcSettings = {
@@ -15,12 +15,12 @@ export type OidcSettings = {
    * The access token used for authentication.
    */
   accessToken: string;
-}
+};
 
 export type ClubMedApiSettings = {
   url: string;
   apiKey: string;
-}
+};
 
 export type SDKOptions = {
   /**

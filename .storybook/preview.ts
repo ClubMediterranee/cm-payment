@@ -1,8 +1,9 @@
+import './style.css';
+
+import type { Preview } from '@storybook/react-vite';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 
-import './style.css';
 import { iconsDecorator } from './icons.js';
-import type { Preview } from '@storybook/react-vite';
 
 const preview: Preview = {
   parameters: {
@@ -32,12 +33,10 @@ const preview: Preview = {
         { name: 'ultramarine', value: 'hsl(var(--color-ultramarine))' },
         { name: 'darkGrey', value: 'hsl(var(--color-darkGrey))' },
       ],
-    }
+    },
   },
 
-  decorators: [
-    iconsDecorator,
-  ],
+  decorators: [iconsDecorator],
   // tags: ['autodocs']
 };
 

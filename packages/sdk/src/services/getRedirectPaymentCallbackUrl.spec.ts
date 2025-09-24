@@ -1,5 +1,5 @@
-import {getRedirectPaymentCallbackUrl} from './getRedirectPaymentCallbackUrl.js';
-import {getSDKPaymentOptions} from '../providers/SDKConfigProvider.js';
+import { getSDKPaymentOptions } from '../providers/SDKConfigProvider.js';
+import { getRedirectPaymentCallbackUrl } from './getRedirectPaymentCallbackUrl.js';
 
 // Mock the getSDKPaymentOptions function
 vi.mock('../providers/SDKConfigProvider.js', () => ({
@@ -31,7 +31,9 @@ describe('getRedirectPaymentCallbackUrl', () => {
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
     // Assert
-    expect(result).toBe('https://example.com/oidc/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123');
+    expect(result).toBe(
+      'https://example.com/oidc/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123',
+    );
     expect(mockGetSDKPaymentOptions).toHaveBeenCalledOnce();
   });
 
@@ -116,7 +118,9 @@ describe('getRedirectPaymentCallbackUrl', () => {
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
     // Assert
-    expect(result).toBe('https://example.com/keycloak/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123');
+    expect(result).toBe(
+      'https://example.com/keycloak/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123',
+    );
   });
 
   it('should handle URLs with existing paths', () => {
@@ -137,7 +141,9 @@ describe('getRedirectPaymentCallbackUrl', () => {
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
     // Assert
-    expect(result).toBe('https://example.com/oidc/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123');
+    expect(result).toBe(
+      'https://example.com/oidc/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123',
+    );
   });
 
   it('should handle URLs with ports', () => {
@@ -158,7 +164,9 @@ describe('getRedirectPaymentCallbackUrl', () => {
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
     // Assert
-    expect(result).toBe('http://localhost:3000/oidc/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123');
+    expect(result).toBe(
+      'http://localhost:3000/oidc/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123',
+    );
   });
 
   it('should handle special characters in paymentId', () => {
@@ -179,7 +187,9 @@ describe('getRedirectPaymentCallbackUrl', () => {
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
     // Assert
-    expect(result).toBe('https://example.com/oidc/redirect/payment-456-special@chars?provider_id=provider-789&proposal_id=proposal-123');
+    expect(result).toBe(
+      'https://example.com/oidc/redirect/payment-456-special@chars?provider_id=provider-789&proposal_id=proposal-123',
+    );
   });
 
   it('should handle special characters in providerId and proposalId', () => {

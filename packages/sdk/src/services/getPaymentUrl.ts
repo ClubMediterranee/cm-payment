@@ -1,4 +1,4 @@
-import {OidcIssuerTypes} from "@clubmed/payment-sdk/types/SDKOptions.js";
+import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
 
 type Options = {
   issuerType: OidcIssuerTypes;
@@ -20,7 +20,7 @@ type Options = {
   customerId: string;
 
   extraParams?: Record<string, string>;
-}
+};
 
 /**
  * Use this function to generate a payment URL with the specified parameters.
@@ -28,28 +28,26 @@ type Options = {
  * @param options {Options}
  */
 export function getPaymentUrl(baseUrl: string, options: Options): string {
-  const {locale, proposalId, issuerType, bookingId, customerId} = options;
+  const { locale, proposalId, issuerType, bookingId, customerId } = options;
 
   if (issuerType !== OidcIssuerTypes.GM && !customerId) {
     throw new Error(`CustomerId is required for issuerType ${issuerType}`);
   }
 
   if (!proposalId && !bookingId) {
-    throw new Error("Either proposalId or bookingId must be provided");
+    throw new Error('Either proposalId or bookingId must be provided');
   }
 
   const url = new URL(baseUrl);
 
-  url.pathname = [
-    issuerType,
-    bookingId ? "booking" : "proposal",
-    bookingId || proposalId,
-  ].join("/")
+  url.pathname = [issuerType, bookingId ? 'booking' : 'proposal', bookingId || proposalId].join(
+    '/',
+  );
 
-  url.searchParams.append("locale", locale || navigator.language || "fr-FR");
+  url.searchParams.append('locale', locale || navigator.language || 'fr-FR');
 
   if (customerId) {
-    url.searchParams.append("customer_id", customerId);
+    url.searchParams.append('customer_id', customerId);
   }
 
   if (options.extraParams) {

@@ -1,4 +1,4 @@
-import {getSDKPaymentOptions} from "@clubmed/payment-sdk/providers/SDKConfigProvider.js";
+import { getSDKPaymentOptions } from '@clubmed/payment-sdk/providers/SDKConfigProvider.js';
 
 export const fetcher = async <T>(
   {
@@ -14,25 +14,22 @@ export const fetcher = async <T>(
     params?: Record<string, unknown>;
     data?: unknown;
   },
-  auth?: { withAuth: boolean }
+  auth?: { withAuth: boolean },
 ): Promise<T> => {
   const withAuth = auth?.withAuth || false;
   const {
     locale,
-    oidc: {accessToken},
-    api: {
-      url: apiUrl,
-      apiKey
-    }
+    oidc: { accessToken },
+    api: { url: apiUrl, apiKey },
   } = getSDKPaymentOptions();
   console.log({
     locale,
-    oidc: {accessToken},
+    oidc: { accessToken },
     api: {
       url: apiUrl,
-      apiKey
-    }
-  })
+      apiKey,
+    },
+  });
   // if (withAuth && !accessToken) {
   //   throw new Error("No access token provided");
   // }
@@ -41,29 +38,26 @@ export const fetcher = async <T>(
 
   Object.entries(params || {}).forEach(([key, value]) => {
     if (value !== undefined) {
-      queryParams.append(key, value === null ? "null" : value.toString());
+      queryParams.append(key, value === null ? 'null' : value.toString());
     }
   });
 
   // queryParams.append("api_key", apiKey);
 
-  const endpoint = `${apiUrl}${url}?${queryParams.toString()}`
-
+  const endpoint = `${apiUrl}${url}?${queryParams.toString()}`;
 
   const opts = {
     method,
     headers: {
-      accept: "application/json",
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      ...(withAuth && accessToken
-        ? {Authorization: `Bearer ${accessToken}`}
-        : {}),
-      ...(data ? {body: JSON.stringify(data)} : {}),
-      "accept-language": locale,
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      ...(withAuth && accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(data ? { body: JSON.stringify(data) } : {}),
+      'accept-language': locale,
       ...headers,
     },
-  }
+  };
 
   const response = await fetch(endpoint, opts);
 

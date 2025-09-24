@@ -1,7 +1,8 @@
-import {PropsWithChildren, useEffect} from "react";
-import {type GetPaymentRedirectUrlParams, usePaymentRedirect} from "../hooks/usePaymentRedirect";
-import {useFormContext} from "react-hook-form";
-import {IframeProvider} from "@clubmed/payment-sdk/components/providers/IframeProvider";
+import { IframeProvider } from '@clubmed/payment-sdk/components/providers/IframeProvider';
+import { PropsWithChildren, useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { type GetPaymentRedirectUrlParams, usePaymentRedirect } from '../hooks/usePaymentRedirect';
 
 type Props = {
   /**
@@ -10,12 +11,12 @@ type Props = {
   onLoad?: () => void;
   onLoadEnd?: () => void;
   onError?: (error: Error) => void;
-}
+};
 
-export function SDKForm({children, onError, onLoad}: PropsWithChildren<Props>) {
+export function SDKForm({ children, onError, onLoad }: PropsWithChildren<Props>) {
   const methods = useFormContext<GetPaymentRedirectUrlParams>();
 
-  const {mutate, isPending} = usePaymentRedirect({
+  const { mutate, isPending } = usePaymentRedirect({
     onError: (error) => {
       onError?.(error);
     },
@@ -37,7 +38,7 @@ export function SDKForm({children, onError, onLoad}: PropsWithChildren<Props>) {
         className="w-full flex flex-col justify-center items-center gap-24"
       >
         {children}
-        <IframeProvider/>
+        <IframeProvider />
       </form>
     </>
   );

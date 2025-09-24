@@ -1,12 +1,13 @@
-import {useSDKPaymentContext} from "./useSDKPaymentContext.js";
-import {useSuspenseQuery} from "@tanstack/react-query";
+import { useSuspenseQuery } from '@tanstack/react-query';
+
 import {
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
-} from "../__generated__";
+} from '../__generated__';
+import { useSDKPaymentContext } from './useSDKPaymentContext.js';
 
 export const usePaymentSchedule = () => {
-  const {proposalId, bookingId, customerId: userId} = useSDKPaymentContext();
+  const { proposalId, bookingId, customerId: userId } = useSDKPaymentContext();
 
   const getPaymentSchedule = () => {
     if (bookingId) {
@@ -16,14 +17,14 @@ export const usePaymentSchedule = () => {
     }
 
     if (!proposalId) {
-      throw new Error("Either bookingId or proposalId must be provided");
+      throw new Error('Either bookingId or proposalId must be provided');
     }
 
     return getV1ProposalsProposalIdPaymentSchedule(proposalId!);
   };
 
-  const {data: paymentSchedule} = useSuspenseQuery({
-    queryKey: ["paymentSchedule"],
+  const { data: paymentSchedule } = useSuspenseQuery({
+    queryKey: ['paymentSchedule'],
     queryFn: getPaymentSchedule,
     retry: false,
     select: (data: any) => {
@@ -38,13 +39,13 @@ export const usePaymentSchedule = () => {
       const mappedPaymentSchedule = [
         ...(mappedSchedule.payment_schedules || []),
         ...(mappedSchedule.deposit_repayment_schedule || []),
-      ].map(({expected_payment_amount, deadline, amount}) => ({
+      ].map(({ expected_payment_amount, deadline, amount }) => ({
         amount: expected_payment_amount || amount,
         currency: mappedSchedule.currency,
         deadline,
       }));
 
-      if (!("paid" in data) || !data.paid) {
+      if (!('paid' in data) || !data.paid) {
         schedule.push({
           amount: mappedSchedule.total,
           currency: mappedSchedule.currency,
@@ -53,14 +54,14 @@ export const usePaymentSchedule = () => {
 
       if (
         mappedPaymentSchedule?.length > 1 ||
-        ("paid" in data && mappedPaymentSchedule?.length === 1)
+        ('paid' in data && mappedPaymentSchedule?.length === 1)
       ) {
-        schedule.push({...mappedPaymentSchedule[0]});
+        schedule.push({ ...mappedPaymentSchedule[0] });
       }
 
       return schedule;
     },
   });
 
-  return {paymentSchedule};
+  return { paymentSchedule };
 };
