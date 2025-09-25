@@ -1,0 +1,26 @@
+.react-select-container {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  .react-select__control {
+    @apply text-b4 rounded-pill w-full border px-8 py-4 font-normal outline-none border-lightGrey bg-white text-black;
+
+    &.react-select__control--is-focused {
+      @apply border-black outline-none shadow-none;
+    }
+  }
+
+  .react-select__option {
+    &.react-select__option--is-focused {
+      @apply bg-sand text-black;
+    }
+
+    &.react-select__option--is-selected {
+      @apply bg-saffron text-black;
+    }
+
+    &.react-select__option--is-selected.react-select__option--is-focused {
+      @apply bg-saffron-active text-black;
+    }
+  }
+}

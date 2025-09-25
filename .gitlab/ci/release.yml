@@ -1,0 +1,53 @@
+###
+# manually create, publish or cancel a release
+###
+---
+# @Description Automatic for each push on master, develop and next-release
+bump_version:
+  extends: .gitflow_bump_version  # from @clubmed/templates:CI/git-flow.yaml
+  stage: version:bump
+  needs:
+    - lint
+    - test
+  rules:
+    - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web") && $CI_COMMIT_REF_NAME =~ /master|develop|next-release/'
+      when: on_success
+    - when: never
+  image: '$NODE_IMG'
+  cache: {}
+
+# @Description Manually create a new release branch from develop
+make_release:
+  extends: .gitflow_release_create  # from @clubmed/templates:CI/git-flow.yaml
+  stage: release:make
+  needs:
+    - lint
+    - test
+  rules:
+    - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web") && $CI_COMMIT_REF_NAME == "develop"'
+      when: manual
+    - when: never
+  cache: {}
+
+# @Description Manually cancel a release branch
+cancel_release:
+  extends: .gitflow_release_cancel  # from @clubmed/templates:CI/git-flow.yaml
+  stage: release:publish
+  rules:
+    - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web") && $CI_COMMIT_REF_NAME == "next-release"'
+      when: manual
+    - when: never
+  cache: {}
+
+# @Description Manually publish a release branch
+publish_release:
+  extends: .gitflow_release_publish  # from @clubmed/templates:CI/git-flow.yaml
+  stage: release:publish
+  needs:
+    - lint
+    - test
+  rules:
+    - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web") && $CI_COMMIT_REF_NAME == "next-release"'
+      when: manual
+    - when: never
+  cache: {}

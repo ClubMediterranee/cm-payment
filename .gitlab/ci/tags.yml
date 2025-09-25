@@ -1,0 +1,206 @@
+###
+# for each version tag
+###
+---
+.tag_vars: &tag_vars
+  APP_VERSION: '${CI_COMMIT_TAG}'
+  BUILD_ARG_APP_VERSION: '${CI_COMMIT_TAG}'
+  VERSION_STRATEGY: 'set'
+  DOCKER_TAG: '${CI_COMMIT_TAG}'
+
+# @Description Build the release storybook
+build_storybook:
+  extends: .docker_tag_and_push.aws # from @clubmed/templates:CI/library/docker-aws.yaml
+  stage: version:storybook
+  needs:
+    - lint
+    - test
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+    - when: never
+  variables:
+    <<: *tag_vars
+
+# @Description Deploy the release storybook
+deploy_storybook:
+  extends: .deploy_docker_image_to_aws # from @clubmed/templates:CI/library/docker-aws.yaml
+  stage: version:storybook
+  needs:
+    - build_storybook
+  rules:
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-(alpha|beta)\.(0|[1-9]\d*)$/'
+      when: on_success
+      variables:
+        ENV: 'integration'
+        ENV_URL: 'https://develop.${BASE_DN}'
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-rc\.(0|[1-9]\d*)$/'
+      when: on_success
+      variables:
+        ENV: 'staging'
+        ENV_URL: 'https://next-release.${BASE_DN}'
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/'
+      when: on_success
+      variables:
+        ENV: 'production'
+        ENV_URL: 'https://latest.${BASE_DN}'
+    - when: never
+  environment:
+    name: $ENV
+    url: $ENV_URL
+  variables:
+    <<: *tag_vars
+  cache: {}
+
+# @Description Build the release before publication
+build_version:
+  stage: version:publish
+  image: '$NODE_IMG'
+  needs:
+    - lint
+    - test
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+    - when: never
+  tags:
+    # required to re-use prepared cache
+    - integration
+  before_script:
+    - !reference [.setup_proxy_linux, script] # from @clubmed/templates:CI/library/commons.yaml
+  script:
+    - !reference [.prepare_npm_env, script] # from commons.yml
+    - npm run build
+  artifacts:
+    paths:
+      - dist
+
+# @Description Publish the release to NPM
+publish_version_npm:
+  stage: version:publish
+  image: '$NODE_IMG'
+  needs:
+    - job: build_version
+      artifacts: true
+  rules:
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-alpha\.(0|[1-9]\d*)$/'
+      when: on_success
+      variables:
+        TAG_NAME: 'alpha'
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-beta\.(0|[1-9]\d*)$/'
+      when: on_success
+      variables:
+        TAG_NAME: 'beta'
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-rc\.(0|[1-9]\d*)$/'
+      when: on_success
+      variables:
+        TAG_NAME: 'rc'
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/'
+      when: on_success
+      variables:
+        TAG_NAME: 'latest'
+    - when: never
+  tags:
+    # required to re-use prepared cache
+    - integration
+  before_script:
+    - !reference [.setup_proxy_npm, script] # from @clubmed/templates:CI/library/commons.yaml
+    - !reference [.prepare_npm_env, script] # from commons.yml
+    - npm config set strict-ssl false
+  script:
+    - cd ./dist # please don't touch this line, it's required to publish the correct package configuration
+    - npm config set -- "//registry.npmjs.org/:_authToken=${NPM_TOKEN}"
+    - npm publish --access public --tag ${TAG_NAME}
+
+# @see https://docs.npmjs.com/policies/unpublish
+# @Description Unpublication of the tag on NPM - This will only work until 72h after publication if the version was not downloaded
+unpublish_version_npm:
+  stage: version:lifecycle
+  image: '$NODE_IMG'
+  needs:
+    - job: build_version
+      artifacts: true
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: manual
+    - when: never
+  tags:
+    # required to re-use prepared cache
+    - integration
+  before_script:
+    - !reference [.setup_proxy_npm, script] # from @clubmed/templates:CI/library/commons.yaml
+    - !reference [.prepare_npm_env, script] # from commons.yml
+    - npm config set strict-ssl false
+  script:
+    - npm config set -- "//registry.npmjs.org/:_authToken=${NPM_TOKEN}"
+    - npm unpublish $(npm pkg get name | tr -d \")@${CI_COMMIT_TAG:1}
+
+# @Description Deprecation of the tag on NPM - You can overwrite the message with DEPRECATION_MESSAGE=...
+deprecate_version_npm:
+  stage: version:lifecycle
+  image: '$NODE_IMG'
+  needs:
+    - job: build_version
+      artifacts: true
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: manual
+    - when: never
+  tags:
+    # required to re-use prepared cache
+    - integration
+  before_script:
+    - !reference [.setup_proxy_npm, script] # from @clubmed/templates:CI/library/commons.yaml
+    - !reference [.prepare_npm_env, script] # from commons.yml
+    - npm config set strict-ssl false
+  script:
+    - npm config set -- "//registry.npmjs.org/:_authToken=${NPM_TOKEN}"
+    - npm deprecate $(npm pkg get name | tr -d \")@${CI_COMMIT_TAG:1} "${DEPRECATION_MESSAGE}"
+
+# @Description Publish the release to Gitlab internal registry
+publish_version_gitlab:
+  stage: version:publish
+  image: '$NODE_IMG'
+  needs:
+    - job: build_version
+      artifacts: true
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+    - when: never
+  before_script:
+    - !reference [.setup_proxy_npm, script] # from @clubmed/templates:CI/library/commons.yaml
+    - !reference [.prepare_npm_env, script] # from commons.yml
+    - npm config set strict-ssl false
+  script:
+    - cd ./dist
+    - npm config set @clubmed:registry "https://scm.clubmed.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"
+    - npm config set -- "//scm.clubmed.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}"
+    - npm config set -- "//scm.clubmed.com/:_authToken=${CI_JOB_TOKEN}"
+    - npm publish
+
+# @Description Create a release page on Gitlab
+publish_gitlab_release:
+  stage: version:publish
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - lint
+    - test
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+    - when: never
+  cache: {}
+  variables:
+    <<: *tag_vars
+  before_script:
+    - !reference [.setup_proxy_linux, script] # from @clubmed/templates:CI/library/commons.yaml
+    - apk --no-cache add git openssl ca-certificates
+    - >
+      openssl s_client -connect ${CI_SERVER_HOST}:${CI_SERVER_PORT} -servername ${CI_SERVER_HOST}
+      -showcerts </dev/null 2>/dev/null | sed -e '/-----BEGIN/,/-----END/!d'
+      | tee -a /etc/ssl/certs/ca-certificates.crt >/dev/null
+  script:
+    - export NEXT_RELEASE_NOTES="$(git log --format=%B -n 1 | sed '1d')"
+    - export NEXT_RELEASE_VERSION="${CI_COMMIT_TAG:1}"
+    - release-cli create --name="Release ${NEXT_RELEASE_VERSION}" --tag-name="${CI_COMMIT_TAG}" --description="${NEXT_RELEASE_NOTES}"

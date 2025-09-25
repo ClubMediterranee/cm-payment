@@ -1,0 +1,38 @@
+# scripts library
+---
+# install deps first for all run
+.prepare_npm_env:
+  script:
+    - !reference [.setup_proxy_linux, script]  # from @clubmed/templates:CI/library/commons.yaml
+    - !reference [.setup_proxy_npm, script]  # from @clubmed/templates:CI/library/commons.yaml
+    - npm ci --cache .npm --prefer-offline
+
+# add a comment to merge-requests with deployed instance URL
+.notify_gitlab_deployed_env:
+  script:
+    - MESSAGE_PREFIX="Merge-request successfully **DEPLOYED** on AWS"
+    - pr_comments=$(gitlab_get_mr_comments "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID")
+    - already_published=$(jq --arg search "$MESSAGE_PREFIX" -r '.[] | select(.body|contains($search))' <<< "$pr_comments")
+    - >
+      if [[ -z $already_published ]]; then
+        MESSAGE="$MESSAGE_PREFIX
+
+      🚀 Instance accessible at: <https://${DOCKER_TAG}.${BASE_DN}>"
+        gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
+      else
+        echo "> comment seems already present - nothing to do"
+      fi
+
+# add a comment to merge-requests with UN-deployed info
+.notify_gitlab_deleted_env:
+  script:
+    - MESSAGE_PREFIX="Merge-request successfully **UN-PUBLISHED** from AWS"
+    - pr_comments=$(gitlab_get_mr_comments "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID")
+    - already_published=$(jq --arg search "$MESSAGE_PREFIX" -r '.[] | select(.body|contains($search))' <<< "$pr_comments")
+    - >
+      if [[ -z $already_published ]]; then
+        MESSAGE="$MESSAGE_PREFIX"
+        gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
+      else
+        echo "> comment seems already present - nothing to do"
+      fi

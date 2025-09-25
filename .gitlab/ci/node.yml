@@ -1,0 +1,84 @@
+variables:
+  NPM_CONFIG_CACHE: '~/.npm'
+  YARN_CACHE_FOLDER: '~/.yarn/cache'
+  YARN_GLOBAL_FOLDER: '~/.yarn/cache'
+  YARN_ENABLE_GLOBAL_CACHE: 'false'
+  PNPM_CACHE_FOLDER: '~/.pnpm-store'
+
+.node_configure:
+  image: ${NODE_IMG:-node:${NODE_VERSION}-bullseye}
+  before_script: |
+    echo "Node version: $(node -v)"
+
+    npm config set proxy "$HTTP_PROXY"
+    npm config set https-proxy "$HTTPS_PROXY"
+    npm config set noproxy "$NO_PROXY"
+
+    if [ -f "yarn.lock" ]; then
+        corepack enable
+        corepack prepare yarn@stable --activate
+        npm install -g --force yarn
+        echo "Yarn version: $(yarn -v)"
+
+        yarn config set httpProxy '${HTTP_PROXY:-}'
+        yarn config set httpsProxy '${HTTPS_PROXY:-}'
+
+    elif [ -f "pnpm-lock.yaml" ]; then
+        npm install -g --force pnpm
+
+        pnpm config set proxy "$HTTP_PROXY"
+        pnpm config set https-proxy "$HTTPS_PROXY"
+        pnpm config set noproxy "$NO_PROXY"
+
+        echo "PNPM version: $(pnpm -v)"
+    else
+        echo "NPM version: $(npm -v)"
+    fi
+
+.node_install_dependencies:
+  image: $NODE_IMG
+  before_script:
+    - !reference [.node_configure, before_script]
+    - |
+      if [ -f "yarn.lock" ]; then
+          yarn install --immutable
+      elif [ -f "pnpm-lock.yaml" ]; then
+          pnpm install --frozen-lockfile
+      else
+          npm ci
+      fi
+  script: "echo 'Dependencies installed'"
+
+.node_restore_dependencies:
+  image: $NODE_IMG
+  before_script:
+    - !reference [.setup_proxy_linux, script]
+    - !reference [.setup_proxy_apt, script] # from @clubmed/templates:CI/library/commons.yaml
+    - !reference [.node_configure, before_script]
+    - |
+      if [ -f "yarn.lock" ]; then
+          yarn install --immutable
+      elif [ -f "pnpm-lock.yaml" ]; then
+          pnpm install --frozen-lockfile --offline
+      else
+          npm ci --prefer-offline --no-audit
+      fi
+  script: "echo 'Dependencies installed'"
+
+.node_dind:
+  image: docker:cli
+  variables:
+    DOCKER_HOST: unix:///var/run/docker.sock
+    TESTCONTAINERS_RYUK_DISABLED: 'true'
+  before_script:
+    - !reference [.setup_proxy_linux, script]
+    - !reference [.setup_proxy_apt, script] # from @clubmed/templates:CI/library/commons.yaml
+    - export DOCKER_BUILDKIT=0
+    - docker --version
+    - apk add --no-cache bash nodejs npm
+    - node -v && npm -v
+    - npm config set proxy "$HTTP_PROXY"
+    - npm config set https-proxy "$HTTPS_PROXY"
+    - npm config set noproxy "$NO_PROXY"
+    - npm install -g corepack yarn pnpm
+    - !reference [.node_configure, before_script]
