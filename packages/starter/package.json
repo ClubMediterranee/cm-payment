@@ -7,7 +7,6 @@
   "scripts": {
     "dev": "vite --port 4004",
     "build": "vite build",
-    "generate:types": "orval",
     "preview": "vite preview"
   },
   "dependencies": {

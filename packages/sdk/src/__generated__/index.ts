@@ -8225,24 +8225,18 @@ export interface Period {
 
 export type OpeningDateListModel = Period[];
 
-export interface MonthlyWeatherModel {
-  /** month of the year (starting from 1) */
-  month: number;
-  /** average minimal temperature of the month in degrees Celsius */
-  temp_min_C?: number;
-  /** average maximal temperature of the month in degrees Celsius */
-  temp_max_C?: number;
-  /** average minimal temperature of the month in degrees Fahrenheit */
-  temp_min_F?: number;
-  /** average maximal temperature of the month in degrees Fahrenheit */
-  temp_max_F?: number;
-  /** average snow level in centimeter */
-  snow_level_in_cm?: number;
-  /** average snow level in inches */
-  snow_level_in_inches?: number;
+export interface ProductMustTryExperience {
+  /** Experience id */
+  id: string;
+  /** Experience title in few words */
+  title: string;
+  /** Experience description in few word */
+  description: string;
+  /** Experience immersive picture */
+  image: string;
 }
 
-export type MonthlyWeatherItem = MonthlyWeatherModel[];
+export type ProductMustTryExperiences = ProductMustTryExperience[];
 
 export type MeetingRoomImages = string[];
 
@@ -9474,18 +9468,24 @@ export interface MiceModel {
   best_price?: MiceBestPriceModel;
 }
 
-export interface ProductMustTryExperience {
-  /** Experience id */
-  id: string;
-  /** Experience title in few words */
-  title: string;
-  /** Experience description in few word */
-  description: string;
-  /** Experience immersive picture */
-  image: string;
+export interface MonthlyWeatherModel {
+  /** month of the year (starting from 1) */
+  month: number;
+  /** average minimal temperature of the month in degrees Celsius */
+  temp_min_C?: number;
+  /** average maximal temperature of the month in degrees Celsius */
+  temp_max_C?: number;
+  /** average minimal temperature of the month in degrees Fahrenheit */
+  temp_min_F?: number;
+  /** average maximal temperature of the month in degrees Fahrenheit */
+  temp_max_F?: number;
+  /** average snow level in centimeter */
+  snow_level_in_cm?: number;
+  /** average snow level in inches */
+  snow_level_in_inches?: number;
 }
 
-export type ProductMustTryExperiences = ProductMustTryExperience[];
+export type MonthlyWeatherItem = MonthlyWeatherModel[];
 
 /**
  * season on which the price is valid
@@ -10380,26 +10380,6 @@ export interface ProposalGetAlternativeRateModel {
 
 export type ProposalAlternativeRatesModel = ProposalGetAlternativeRateModel[];
 
-export interface ProposalPackageDifferentialPriceModel {
-  /** Indicates the price difference between the applicable package and the already applied package of the given proposal. */
-  amount: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-export interface ProposalPackageModel {
-  /** a package_id from /products/{product_id}/packages resource */
-  id: string;
-  differential_price?: ProposalPackageDifferentialPriceModel;
-  _links?: LinksModel;
-}
-
-export type ProposalPackagesModel = ProposalPackageModel[];
-
 /**
  * Indicates the way of the journey (outbound / inbound)
  */
@@ -10535,6 +10515,26 @@ export interface TransportConfigurationModel {
   forbidden_companies?: TransportConfigurationForbiddenCompaniesModel;
   excluded_connection_cities?: TransportConfigurationExcludedConnectionCitiesModel;
 }
+
+export interface ProposalPackageDifferentialPriceModel {
+  /** Indicates the price difference between the applicable package and the already applied package of the given proposal. */
+  amount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+export interface ProposalPackageModel {
+  /** a package_id from /products/{product_id}/packages resource */
+  id: string;
+  differential_price?: ProposalPackageDifferentialPriceModel;
+  _links?: LinksModel;
+}
+
+export type ProposalPackagesModel = ProposalPackageModel[];
 
 /**
  * Attendee type [MAIN, KID, ADULT]
@@ -12532,6 +12532,76 @@ export interface AccommodationModelV1 {
 
 export type AccommodationsModelV1 = AccommodationModelV1[];
 
+export type TransferServiceCodesArray = string[];
+
+/**
+ * distance between the access and the product
+ */
+export type ProductTransferV1DistanceValue = number | null;
+
+export interface ProductTransferV1Distance {
+  /** distance between the access and the product */
+  value?: ProductTransferV1DistanceValue;
+  /** unit of the distance */
+  unit?: string;
+}
+
+/**
+ * maximum number of passengers allowed for this transportation
+ */
+export type ProductTransferV1TransportationPassengerCapacity = number | null;
+
+export interface ProductTransferV1Transportation {
+  /** id of the transportation mean */
+  id: string;
+  /** label of the transportation type */
+  label: string;
+  /** maximum number of passengers allowed for this transportation */
+  passenger_capacity?: ProductTransferV1TransportationPassengerCapacity;
+}
+
+export type ProductTransferV1Transportations = ProductTransferV1Transportation[];
+
+export interface ProductTransferV1Access {
+  /** id of the access to the product */
+  id?: string;
+  /** type of access (AIRPORT, TRAIN_STATION, ...) */
+  type?: string;
+  /** access label */
+  label?: string;
+}
+
+/**
+ * duration in minutes
+ */
+export type ProductTransferV1DurationInMinutes = number | null;
+
+/**
+ * average waiting time before transfer
+ */
+export type ProductTransferV1WaitingTimeInMinutes = number | null;
+
+export interface ProductTransferV1 {
+  /** id */
+  id: string;
+  /** type of customer targeted by this transfer */
+  customer_target?: string;
+  /** transfer label */
+  label?: string;
+  service_codes?: TransferServiceCodesArray;
+  /** transfer description */
+  description?: string;
+  /** duration in minutes */
+  duration_in_minutes?: ProductTransferV1DurationInMinutes;
+  distance?: ProductTransferV1Distance;
+  transportation_means?: ProductTransferV1Transportations;
+  access?: ProductTransferV1Access;
+  /** average waiting time before transfer */
+  waiting_time_in_minutes?: ProductTransferV1WaitingTimeInMinutes;
+}
+
+export type ProductTransferV1List = ProductTransferV1[];
+
 /**
  * inclusive start date
  */
@@ -13156,76 +13226,6 @@ export interface RestaurantModelV1 {
 
 export type RestaurantsModelV1 = RestaurantModelV1[];
 
-export type TransferServiceCodesArray = string[];
-
-/**
- * distance between the access and the product
- */
-export type ProductTransferV1DistanceValue = number | null;
-
-export interface ProductTransferV1Distance {
-  /** distance between the access and the product */
-  value?: ProductTransferV1DistanceValue;
-  /** unit of the distance */
-  unit?: string;
-}
-
-/**
- * maximum number of passengers allowed for this transportation
- */
-export type ProductTransferV1TransportationPassengerCapacity = number | null;
-
-export interface ProductTransferV1Transportation {
-  /** id of the transportation mean */
-  id: string;
-  /** label of the transportation type */
-  label: string;
-  /** maximum number of passengers allowed for this transportation */
-  passenger_capacity?: ProductTransferV1TransportationPassengerCapacity;
-}
-
-export type ProductTransferV1Transportations = ProductTransferV1Transportation[];
-
-export interface ProductTransferV1Access {
-  /** id of the access to the product */
-  id?: string;
-  /** type of access (AIRPORT, TRAIN_STATION, ...) */
-  type?: string;
-  /** access label */
-  label?: string;
-}
-
-/**
- * duration in minutes
- */
-export type ProductTransferV1DurationInMinutes = number | null;
-
-/**
- * average waiting time before transfer
- */
-export type ProductTransferV1WaitingTimeInMinutes = number | null;
-
-export interface ProductTransferV1 {
-  /** id */
-  id: string;
-  /** type of customer targeted by this transfer */
-  customer_target?: string;
-  /** transfer label */
-  label?: string;
-  service_codes?: TransferServiceCodesArray;
-  /** transfer description */
-  description?: string;
-  /** duration in minutes */
-  duration_in_minutes?: ProductTransferV1DurationInMinutes;
-  distance?: ProductTransferV1Distance;
-  transportation_means?: ProductTransferV1Transportations;
-  access?: ProductTransferV1Access;
-  /** average waiting time before transfer */
-  waiting_time_in_minutes?: ProductTransferV1WaitingTimeInMinutes;
-}
-
-export type ProductTransferV1List = ProductTransferV1[];
-
 export type Keywords = string[];
 
 export interface MediaModelV1 {
@@ -13326,57 +13326,39 @@ export interface ThematicModel {
  */
 export type ProductThematicsModel = ThematicModel[];
 
-export interface AttendeePaymentScheduleModel {
-  /** Payment schedule Id */
-  id: string;
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id?: string;
-}
-
-export type HouseholdPaymentScheduleModel = AttendeePaymentScheduleModel[];
-
 /**
- * Due date for the payment
+ * Proposal price base info
  */
-export type DepositRepaymentScheduleModelV1Deadline = string | null;
-
-export interface DepositRepaymentScheduleModelV1 {
-  /**
-   * Amount to pay for this repayment
-   * @minimum 0
-   */
-  expected_payment_amount?: number;
-  /** Due date for the payment */
-  deadline: DepositRepaymentScheduleModelV1Deadline;
+export interface AttendeePriceModel {
+  /** Total price(discount_price_with_fees + package_options.price) calculated from your criteria */
+  total?: number;
+  /** Total price(initial_price_with_fees + package_options.price) calculated from your criteria */
+  total_without_discount?: number;
+  discounts?: DiscountsModel;
+  trip?: ProposalTripModel;
+  included_services?: IncludedServicesModel;
+  package_options?: PackageOptionsModel;
+  /** Attendee ID */
+  id?: string;
 }
 
-/**
- * List of repayment deposit
- */
-export type DepositRepaymentScheduleModelListV1 = DepositRepaymentScheduleModelV1[];
+export type AttendeesPricesModel = AttendeePriceModel[];
 
-export interface HouseholdPaymentScheduleModelV1 {
-  attendees?: HouseholdPaymentScheduleModel;
-  /** @minimum 0 */
-  total: number;
-  deposit_repayment_schedule?: DepositRepaymentScheduleModelListV1;
+export interface ProposalPriceDetailsResponseHouseholdModel {
+  attendees_prices?: AttendeesPricesModel;
 }
 
-export type HouseholdPaymentScheduleModels = HouseholdPaymentScheduleModelV1[];
+export type ProposalPriceDetailsResponseHouseholdsModel =
+  ProposalPriceDetailsResponseHouseholdModel[];
 
-export interface ProposalPaymentScheduleModelV1 {
+export interface ProposalPriceDetailsPerHouseholdResponseModel {
   /**
    * The iso 3 currency. Ex: CNY,EUR,..
    * @minLength 3
    * @maxLength 3
    */
   currency: string;
-  /** Show if the agency's commission is included or not */
-  commission_included: boolean;
-  households?: HouseholdPaymentScheduleModels;
+  households?: ProposalPriceDetailsResponseHouseholdsModel;
 }
 
 /**
@@ -13669,39 +13651,57 @@ export interface JourneyModel {
 
 export type TransportJourneysModel = JourneyModel[];
 
+export interface AttendeePaymentScheduleModel {
+  /** Payment schedule Id */
+  id: string;
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id?: string;
+}
+
+export type HouseholdPaymentScheduleModel = AttendeePaymentScheduleModel[];
+
 /**
- * Proposal price base info
+ * Due date for the payment
  */
-export interface AttendeePriceModel {
-  /** Total price(discount_price_with_fees + package_options.price) calculated from your criteria */
-  total?: number;
-  /** Total price(initial_price_with_fees + package_options.price) calculated from your criteria */
-  total_without_discount?: number;
-  discounts?: DiscountsModel;
-  trip?: ProposalTripModel;
-  included_services?: IncludedServicesModel;
-  package_options?: PackageOptionsModel;
-  /** Attendee ID */
-  id?: string;
+export type DepositRepaymentScheduleModelV1Deadline = string | null;
+
+export interface DepositRepaymentScheduleModelV1 {
+  /**
+   * Amount to pay for this repayment
+   * @minimum 0
+   */
+  expected_payment_amount?: number;
+  /** Due date for the payment */
+  deadline: DepositRepaymentScheduleModelV1Deadline;
 }
 
-export type AttendeesPricesModel = AttendeePriceModel[];
+/**
+ * List of repayment deposit
+ */
+export type DepositRepaymentScheduleModelListV1 = DepositRepaymentScheduleModelV1[];
 
-export interface ProposalPriceDetailsResponseHouseholdModel {
-  attendees_prices?: AttendeesPricesModel;
+export interface HouseholdPaymentScheduleModelV1 {
+  attendees?: HouseholdPaymentScheduleModel;
+  /** @minimum 0 */
+  total: number;
+  deposit_repayment_schedule?: DepositRepaymentScheduleModelListV1;
 }
 
-export type ProposalPriceDetailsResponseHouseholdsModel =
-  ProposalPriceDetailsResponseHouseholdModel[];
+export type HouseholdPaymentScheduleModels = HouseholdPaymentScheduleModelV1[];
 
-export interface ProposalPriceDetailsPerHouseholdResponseModel {
+export interface ProposalPaymentScheduleModelV1 {
   /**
    * The iso 3 currency. Ex: CNY,EUR,..
    * @minLength 3
    * @maxLength 3
    */
   currency: string;
-  households?: ProposalPriceDetailsResponseHouseholdsModel;
+  /** Show if the agency's commission is included or not */
+  commission_included: boolean;
+  households?: HouseholdPaymentScheduleModels;
 }
 
 /**
@@ -23706,6 +23706,45 @@ export interface CustomerTypeConversionResponseModel {
 
 export type CustomersTypeConversionResponseModel = CustomerTypeConversionResponseModel[];
 
+/**
+ * The rate is a more or less advantageous price condition that you can chose to apply to a proposal. Select the rate type you want to apply from the list.
+ */
+export type ProposalRatesInputModelTypes =
+  (typeof ProposalRatesInputModelTypes)[keyof typeof ProposalRatesInputModelTypes];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProposalRatesInputModelTypes = {
+  STANDARD_RATE: 'STANDARD_RATE',
+  FLEXIBLE_RATE: 'FLEXIBLE_RATE',
+  NON_REFUNDABLE_RATE: 'NON_REFUNDABLE_RATE',
+} as const;
+
+export interface PutProposalRatesInputModel {
+  type: ProposalRatesInputModelTypes;
+}
+
+export interface PutPackagesInputModel {
+  /** a package_id from /products/{product_id}/packages resource */
+  id: string;
+}
+
+export interface ReplacementAccommodationsArrangement {
+  /** id of the accommodation */
+  id: string;
+  /** number of accommodations where the attendees will be allocated */
+  quantity: number;
+  attendees: AccommodationsArrangementAttendeesModel;
+}
+
+export type ReplacementAccommodationsArrangements = ReplacementAccommodationsArrangement[];
+
+export interface PutProposalOfferPayloadOffer {
+  /** Id of the offer to set in the proposal */
+  offer_id: string;
+}
+
+export type PutProposalOfferPayload = PutProposalOfferPayloadOffer[];
+
 export interface AProposalServiceScheduleAttendee {
   /** Attendee identifier */
   id: string;
@@ -23730,55 +23769,6 @@ export interface AProposalService {
 }
 
 export type ProposalServicesList = AProposalService[];
-
-export interface PutProposalOfferPayloadOffer {
-  /** Id of the offer to set in the proposal */
-  offer_id: string;
-}
-
-export type PutProposalOfferPayload = PutProposalOfferPayloadOffer[];
-
-export interface PutPackagesInputModel {
-  /** a package_id from /products/{product_id}/packages resource */
-  id: string;
-}
-
-export interface ReplacementAccommodationsArrangement {
-  /** id of the accommodation */
-  id: string;
-  /** number of accommodations where the attendees will be allocated */
-  quantity: number;
-  attendees: AccommodationsArrangementAttendeesModel;
-}
-
-export type ReplacementAccommodationsArrangements = ReplacementAccommodationsArrangement[];
-
-/**
- * The rate is a more or less advantageous price condition that you can chose to apply to a proposal. Select the rate type you want to apply from the list.
- */
-export type ProposalRatesInputModelTypes =
-  (typeof ProposalRatesInputModelTypes)[keyof typeof ProposalRatesInputModelTypes];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProposalRatesInputModelTypes = {
-  STANDARD_RATE: 'STANDARD_RATE',
-  FLEXIBLE_RATE: 'FLEXIBLE_RATE',
-  NON_REFUNDABLE_RATE: 'NON_REFUNDABLE_RATE',
-} as const;
-
-export interface PutProposalRatesInputModel {
-  type: ProposalRatesInputModelTypes;
-}
-
-export interface PutAccommodationsArrangement {
-  /** id of the accommodation */
-  id: string;
-  /** Number of occupants in the accommodation */
-  occupancy: number;
-  attendees: AccommodationsArrangementAttendeesModel;
-}
-
-export type PutAccommodationsArrangements = PutAccommodationsArrangement[];
 
 /**
  * customer's status
@@ -23833,6 +23823,16 @@ export interface PutProposalAttendeesResponseHouseholdModel {
 }
 
 export type PutProposalAttendeesResponseModelV1 = PutProposalAttendeesResponseHouseholdModel[];
+
+export interface PutAccommodationsArrangement {
+  /** id of the accommodation */
+  id: string;
+  /** Number of occupants in the accommodation */
+  occupancy: number;
+  attendees: AccommodationsArrangementAttendeesModel;
+}
+
+export type PutAccommodationsArrangements = PutAccommodationsArrangement[];
 
 /**
  * location number

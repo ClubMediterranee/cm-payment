@@ -8543,6 +8543,60 @@ export interface ActivitiesThematic {
 
 export type ActivitiesThematics = ActivitiesThematic[];
 
+/**
+ * External service type
+ */
+export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExternalServiceType = {
+  CONCIERGERIE: 'CONCIERGERIE',
+  PARKING: 'PARKING',
+} as const;
+
+/**
+ * white label service subtype
+ */
+export type ExternalServiceSubtype =
+  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExternalServiceSubtype = {
+  BABYSITTING: 'BABYSITTING',
+  BABY_SKI_LESSON: 'BABY_SKI_LESSON',
+  BIRTHDAY_PARTY: 'BIRTHDAY_PARTY',
+  CELEBRATION: 'CELEBRATION',
+  CHAMPAGNE: 'CHAMPAGNE',
+  HONEYMOON: 'HONEYMOON',
+  PARKING: 'PARKING',
+  PHOTO_PACKAGE: 'PHOTO_PACKAGE',
+  WIFI: 'WIFI',
+  EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
+} as const;
+
+export interface ExternalServiceModel {
+  /** External service code */
+  id?: string;
+  type?: ExternalServiceType;
+  subtype?: ExternalServiceSubtype;
+  /** External service title */
+  title?: string;
+  /** External service description */
+  description?: string;
+  /** white label service image */
+  image?: string;
+}
+
+export type ExternalServicesModel = ExternalServiceModel[];
+
+export interface PspOfResortModel {
+  /**
+   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
+   * @pattern ^([EMS][0-9A-Z]+)$
+   */
+  id: string;
+}
+
 export type AccommodationCategoryModelRanking =
   (typeof AccommodationCategoryModelRanking)[keyof typeof AccommodationCategoryModelRanking];
 
@@ -8618,60 +8672,6 @@ export interface DescriptionAccommodationCategoriesList {
   /** description of the category */
   description?: string;
   accommodation_categories?: AccommodationCategoriesList;
-}
-
-/**
- * External service type
- */
-export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExternalServiceType = {
-  CONCIERGERIE: 'CONCIERGERIE',
-  PARKING: 'PARKING',
-} as const;
-
-/**
- * white label service subtype
- */
-export type ExternalServiceSubtype =
-  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExternalServiceSubtype = {
-  BABYSITTING: 'BABYSITTING',
-  BABY_SKI_LESSON: 'BABY_SKI_LESSON',
-  BIRTHDAY_PARTY: 'BIRTHDAY_PARTY',
-  CELEBRATION: 'CELEBRATION',
-  CHAMPAGNE: 'CHAMPAGNE',
-  HONEYMOON: 'HONEYMOON',
-  PARKING: 'PARKING',
-  PHOTO_PACKAGE: 'PHOTO_PACKAGE',
-  WIFI: 'WIFI',
-  EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
-} as const;
-
-export interface ExternalServiceModel {
-  /** External service code */
-  id?: string;
-  type?: ExternalServiceType;
-  subtype?: ExternalServiceSubtype;
-  /** External service title */
-  title?: string;
-  /** External service description */
-  description?: string;
-  /** white label service image */
-  image?: string;
-}
-
-export type ExternalServicesModel = ExternalServiceModel[];
-
-export interface PspOfResortModel {
-  /**
-   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
-   * @pattern ^([EMS][0-9A-Z]+)$
-   */
-  id: string;
 }
 
 export interface AccommodationCodeModel {
@@ -10334,147 +10334,14 @@ export interface SpaInformationModel {
   cancellation_hours_limit: SpaInformationModelCancellationHoursLimit;
 }
 
-/**
- * slot in the day for this service
- */
-export type TimeSlot = (typeof TimeSlot)[keyof typeof TimeSlot];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TimeSlot = {
-  MORNING: 'MORNING',
-  AFTERNOON_BEFORE_5PM: 'AFTERNOON_BEFORE_5PM',
-  AFTERNOON_AFTER_5PM: 'AFTERNOON_AFTER_5PM',
-  AFTERNOON: 'AFTERNOON',
-  SPECIFIC_DAY: 'SPECIFIC_DAY',
-  SPECIFIC_MORNING: 'SPECIFIC_MORNING',
-  SPECIFIC_AFTERNOON: 'SPECIFIC_AFTERNOON',
-  AFTERNOON_BEFORE_4PM: 'AFTERNOON_BEFORE_4PM',
-  AFTERNOON_AFTER_4PM: 'AFTERNOON_AFTER_4PM',
-} as const;
-
-/**
- * type of the service
- */
-export type ValidProposalServiceTypesModel =
-  (typeof ValidProposalServiceTypesModel)[keyof typeof ValidProposalServiceTypesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ValidProposalServiceTypesModel = {
-  CHILDCARE: 'CHILDCARE',
-  TRANSFER: 'TRANSFER',
-  INSURANCE: 'INSURANCE',
-  RENTAL: 'RENTAL',
-  EXCURSION: 'EXCURSION',
-  WATER_SPORT: 'WATER_SPORT',
-  LAND_SPORT: 'LAND_SPORT',
-  WINTER_SPORT: 'WINTER_SPORT',
-  WELLNESS: 'WELLNESS',
-  VISAS: 'VISAS',
-  TOURIST_TAX: 'TOURIST_TAX',
-  PORT_TAX: 'PORT_TAX',
-  CONCIERGERIE: 'CONCIERGERIE',
-  PARKING: 'PARKING',
-  HONEY_MOON: 'HONEY_MOON',
-  CLAN: 'CLAN',
-  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
-  OTHERS: 'OTHERS',
-} as const;
-
-export interface AttendeeDiscount {
-  /** discount's amount applied on the service for the concerned attendee */
-  amount: number;
-  /** Offer id if relevant */
-  offer_id?: string;
-  /** Offer code */
-  code?: string;
-  _links?: LinksModel;
+export interface TransportAxisModel {
+  /** Departure city code */
+  departure_city_code: string;
+  /** Arrival city code */
+  arrival_city_code: string;
 }
 
-export type ProposalServiceScheduleAttendeeDiscounts = AttendeeDiscount[];
-
-export interface ServiceAttendee {
-  /** concerned attendee id */
-  id: string;
-  /** service's price including discount for the concerned attendee */
-  price: number;
-  /** service's price without discount for the concerned attendee */
-  price_without_discount: number;
-  discounts?: ProposalServiceScheduleAttendeeDiscounts;
-}
-
-export type ProposalServiceScheduleAttendees = ServiceAttendee[];
-
-/**
- * service start date
- */
-export type ProposalServiceScheduleStartDate = string | null;
-
-/**
- * service end date
- */
-export type ProposalServiceScheduleEndDate = string | null;
-
-export interface ProposalServiceSchedule {
-  /** service start date */
-  start_date: ProposalServiceScheduleStartDate;
-  /** service end date */
-  end_date: ProposalServiceScheduleEndDate;
-  attendees?: ProposalServiceScheduleAttendees;
-}
-
-export type ProposalServiceSchedules = ProposalServiceSchedule[];
-
-/**
- * List of service_ids which are mandatory with this service. Each service in this list must be booked as well if you wish to book this service
- */
-export type MandatoryServiceIdModel = string[];
-
-/**
- * List of service_ids not compatible with this service. This service cannot be booked if any service in the list is booked
- */
-export type NotCompatibleServiceIdsModel = string[];
-
-/**
- * Age range required for this service in months
- */
-export type ProposalServiceModelAnyOf = {
-  /** Customer minimum age to benefits from this childcare in months */
-  min?: number;
-  /** Customer maximum age to benefits from this childcare in months */
-  max?: number;
-};
-
-/**
- * Age range required for this service in months
- */
-export type ProposalServiceModel = ProposalServiceModelAnyOf | null;
-
-/**
- * id of the product information for this service
- */
-export type ProposalServiceProductInformationId = string | null;
-
-export interface ProposalService {
-  /** service id */
-  id: string;
-  time_slot?: TimeSlot;
-  type: ValidProposalServiceTypesModel;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  schedules: ProposalServiceSchedules;
-  /** id of the product information for this service */
-  product_information_id?: ProposalServiceProductInformationId;
-  sold_only_with?: MandatoryServiceIdModel;
-  not_compatible_with?: NotCompatibleServiceIdsModel;
-  age_in_months?: ProposalServiceModel;
-  _links?: LinksModel;
-}
-
-export type ProposalServices = ProposalService[];
+export type GetProposalTransportAxesModel = TransportAxisModel[];
 
 export interface SellerCommissionModel {
   /** earnings for a sale */
@@ -10726,14 +10593,147 @@ export interface AccommodationArrangementResponseV0Model {
 export type AccommodationsArrangementResponseListV0Model =
   AccommodationArrangementResponseV0Model[];
 
-export interface TransportAxisModel {
-  /** Departure city code */
-  departure_city_code: string;
-  /** Arrival city code */
-  arrival_city_code: string;
+/**
+ * slot in the day for this service
+ */
+export type TimeSlot = (typeof TimeSlot)[keyof typeof TimeSlot];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TimeSlot = {
+  MORNING: 'MORNING',
+  AFTERNOON_BEFORE_5PM: 'AFTERNOON_BEFORE_5PM',
+  AFTERNOON_AFTER_5PM: 'AFTERNOON_AFTER_5PM',
+  AFTERNOON: 'AFTERNOON',
+  SPECIFIC_DAY: 'SPECIFIC_DAY',
+  SPECIFIC_MORNING: 'SPECIFIC_MORNING',
+  SPECIFIC_AFTERNOON: 'SPECIFIC_AFTERNOON',
+  AFTERNOON_BEFORE_4PM: 'AFTERNOON_BEFORE_4PM',
+  AFTERNOON_AFTER_4PM: 'AFTERNOON_AFTER_4PM',
+} as const;
+
+/**
+ * type of the service
+ */
+export type ValidProposalServiceTypesModel =
+  (typeof ValidProposalServiceTypesModel)[keyof typeof ValidProposalServiceTypesModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ValidProposalServiceTypesModel = {
+  CHILDCARE: 'CHILDCARE',
+  TRANSFER: 'TRANSFER',
+  INSURANCE: 'INSURANCE',
+  RENTAL: 'RENTAL',
+  EXCURSION: 'EXCURSION',
+  WATER_SPORT: 'WATER_SPORT',
+  LAND_SPORT: 'LAND_SPORT',
+  WINTER_SPORT: 'WINTER_SPORT',
+  WELLNESS: 'WELLNESS',
+  VISAS: 'VISAS',
+  TOURIST_TAX: 'TOURIST_TAX',
+  PORT_TAX: 'PORT_TAX',
+  CONCIERGERIE: 'CONCIERGERIE',
+  PARKING: 'PARKING',
+  HONEY_MOON: 'HONEY_MOON',
+  CLAN: 'CLAN',
+  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
+  OTHERS: 'OTHERS',
+} as const;
+
+export interface AttendeeDiscount {
+  /** discount's amount applied on the service for the concerned attendee */
+  amount: number;
+  /** Offer id if relevant */
+  offer_id?: string;
+  /** Offer code */
+  code?: string;
+  _links?: LinksModel;
 }
 
-export type GetProposalTransportAxesModel = TransportAxisModel[];
+export type ProposalServiceScheduleAttendeeDiscounts = AttendeeDiscount[];
+
+export interface ServiceAttendee {
+  /** concerned attendee id */
+  id: string;
+  /** service's price including discount for the concerned attendee */
+  price: number;
+  /** service's price without discount for the concerned attendee */
+  price_without_discount: number;
+  discounts?: ProposalServiceScheduleAttendeeDiscounts;
+}
+
+export type ProposalServiceScheduleAttendees = ServiceAttendee[];
+
+/**
+ * service start date
+ */
+export type ProposalServiceScheduleStartDate = string | null;
+
+/**
+ * service end date
+ */
+export type ProposalServiceScheduleEndDate = string | null;
+
+export interface ProposalServiceSchedule {
+  /** service start date */
+  start_date: ProposalServiceScheduleStartDate;
+  /** service end date */
+  end_date: ProposalServiceScheduleEndDate;
+  attendees?: ProposalServiceScheduleAttendees;
+}
+
+export type ProposalServiceSchedules = ProposalServiceSchedule[];
+
+/**
+ * List of service_ids which are mandatory with this service. Each service in this list must be booked as well if you wish to book this service
+ */
+export type MandatoryServiceIdModel = string[];
+
+/**
+ * List of service_ids not compatible with this service. This service cannot be booked if any service in the list is booked
+ */
+export type NotCompatibleServiceIdsModel = string[];
+
+/**
+ * Age range required for this service in months
+ */
+export type ProposalServiceModelAnyOf = {
+  /** Customer minimum age to benefits from this childcare in months */
+  min?: number;
+  /** Customer maximum age to benefits from this childcare in months */
+  max?: number;
+};
+
+/**
+ * Age range required for this service in months
+ */
+export type ProposalServiceModel = ProposalServiceModelAnyOf | null;
+
+/**
+ * id of the product information for this service
+ */
+export type ProposalServiceProductInformationId = string | null;
+
+export interface ProposalService {
+  /** service id */
+  id: string;
+  time_slot?: TimeSlot;
+  type: ValidProposalServiceTypesModel;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  schedules: ProposalServiceSchedules;
+  /** id of the product information for this service */
+  product_information_id?: ProposalServiceProductInformationId;
+  sold_only_with?: MandatoryServiceIdModel;
+  not_compatible_with?: NotCompatibleServiceIdsModel;
+  age_in_months?: ProposalServiceModel;
+  _links?: LinksModel;
+}
+
+export type ProposalServices = ProposalService[];
 
 export type TravelerResponseModelUnicodeFirstName = string | null;
 
@@ -12262,277 +12262,6 @@ export interface ActivityModelV1 {
 export type ActivitiesModelV1 = ActivityModelV1[];
 
 /**
- * minimal rooms area
- */
-export type AccommodationAreaModelV1AnyOfMin = number | null;
-
-/**
- * maximal rooms area
- */
-export type AccommodationAreaModelV1AnyOfMax = number | null;
-
-export type AccommodationAreaModelV1AnyOf = {
-  /** minimal rooms area */
-  min?: AccommodationAreaModelV1AnyOfMin;
-  /** maximal rooms area */
-  max?: AccommodationAreaModelV1AnyOfMax;
-  /** unit of the rooms area */
-  unit?: string;
-};
-
-export type AccommodationAreaModelV1 = AccommodationAreaModelV1AnyOf | null;
-
-/**
- * importance of this accommodation between all accommodations of this product
- */
-export type AccommodationRankingModel =
-  (typeof AccommodationRankingModel)[keyof typeof AccommodationRankingModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AccommodationRankingModel = {
-  VERY_LOW: 'VERY_LOW',
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-  VERY_HIGH: 'VERY_HIGH',
-} as const;
-
-export type AccommodationComfortTypeModelAnyOf = {
-  /** id of the accommodation comfort type */
-  id?: string;
-  /** label of the accommodation of the comfort type */
-  label?: string;
-};
-
-export type AccommodationComfortTypeModel = AccommodationComfortTypeModelAnyOf | null;
-
-export type AccommodationV1ViewModelAnyOf = {
-  /** id of the view */
-  id: string;
-  /** label of the view */
-  label: string;
-};
-
-export type AccommodationV1ViewModel = AccommodationV1ViewModelAnyOf | null;
-
-export interface AccommodationsAccommodationCategoryModel {
-  /** id of the category */
-  id: string;
-  /** label of the category */
-  label: string;
-}
-
-export type AccommodationCategoriesModel = AccommodationsAccommodationCategoryModel[];
-
-/**
- * accommodation opening date for this period. Inclusive, the accommodation is opened on this date
- */
-export type AccommodationOpeningDateModelOpening = string | null;
-
-/**
- * accommodation closing date for this period. Exclusive, the accommodation is opened on this date
- */
-export type AccommodationOpeningDateModelClosing = string | null;
-
-export interface AccommodationOpeningDateModel {
-  /** accommodation opening date for this period. Inclusive, the accommodation is opened on this date */
-  opening: AccommodationOpeningDateModelOpening;
-  /** accommodation closing date for this period. Exclusive, the accommodation is opened on this date */
-  closing: AccommodationOpeningDateModelClosing;
-}
-
-export type AccommodationOpeningDatesModel = AccommodationOpeningDateModel[];
-
-/**
- * minimal rooms capacity
- */
-export type AccommodationCapacityModelAnyOfMin = number | null;
-
-/**
- * maximal rooms capacity
- */
-export type AccommodationCapacityModelAnyOfMax = number | null;
-
-export type AccommodationCapacityModelAnyOf = {
-  /** minimal rooms capacity */
-  min?: AccommodationCapacityModelAnyOfMin;
-  /** maximal rooms capacity */
-  max?: AccommodationCapacityModelAnyOfMax;
-};
-
-export type AccommodationCapacityModel = AccommodationCapacityModelAnyOf | null;
-
-export interface AccommodationV1StrengthModel {
-  /** id of the strengths */
-  id: string;
-  /** label of the strengths */
-  label: string;
-}
-
-export type AccommodationStrengthsModel = AccommodationV1StrengthModel[];
-
-/**
- * importance of this equipment for this specific accommodation
- */
-export type AccommodationEquipmentRankingModel =
-  (typeof AccommodationEquipmentRankingModel)[keyof typeof AccommodationEquipmentRankingModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AccommodationEquipmentRankingModel = {
-  VERY_LOW: 'VERY_LOW',
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-  VERY_HIGH: 'VERY_HIGH',
-} as const;
-
-export interface AccommodationEquipmentModel {
-  /** id of the equipments */
-  id: string;
-  /** label of the equipments */
-  label: string;
-  ranking: AccommodationEquipmentRankingModel;
-}
-
-export type AccommodationEquipmentsModel = AccommodationEquipmentModel[];
-
-/**
- * importance of this service for this specific accommodation
- */
-export type AccommodationV1ServiceRankingModel =
-  (typeof AccommodationV1ServiceRankingModel)[keyof typeof AccommodationV1ServiceRankingModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AccommodationV1ServiceRankingModel = {
-  VERY_LOW: 'VERY_LOW',
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-  VERY_HIGH: 'VERY_HIGH',
-} as const;
-
-export interface AccommodationServiceModel {
-  /** id of the services */
-  id: string;
-  /** label of the services */
-  label: string;
-  ranking: AccommodationV1ServiceRankingModel;
-}
-
-export type AccommodationServicesModel = AccommodationServiceModel[];
-
-export type AccommodationImagesModel = string[];
-
-export interface AccommodationV1BathroomEquipmentModel {
-  /** id of the bathroom equipment */
-  id?: string;
-  /** label of the bathroom equipment */
-  label?: string;
-}
-
-export type AccommodationBathroomEquipmentsModel = AccommodationV1BathroomEquipmentModel[];
-
-/**
- * minimum area of the outside facility
- */
-export type AccommodationV1OutsideFacilityAreaModelAnyOfMin = number | null;
-
-/**
- * maximum area of the outside facility
- */
-export type AccommodationV1OutsideFacilityAreaModelAnyOfMax = number | null;
-
-export type AccommodationV1OutsideFacilityAreaModelAnyOf = {
-  /** minimum area of the outside facility */
-  min?: AccommodationV1OutsideFacilityAreaModelAnyOfMin;
-  /** maximum area of the outside facility */
-  max?: AccommodationV1OutsideFacilityAreaModelAnyOfMax;
-  /** unit of the rooms area */
-  unit?: string;
-};
-
-export type AccommodationV1OutsideFacilityAreaModel =
-  AccommodationV1OutsideFacilityAreaModelAnyOf | null;
-
-export interface AccommodationOutsideFacilityModel {
-  /** id of the outside facility */
-  id?: string;
-  /** label of the outside facility */
-  label?: string;
-  area: AccommodationV1OutsideFacilityAreaModel;
-}
-
-export type AccommodationOutsideFacilitiesModel = AccommodationOutsideFacilityModel[];
-
-export interface AssociatedAccommodationModel {
-  /** id of an accommodation mixable with this accommodation */
-  id: string;
-}
-
-export type AssociatedAccommodationsModel = AssociatedAccommodationModel[];
-
-/**
- * true if the accommodation is composed of communicating rooms
- */
-export type AccommodationModelV1ConnectingRoom = boolean | null;
-
-/**
- * true if the room is suitable for families
- */
-export type AccommodationModelV1FamilyRoom = boolean | null;
-
-/**
- * reduced mobility access
- */
-export type AccommodationModelV1ReducedMobilityAccess = boolean | null;
-
-/**
- * total stock
- */
-export type AccommodationModelV1TotalStock = number | null;
-
-export interface AccommodationModelV1 {
-  /** code from products resource */
-  id: string;
-  /** short description */
-  label: string;
-  /** define if the room is related to an Exclusive Collection space */
-  exclusive_collection?: boolean;
-  /** details */
-  description: string;
-  /** sellers oriented description of the accommodation */
-  seller_description?: string;
-  area: AccommodationAreaModelV1;
-  ranking: AccommodationRankingModel;
-  comfort_type: AccommodationComfortTypeModel;
-  /** true if the accommodation is composed of communicating rooms */
-  connecting_room: AccommodationModelV1ConnectingRoom;
-  /** true if the room is suitable for families */
-  family_room: AccommodationModelV1FamilyRoom;
-  /** reduced mobility access */
-  reduced_mobility_access: AccommodationModelV1ReducedMobilityAccess;
-  /** total stock */
-  total_stock: AccommodationModelV1TotalStock;
-  view: AccommodationV1ViewModel;
-  accommodation_categories: AccommodationCategoriesModel;
-  opening_dates: AccommodationOpeningDatesModel;
-  capacity: AccommodationCapacityModel;
-  strengths: AccommodationStrengthsModel;
-  equipments: AccommodationEquipmentsModel;
-  services: AccommodationServicesModel;
-  images: AccommodationImagesModel;
-  bathroom_equipments: AccommodationBathroomEquipmentsModel;
-  outside_facilities: AccommodationOutsideFacilitiesModel;
-  associated_accommodations?: AssociatedAccommodationsModel;
-  restriction_information: RestrictionsInformationModel;
-  /** possible plan of this accommodation */
-  plan?: string;
-  _links?: LinksModel;
-}
-
-export type AccommodationsModelV1 = AccommodationModelV1[];
-
-/**
  * inclusive start date
  */
 export type PeriodsInfoStartDate = string | null;
@@ -13225,6 +12954,277 @@ export interface ProductTransferV1 {
 }
 
 export type ProductTransferV1List = ProductTransferV1[];
+
+/**
+ * minimal rooms area
+ */
+export type AccommodationAreaModelV1AnyOfMin = number | null;
+
+/**
+ * maximal rooms area
+ */
+export type AccommodationAreaModelV1AnyOfMax = number | null;
+
+export type AccommodationAreaModelV1AnyOf = {
+  /** minimal rooms area */
+  min?: AccommodationAreaModelV1AnyOfMin;
+  /** maximal rooms area */
+  max?: AccommodationAreaModelV1AnyOfMax;
+  /** unit of the rooms area */
+  unit?: string;
+};
+
+export type AccommodationAreaModelV1 = AccommodationAreaModelV1AnyOf | null;
+
+/**
+ * importance of this accommodation between all accommodations of this product
+ */
+export type AccommodationRankingModel =
+  (typeof AccommodationRankingModel)[keyof typeof AccommodationRankingModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccommodationRankingModel = {
+  VERY_LOW: 'VERY_LOW',
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  VERY_HIGH: 'VERY_HIGH',
+} as const;
+
+export type AccommodationComfortTypeModelAnyOf = {
+  /** id of the accommodation comfort type */
+  id?: string;
+  /** label of the accommodation of the comfort type */
+  label?: string;
+};
+
+export type AccommodationComfortTypeModel = AccommodationComfortTypeModelAnyOf | null;
+
+export type AccommodationV1ViewModelAnyOf = {
+  /** id of the view */
+  id: string;
+  /** label of the view */
+  label: string;
+};
+
+export type AccommodationV1ViewModel = AccommodationV1ViewModelAnyOf | null;
+
+export interface AccommodationsAccommodationCategoryModel {
+  /** id of the category */
+  id: string;
+  /** label of the category */
+  label: string;
+}
+
+export type AccommodationCategoriesModel = AccommodationsAccommodationCategoryModel[];
+
+/**
+ * accommodation opening date for this period. Inclusive, the accommodation is opened on this date
+ */
+export type AccommodationOpeningDateModelOpening = string | null;
+
+/**
+ * accommodation closing date for this period. Exclusive, the accommodation is opened on this date
+ */
+export type AccommodationOpeningDateModelClosing = string | null;
+
+export interface AccommodationOpeningDateModel {
+  /** accommodation opening date for this period. Inclusive, the accommodation is opened on this date */
+  opening: AccommodationOpeningDateModelOpening;
+  /** accommodation closing date for this period. Exclusive, the accommodation is opened on this date */
+  closing: AccommodationOpeningDateModelClosing;
+}
+
+export type AccommodationOpeningDatesModel = AccommodationOpeningDateModel[];
+
+/**
+ * minimal rooms capacity
+ */
+export type AccommodationCapacityModelAnyOfMin = number | null;
+
+/**
+ * maximal rooms capacity
+ */
+export type AccommodationCapacityModelAnyOfMax = number | null;
+
+export type AccommodationCapacityModelAnyOf = {
+  /** minimal rooms capacity */
+  min?: AccommodationCapacityModelAnyOfMin;
+  /** maximal rooms capacity */
+  max?: AccommodationCapacityModelAnyOfMax;
+};
+
+export type AccommodationCapacityModel = AccommodationCapacityModelAnyOf | null;
+
+export interface AccommodationV1StrengthModel {
+  /** id of the strengths */
+  id: string;
+  /** label of the strengths */
+  label: string;
+}
+
+export type AccommodationStrengthsModel = AccommodationV1StrengthModel[];
+
+/**
+ * importance of this equipment for this specific accommodation
+ */
+export type AccommodationEquipmentRankingModel =
+  (typeof AccommodationEquipmentRankingModel)[keyof typeof AccommodationEquipmentRankingModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccommodationEquipmentRankingModel = {
+  VERY_LOW: 'VERY_LOW',
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  VERY_HIGH: 'VERY_HIGH',
+} as const;
+
+export interface AccommodationEquipmentModel {
+  /** id of the equipments */
+  id: string;
+  /** label of the equipments */
+  label: string;
+  ranking: AccommodationEquipmentRankingModel;
+}
+
+export type AccommodationEquipmentsModel = AccommodationEquipmentModel[];
+
+/**
+ * importance of this service for this specific accommodation
+ */
+export type AccommodationV1ServiceRankingModel =
+  (typeof AccommodationV1ServiceRankingModel)[keyof typeof AccommodationV1ServiceRankingModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccommodationV1ServiceRankingModel = {
+  VERY_LOW: 'VERY_LOW',
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  VERY_HIGH: 'VERY_HIGH',
+} as const;
+
+export interface AccommodationServiceModel {
+  /** id of the services */
+  id: string;
+  /** label of the services */
+  label: string;
+  ranking: AccommodationV1ServiceRankingModel;
+}
+
+export type AccommodationServicesModel = AccommodationServiceModel[];
+
+export type AccommodationImagesModel = string[];
+
+export interface AccommodationV1BathroomEquipmentModel {
+  /** id of the bathroom equipment */
+  id?: string;
+  /** label of the bathroom equipment */
+  label?: string;
+}
+
+export type AccommodationBathroomEquipmentsModel = AccommodationV1BathroomEquipmentModel[];
+
+/**
+ * minimum area of the outside facility
+ */
+export type AccommodationV1OutsideFacilityAreaModelAnyOfMin = number | null;
+
+/**
+ * maximum area of the outside facility
+ */
+export type AccommodationV1OutsideFacilityAreaModelAnyOfMax = number | null;
+
+export type AccommodationV1OutsideFacilityAreaModelAnyOf = {
+  /** minimum area of the outside facility */
+  min?: AccommodationV1OutsideFacilityAreaModelAnyOfMin;
+  /** maximum area of the outside facility */
+  max?: AccommodationV1OutsideFacilityAreaModelAnyOfMax;
+  /** unit of the rooms area */
+  unit?: string;
+};
+
+export type AccommodationV1OutsideFacilityAreaModel =
+  AccommodationV1OutsideFacilityAreaModelAnyOf | null;
+
+export interface AccommodationOutsideFacilityModel {
+  /** id of the outside facility */
+  id?: string;
+  /** label of the outside facility */
+  label?: string;
+  area: AccommodationV1OutsideFacilityAreaModel;
+}
+
+export type AccommodationOutsideFacilitiesModel = AccommodationOutsideFacilityModel[];
+
+export interface AssociatedAccommodationModel {
+  /** id of an accommodation mixable with this accommodation */
+  id: string;
+}
+
+export type AssociatedAccommodationsModel = AssociatedAccommodationModel[];
+
+/**
+ * true if the accommodation is composed of communicating rooms
+ */
+export type AccommodationModelV1ConnectingRoom = boolean | null;
+
+/**
+ * true if the room is suitable for families
+ */
+export type AccommodationModelV1FamilyRoom = boolean | null;
+
+/**
+ * reduced mobility access
+ */
+export type AccommodationModelV1ReducedMobilityAccess = boolean | null;
+
+/**
+ * total stock
+ */
+export type AccommodationModelV1TotalStock = number | null;
+
+export interface AccommodationModelV1 {
+  /** code from products resource */
+  id: string;
+  /** short description */
+  label: string;
+  /** define if the room is related to an Exclusive Collection space */
+  exclusive_collection?: boolean;
+  /** details */
+  description: string;
+  /** sellers oriented description of the accommodation */
+  seller_description?: string;
+  area: AccommodationAreaModelV1;
+  ranking: AccommodationRankingModel;
+  comfort_type: AccommodationComfortTypeModel;
+  /** true if the accommodation is composed of communicating rooms */
+  connecting_room: AccommodationModelV1ConnectingRoom;
+  /** true if the room is suitable for families */
+  family_room: AccommodationModelV1FamilyRoom;
+  /** reduced mobility access */
+  reduced_mobility_access: AccommodationModelV1ReducedMobilityAccess;
+  /** total stock */
+  total_stock: AccommodationModelV1TotalStock;
+  view: AccommodationV1ViewModel;
+  accommodation_categories: AccommodationCategoriesModel;
+  opening_dates: AccommodationOpeningDatesModel;
+  capacity: AccommodationCapacityModel;
+  strengths: AccommodationStrengthsModel;
+  equipments: AccommodationEquipmentsModel;
+  services: AccommodationServicesModel;
+  images: AccommodationImagesModel;
+  bathroom_equipments: AccommodationBathroomEquipmentsModel;
+  outside_facilities: AccommodationOutsideFacilitiesModel;
+  associated_accommodations?: AssociatedAccommodationsModel;
+  restriction_information: RestrictionsInformationModel;
+  /** possible plan of this accommodation */
+  plan?: string;
+  _links?: LinksModel;
+}
+
+export type AccommodationsModelV1 = AccommodationModelV1[];
 
 export type Keywords = string[];
 
