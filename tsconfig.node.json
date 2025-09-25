@@ -2,9 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": [
-      "ES2023"
-    ],
+    "lib": ["ES2023"],
     "skipLibCheck": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -19,6 +17,7 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
+    "**/tailwind.config.ts",
     "**/vite.config.ts",
     "**/orval.config.ts",
     "**/vitest.config.ts",

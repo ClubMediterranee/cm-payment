@@ -23,19 +23,17 @@ export const fetcher = async <T>(
     api: { url: apiUrl, apiKey },
   } = getSDKPaymentOptions();
 
-  if (withAuth && !accessToken) {
-    throw new Error('No access token provided');
-  }
-
-  const pathParams = new URLSearchParams();
+  const queryParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
     if (value !== undefined) {
-      pathParams.append(key, value === null ? 'null' : value.toString());
+      queryParams.append(key, value === null ? 'null' : value.toString());
     }
   });
 
-  const endpoint = `${apiUrl}${url}?${pathParams.toString()}`;
+  // queryParams.append("api_key", apiKey);
+
+  const endpoint = `${apiUrl}${url}?${queryParams.toString()}`;
 
   const opts = {
     method,
@@ -55,6 +53,10 @@ export const fetcher = async <T>(
   const json = await response.json();
 
   if (!response.ok) {
+    if (json.status_code === 404) {
+      throw new Error(json.error_description);
+    }
+
     throw new Error(json.errors[0].error_description);
   }
 

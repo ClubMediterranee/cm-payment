@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { Globals } from '@react-spring/web';
 import { cleanup } from '@testing-library/react';
 import { toHaveNoViolations } from 'jest-axe';
-import { afterEach, beforeAll, vi } from 'vitest';
+import { afterEach, beforeAll, expect, vi } from 'vitest';
 
 expect.extend(toHaveNoViolations);
 
