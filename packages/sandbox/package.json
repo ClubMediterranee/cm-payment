@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 4003",
+    "dev:prod": "NODE_ENV=production vite --port 4003",
+    "dev:staging": "NODE_ENV=staging vite --port 4003",
     "build": "vite build",
     "generate:types": "orval",
     "preview": "vite preview"

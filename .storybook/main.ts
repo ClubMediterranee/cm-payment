@@ -7,10 +7,10 @@ const config: StorybookConfig = {
       directory: '../packages/sdk/src',
       titlePrefix: 'SDK',
     },
-    {
-      directory: '../packages/sandbox/src',
-      titlePrefix: 'Sandbox',
-    },
+    // {
+    //   directory: '../packages/sandbox/src',
+    //   titlePrefix: 'Sandbox',
+    // },
   ],
 
   addons: [

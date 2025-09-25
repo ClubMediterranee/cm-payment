@@ -8225,18 +8225,24 @@ export interface Period {
 
 export type OpeningDateListModel = Period[];
 
-export interface ProductMustTryExperience {
-  /** Experience id */
-  id: string;
-  /** Experience title in few words */
-  title: string;
-  /** Experience description in few word */
-  description: string;
-  /** Experience immersive picture */
-  image: string;
+export interface MonthlyWeatherModel {
+  /** month of the year (starting from 1) */
+  month: number;
+  /** average minimal temperature of the month in degrees Celsius */
+  temp_min_C?: number;
+  /** average maximal temperature of the month in degrees Celsius */
+  temp_max_C?: number;
+  /** average minimal temperature of the month in degrees Fahrenheit */
+  temp_min_F?: number;
+  /** average maximal temperature of the month in degrees Fahrenheit */
+  temp_max_F?: number;
+  /** average snow level in centimeter */
+  snow_level_in_cm?: number;
+  /** average snow level in inches */
+  snow_level_in_inches?: number;
 }
 
-export type ProductMustTryExperiences = ProductMustTryExperience[];
+export type MonthlyWeatherItem = MonthlyWeatherModel[];
 
 export type MeetingRoomImages = string[];
 
@@ -9468,24 +9474,18 @@ export interface MiceModel {
   best_price?: MiceBestPriceModel;
 }
 
-export interface MonthlyWeatherModel {
-  /** month of the year (starting from 1) */
-  month: number;
-  /** average minimal temperature of the month in degrees Celsius */
-  temp_min_C?: number;
-  /** average maximal temperature of the month in degrees Celsius */
-  temp_max_C?: number;
-  /** average minimal temperature of the month in degrees Fahrenheit */
-  temp_min_F?: number;
-  /** average maximal temperature of the month in degrees Fahrenheit */
-  temp_max_F?: number;
-  /** average snow level in centimeter */
-  snow_level_in_cm?: number;
-  /** average snow level in inches */
-  snow_level_in_inches?: number;
+export interface ProductMustTryExperience {
+  /** Experience id */
+  id: string;
+  /** Experience title in few words */
+  title: string;
+  /** Experience description in few word */
+  description: string;
+  /** Experience immersive picture */
+  image: string;
 }
 
-export type MonthlyWeatherItem = MonthlyWeatherModel[];
+export type ProductMustTryExperiences = ProductMustTryExperience[];
 
 /**
  * season on which the price is valid
@@ -10334,14 +10334,147 @@ export interface SpaInformationModel {
   cancellation_hours_limit: SpaInformationModelCancellationHoursLimit;
 }
 
-export interface TransportAxisModel {
-  /** Departure city code */
-  departure_city_code: string;
-  /** Arrival city code */
-  arrival_city_code: string;
+/**
+ * slot in the day for this service
+ */
+export type TimeSlot = (typeof TimeSlot)[keyof typeof TimeSlot];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TimeSlot = {
+  MORNING: 'MORNING',
+  AFTERNOON_BEFORE_5PM: 'AFTERNOON_BEFORE_5PM',
+  AFTERNOON_AFTER_5PM: 'AFTERNOON_AFTER_5PM',
+  AFTERNOON: 'AFTERNOON',
+  SPECIFIC_DAY: 'SPECIFIC_DAY',
+  SPECIFIC_MORNING: 'SPECIFIC_MORNING',
+  SPECIFIC_AFTERNOON: 'SPECIFIC_AFTERNOON',
+  AFTERNOON_BEFORE_4PM: 'AFTERNOON_BEFORE_4PM',
+  AFTERNOON_AFTER_4PM: 'AFTERNOON_AFTER_4PM',
+} as const;
+
+/**
+ * type of the service
+ */
+export type ValidProposalServiceTypesModel =
+  (typeof ValidProposalServiceTypesModel)[keyof typeof ValidProposalServiceTypesModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ValidProposalServiceTypesModel = {
+  CHILDCARE: 'CHILDCARE',
+  TRANSFER: 'TRANSFER',
+  INSURANCE: 'INSURANCE',
+  RENTAL: 'RENTAL',
+  EXCURSION: 'EXCURSION',
+  WATER_SPORT: 'WATER_SPORT',
+  LAND_SPORT: 'LAND_SPORT',
+  WINTER_SPORT: 'WINTER_SPORT',
+  WELLNESS: 'WELLNESS',
+  VISAS: 'VISAS',
+  TOURIST_TAX: 'TOURIST_TAX',
+  PORT_TAX: 'PORT_TAX',
+  CONCIERGERIE: 'CONCIERGERIE',
+  PARKING: 'PARKING',
+  HONEY_MOON: 'HONEY_MOON',
+  CLAN: 'CLAN',
+  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
+  OTHERS: 'OTHERS',
+} as const;
+
+export interface AttendeeDiscount {
+  /** discount's amount applied on the service for the concerned attendee */
+  amount: number;
+  /** Offer id if relevant */
+  offer_id?: string;
+  /** Offer code */
+  code?: string;
+  _links?: LinksModel;
 }
 
-export type GetProposalTransportAxesModel = TransportAxisModel[];
+export type ProposalServiceScheduleAttendeeDiscounts = AttendeeDiscount[];
+
+export interface ServiceAttendee {
+  /** concerned attendee id */
+  id: string;
+  /** service's price including discount for the concerned attendee */
+  price: number;
+  /** service's price without discount for the concerned attendee */
+  price_without_discount: number;
+  discounts?: ProposalServiceScheduleAttendeeDiscounts;
+}
+
+export type ProposalServiceScheduleAttendees = ServiceAttendee[];
+
+/**
+ * service start date
+ */
+export type ProposalServiceScheduleStartDate = string | null;
+
+/**
+ * service end date
+ */
+export type ProposalServiceScheduleEndDate = string | null;
+
+export interface ProposalServiceSchedule {
+  /** service start date */
+  start_date: ProposalServiceScheduleStartDate;
+  /** service end date */
+  end_date: ProposalServiceScheduleEndDate;
+  attendees?: ProposalServiceScheduleAttendees;
+}
+
+export type ProposalServiceSchedules = ProposalServiceSchedule[];
+
+/**
+ * List of service_ids which are mandatory with this service. Each service in this list must be booked as well if you wish to book this service
+ */
+export type MandatoryServiceIdModel = string[];
+
+/**
+ * List of service_ids not compatible with this service. This service cannot be booked if any service in the list is booked
+ */
+export type NotCompatibleServiceIdsModel = string[];
+
+/**
+ * Age range required for this service in months
+ */
+export type ProposalServiceModelAnyOf = {
+  /** Customer minimum age to benefits from this childcare in months */
+  min?: number;
+  /** Customer maximum age to benefits from this childcare in months */
+  max?: number;
+};
+
+/**
+ * Age range required for this service in months
+ */
+export type ProposalServiceModel = ProposalServiceModelAnyOf | null;
+
+/**
+ * id of the product information for this service
+ */
+export type ProposalServiceProductInformationId = string | null;
+
+export interface ProposalService {
+  /** service id */
+  id: string;
+  time_slot?: TimeSlot;
+  type: ValidProposalServiceTypesModel;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  schedules: ProposalServiceSchedules;
+  /** id of the product information for this service */
+  product_information_id?: ProposalServiceProductInformationId;
+  sold_only_with?: MandatoryServiceIdModel;
+  not_compatible_with?: NotCompatibleServiceIdsModel;
+  age_in_months?: ProposalServiceModel;
+  _links?: LinksModel;
+}
+
+export type ProposalServices = ProposalService[];
 
 export interface SellerCommissionModel {
   /** earnings for a sale */
@@ -10593,147 +10726,14 @@ export interface AccommodationArrangementResponseV0Model {
 export type AccommodationsArrangementResponseListV0Model =
   AccommodationArrangementResponseV0Model[];
 
-/**
- * slot in the day for this service
- */
-export type TimeSlot = (typeof TimeSlot)[keyof typeof TimeSlot];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TimeSlot = {
-  MORNING: 'MORNING',
-  AFTERNOON_BEFORE_5PM: 'AFTERNOON_BEFORE_5PM',
-  AFTERNOON_AFTER_5PM: 'AFTERNOON_AFTER_5PM',
-  AFTERNOON: 'AFTERNOON',
-  SPECIFIC_DAY: 'SPECIFIC_DAY',
-  SPECIFIC_MORNING: 'SPECIFIC_MORNING',
-  SPECIFIC_AFTERNOON: 'SPECIFIC_AFTERNOON',
-  AFTERNOON_BEFORE_4PM: 'AFTERNOON_BEFORE_4PM',
-  AFTERNOON_AFTER_4PM: 'AFTERNOON_AFTER_4PM',
-} as const;
-
-/**
- * type of the service
- */
-export type ValidProposalServiceTypesModel =
-  (typeof ValidProposalServiceTypesModel)[keyof typeof ValidProposalServiceTypesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ValidProposalServiceTypesModel = {
-  CHILDCARE: 'CHILDCARE',
-  TRANSFER: 'TRANSFER',
-  INSURANCE: 'INSURANCE',
-  RENTAL: 'RENTAL',
-  EXCURSION: 'EXCURSION',
-  WATER_SPORT: 'WATER_SPORT',
-  LAND_SPORT: 'LAND_SPORT',
-  WINTER_SPORT: 'WINTER_SPORT',
-  WELLNESS: 'WELLNESS',
-  VISAS: 'VISAS',
-  TOURIST_TAX: 'TOURIST_TAX',
-  PORT_TAX: 'PORT_TAX',
-  CONCIERGERIE: 'CONCIERGERIE',
-  PARKING: 'PARKING',
-  HONEY_MOON: 'HONEY_MOON',
-  CLAN: 'CLAN',
-  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
-  OTHERS: 'OTHERS',
-} as const;
-
-export interface AttendeeDiscount {
-  /** discount's amount applied on the service for the concerned attendee */
-  amount: number;
-  /** Offer id if relevant */
-  offer_id?: string;
-  /** Offer code */
-  code?: string;
-  _links?: LinksModel;
+export interface TransportAxisModel {
+  /** Departure city code */
+  departure_city_code: string;
+  /** Arrival city code */
+  arrival_city_code: string;
 }
 
-export type ProposalServiceScheduleAttendeeDiscounts = AttendeeDiscount[];
-
-export interface ServiceAttendee {
-  /** concerned attendee id */
-  id: string;
-  /** service's price including discount for the concerned attendee */
-  price: number;
-  /** service's price without discount for the concerned attendee */
-  price_without_discount: number;
-  discounts?: ProposalServiceScheduleAttendeeDiscounts;
-}
-
-export type ProposalServiceScheduleAttendees = ServiceAttendee[];
-
-/**
- * service start date
- */
-export type ProposalServiceScheduleStartDate = string | null;
-
-/**
- * service end date
- */
-export type ProposalServiceScheduleEndDate = string | null;
-
-export interface ProposalServiceSchedule {
-  /** service start date */
-  start_date: ProposalServiceScheduleStartDate;
-  /** service end date */
-  end_date: ProposalServiceScheduleEndDate;
-  attendees?: ProposalServiceScheduleAttendees;
-}
-
-export type ProposalServiceSchedules = ProposalServiceSchedule[];
-
-/**
- * List of service_ids which are mandatory with this service. Each service in this list must be booked as well if you wish to book this service
- */
-export type MandatoryServiceIdModel = string[];
-
-/**
- * List of service_ids not compatible with this service. This service cannot be booked if any service in the list is booked
- */
-export type NotCompatibleServiceIdsModel = string[];
-
-/**
- * Age range required for this service in months
- */
-export type ProposalServiceModelAnyOf = {
-  /** Customer minimum age to benefits from this childcare in months */
-  min?: number;
-  /** Customer maximum age to benefits from this childcare in months */
-  max?: number;
-};
-
-/**
- * Age range required for this service in months
- */
-export type ProposalServiceModel = ProposalServiceModelAnyOf | null;
-
-/**
- * id of the product information for this service
- */
-export type ProposalServiceProductInformationId = string | null;
-
-export interface ProposalService {
-  /** service id */
-  id: string;
-  time_slot?: TimeSlot;
-  type: ValidProposalServiceTypesModel;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  schedules: ProposalServiceSchedules;
-  /** id of the product information for this service */
-  product_information_id?: ProposalServiceProductInformationId;
-  sold_only_with?: MandatoryServiceIdModel;
-  not_compatible_with?: NotCompatibleServiceIdsModel;
-  age_in_months?: ProposalServiceModel;
-  _links?: LinksModel;
-}
-
-export type ProposalServices = ProposalService[];
+export type GetProposalTransportAxesModel = TransportAxisModel[];
 
 export type TravelerResponseModelUnicodeFirstName = string | null;
 
@@ -21516,30 +21516,6 @@ export interface ContactEventModel {
   prioritization?: PrioritizationModel;
 }
 
-export interface SponsorshipsPostModel {
-  /**
-   * A valid email adress
-   * @pattern ^[^\s@]+@[^\s@]+\.[^\s@]+$
-   */
-  email: string;
-  /** user's civility :see the /civilities resource */
-  civility: string;
-  /**
-   * The user first name, Ex : Jean
-   * @maxLength 20
-   */
-  first_name: string;
-  /** The user first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤 */
-  unicode_first_name?: string;
-  /**
-   * The user last name Ex: Chang
-   * @maxLength 30
-   */
-  last_name: string;
-  /** The user last name in unicode character, useful in double byte countries like China,  Ex : 昌 */
-  unicode_last_name?: string;
-}
-
 /**
  * PHONE/CHAT
  */
@@ -21703,6 +21679,30 @@ export interface AssignCustomerToProposalsSummaryElement {
 }
 
 export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
+
+export interface SponsorshipsPostModel {
+  /**
+   * A valid email adress
+   * @pattern ^[^\s@]+@[^\s@]+\.[^\s@]+$
+   */
+  email: string;
+  /** user's civility :see the /civilities resource */
+  civility: string;
+  /**
+   * The user first name, Ex : Jean
+   * @maxLength 20
+   */
+  first_name: string;
+  /** The user first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤 */
+  unicode_first_name?: string;
+  /**
+   * The user last name Ex: Chang
+   * @maxLength 30
+   */
+  last_name: string;
+  /** The user last name in unicode character, useful in double byte countries like China,  Ex : 昌 */
+  unicode_last_name?: string;
+}
 
 export type PostSurveyQuestionsModel = SurveyQuestionModel[];
 
