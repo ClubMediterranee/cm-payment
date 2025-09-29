@@ -36,6 +36,7 @@ include:
   #  - local: '.gitlab/ci/tags.yml'
   - local: '.gitlab/ci/proxy.yml'
   - local: '.gitlab/ci/node.yml'
+  - local: '.gitlab/ci/chromatic.yml'
 
 variables:
   ENV_DEV_LIFETIME: '1 week'
@@ -146,28 +147,9 @@ chromatic:
   extends: .node_install_dependencies
   stage: test
   needs: []
-  variables:
-    # Requires CI/CD variable CHROMATIC_PROJECT_TOKEN to be set in GitLab
-    # Uses chromatic.config.json for options (projectId, onlyChanged, etc.)
-    NODE_IMG: $NODE_IMG
   script:
-    - set -o pipefail
-    - pnpm run chromatic --project-token=${CHROMATIC_TOKEN} 2>&1 | tee chromatic_output.log
-    - |
-      BUILD_URL=$(grep -Eo 'https?://(www\.)?chromatic\.com/(builds?|build)/[A-Za-z0-9_\-/?=&]+' chromatic_output.log | head -n1)
-      if [ -z "$BUILD_URL" ]; then
-        BUILD_URL=$(grep -Eo 'https?://(www\.)?chromatic\.com/[A-Za-z0-9_\-/?=&]+' chromatic_output.log | head -n1)
-      fi
-      echo "Chromatic build URL: ${BUILD_URL:-not found}"
-      if [ -n "$CI_MERGE_REQUEST_IID" ] && [ -n "$BUILD_URL" ]; then
-        NOTE_BODY="Chromatic build: ${BUILD_URL}"
-        curl --silent --show-error --fail -X POST "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}/notes" \
-          --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
-          --header "Content-Type: application/json" \
-          --data "{\"body\": \"${NOTE_BODY}\"}"
-      else
-        echo "No MR context or build URL not found; skipping MR comment."
-      fi
+    - !reference [.chromatic_run, script]
+    - !reference [.chromatic_upsert_mr_comment, script]
   artifacts:
     when: always
     paths:

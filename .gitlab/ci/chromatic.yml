@@ -1,0 +1,66 @@
+---
+# Reusable Chromatic CI scripts (to be composed in .gitlab-ci.yml jobs)
+
+.chromatic_run:
+  script:
+    - set -o pipefail
+    # Run Chromatic and capture output for parsing. Token can be provided via CHROMATIC_PROJECT_TOKEN or CHROMATIC_TOKEN
+    - |
+
+      # Detect package manager: yarn > pnpm > npm
+      if [ -f "yarn.lock" ]; then
+        PM="yarn"
+      elif [ -f "pnpm-lock.yaml" ]; then
+        PM="pnpm"
+      else
+        PM="npm"
+      fi
+
+      echo "Detected package manager: $PM"
+
+      if [ "$PM" = "yarn" ]; then
+        CMD="yarn run chromatic --exit-zero-on-changes"
+      elif [ "$PM" = "pnpm" ]; then
+        CMD="pnpm run chromatic -- --exit-zero-on-changes"
+      else
+        CMD="npm run chromatic -- --exit-zero-on-changes"
+      fi
+
+      echo "Running: $CMD"
+      # shellcheck disable=SC2086
+      eval $CMD 2>&1 | tee chromatic_output.log
+
+.chromatic_upsert_mr_comment:
+  script:
+    - |
+      # Extract Chromatic build URL from CLI output
+      BUILD_URL=$(grep -Eo 'https?://(www\.)?chromatic\.com/(builds?|build)/[A-Za-z0-9_\-/?=&]+' chromatic_output.log | head -n1)
+      if [ -z "$BUILD_URL" ]; then
+        BUILD_URL=$(grep -Eo 'https?://(www\.)?chromatic\.com/[A-Za-z0-9_\-/?=&]+' chromatic_output.log | head -n1)
+      fi
+      echo "Chromatic build URL: ${BUILD_URL:-not found}"
+
+      # If in MR context and URL found, upsert a MR comment (create or update existing)
+      if [ -n "$CI_MERGE_REQUEST_IID" ] && [ -n "$BUILD_URL" ]; then
+        MESSAGE_PREFIX="Chromatic build:"
+        MESSAGE="${MESSAGE_PREFIX} ${BUILD_URL}"
+
+        # Fetch MR comments using helper function from gitlab-api-utils
+        pr_comments=$(gitlab_get_mr_comments "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID")
+        # Find first existing note that contains our prefix
+        existing_note=$(jq --arg search "$MESSAGE_PREFIX" -r '.[] | select(.body|contains($search)) | {id: .id} | @base64' <<< "$pr_comments" | head -n1)
+
+        if [ -n "$existing_note" ]; then
+          note_id=$(echo "$existing_note" | base64 -d | jq -r '.id')
+          echo "Updating existing Chromatic comment (note id: $note_id)"
+          curl --silent --show-error --fail -X PUT "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}/notes/${note_id}" \
+            --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data "{\"body\": \"${MESSAGE}\"}"
+        else
+          echo "Creating new Chromatic comment"
+          gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
+        fi
+      else
+        echo "No MR context or build URL not found; skipping MR comment."
+      fi
