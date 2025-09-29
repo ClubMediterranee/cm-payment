@@ -141,3 +141,20 @@ test:
     - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
       when: never
     - when: always
+
+chromatic:
+  extends: .node_install_dependencies
+  stage: test
+  needs: []
+  variables:
+    # Requires CI/CD variable CHROMATIC_PROJECT_TOKEN to be set in GitLab
+    # Uses chromatic.config.json for options (projectId, onlyChanged, etc.)
+    NODE_IMG: $NODE_IMG
+  script:
+    - pnpm run chromatic --project-token=${CHROMATIC_TOKEN}
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
+      when: never
+    - when: always

@@ -37,7 +37,7 @@ const preview: Preview = {
   },
 
   decorators: [iconsDecorator],
-  // tags: ['autodocs']
+  tags: ['autodocs'],
 };
 
 export default preview;
