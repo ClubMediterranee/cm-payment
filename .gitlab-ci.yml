@@ -20,9 +20,9 @@ include:
   - project: 'clubmed/templates'
     ref: 'master'
     file: 'CI/library/docker.yaml'
-  - project: 'clubmed/templates'
-    ref: 'master'
-    file: 'CI/library/docker-aws.yaml'
+  #  - project: 'clubmed/templates'
+  #    ref: 'master'
+  #    file: 'CI/library/docker-aws.yaml'
   - project: 'clubmed/templates'
     ref: 'master'
     file: 'CI/git-flow.yaml'
@@ -69,7 +69,7 @@ workflow:
 stages:
   - test_ci
   - test
-#  - storybook:dev
+  - storybook:dev
 #  - version:bump
 #  - version:storybook
 #  - version:publish
@@ -145,13 +145,14 @@ test:
 
 chromatic:
   extends: .node_install_dependencies
-  stage: test
-  needs: []
+  stage: storybook:dev
+  needs:
+    - lint
+    - test
+    - build
   script:
     - !reference [.chromatic_run, script]
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: always
-    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
-      when: never
-    - when: always
+    - when: never

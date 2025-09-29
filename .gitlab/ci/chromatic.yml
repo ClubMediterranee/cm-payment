@@ -3,20 +3,15 @@
 
 .chromatic_run:
   script:
-    #    - set -o pipefail
-    # Run Chromatic and capture output for parsing. Token can be provided via CHROMATIC_PROJECT_TOKEN or CHROMATIC_TOKEN
+    # Run Chromatic and capture diagnostics JSON. Token can be provided via CHROMATIC_PROJECT_TOKEN or CHROMATIC_TOKEN
     - |
-
       CMD="$PM run chromatic $ARG_SEP --exit-zero-on-changes --diagnosticsFile=chromatic-diagnostics.json --branch-name ${CI_COMMIT_REF_NAME}"
-
       echo "Running: $CMD"
       # shellcheck disable=SC2086
       eval $CMD
-
       DIAG="chromatic-diagnostics.json"
-
       if [ ! -f "$DIAG" ]; then
-        echo "Fichier $DIAG introuvable, rien à poster."
+        echo "Fichier $DIAG introuvable, rien d'autre à faire dans ce job."
         exit 0
       fi
 
@@ -27,31 +22,59 @@
         jq --version || true
       fi
 
-      # Extraire status et url depuis le diagnostic
+      # Extract status and URL from diagnostics
       STATUS=$(jq -r '.build.status // .announcedBuild.status // empty' "$DIAG")
-      URL=$(jq -r '.build.webUrl // .announcedBuild.webUrl // empty' "$DIAG")
+      CHROMATIC_REVIEW_URL=$(jq -r '.build.webUrl // .announcedBuild.webUrl // empty' "$DIAG")
+      STORYBOOK_URL=$(jq -r '.build.storybookUrl // .announcedBuild.storybookUrl // empty' "$DIAG")
+
+      echo "Status: $STATUS"
+      echo "Chromatic review URL: $CHROMATIC_REVIEW_URL"
+      echo "Storybook review URL: $STORYBOOK_URL"
 
       if [ -z "$STATUS" ]; then
         echo "Status introuvable dans $DIAG"
         exit 0
       fi
 
-      # Mapper status Chromatic -> GitLab state
+      # Map Chromatic status -> GitLab state
       case "${STATUS^^}" in
         PENDING|RUNNING) GSTATE="pending" ;;
-        PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
+        ACCEPTED|PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
         FAILED|ERROR|ABORTED) GSTATE="failed" ;;
         *) GSTATE="pending" ;;
       esac
 
-      DESCRIPTION="Chromatic: $STATUS"
+      # Post status on commit (uses JOB-TOKEN)
+      SAFE_URL="${CI_API_V4_URL%/}/projects/${CI_PROJECT_ID}/statuses/${CI_COMMIT_SHA}"
 
-      # Poster le status sur le commit (nécessite CI_API_V4_URL, CI_PROJECT_ID, CI_COMMIT_SHA, GITLAB_TOKEN)
-      curl --silent --show-error --fail --retry 3 --retry-all-errors --max-time 60 --insecure -X POST "${CI_API_V4_URL%/}/projects/${CI_PROJECT_ID}/statuses/${CI_COMMIT_SHA}" \
+      echo "Posting Chromatic review URL ${CHROMATIC_REVIEW_URL}"
+
+      curl --show-error --fail --retry 3 --retry-all-errors --max-time 60 --insecure -X POST "${SAFE_URL}" \
         -H "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
         -F "state=${GSTATE}" \
-        -F "context=chromatic" \
-        -F "target_url=${URL}" \
-        -F "description=${DESCRIPTION}"
+        -F "name=chromatic_review" \
+        -F "target_url=${CHROMATIC_REVIEW_URL}" \
+        -F "description=Chromatic: ${STATUS}"
 
-      echo "Posted chromatic status '${GSTATE}' (Chromatic=${STATUS}) -> ${URL:-no-url}"
+      # post storybook url in gitlab
+      echo "Posting storybook review URL ${STORYBOOK_URL}"
+
+      curl --show-error --fail --retry 3 --retry-all-errors --max-time 60 --insecure -X POST "${SAFE_URL}" \
+          -H "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+          -F "state=success" \
+          -F "name=storybook_review" \
+          -F "target_url=${STORYBOOK_URL}" \
+          -F "description=Storybook Review"
+
+    - !reference [.gitlab_api_utils_setup_apt, script] # from @clubmed/templates:CI/library/gitlab-api-utils.yaml
+    - !reference [.gitlab_api_utils, script] # from @clubmed/templates:CI/library/gitlab-api-utils.yaml
+    - MESSAGE_PREFIX="Storybook successfully **DEPLOYED** on Chromatics (n° $BUILD_NUMBER)"
+    - >
+      MESSAGE="$MESSAGE_PREFIX
+
+      - 🚀 Storybook is accessible at: <$STORYBOOK_URL>
+
+      - 🚀 Chromatic review is accessible at: <$CHROMATIC_REVIEW_URL>
+      "
+
+      gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
