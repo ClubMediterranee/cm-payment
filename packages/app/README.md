@@ -1,10 +1,10 @@
-# @clubmed/sandbox-spa
+# @clubmed/payment-app
 
-Centralized payment page sandbox for testing Club Med's payment workflows with configurable parameters.
+Centralized payment application for testing Club Med's payment workflows with configurable parameters.
 
 ## Description
 
-The sandbox is a centralized payment application that provides a testing environment for Club Med's payment flows. It accepts URL parameters to configure the payment context including locale, booking/proposal IDs, and OIDC issuer types. This application is designed to work in conjunction with the starter package to provide a complete payment workflow testing experience.
+The app is a centralized payment application that provides a testing environment for Club Med's payment flows. It accepts URL parameters to configure the payment context including locale, booking/proposal IDs, and OIDC issuer types. This application is designed to work in conjunction with the starter package to provide a complete payment workflow testing experience.
 
 ## Features
 
@@ -19,7 +19,7 @@ The sandbox is a centralized payment application that provides a testing environ
 
 ## Prerequisites
 
-**Important**: To properly test the payment workflow in the sandbox, you must first run the starter application:
+**Important**: To properly test the payment workflow in the app, you must first run the starter application:
 
 1. **Start the Starter Application**: The `packages/starter` project provides the front-end interface to initiate payment workflows
 2. **Host Configuration**: Ensure your `/etc/hosts` file is configured with:
@@ -44,7 +44,7 @@ pnpm install
 pnpm dev
 ```
 
-The sandbox application will be available at `https://payment:4003` with SSL enabled by default.
+The application will be available at `https://cm-payment:4003` with SSL enabled by default.
 
 ### Available Scripts
 
@@ -66,6 +66,7 @@ The application uses `dotenv-flow` to load environment configurations from the `
 - `config/.env.integration` - Integration environment
 
 **Available Environment Variables:**
+
 - `HOST` - Configure the development server host (default: payment)
 - `BASE_URL` - Base URL for the application
 - `VITE_GM_OIDC_URL` - Club Med GM OIDC provider URL
@@ -80,10 +81,10 @@ The application uses `dotenv-flow` to load environment configurations from the `
 
 ### URL Structure
 
-The sandbox accepts payment parameters via URL path and query parameters:
+The app accepts payment parameters via URL path and query parameters:
 
 ```
-https://payment:4003/:issuer/:type/:id/:locale?customer_id=123
+https://cm-payment:4003/:issuer/:type/:id/:locale?customer_id=123
 ```
 
 **Query Parameters:**
@@ -97,25 +98,27 @@ https://payment:4003/:issuer/:type/:id/:locale?customer_id=123
 ### Example URLs
 
 1. **Booking Payment with GM Provider:**
+
    ```
-   https://payment:4003/GM/booking/123456/fr-FR?customer_id=789
+   https://cm-payment:4003/GM/booking/123456/fr-FR?customer_id=789
    ```
 
 2. **Proposal Payment with GO Provider:**
+
    ```
-   https://payment:4003/GO/proposal/654321/en-US
+   https://cm-payment:4003/GO/proposal/654321/en-US
    ```
 
 3. **Partner Payment:**
    ```
-   https://payment:4003/PARTNER/booking/111222/en-GB?customer_id=333
+   https://cm-payment:4003/PARTNER/booking/111222/en-GB?customer_id=333
    ```
 
 ### Workflow Integration
 
 1. **Start with Starter App**: Use `packages/starter` to configure and initiate payment flows
-2. **Automatic Redirect**: The starter app will redirect to the sandbox with appropriate parameters
-3. **Payment Processing**: The sandbox handles the complete payment workflow
+2. **Automatic Redirect**: The starter app will redirect to the app with appropriate parameters
+3. **Payment Processing**: The app handles the complete payment workflow
 4. **Authentication**: Automatic OIDC authentication for booking-based payments
 5. **Completion**: Redirect to confirmation page upon successful payment
 
@@ -191,7 +194,7 @@ src/
 3. Install dependencies: `pnpm install`
 4. Configure the hosts file as described above
 5. Start the starter application: `cd packages/starter && pnpm dev`
-6. In a new terminal, start the sandbox: `cd packages/sandbox && pnpm dev`
+6. In a new terminal, start the app: `cd packages/app && pnpm dev`
 
 ## Building for Production
 
@@ -203,21 +206,21 @@ The built files will be available in the `dist` directory.
 
 ## Testing with Starter
 
-To properly test the sandbox:
+To properly test the app:
 
 1. **Start both applications:**
    - Starter: `https://payment-starter:4004`
-   - Sandbox: `https://payment:4003`
+   - App: `https://cm-payment:4003`
 
 2. **Use the starter interface** to:
    - Select locale and OIDC provider
    - Configure customer ID, booking ID, or proposal ID
    - Click "Start flow" to initiate payment
 
-3. **The starter will redirect** to the sandbox with appropriate parameters
+3. **The starter will redirect** to the app with appropriate parameters
 
-4. **Complete the payment flow** in the sandbox interface
+4. **Complete the payment flow** in the app interface
 
 ## Contributing
 
-This package is part of the Club Med payment system. Please follow the project's contribution guidelines and ensure all changes are properly tested with both the starter and sandbox applications.
+This package is part of the Club Med payment system. Please follow the project's contribution guidelines and ensure all changes are properly tested with both the starter and app applications.

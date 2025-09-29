@@ -1,5 +1,5 @@
 {
-  "name": "@clubmed/start-spa",
+  "name": "@clubmed/starter",
   "description": "Application to start a new Payment flow",
   "private": true,
   "version": "1.0.0",

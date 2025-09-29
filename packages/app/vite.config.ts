@@ -26,7 +26,7 @@ export default defineConfig({
     host: process.env.HOST,
     proxy: {
       '/api': {
-        target: 'https://api.integ.clubmed.com',
+        target: process.env.VITE_API_TARGET,
         secure: false,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
