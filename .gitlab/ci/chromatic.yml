@@ -3,64 +3,55 @@
 
 .chromatic_run:
   script:
-    - set -o pipefail
+    #    - set -o pipefail
     # Run Chromatic and capture output for parsing. Token can be provided via CHROMATIC_PROJECT_TOKEN or CHROMATIC_TOKEN
     - |
 
-      # Detect package manager: yarn > pnpm > npm
-      if [ -f "yarn.lock" ]; then
-        PM="yarn"
-      elif [ -f "pnpm-lock.yaml" ]; then
-        PM="pnpm"
-      else
-        PM="npm"
-      fi
-
-      echo "Detected package manager: $PM"
-
-      if [ "$PM" = "yarn" ]; then
-        CMD="yarn run chromatic --exit-zero-on-changes"
-      elif [ "$PM" = "pnpm" ]; then
-        CMD="pnpm run chromatic -- --exit-zero-on-changes"
-      else
-        CMD="npm run chromatic -- --exit-zero-on-changes"
-      fi
+      CMD="$PM run chromatic $ARG_SEP --exit-zero-on-changes --diagnosticsFile=chromatic-diagnostics.json --branch-name ${CI_COMMIT_REF_NAME}"
 
       echo "Running: $CMD"
       # shellcheck disable=SC2086
-      eval $CMD 2>&1 | tee chromatic_output.log
+      eval $CMD
 
-.chromatic_upsert_mr_comment:
-  script:
-    - |
-      # Extract Chromatic build URL from CLI output
-      BUILD_URL=$(grep -Eo 'https?://(www\.)?chromatic\.com/(builds?|build)/[A-Za-z0-9_\-/?=&]+' chromatic_output.log | head -n1)
-      if [ -z "$BUILD_URL" ]; then
-        BUILD_URL=$(grep -Eo 'https?://(www\.)?chromatic\.com/[A-Za-z0-9_\-/?=&]+' chromatic_output.log | head -n1)
+      DIAG="chromatic-diagnostics.json"
+
+      if [ ! -f "$DIAG" ]; then
+        echo "Fichier $DIAG introuvable, rien à poster."
+        exit 0
       fi
-      echo "Chromatic build URL: ${BUILD_URL:-not found}"
 
-      # If in MR context and URL found, upsert a MR comment (create or update existing)
-      if [ -n "$CI_MERGE_REQUEST_IID" ] && [ -n "$BUILD_URL" ]; then
-        MESSAGE_PREFIX="Chromatic build:"
-        MESSAGE="${MESSAGE_PREFIX} ${BUILD_URL}"
-
-        # Fetch MR comments using helper function from gitlab-api-utils
-        pr_comments=$(gitlab_get_mr_comments "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID")
-        # Find first existing note that contains our prefix
-        existing_note=$(jq --arg search "$MESSAGE_PREFIX" -r '.[] | select(.body|contains($search)) | {id: .id} | @base64' <<< "$pr_comments" | head -n1)
-
-        if [ -n "$existing_note" ]; then
-          note_id=$(echo "$existing_note" | base64 -d | jq -r '.id')
-          echo "Updating existing Chromatic comment (note id: $note_id)"
-          curl --silent --show-error --fail -X PUT "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}/notes/${note_id}" \
-            --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
-            --header "Content-Type: application/json" \
-            --data "{\"body\": \"${MESSAGE}\"}"
-        else
-          echo "Creating new Chromatic comment"
-          gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
-        fi
-      else
-        echo "No MR context or build URL not found; skipping MR comment."
+      # Ensure jq is installed (needed to parse Chromatic diagnostics)
+      if ! command -v jq >/dev/null 2>&1; then
+        echo "Installing jq..."
+        apt-get update -y && apt-get install -y jq
+        jq --version || true
       fi
+
+      # Extraire status et url depuis le diagnostic
+      STATUS=$(jq -r '.build.status // .announcedBuild.status // empty' "$DIAG")
+      URL=$(jq -r '.build.webUrl // .announcedBuild.webUrl // empty' "$DIAG")
+
+      if [ -z "$STATUS" ]; then
+        echo "Status introuvable dans $DIAG"
+        exit 0
+      fi
+
+      # Mapper status Chromatic -> GitLab state
+      case "${STATUS^^}" in
+        PENDING|RUNNING) GSTATE="pending" ;;
+        PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
+        FAILED|ERROR|ABORTED) GSTATE="failed" ;;
+        *) GSTATE="pending" ;;
+      esac
+
+      DESCRIPTION="Chromatic: $STATUS"
+
+      # Poster le status sur le commit (nécessite CI_API_V4_URL, CI_PROJECT_ID, CI_COMMIT_SHA, GITLAB_TOKEN)
+      curl --silent --show-error --fail --retry 3 --retry-all-errors --max-time 60 --insecure -X POST "${CI_API_V4_URL%/}/projects/${CI_PROJECT_ID}/statuses/${CI_COMMIT_SHA}" \
+        -H "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+        -F "state=${GSTATE}" \
+        -F "context=chromatic" \
+        -F "target_url=${URL}" \
+        -F "description=${DESCRIPTION}"
+
+      echo "Posted chromatic status '${GSTATE}' (Chromatic=${STATUS}) -> ${URL:-no-url}"
