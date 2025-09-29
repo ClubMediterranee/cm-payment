@@ -13,13 +13,15 @@
     "pretest": "pnpm exec playwright install",
     "test": "vitest run",
     "dev:storybook": "storybook dev -p 6006",
-    "dev:sdk": "pnpm --filter sdk run dev",
+    "dev:sdk": "pnpm --filter @clubmed/payment-sdk run dev",
+    "dev:app": "pnpm --filter @clubmed/app run dev",
+    "dev:starter": "pnpm --filter @clubmed/starter run dev",
     "generate:types": "pnpm -r run generate:types",
     "prebuild": "tsc -b",
     "build": "pnpm -r run build",
     "build:storybook": "storybook build",
     "build:sdk": "pnpm --filter sdk run build",
-    "build:sandbox": "pnpm --filter sandbox run build",
+    "build:app": "pnpm --filter app run build",
     "prepare": "husky"
   },
   "devDependencies": {

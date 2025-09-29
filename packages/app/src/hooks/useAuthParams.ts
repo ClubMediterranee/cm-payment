@@ -4,6 +4,7 @@ import { useRoute } from 'wouter';
 import { z } from 'zod';
 
 import { AppSettings } from '../config.js';
+import { useQueryParams } from './useQueryParams.js';
 
 const ParamsSchema = z.object({
   issuer: z.enum([OidcIssuerTypes.GM, OidcIssuerTypes.GO, OidcIssuerTypes.PARTNERS]).optional(),
@@ -22,10 +23,7 @@ export function useAuthParams() {
     '/:issuer/*',
   );
 
-  // const {
-  //   locale,
-  //   customer_id,
-  // } = useQueryParams<Pick<AppQueryParams, "locale" | "customer_id">>();
+  const { locale } = useQueryParams<Pick<any, 'locale' | 'customer_id'>>();
 
   const initialValues = {
     issuer: result?.issuer?.toUpperCase(),
@@ -52,6 +50,7 @@ export function useAuthParams() {
     oidc: {
       issuerType: initialValues.issuer as OidcIssuerTypes,
       ...AppSettings.oidc[initialValues.issuer as OidcIssuerTypes],
+      extraQueryParams: { locale },
     },
     onSigninCallback,
   };

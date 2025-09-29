@@ -8,24 +8,24 @@ orbs:
 parameters:
   image-tag:
     type: string
-    default: "20.11.0"
+    default: '20.11.0'
 
   env:
     type: enum
-    description: "The environment name to deploy tag or branch"
-    enum: [ "", "integration", "staging", "production" ]
-    default: ""
+    description: 'The environment name to deploy tag or branch'
+    enum: ['', 'integration', 'staging', 'production']
+    default: ''
 
   version:
     type: string
-    description: "The version to be deployed on environment. Can be a tag or branch name"
+    description: 'The version to be deployed on environment. Can be a tag or branch name'
     default: ${CIRCLE_BRANCH}
 
   workflow:
     type: enum
-    description: "Trigger a specific workflow"
-    enum: [ "build", "deploy", "rebase", "rebase-all" ]
-    default: "build"
+    description: 'Trigger a specific workflow'
+    enum: ['build', 'deploy', 'rebase', 'rebase-all']
+    default: 'build'
 
 executors:
   job-executor:
@@ -46,16 +46,16 @@ executors:
     resource_class: large
 commands:
   switch-branch:
-    description: "Switch to branch or tags"
+    description: 'Switch to branch or tags'
     steps:
       - when:
           condition:
             and:
               - not:
-                  equal: [ << pipeline.git.branch >>, << pipeline.parameters.version >> ]
+                  equal: [<< pipeline.git.branch >>, << pipeline.parameters.version >>]
           steps:
             - run:
-                name: "Checkout"
+                name: 'Checkout'
                 command: |
                   CURRENT_VERSION="<< pipeline.parameters.version >>"
                   if [[ "$CURRENT_VERSION" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)?$ ]]; then
@@ -68,13 +68,13 @@ commands:
                   fi
 
   configure-executor:
-    description: "Configuration docker"
+    description: 'Configuration docker'
     steps:
       - setup_remote_docker
   configure-git:
     steps:
       - run:
-          name: "Set git configuration"
+          name: 'Set git configuration'
           command: |
             git config --global user.name "$GIT_USER_NAME"
             git config --global user.email "$GIT_USER_EMAIL"
@@ -85,9 +85,9 @@ commands:
     parameters:
       env:
         type: enum
-        description: "The environment name to deploy tag or branch"
-        enum: [ "", "integration",  "staging", "production" ]
-        default: "integration"
+        description: 'The environment name to deploy tag or branch'
+        enum: ['', 'integration', 'staging', 'production']
+        default: 'integration'
     steps:
       - dotenv/source:
           path: .circleci/.env.<< parameters.env >>
@@ -99,12 +99,12 @@ commands:
     parameters:
       env:
         type: enum
-        description: "The environment name to deploy tag or branch"
-        enum: [ "", "integration",  "staging", "production" ]
-        default: "integration"
+        description: 'The environment name to deploy tag or branch'
+        enum: ['', 'integration', 'staging', 'production']
+        default: 'integration'
       version:
         type: string
-        description: "The version to be deployed on environment"
+        description: 'The version to be deployed on environment'
     steps:
       - dotenv/source:
           path: .circleci/.env.<< parameters.env >>
@@ -113,10 +113,10 @@ commands:
       - ms-teams/report:
           webhook_url: $TEAMS_WEBHOOK
           only_on_fail: false
-          message: "Deployment of version << parameters.version >> on << parameters.env >> environment is __build_status__."
+          message: 'Deployment of version << parameters.version >> on << parameters.env >> environment is __build_status__.'
 
   install:
-    description: "Yarn install with cache optimization"
+    description: 'Yarn install with cache optimization'
     steps:
       - node/install-packages:
           check-cache: never
@@ -127,39 +127,39 @@ commands:
     parameters:
       process-type:
         type: string
-        description: "The heroku process type"
-        default: "web"
+        description: 'The heroku process type'
+        default: 'web'
       app:
         type: string
-        description: "The heroku app name"
+        description: 'The heroku app name'
     steps:
       - run:
-          name: "Heroku login"
+          name: 'Heroku login'
           command: npx heroku@7.67.2 container:login
       - run:
-          name: "Docker login & build"
+          name: 'Docker login & build'
           command: |
             docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
             docker build . -t registry.heroku.com/<< parameters.app >>/<< parameters.process-type >>
       - run:
-          name: "Docker push"
+          name: 'Docker push'
           command: docker push registry.heroku.com/<< parameters.app >>/<< parameters.process-type >>
       - run:
-          name: "Heroku deploy"
+          name: 'Heroku deploy'
           command: npx heroku@7.67.2 container:release web --app << parameters.app >>
 
   workspace-restore:
-    description: "Restore workspace"
+    description: 'Restore workspace'
     steps:
       - attach_workspace:
           at: .
 
   test-update-coverage:
-    description: "Update coverage file"
+    description: 'Update coverage file'
     parameters:
       package:
         type: string
-        description: "package path under packages directory"
+        description: 'package path under packages directory'
     steps:
       - run: yarn tsc:build
       - run:
@@ -199,7 +199,6 @@ jobs:
       - test-update-coverage:
           package: app
 
-
   test-app-cy:
     executor: cypress-executor
     parallelism: 6
@@ -230,24 +229,24 @@ jobs:
     parameters:
       version:
         type: string
-        description: "The version to be deployed on environment"
+        description: 'The version to be deployed on environment'
       env:
         type: enum
-        description: "The environment name to deploy tag or branch"
-        enum: [ "", "integration",  "staging", "production" ]
-        default: "integration"
+        description: 'The environment name to deploy tag or branch'
+        enum: ['', 'integration', 'staging', 'production']
+        default: 'integration'
     steps:
       - run:
-          name: "Log parameters"
+          name: 'Log parameters'
           command: |
             echo "Env: << parameters.env >>"
             echo "Version/Branch: << parameters.version >>"
       - configure-executor
       - checkout
       - switch-branch
-#      - run:
-#          name: Write job data
-#          command: echo "<< parameters.version >>" > packages/server/resources/release.info
+      #      - run:
+      #          name: Write job data
+      #          command: echo "<< parameters.version >>" > packages/server/resources/release.info
       - release-tag:
           env: << parameters.env >>
 
@@ -256,24 +255,24 @@ jobs:
     parameters:
       version:
         type: string
-        description: "The version to be deployed on environment"
+        description: 'The version to be deployed on environment'
       env:
         type: enum
-        description: "The environment name to deploy tag or branch"
-        enum: [ "", "integration",  "staging", "production" ]
-        default: "integration"
+        description: 'The environment name to deploy tag or branch'
+        enum: ['', 'integration', 'staging', 'production']
+        default: 'integration'
     steps:
       - run:
-          name: "Log parameters"
+          name: 'Log parameters'
           command: |
             echo "Env: << parameters.env >>"
             echo "Version/Branch: << parameters.version >>"
       - configure-executor
       - checkout
       - switch-branch
-#      - run:
-#          name: Write job data
-#          command: echo "<< parameters.version >>" > packages/server/resources/release.info
+      #      - run:
+      #          name: Write job data
+      #          command: echo "<< parameters.version >>" > packages/server/resources/release.info
       - deploy-env:
           env: << parameters.env >>
           version: << parameters.version >>
@@ -286,7 +285,7 @@ jobs:
       - checkout
       - configure-git
       - run:
-          name: "Republish branches"
+          name: 'Republish branches'
           command: yarn dlx -p @cmflow/cli cm republish
   rebase:
     executor: job-executor
@@ -296,14 +295,14 @@ jobs:
       - checkout
       - configure-git
       - run:
-          name: "Republish branch"
+          name: 'Republish branch'
           command: yarn dlx -p @cmflow/cli cm push
 
 workflows:
   # rebase all branches
   rebase-all:
     when:
-      equal: [ "rebase-all", << pipeline.parameters.workflow >> ]
+      equal: ['rebase-all', << pipeline.parameters.workflow >>]
     jobs:
       - rebase-all:
           context: api
@@ -311,7 +310,7 @@ workflows:
   # rebase all branches
   rebase:
     when:
-      equal: [ "rebase", << pipeline.parameters.workflow >> ]
+      equal: ['rebase', << pipeline.parameters.workflow >>]
     jobs:
       - rebase:
           filters:
@@ -324,8 +323,8 @@ workflows:
     when:
       or:
         - not:
-            equal: [ "", << pipeline.parameters.env >> ]
-        - equal: [ "deploy", << pipeline.parameters.workflow >> ]
+            equal: ['', << pipeline.parameters.env >>]
+        - equal: ['deploy', << pipeline.parameters.workflow >>]
     jobs:
       - deploy:
           env: << pipeline.parameters.env >>
@@ -334,7 +333,7 @@ workflows:
   # default workflow when a commit is pushed on repository.
   build-and-release:
     when:
-      equal: [ "build", << pipeline.parameters.workflow >> ]
+      equal: ['build', << pipeline.parameters.workflow >>]
     jobs:
       - lint
       - test-app

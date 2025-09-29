@@ -8,8 +8,8 @@ const config: StorybookConfig = {
       titlePrefix: 'SDK',
     },
     // {
-    //   directory: '../packages/sandbox/src',
-    //   titlePrefix: 'Sandbox',
+    //   directory: '../packages/app/src',
+    //   titlePrefix: 'App',
     // },
   ],
 

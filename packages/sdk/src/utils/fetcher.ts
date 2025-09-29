@@ -31,8 +31,6 @@ export const fetcher = async <T>(
     }
   });
 
-  // queryParams.append("api_key", apiKey);
-
   const endpoint = `${apiUrl}${url}?${queryParams.toString()}`;
 
   const opts = {
