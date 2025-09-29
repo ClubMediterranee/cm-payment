@@ -1,6 +1,10 @@
 import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
 
 export const AppSettings = {
+  paymentPageUrl:
+    import.meta.env.VITE_PAYMENT_PAGE_URL === '/'
+      ? window.location.origin
+      : import.meta.env.VITE_PAYMENT_PAGE_URL,
   oidc: [
     {
       label: OidcIssuerTypes.GM,

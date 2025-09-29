@@ -68,7 +68,7 @@ The application uses `dotenv-flow` to load environment configurations from the `
 **Available Environment Variables:**
 
 - `HOST` - Configure the development server host (default: payment)
-- `BASE_URL` - Base URL for the application
+- `VITE_BASE_PATH` - Base URL for the application
 - `VITE_GM_OIDC_URL` - Club Med GM OIDC provider URL
 - `VITE_GM_OIDC_CLIENT_ID` - GM OIDC client ID
 - `VITE_GO_OIDC_CLIENT` - Club Med GO OIDC provider URL

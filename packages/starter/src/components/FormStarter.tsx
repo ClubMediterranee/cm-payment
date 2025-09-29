@@ -18,7 +18,7 @@ function useFormStarter() {
 
   function getUrl() {
     try {
-      return getPaymentUrl(import.meta.env.VITE_PAYMENT_PAGE_URL, {
+      return getPaymentUrl(AppSettings.paymentPageUrl, {
         issuerType: oidc as OidcIssuerTypes,
         locale,
         proposalId: proposal_id || undefined,
