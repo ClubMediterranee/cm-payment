@@ -23,6 +23,8 @@ variables:
         yarn config set httpProxy '${HTTP_PROXY:-}'
         yarn config set httpsProxy '${HTTPS_PROXY:-}'
 
+        export PM="yarn"
+        export ARG_SEP=""
     elif [ -f "pnpm-lock.yaml" ]; then
         npm install -g --force pnpm
 
@@ -31,8 +33,12 @@ variables:
         pnpm config set noproxy "$NO_PROXY"
 
         echo "PNPM version: $(pnpm -v)"
+        export PM="pnpm"
+        export ARG_SEP=" -- "
     else
         echo "NPM version: $(npm -v)"
+        export PM="npm"
+        export ARG_SEP=" -- "
     fi
 
 .node_install_dependencies:
@@ -42,10 +48,16 @@ variables:
     - |
       if [ -f "yarn.lock" ]; then
           yarn install --immutable
+          export PM="yarn"
+          export ARG_SEP=""
       elif [ -f "pnpm-lock.yaml" ]; then
           pnpm install --frozen-lockfile
+          export PM="pnpm"
+          export ARG_SEP=""
       else
           npm ci
+          export PM="npm"
+          export ARG_SEP=" -- "
       fi
   script: "echo 'Dependencies installed'"
 

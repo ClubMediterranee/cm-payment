@@ -20,6 +20,7 @@ const config: StorybookConfig = {
     '@storybook/addon-a11y',
     '@storybook/addon-themes',
     '@storybook/addon-vitest',
+    '@chromatic-com/storybook',
   ],
   typescript: {
     reactDocgen: 'react-docgen',
@@ -32,7 +33,7 @@ const config: StorybookConfig = {
     builder: {
       name: '@storybook/builder-vite',
       options: {
-        viteConfigPath: './vite.storybook.config.js',
+        viteConfigPath: './vite.storybook.config.ts',
       },
     },
     disableTelemetry: true,

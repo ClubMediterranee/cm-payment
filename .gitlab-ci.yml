@@ -20,9 +20,9 @@ include:
   - project: 'clubmed/templates'
     ref: 'master'
     file: 'CI/library/docker.yaml'
-  - project: 'clubmed/templates'
-    ref: 'master'
-    file: 'CI/library/docker-aws.yaml'
+  #  - project: 'clubmed/templates'
+  #    ref: 'master'
+  #    file: 'CI/library/docker-aws.yaml'
   - project: 'clubmed/templates'
     ref: 'master'
     file: 'CI/git-flow.yaml'
@@ -36,6 +36,7 @@ include:
   #  - local: '.gitlab/ci/tags.yml'
   - local: '.gitlab/ci/proxy.yml'
   - local: '.gitlab/ci/node.yml'
+  - local: '.gitlab/ci/chromatic.yml'
 
 variables:
   ENV_DEV_LIFETIME: '1 week'
@@ -68,7 +69,7 @@ workflow:
 stages:
   - test_ci
   - test
-#  - storybook:dev
+  - storybook:dev
 #  - version:bump
 #  - version:storybook
 #  - version:publish
@@ -141,3 +142,17 @@ test:
     - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
       when: never
     - when: always
+
+chromatic:
+  extends: .node_install_dependencies
+  stage: storybook:dev
+  needs:
+    - lint
+    - test
+    - build
+  script:
+    - !reference [.chromatic_run, script]
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - when: never

@@ -1,16 +1,20 @@
-import type { Options } from 'orval';
+import { join } from 'node:path';
 
-export default {
+import { defineConfig } from 'orval';
+
+const root = __dirname;
+
+export default defineConfig({
   api: {
     input: {
       // TO fix: check this issue and replace the target by import.meta.env.VITE_API_ENDPOINT
       target: `https://api.clubmed.com/doc/swagger.json`,
       override: {
-        transformer: './scripts/orval.transformer.js',
+        transformer: join(root, 'scripts/orval.transformer.js'),
       },
     },
     output: {
-      target: './src/__generated__/index.ts',
+      target: join(root, 'src/__generated__/index.ts'),
       mode: 'single',
       prettier: true,
       override: {
@@ -24,4 +28,4 @@ export default {
       },
     },
   },
-} satisfies { api: Options };
+});
