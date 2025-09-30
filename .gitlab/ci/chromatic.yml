@@ -5,7 +5,7 @@
   script:
     # Run Chromatic and capture diagnostics JSON. Token can be provided via CHROMATIC_PROJECT_TOKEN or CHROMATIC_TOKEN
     - |
-      CMD="$PM run chromatic $ARG_SEP --exit-zero-on-changes --diagnosticsFile=chromatic-diagnostics.json --branch-name ${CI_COMMIT_REF_NAME}"
+      CMD="$PM run chromatic $ARG_SEP --exit-zero-on-changes --diagnosticsFile=chromatic-diagnostics.json --branch-name ${CI_COMMIT_REF_NAME} --skip-update-check"
       echo "Running: $CMD"
       # shellcheck disable=SC2086
       eval $CMD
@@ -38,8 +38,7 @@
 
       # Map Chromatic status -> GitLab state
       case "${STATUS^^}" in
-        PENDING|RUNNING) GSTATE="pending" ;;
-        ACCEPTED|PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
+        PENDING|RUNNING|ACCEPTED|PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
         FAILED|ERROR|ABORTED) GSTATE="failed" ;;
         *) GSTATE="pending" ;;
       esac
@@ -68,7 +67,7 @@
 
     - !reference [.gitlab_api_utils_setup_apt, script] # from @clubmed/templates:CI/library/gitlab-api-utils.yaml
     - !reference [.gitlab_api_utils, script] # from @clubmed/templates:CI/library/gitlab-api-utils.yaml
-    - MESSAGE_PREFIX="Storybook successfully **DEPLOYED** on Chromatics (n° $BUILD_NUMBER)"
+    - MESSAGE_PREFIX="Storybook successfully **DEPLOYED** on Chromatic (n° $BUILD_NUMBER)"
     - >
       MESSAGE="$MESSAGE_PREFIX
 

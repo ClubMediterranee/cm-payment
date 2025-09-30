@@ -33,7 +33,7 @@ const config: StorybookConfig = {
     builder: {
       name: '@storybook/builder-vite',
       options: {
-        viteConfigPath: './vite.storybook.config.js',
+        viteConfigPath: './vite.storybook.config.ts',
       },
     },
     disableTelemetry: true,
