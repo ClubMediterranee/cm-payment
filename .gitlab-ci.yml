@@ -135,11 +135,11 @@ test:
   script:
     - npx playwright install --with-deps
     - pnpm run test
-  artifacts:
-    when: always
-    reports:
-      junit: ./reports/vitest/test-results.xml
-    expire_in: 1 week
+  #  artifacts:
+  #    when: always
+  #    reports:
+  #      junit: ./packages/sdk/reports/vitest/test-results.xml
+  #    expire_in: 1 week
   rules:
     - if: '$WORKFLOW == "build"'
       when: always

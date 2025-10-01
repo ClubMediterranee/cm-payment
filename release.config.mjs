@@ -43,67 +43,9 @@ export default defineConfig({
         command: 'build',
       },
     ],
-    [
-      '@cmflow/cli/semantic/core/conditional', // add this task to trigger build npm task
-      {
-        // when: (context) => context.branch.type === "release" //  default condition to run the task
-        run: ['@cmflow/cli/semantic/core/prepare/commit'],
-      },
-    ],
+    '@cmflow/cli/semantic/core/prepare/commit',
   ],
-  publish: ['@cmflow/cli/semantic/core/sync-repository'],
   success: [['semantic-release-jira-releases-modern', jiraReleasesConfig]],
   fail: [],
   writerOpts: {},
-  // plugins: [
-  //   '@semantic-release/commit-analyzer',
-  //   [
-  //     '@semantic-release/npm',
-  //     {
-  //       npmPublish: false,
-  //     },
-  //   ],
-  //   [
-  //     '@semantic-release/release-notes-generator',
-  //     {
-  //       // Preserving custom option from YAML; if unsupported by the plugin, it will be ignored.
-  //       commit: '-/commit',
-  //     },
-  //   ],
-  //   [
-  //     '@semantic-release/changelog',
-  //     {
-  //       changelogFile: 'CHANGELOG.md',
-  //       changelogTitle: '# ClubMed Payment SDK changelog',
-  //     },
-  //   ],
-  //   [
-  //     '@semantic-release/exec',
-  //     {
-  //       verifyReleaseCmd: 'echo "${nextRelease.version}" > /tmp/next_release_version',
-  //     },
-  //   ],
-  //   [
-  //     '@semantic-release/git',
-  //     {
-  //       assets: [
-  //         'CHANGELOG.md',
-  //         'package.json',
-  //         './packages/sdk/package.json',
-  //         './packages/sandbox/package.json',
-  //         'pnpm-lock.yaml',
-  //         'vitest.config.ts',
-  //       ],
-  //       message: 'chore(release): ${nextRelease.version}\n\n${nextRelease.notes}',
-  //     },
-  //   ],
-  //   [
-  //     '@saithodev/semantic-release-backmerge',
-  //     {
-  //       clearWorkspace: true,
-  //       restoreWorkspace: true,
-  //       backmergeBranches: [{ from: 'main', to: 'develop' }],
-  //     },
-  //   ],
-  // ],
 });
