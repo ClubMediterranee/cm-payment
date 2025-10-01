@@ -185,7 +185,7 @@ make-release:
     - test
     - build
   rules:
-    - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web") && $CI_COMMIT_REF_NAME == "develop"'
+    - if: '$WORKFLOW == "build" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web") && $CI_COMMIT_REF_NAME == "develop"'
       when: manual
     - when: never
   cache: {}
@@ -234,7 +234,7 @@ rebase-all:
 notify:
   stage: notification
   trigger:
-    include: .gitlab/notification.yml
+    include: .gitlab/ci/notification.yml
     forward:
       pipeline_variables: true
   rules:
