@@ -45,6 +45,7 @@ export default defineConfig({
     ],
     '@cmflow/cli/semantic/core/prepare/commit',
   ],
+  publish: [],
   success: [['semantic-release-jira-releases-modern', jiraReleasesConfig]],
   fail: [],
   writerOpts: {},
