@@ -1,6 +1,5 @@
 .publish-npm-package:
   script:
-    - !reference [.prepare_npm_env, script] # from commons.yml
     - rm .npmrc 2>/dev/null || true
     - echo "Publishing package to NPM"
     - npm config set strict-ssl false
@@ -9,7 +8,6 @@
 
 .publish-gitlab-package:
   script:
-    - !reference [.prepare_npm_env, script] # from commons.yml
     - echo "Publishing package to GITLAB"
     - rm .npmrc 2>/dev/null || true
     - npm config set @clubmed:registry "https://scm.clubmed.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"

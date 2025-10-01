@@ -1,4 +1,17 @@
-.git
+# Dependencies
 node_modules
-coverage
+
+# Build outputs
+build
+build-storybook
+storybook-static
 dist
+coverage
+
+# Logs
+*.log
+
+# Misc
+.tmp
+.temp
+.DS_Store

@@ -1,4 +1,16 @@
-# CM-payment SDK
+<div style="text-align: center" align="center">
+ <img src="https://ns.clubmed.com/fbs/RWD/branding2023/Logo/MicrosoftTeams-image%20(9).png" width="200" alt="Club Med"/>
+</div>
+
+<div align="center">
+   <h1>@clubmed/payment-sdk</h1>
+   <hr />
+
+[![npm version](https://badge.fury.io/js/%40clubmed%2Fpayment-sdk.svg)](https://badge.fury.io/js/%40clubmed%2Fpayment-sdk)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
+</div>
 
 ## Introduction
 
@@ -23,12 +35,12 @@ npm install cm-payment @tanstack/react-query react-hook-form @clubmed/trident-ui
 Before using the SDK, initialize it by setting up fetch options:
 
 ```tsx
-import { paymentSDK } from "cm-payment";
+import { paymentSDK } from 'cm-payment';
 
 paymentSDK.setFetchOptions({
-  apiKey: "YOUR_API_KEY",
+  apiKey: 'YOUR_API_KEY',
   getAccessToken: getMyAccessToken(),
-  locale: "YOUR_LOCALE",
+  locale: 'YOUR_LOCALE',
 });
 ```
 
@@ -37,13 +49,7 @@ paymentSDK.setFetchOptions({
 The form must be built using the React components provided by the SDK and wrapped inside the `FormProvider` from `cm-payment`.
 
 ```tsx
-import {
-  FormProvider,
-  CardNumberField,
-  ExpiryDateField,
-  CVCField,
-  SubmitButton,
-} from "cm-payment";
+import { FormProvider, CardNumberField, ExpiryDateField, CVCField, SubmitButton } from 'cm-payment';
 
 const PaymentForm = () => {
   return (
@@ -64,9 +70,9 @@ Your application should have a dedicated route for payment confirmation. This ro
 #### Example Route Setup
 
 ```tsx
-import { usePaymentConfirmation } from "cm-payment";
-import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { usePaymentConfirmation } from 'cm-payment';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const PaymentConfirmation = () => {
   const { paymentId } = useParams();

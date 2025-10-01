@@ -5,14 +5,19 @@ const jiraNotesConfig = {
   ticketPrefixes: ['GPAY'],
 };
 
-// Use the same configuration for releases plugin unless specific options are needed
-const jiraReleasesConfig = { ...jiraNotesConfig };
+const jiraReleasesConfig = {
+  jiraHost: 'https://clubmed.atlassian.net',
+  projectId: 'GPAY',
+  releaseNameTemplate: 'SDK-PAYMENT-v${version}',
+  released: false,
+  ticketPrefixes: ['GPAY'],
+};
 
 export default defineConfig({
   npmPublish: false,
   branches: [
     '+([0-9])?(.{+([0-9]),x}).x',
-    'master',
+    'main',
     { name: 'next-release', prerelease: 'rc' },
     { name: 'develop', prerelease: 'beta' },
   ],
@@ -21,7 +26,7 @@ export default defineConfig({
     ['semantic-release-jira-notes', jiraNotesConfig],
     ['semantic-release-jira-releases-modern', jiraReleasesConfig],
   ],
-  analyzeCommits: ['@cmflow/cli/semantic/core/analyze-commits'],
+  analyzeCommits: ['@semantic-release/commit-analyzer'],
   verifyRelease: ['@cmflow/cli/semantic/core/verify-release'],
   generateNotes: [['semantic-release-jira-notes', jiraNotesConfig]],
   prepare: [
