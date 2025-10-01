@@ -1,0 +1,4 @@
+.dotenv-source:
+  script:
+    - echo "Loading environment variables from .env.$ENV"
+    - source ".gitlab/envs/.env.$ENV"

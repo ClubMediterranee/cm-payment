@@ -7,6 +7,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 const root = join(import.meta.dirname);
 
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || '/',
   plugins: [
     react(),
     tsconfigPaths({

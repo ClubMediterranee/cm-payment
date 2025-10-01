@@ -54,7 +54,10 @@ export function useAppParams() {
       setLocation('/404');
     }
 
-    if (!ParamsSchema.safeParse(values).success) {
+    const validationResult = ParamsSchema.safeParse(values);
+
+    if (!validationResult.success) {
+      console.error('[APP] Invalid parameters', validationResult, values);
       session.clear();
       setLocation('/400?error=invalid_parameters');
     }

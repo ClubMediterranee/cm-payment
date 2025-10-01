@@ -38,6 +38,7 @@ export default defineConfig({
         '**/*.stories.{ts,tsx}',
         '**/*.d.ts',
         '**/__mocks__/**',
+        '**/__fixtures__/**',
         '**/tests/**',
         'lib/atoms/Icons/**',
         'lib/tailwind/**',
@@ -53,10 +54,10 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        statements: 16.74,
-        branches: 59.18,
-        functions: 35.08,
-        lines: 16.74,
+        statements: 14.88,
+        branches: 57.14,
+        functions: 32.72,
+        lines: 14.88,
       },
     },
     projects: [

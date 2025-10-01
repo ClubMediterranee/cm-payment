@@ -1,0 +1,45 @@
+# Multi-stage build for the payment applications
+FROM node:20-alpine AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/app/package.json ./packages/app/
+COPY packages/starter/package.json ./packages/starter/
+COPY packages/sdk/package.json ./packages/sdk/
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --shamefully-hoist
+
+# Copy all source code
+COPY . .
+
+# Build all applications with correct base paths
+RUN NODE_ENV=$NODE_ENV VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
+RUN NODE_ENV=$NODE_ENV VITE_BASE_PATH=/starter/ pnpm --filter @clubmed/starter run build
+RUN NODE_ENV=$NODE_ENV VITE_BASE_PATH=/storybook/ pnpm build:storybook
+
+# Production stage with nginx
+FROM nginx:alpine
+
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy built applications to nginx html directory
+COPY --from=builder /app/packages/app/dist /usr/share/nginx/html
+COPY --from=builder /app/packages/starter/dist /usr/share/nginx/html/starter
+COPY --from=builder /app/storybook-static /usr/share/nginx/html/storybook
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx with environment substitution for API_TARGET (defaults to https://api.integ.clubmed.com)
+CMD ["/bin/sh", "-c", "API_TARGET=${API_TARGET:-https://api.integ.clubmed.com}; export API_TARGET; envsubst '$API_TARGET' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.rendered && exec nginx -g 'daemon off;' -c /etc/nginx/nginx.conf.rendered"]
