@@ -1,0 +1,25 @@
+.deploy-with-parameters:
+  script: |
+    echo "Heroku deploy with parameters"
+
+    echo "ENV: $ENV"      
+    echo "VERSION: $VERSION"
+    echo "WORKFLOW: $WORKFLOW"
+    echo "HEROKU_APP: $HEROKU_APP"
+    echo "HEROKU_TEAM: $HEROKU_TEAM"
+    echo "APP_ENV_LEVEL: $APP_ENV_LEVEL"
+
+    echo "Heroku login"
+
+    npx heroku@7.67.2 container:login
+
+    echo "Docker login & build"
+
+    docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
+    docker build . -t registry.heroku.com/${HEROKU_APP}/web --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg NO_PROXY=${NO_PROXY}
+
+    docker push registry.heroku.com/${HEROKU_APP}/web
+
+    echo "Heroku deploy"
+
+    npx heroku@7.67.2 container:release web --app ${HEROKU_APP}

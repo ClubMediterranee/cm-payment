@@ -1,0 +1,116 @@
+stages:
+  - notify_on_teams
+
+.notification_template:
+  image: alpine/curl
+  variables:
+    TEAMS_WEBHOOK_URL: $TEAMS_WEBHOOK
+  script: |
+    cat << EOF > payload.json
+    {
+      "type": "message",
+      "attachments": [
+        {
+          "contentType": "application/vnd.microsoft.card.adaptive",
+          "contentUrl": null,
+          "content": {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.2",
+            "body": [
+              {
+                "type": "TextBlock",
+                "size": "Medium",
+                "weight": "Bolder",
+                "text": "${CI_PROJECT_PATH//\// → }"
+              },
+              {
+                "type": "ColumnSet",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "style": "Person",
+                        "url": "https://about.gitlab.com/images/press/press-kit-icon.svg",
+                        "size": "Medium"
+                      }
+                    ],
+                    "width": "auto"
+                  },
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "TextBlock",
+                        "spacing": "None",
+                        "text": "**Author**: $GITLAB_USER_NAME",
+                        "isSubtle": false,
+                        "wrap": true
+                      },
+                      {
+                        "type": "TextBlock",
+                        "spacing": "None",
+                        "text": "**Workflow**: $WORKFLOW",
+                        "isSubtle": false,
+                        "wrap": true
+                      },
+                      {
+                        "type": "TextBlock",
+                        "spacing": "None",
+                        "text": "**Environment**: : $ENV",
+                        "isSubtle": false,
+                        "wrap": true
+                      },
+                      {
+                        "type": "TextBlock",
+                        "spacing": "None",
+                        "text": "**Version**: : $VERSION",
+                        "isSubtle": false,
+                        "wrap": true
+                      },
+                      {
+                        "type": "TextBlock",
+                        "spacing": "None",
+                        "text": "**Status**: $STATUS $ICON",
+                        "isSubtle": false,
+                        "wrap": true
+                      },
+                    ],
+                    "width": "stretch"
+                  }
+                ]
+              },
+              {
+                "type": "TextBlock",
+                "text": "Pipeline ${STATUS}. [See more](${CI_PIPELINE_URL}).",
+                "wrap": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+    EOF
+    curl -H 'Content-Type: application/json' -d @payload.json $TEAMS_WEBHOOK_URL
+
+teams_notification_when_pipeline_failed:
+  stage: notify_on_teams
+  extends:
+    - .notification_template
+  rules:
+    - when: on_failure
+      variables:
+        STATUS: 'failed'
+        ICON: '❌'
+
+teams_notification_when_pipeline_succeed:
+  stage: notify_on_teams
+  extends:
+    - .notification_template
+  rules:
+    - when: on_success
+      variables:
+        STATUS: 'success'
+        ICON: '✅'
