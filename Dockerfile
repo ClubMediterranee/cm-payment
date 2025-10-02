@@ -39,7 +39,7 @@ COPY --from=builder /app/packages/starter/dist /usr/share/nginx/html/starter
 COPY --from=builder /app/storybook-static /usr/share/nginx/html/storybook
 
 # Expose port 8080 (non-privileged). Actual port can be overridden via $PORT at runtime
-EXPOSE 8080
+EXPOSE ${PORT:-8080}
 
 # Start nginx with environment substitution for API_TARGET and PORT
 CMD ["/bin/sh", "-c", "API_TARGET=${API_TARGET:-https://api.integ.clubmed.com}; PORT=${PORT:-8080}; export API_TARGET PORT; envsubst '$API_TARGET $PORT' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.rendered && exec nginx -g 'daemon off;' -c /etc/nginx/nginx.conf.rendered"]
