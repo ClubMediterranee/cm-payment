@@ -200,7 +200,7 @@ deploy:
   script:
     - !reference [.switch-branch, script]
     - !reference [.dotenv-source, script]
-    - echo $VERSION > resources/release.info
+    - echo $VERSION > packages/app/public/release.info
     - !reference [.deploy-with-parameters, script]
     - |
       if [ "$ENV" = "production" ]; then

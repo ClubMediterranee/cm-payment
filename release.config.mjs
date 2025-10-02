@@ -34,7 +34,7 @@ export default defineConfig({
     [
       '@cmflow/cli/semantic/core/prepare/release-info',
       {
-        path: './resources/release.info',
+        path: './packages/app/public/release.info',
       },
     ],
     [

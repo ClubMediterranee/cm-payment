@@ -8,6 +8,7 @@
     "dev:prod": "NODE_ENV=production vite --port 4003",
     "dev:staging": "NODE_ENV=staging vite --port 4003",
     "build": "vite build",
+    "postbuild": "node ./scripts/build-version.js",
     "generate:types": "orval",
     "preview": "vite preview"
   },
