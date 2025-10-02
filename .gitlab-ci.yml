@@ -205,7 +205,7 @@ deploy:
     - |
       if [ "$ENV" = "production" ]; then
         yarn install
-        npx -p @cmflow/cli cm jira-releases --project-id CMAB --component ALGOLIA --tag $VERSION --verbose --update
+        npx -p @cmflow/cli cm jira-releases --project-id GPAY --component SDK-PAYMENT --tag $VERSION --verbose --update
       fi
 
 rebase:
