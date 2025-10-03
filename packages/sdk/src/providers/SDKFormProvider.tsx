@@ -1,9 +1,10 @@
-import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/useSDKPaymentContext';
-import { validateComponents } from '@clubmed/payment-sdk/utils/validateComponents';
+import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/utils/useSDKPaymentContext';
+import { validateComponents } from '@clubmed/payment-sdk/utils/validation/validateComponents';
 import type { ComponentProps, PropsWithChildren } from 'react';
-import { FormProvider as ReactHookFormProvider, useForm } from 'react-hook-form';
+import { FormProvider as ReactHookFormProvider } from 'react-hook-form';
 
 import { SDKForm } from '../components/SDKForm';
+import { useForm } from '../hooks/utils/useForm';
 
 /**
  * Check the presence of required components based on the issuer type and provide form context

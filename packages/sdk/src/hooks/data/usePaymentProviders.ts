@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { getV1PaymentProviders } from '../__generated__';
-import { useOidcContext } from './useSDKPaymentContext.js';
+import { getV1PaymentProviders } from '../../__generated__';
+import { useOidcContext } from '../utils/useSDKPaymentContext';
 
 export const usePaymentProviders = () => {
   const { withAuth } = useOidcContext();

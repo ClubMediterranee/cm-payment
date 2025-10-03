@@ -3,9 +3,10 @@ import { Icon, type IconicNames } from '@clubmed/trident-icons';
 import { Card } from '@clubmed/trident-ui/molecules/Card';
 import { Checkbox, Checkboxes } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
-import { useFormContext } from 'react-hook-form';
 
 import { GLOBAL_SDK_SETTINGS } from '../config';
+import { useFormContext } from '../hooks/utils/useForm';
+import { SDKFormData } from '../types/FormData';
 
 type Props = {
   contactMethodProviders?: string[];
@@ -53,7 +54,7 @@ export const ContactChoice = ({
                 {isChecked && (
                   <TextField
                     type={type}
-                    {...register(`billing_details.${name}`)}
+                    {...register(`billing_details.${name}` as keyof SDKFormData['billing_details'])}
                     data-name={'InputFor_' + name}
                     data-testid={'InputFor_' + name}
                     onChange={setValue}

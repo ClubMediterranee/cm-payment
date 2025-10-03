@@ -1,7 +1,7 @@
-import { isServerValidationProvidersEnabled } from '@clubmed/payment-sdk/services/isServerValidationProvidersEnabled.js';
+import { isServerValidationProvidersEnabled } from '@clubmed/payment-sdk/utils/validation/isServerValidationProvidersEnabled';
 import { useQuery } from '@tanstack/react-query';
 
-import { postV1PaymentsPaymentIdNotify } from '../__generated__';
+import { postV1PaymentsPaymentIdNotify } from '../../__generated__';
 
 export const usePaymentNotify = ({ paymentId }: { paymentId: string }) => {
   const search = new URLSearchParams(document.location.search);
@@ -10,8 +10,7 @@ export const usePaymentNotify = ({ paymentId }: { paymentId: string }) => {
   return useQuery({
     queryKey: ['notify'],
     queryFn: () =>
-      // TODO Jeremo enleve le never et tu verras le problème
-      postV1PaymentsPaymentIdNotify(paymentId, { provider_response: search as never }),
+      postV1PaymentsPaymentIdNotify(paymentId, { provider_response: search.toString() }),
     enabled: isServerValidationProvidersEnabled(paymentId, provider_id),
     retry: false,
   });

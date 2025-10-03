@@ -1,6 +1,7 @@
-import { usePaymentProviders } from '@clubmed/payment-sdk/hooks/usePaymentProviders.js';
 import { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+
+import { usePaymentProviders } from './data/usePaymentProviders';
+import { useFormContext } from './utils/useForm';
 
 export function usePaymentProvidersCheckboxes() {
   const { data: paymentProviders = [], isSuccess } = usePaymentProviders();

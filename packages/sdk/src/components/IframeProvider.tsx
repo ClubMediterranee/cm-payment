@@ -1,5 +1,5 @@
 import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config';
-import { usePaymentRedirect } from '@clubmed/payment-sdk/hooks/usePaymentRedirect';
+import { usePaymentRedirect } from '@clubmed/payment-sdk/hooks/data/usePaymentRedirect';
 import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
@@ -30,7 +30,7 @@ export const IframeProvider = () => {
 
   useEffect(() => {
     if (displayProviderIframe) {
-      mutate(getValues() as never);
+      mutate(getValues());
     }
   }, [displayProviderIframe, getValues, mutate, watchedForm]);
 

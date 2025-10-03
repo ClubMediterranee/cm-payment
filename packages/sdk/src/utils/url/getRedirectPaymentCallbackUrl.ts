@@ -1,4 +1,4 @@
-import { getSDKPaymentOptions } from '../providers/SDKConfigProvider.js';
+import { getSDKPaymentOptions } from '../../providers/SDKConfigProvider.js';
 
 export function getRedirectPaymentCallbackUrl(paymentId: string, providerId: string): string {
   const {

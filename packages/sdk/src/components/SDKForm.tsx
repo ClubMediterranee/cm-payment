@@ -1,8 +1,8 @@
-import { IframeProvider } from '@clubmed/payment-sdk/components/providers/IframeProvider';
+import { IframeProvider } from '@clubmed/payment-sdk/components/IframeProvider';
 import { PropsWithChildren, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
 
-import { type GetPaymentRedirectUrlParams, usePaymentRedirect } from '../hooks/usePaymentRedirect';
+import { usePaymentRedirect } from '../hooks/data/usePaymentRedirect';
+import { useFormContext } from '../hooks/utils/useForm';
 
 type Props = {
   /**
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function SDKForm({ children, onError, onLoad }: PropsWithChildren<Props>) {
-  const methods = useFormContext<GetPaymentRedirectUrlParams>();
+  const methods = useFormContext();
 
   const { mutate, isPending } = usePaymentRedirect({
     onError: (error) => {
@@ -32,14 +32,12 @@ export function SDKForm({ children, onError, onLoad }: PropsWithChildren<Props>)
   }, [isPending, onLoad]);
 
   return (
-    <>
-      <form
-        onSubmit={methods.handleSubmit(mutate as any)}
-        className="w-full flex flex-col justify-center items-center gap-24"
-      >
-        {children}
-        <IframeProvider />
-      </form>
-    </>
+    <form
+      onSubmit={methods.handleSubmit((formData) => mutate(formData))}
+      className="w-full flex flex-col justify-center items-center gap-24"
+    >
+      {children}
+      <IframeProvider />
+    </form>
   );
 }

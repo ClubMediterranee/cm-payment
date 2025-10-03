@@ -1,11 +1,11 @@
-import { getCallbackUrl } from '@clubmed/payment-sdk/services/cookies.js';
+import { COOKIE_KEYS, getCookie } from '@clubmed/payment-sdk/utils/storage/cookies';
 import { useEffect } from 'react';
 
-import { usePaymentNotify } from './usePaymentNotify';
-import { usePaymentStatus } from './usePaymentStatus';
+import { usePaymentNotify } from './data/usePaymentNotify';
+import { usePaymentStatus } from './data/usePaymentStatus';
 
 export const usePaymentConfirmation = ({ paymentId }: { paymentId: string }) => {
-  const callbackUrl = getCallbackUrl();
+  const callbackUrl = getCookie(COOKIE_KEYS.CALLBACK_URL);
   const search = new URLSearchParams(document.location.search);
   const proposalId = new URLSearchParams(search).get('proposal_id');
 

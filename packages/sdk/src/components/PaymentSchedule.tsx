@@ -1,10 +1,10 @@
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
-import { Card } from '@clubmed/trident-ui/molecules/Card';
 import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
 import { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
 
-import { usePaymentSchedule } from '../hooks/usePaymentSchedule';
+import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
+import { useFormContext } from '../hooks/utils/useForm';
+import { FormPanel } from './ui/FormPanel';
 
 export const PaymentSchedule = () => {
   const { paymentSchedule } = usePaymentSchedule();
@@ -12,30 +12,31 @@ export const PaymentSchedule = () => {
   const watchedAmount = watch('amount');
 
   useEffect(() => {
-    setValue('amount', paymentSchedule[0]?.amount);
+    setValue('amount', paymentSchedule[0]?.amount || 0);
   }, [paymentSchedule, setValue]);
 
   return (
-    <>
+    <FormPanel>
       {paymentSchedule.map((props) => {
         return (
-          <Card title="" key={props.amount} icon="Clipboard">
-            <Checkbox
-              value={props.amount}
-              {...register('amount')}
-              onChange={setValue}
-              checked={props.amount === watchedAmount}
-            >
-              Je paie le montant de{' '}
-              <span className="font-bold text-sienna mx-4">
-                {props.amount} {props.currency}
-              </span>
-              {'deadline' in props ? ` avant le ${props.deadline}` : ''}
-            </Checkbox>
-          </Card>
+          <Checkbox
+            key={props.amount}
+            value={props.amount}
+            {...register('amount')}
+            onChange={setValue}
+            className="my-20"
+            checked={props.amount === watchedAmount}
+          >
+            Je paie le montant de{' '}
+            <span className="font-bold text-sienna mx-4">
+              {props.amount} {props.currency}
+            </span>
+            {'deadline' in props ? ` avant le ${props.deadline}` : ''}
+          </Checkbox>
         );
       })}
-    </>
+    </FormPanel>
   );
 };
+
 PaymentSchedule.COMPONENT_KEY = TOKENS.PaymentSchedule;

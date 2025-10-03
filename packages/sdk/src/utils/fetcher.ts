@@ -40,10 +40,10 @@ export const fetcher = async <T>(
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       ...(withAuth && accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      ...(data ? { body: JSON.stringify(data) } : {}),
       'accept-language': locale,
       ...headers,
     },
+    ...(data ? { body: JSON.stringify(data) } : {}),
   };
 
   const response = await fetch(endpoint, opts);

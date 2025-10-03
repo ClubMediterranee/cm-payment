@@ -1,4 +1,4 @@
-import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/useSDKPaymentContext.js';
+import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/utils/useSDKPaymentContext.js';
 import { Icon } from '@clubmed/trident-icons';
 import { Breadcrumb } from '@clubmed/trident-ui/molecules/Breadcrumb';
 import { useSearch } from 'wouter';
