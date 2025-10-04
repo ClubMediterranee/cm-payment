@@ -17,6 +17,8 @@ console.log('- NODE_ENV:', process.env.NODE_ENV);
 console.log('- HOST:', process.env.HOST);
 console.log('- VITE_BASE_PATH:', process.env.VITE_BASE_PATH);
 console.log('- VITE_API_TARGET:', process.env.VITE_API_TARGET);
+console.log('- VITE_GM_OIDC_URL:', process.env.VITE_GM_OIDC_URL);
+console.log('- VITE_GO_OIDC_URL:', process.env.VITE_GO_OIDC_URL);
 console.log('');
 
 // https://vite.dev/config/
