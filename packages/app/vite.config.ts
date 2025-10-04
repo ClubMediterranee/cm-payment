@@ -12,6 +12,13 @@ dotenv.config({
   path: join(root, './config'),
 });
 
+console.log('⚙️  Vite config:');
+console.log('- NODE_ENV:', process.env.NODE_ENV);
+console.log('- HOST:', process.env.HOST);
+console.log('- VITE_BASE_PATH:', process.env.VITE_BASE_PATH);
+console.log('- VITE_API_TARGET:', process.env.VITE_API_TARGET);
+console.log('');
+
 // https://vite.dev/config/
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',

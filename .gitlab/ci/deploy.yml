@@ -16,7 +16,7 @@
     echo "Docker login & build"
 
     docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
-    docker build . -t registry.heroku.com/${HEROKU_APP}/web --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg NO_PROXY=${NO_PROXY} --build-arg NODE_ENV=${NODE_ENV}
+    docker build . -t registry.heroku.com/${HEROKU_APP}/web --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg NO_PROXY=${NO_PROXY} --build-arg NODE_ENV=${$APP_ENV_LEVEL}
 
     docker push registry.heroku.com/${HEROKU_APP}/web
 
