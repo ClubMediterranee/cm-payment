@@ -73,13 +73,18 @@
 
     - !reference [.gitlab_api_utils_setup_apt, script] # from @clubmed/templates:CI/library/gitlab-api-utils.yaml
     - !reference [.gitlab_api_utils, script] # from @clubmed/templates:CI/library/gitlab-api-utils.yaml
-    - MESSAGE_PREFIX="Storybook successfully **DEPLOYED** on Chromatic (n° $BUILD_NUMBER)"
-    - >
-      MESSAGE="$MESSAGE_PREFIX
+    - |
+      # Post MR comment only for merge request pipelines
+      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ] && [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        MESSAGE_PREFIX="Storybook successfully **DEPLOYED** on Chromatic (n° $BUILD_NUMBER)"
+        MESSAGE="$MESSAGE_PREFIX
 
-      - 🚀 Storybook is accessible at: <$STORYBOOK_URL>
+        - 🚀 Storybook is accessible at: <$STORYBOOK_URL>
 
-      - 🚀 Chromatic review is accessible at: <$CHROMATIC_REVIEW_URL>
-      "
+        - 🚀 Chromatic review is accessible at: <$CHROMATIC_REVIEW_URL>
+        "
 
-      gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
+        gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
+      else
+        echo "Skipping MR comment: not a merge request pipeline or MR IID missing."
+      fi
