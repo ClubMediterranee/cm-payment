@@ -6,6 +6,12 @@
     # Run Chromatic and capture diagnostics JSON. Token can be provided via CHROMATIC_PROJECT_TOKEN or CHROMATIC_TOKEN
     - |
       CMD="$PM run chromatic $ARG_SEP --exit-zero-on-changes --diagnosticsFile=chromatic-diagnostics.json --branch-name ${CI_COMMIT_REF_NAME} --skip-update-check"
+
+      # If on develop branch, accept changes to set new baseline for future diffs
+      if [ "$CI_COMMIT_REF_NAME" = "$BRANCH_DEV" ]; then
+        CMD="$CMD --auto-accept-changes"
+      fi
+
       echo "Running: $CMD"
       # shellcheck disable=SC2086
       eval $CMD

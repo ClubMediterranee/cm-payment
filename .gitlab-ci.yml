@@ -134,6 +134,8 @@ chromatic:
   rules:
     - if: '$WORKFLOW == "build" && $CI_PIPELINE_SOURCE == "merge_request_event"'
       when: always
+    - if: '$WORKFLOW == "build" && $CI_COMMIT_REF_NAME == $BRANCH_DEV && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
+      when: always
     - when: never
 
 release:
