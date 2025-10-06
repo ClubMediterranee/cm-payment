@@ -16,9 +16,9 @@ console.log('⚙️  Vite config:');
 console.log('- NODE_ENV:', process.env.NODE_ENV);
 console.log('- HOST:', process.env.HOST);
 console.log('- VITE_BASE_PATH:', process.env.VITE_BASE_PATH);
-console.log('- VITE_API_TARGET:', process.env.VITE_API_TARGET);
 console.log('- VITE_GM_OIDC_URL:', process.env.VITE_GM_OIDC_URL);
 console.log('- VITE_GO_OIDC_URL:', process.env.VITE_GO_OIDC_URL);
+console.log('- API_TARGET:', process.env.API_TARGET);
 console.log('');
 
 // https://vite.dev/config/
@@ -35,7 +35,7 @@ export default defineConfig({
     host: process.env.HOST,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_TARGET,
+        target: process.env.API_TARGET,
         secure: false,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
