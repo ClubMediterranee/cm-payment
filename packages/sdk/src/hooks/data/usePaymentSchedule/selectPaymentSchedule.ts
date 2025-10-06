@@ -49,8 +49,8 @@ export const selectPaymentSchedule = (
   }
 
   if (
-    mappedPaymentSchedule?.length > 1 ||
-    ('paid' in data && mappedPaymentSchedule?.length === 1)
+    mappedPaymentSchedule?.length > 2 ||
+    ('paid' in data && mappedPaymentSchedule?.length === 2)
   ) {
     schedule.push({ ...mappedPaymentSchedule[0] });
   }

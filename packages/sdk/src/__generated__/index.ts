@@ -3,8 +3,12 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3313.5
+ * OpenAPI spec version: 0.3315.2
  */
+import { faker } from '@faker-js/faker';
+
+import { HttpResponse, delay, http } from 'msw';
+
 import { fetcher } from '../utils/fetcher';
 /**
  * Eligible attendees for this accommodation
@@ -5779,6 +5783,29 @@ export interface ProposalResponseModelV1 {
   vendor?: ProposalResponseVendorModel;
 }
 
+export interface BookingAttendee {
+  id: string;
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id?: string;
+  gm_number?: string;
+  civility?: string;
+  first_name?: string;
+  unicode_first_name?: string;
+  last_name?: string;
+  unicode_last_name?: string;
+  birthdate?: string;
+  email?: string;
+  identity_number?: string;
+  main_contact: boolean;
+  phones?: PhonesModel;
+  _links?: LinksModel;
+}
+
+export type BookingAttendeesModel = BookingAttendee[];
+
 export interface BookingInterventionAssetModel {
   /** The asset code */
   code: string;
@@ -5825,29 +5852,6 @@ export interface BookingRoomInterventionModel {
 }
 
 export type BookingRoomInterventionsModel = BookingRoomInterventionModel[];
-
-export interface BookingAttendee {
-  id: string;
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id?: string;
-  gm_number?: string;
-  civility?: string;
-  first_name?: string;
-  unicode_first_name?: string;
-  last_name?: string;
-  unicode_last_name?: string;
-  birthdate?: string;
-  email?: string;
-  identity_number?: string;
-  main_contact: boolean;
-  phones?: PhonesModel;
-  _links?: LinksModel;
-}
-
-export type BookingAttendeesModel = BookingAttendee[];
 
 /**
  * TTL
@@ -6145,142 +6149,6 @@ export interface ProfileModelV0 {
   /** identity number which can be mandatory in some countries. For example, in Italy, tax number is mandatory for book a travel. */
   identity_number?: ProfileModelV0IdentityNumber;
 }
-
-/**
- * List of children birthdates
- */
-export type Birthdates = string[];
-
-/**
- * indicates the type of proposal that has been saved on the customer account
- */
-export type ProposalSummaryTypeModel =
-  (typeof ProposalSummaryTypeModel)[keyof typeof ProposalSummaryTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProposalSummaryTypeModel = {
-  PRE_BOOKING: 'PRE_BOOKING',
-  STANDARD: 'STANDARD',
-} as const;
-
-/**
- * Transportation mode: PLANE, TRAIN, BOAT, UNKNOWN or null
- */
-export type TransportType = 'PLANE' | 'TRAIN' | 'BOAT' | 'UNKNOWN' | null;
-
-export type TransportSummaryDepartureCity = string | null;
-
-export type TransportSummaryArrivalCity = string | null;
-
-export interface TransportSummary {
-  transport_type?: TransportType;
-  departure_city?: TransportSummaryDepartureCity;
-  arrival_city?: TransportSummaryArrivalCity;
-}
-
-/**
- * Saved proposals for a customer
- */
-export interface ProposalSummaryModel {
-  /** Context id */
-  id: string;
-  /** Product id. Ex: AGAC */
-  product_id: string;
-  /** Resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  resort_arrival_date?: string;
-  /** Resort departure date 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  resort_departure_date?: string;
-  /**
-   * The count of adults
-   * @minimum 0
-   */
-  adults_count?: number;
-  /**
-   * The count of children
-   * @minimum 0
-   */
-  children_count?: number;
-  birthdates?: Birthdates;
-  type?: ProposalSummaryTypeModel;
-  /** Indicates weither the proposal can be transformed into a booking or not. Always displayed as false when attendees are not added. */
-  is_bookable?: boolean;
-  transport_summary?: TransportSummary;
-}
-
-/**
- * List of customer's saved proposals summary
- */
-export type ProposalSummariesModel = ProposalSummaryModel[];
-
-export interface CustomerCrmHistoryItemModel {
-  /** Url to use so as to retrieve GM's emails */
-  url?: string;
-}
-
-export type CustomerCrmHistoryModel = CustomerCrmHistoryItemModel[];
-
-export type CreateBookmarksBirthdatesModelAnyOfItem = string | null;
-
-/**
- * List of birthdate of kids. Ex: 20160430. Date format YYYYMMDD
- */
-export type CreateBookmarksBirthdatesModel = CreateBookmarksBirthdatesModelAnyOfItem[] | null;
-
-export interface CreateBookmarkPriceModel {
-  /** Price */
-  amount: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-/**
- * adult attendees number
- */
-export type BookmarkModelAdultsCount =
-  (typeof BookmarkModelAdultsCount)[keyof typeof BookmarkModelAdultsCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BookmarkModelAdultsCount = {
-  NUMBER_0: 0,
-} as const;
-
-/**
- * children attendees number
- */
-export type BookmarkModelChildrenCount = 0 | null;
-
-export interface BookmarkModel {
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
-  resort_departure_date?: string;
-  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
-  resort_arrival_date?: string;
-  /** Total number of journey attendees. */
-  number_attendees?: number;
-  /** adult attendees number */
-  adults_count: BookmarkModelAdultsCount;
-  /** children attendees number */
-  children_count?: BookmarkModelChildrenCount;
-  birthdates?: CreateBookmarksBirthdatesModel;
-  /** The departure option id from product/id booking criteria. */
-  departure_option_id?: string;
-  price?: CreateBookmarkPriceModel;
-  /** Bookmark's id */
-  id: string;
-  _links?: LinksModel;
-}
-
-/**
- * List of bookmarks
- */
-export type BookmarksModel = BookmarkModel[];
 
 /**
  * customer profile first name. Cannot be modified. Use customers/{customer_id}/profile instead
@@ -6731,6 +6599,142 @@ export interface TravelDocumentsModelV0 {
   driving_licence?: TravelDocumentDrivingLicenceModelV0;
   travel_membership_cards?: TravelMembershipCardsV0;
 }
+
+export interface CustomerCrmHistoryItemModel {
+  /** Url to use so as to retrieve GM's emails */
+  url?: string;
+}
+
+export type CustomerCrmHistoryModel = CustomerCrmHistoryItemModel[];
+
+export type CreateBookmarksBirthdatesModelAnyOfItem = string | null;
+
+/**
+ * List of birthdate of kids. Ex: 20160430. Date format YYYYMMDD
+ */
+export type CreateBookmarksBirthdatesModel = CreateBookmarksBirthdatesModelAnyOfItem[] | null;
+
+export interface CreateBookmarkPriceModel {
+  /** Price */
+  amount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+/**
+ * adult attendees number
+ */
+export type BookmarkModelAdultsCount =
+  (typeof BookmarkModelAdultsCount)[keyof typeof BookmarkModelAdultsCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BookmarkModelAdultsCount = {
+  NUMBER_0: 0,
+} as const;
+
+/**
+ * children attendees number
+ */
+export type BookmarkModelChildrenCount = 0 | null;
+
+export interface BookmarkModel {
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
+  resort_departure_date?: string;
+  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
+  resort_arrival_date?: string;
+  /** Total number of journey attendees. */
+  number_attendees?: number;
+  /** adult attendees number */
+  adults_count: BookmarkModelAdultsCount;
+  /** children attendees number */
+  children_count?: BookmarkModelChildrenCount;
+  birthdates?: CreateBookmarksBirthdatesModel;
+  /** The departure option id from product/id booking criteria. */
+  departure_option_id?: string;
+  price?: CreateBookmarkPriceModel;
+  /** Bookmark's id */
+  id: string;
+  _links?: LinksModel;
+}
+
+/**
+ * List of bookmarks
+ */
+export type BookmarksModel = BookmarkModel[];
+
+/**
+ * List of children birthdates
+ */
+export type Birthdates = string[];
+
+/**
+ * indicates the type of proposal that has been saved on the customer account
+ */
+export type ProposalSummaryTypeModel =
+  (typeof ProposalSummaryTypeModel)[keyof typeof ProposalSummaryTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProposalSummaryTypeModel = {
+  PRE_BOOKING: 'PRE_BOOKING',
+  STANDARD: 'STANDARD',
+} as const;
+
+/**
+ * Transportation mode: PLANE, TRAIN, BOAT, UNKNOWN or null
+ */
+export type TransportType = 'PLANE' | 'TRAIN' | 'BOAT' | 'UNKNOWN' | null;
+
+export type TransportSummaryDepartureCity = string | null;
+
+export type TransportSummaryArrivalCity = string | null;
+
+export interface TransportSummary {
+  transport_type?: TransportType;
+  departure_city?: TransportSummaryDepartureCity;
+  arrival_city?: TransportSummaryArrivalCity;
+}
+
+/**
+ * Saved proposals for a customer
+ */
+export interface ProposalSummaryModel {
+  /** Context id */
+  id: string;
+  /** Product id. Ex: AGAC */
+  product_id: string;
+  /** Resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  resort_arrival_date?: string;
+  /** Resort departure date 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  resort_departure_date?: string;
+  /**
+   * The count of adults
+   * @minimum 0
+   */
+  adults_count?: number;
+  /**
+   * The count of children
+   * @minimum 0
+   */
+  children_count?: number;
+  birthdates?: Birthdates;
+  type?: ProposalSummaryTypeModel;
+  /** Indicates weither the proposal can be transformed into a booking or not. Always displayed as false when attendees are not added. */
+  is_bookable?: boolean;
+  transport_summary?: TransportSummary;
+}
+
+/**
+ * List of customer's saved proposals summary
+ */
+export type ProposalSummariesModel = ProposalSummaryModel[];
 
 export type OptinsModel = OptinModel[];
 
@@ -7202,2409 +7206,6 @@ export interface CruiseThematicModel {
  * List of thematics for this cruise
  */
 export type CruiseThematicsModel = CruiseThematicModel[];
-
-export type MediaListModel = string[];
-
-/**
- * temperature unit code
- */
-export type Unit = (typeof Unit)[keyof typeof Unit];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Unit = {
-  CELSIUS: 'CELSIUS',
-  FAHRENHEIT: 'FAHRENHEIT',
-} as const;
-
-/**
- * day minimum temperature
- */
-export type ProductWeatherForecastTemperatureModelMin = number | null;
-
-/**
- * day maximum temperature
- */
-export type ProductWeatherForecastTemperatureModelMax = number | null;
-
-/**
- * morning temperature
- */
-export type ProductWeatherForecastTemperatureModelMorning = number | null;
-
-/**
- * afternoon temperature
- */
-export type ProductWeatherForecastTemperatureModelAfternoon = number | null;
-
-/**
- * evening temperature
- */
-export type ProductWeatherForecastTemperatureModelEvening = number | null;
-
-/**
- * night temperature
- */
-export type ProductWeatherForecastTemperatureModelNight = number | null;
-
-export interface ProductWeatherForecastTemperatureModel {
-  /** day minimum temperature */
-  min: ProductWeatherForecastTemperatureModelMin;
-  /** day maximum temperature */
-  max: ProductWeatherForecastTemperatureModelMax;
-  /** morning temperature */
-  morning: ProductWeatherForecastTemperatureModelMorning;
-  /** afternoon temperature */
-  afternoon: ProductWeatherForecastTemperatureModelAfternoon;
-  /** evening temperature */
-  evening: ProductWeatherForecastTemperatureModelEvening;
-  /** night temperature */
-  night: ProductWeatherForecastTemperatureModelNight;
-}
-
-/**
- * code for the weather description. Can be used to display a weather icon
- */
-export type Code = (typeof Code)[keyof typeof Code];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Code = {
-  RAIN: 'RAIN',
-  THUNDERSTORM: 'THUNDERSTORM',
-  SNOW: 'SNOW',
-  MIST: 'MIST',
-  CLEAR_SKY: 'CLEAR_SKY',
-  FEW_CLOUDS: 'FEW_CLOUDS',
-  SCATERRED_CLOUDS: 'SCATERRED_CLOUDS',
-  BROKEN_CLOUDS: 'BROKEN_CLOUDS',
-  SHOWER_RAIN: 'SHOWER_RAIN',
-} as const;
-
-export interface ProductWeatherForecastWeatherModel {
-  code: Code;
-  /** weather description */
-  description: string;
-}
-
-/**
- * forecast date
- */
-export type ProductWeatherForecastModelDate = string | null;
-
-export interface ProductWeatherForecastModel {
-  /** forecast id */
-  id: string;
-  /** forecast date */
-  date: ProductWeatherForecastModelDate;
-  unit: Unit;
-  temperature: ProductWeatherForecastTemperatureModel;
-  weather: ProductWeatherForecastWeatherModel;
-}
-
-export type ProductWeatherForecastListModel = ProductWeatherForecastModel[];
-
-export interface Subratings {
-  /** image of the rating. */
-  rating_image_url?: string;
-  /** name of the rating. Ex: rate_location */
-  name?: string;
-  /** value of the rating. Ex: 4.5 */
-  value?: string;
-  /** localization of the rating. */
-  localized_name?: string;
-}
-
-/**
- * subratings information
- */
-export type TripadvisorSubratings = Subratings[];
-
-export interface Images {
-  /** tiny format of the image. */
-  tiny?: string;
-  /** small format of the image. */
-  small?: string;
-  /** large format of the image. */
-  large?: string;
-}
-
-/**
- * categories of award
- */
-export type Categories = string[];
-
-export interface Awards {
-  /** award type. */
-  award_type?: string;
-  /** year of the award Ex:2015. */
-  year?: string;
-  images?: Images;
-  categories?: Categories;
-  /** display name of the award Ex: traverler's choice. */
-  display_name?: string;
-}
-
-/**
- * awards information
- */
-export type TripadvisorAwards = Awards[];
-
-/**
- * name of the user location, maybe null.
- */
-export type UserLocationName = string | null;
-
-/**
- * id of the user location maybe null.
- */
-export type UserLocationId = string | null;
-
-export interface UserLocation {
-  /** name of the user location, maybe null. */
-  name?: UserLocationName;
-  /** id of the user location maybe null. */
-  id?: UserLocationId;
-}
-
-/**
- * username of the reviewer Ex: Helene B.
- */
-export type ReviewUserModelUsername = string | null;
-
-/**
- * reviewer badge.
- */
-export type ReviewUserModelReviewerBadge = string | null;
-
-export interface ReviewUserModel {
-  /** username of the reviewer Ex: Helene B. */
-  username?: ReviewUserModelUsername;
-  user_location?: UserLocation;
-  /** count of review Ex: 1 */
-  review_count?: string;
-  /** reviewer badge. */
-  reviewer_badge?: ReviewUserModelReviewerBadge;
-}
-
-/**
- * owner id
- */
-export type OwnerResponseAnyOfId = string | null;
-
-/**
- * owner lang
- */
-export type OwnerResponseAnyOfLang = string | null;
-
-/**
- * owner response date
- */
-export type OwnerResponseAnyOfPublishedDate = string | null;
-
-/**
- * owner response author
- */
-export type OwnerResponseAnyOfAuthor = string | null;
-
-/**
- * owner response text
- */
-export type OwnerResponseAnyOfText = string | null;
-
-/**
- * owner response title
- */
-export type OwnerResponseAnyOfTitle = string | null;
-
-/**
- * owner of the response, maybe null
- */
-export type OwnerResponseAnyOf = {
-  /** owner id */
-  id?: OwnerResponseAnyOfId;
-  /** owner lang */
-  lang?: OwnerResponseAnyOfLang;
-  /** owner response date */
-  published_date?: OwnerResponseAnyOfPublishedDate;
-  /** owner response author */
-  author?: OwnerResponseAnyOfAuthor;
-  /** owner response text */
-  text?: OwnerResponseAnyOfText;
-  /** owner response title */
-  title?: OwnerResponseAnyOfTitle;
-};
-
-/**
- * owner of the response, maybe null
- */
-export type OwnerResponse = OwnerResponseAnyOf | null;
-
-/**
- * subratings array of the review
- */
-export type ReviewsSubratings = Subratings[];
-
-/**
- * travel date Ex:2015-04
- */
-export type ReviewsTravelDate = string | null;
-
-/**
- * text description of the review
- */
-export type ReviewsText = string | null;
-
-/**
- * review title
- */
-export type ReviewsTitle = string | null;
-
-export interface Reviews {
-  /** id of the review Ex: 271180947 */
-  id?: string;
-  /** language of the review Ex: fr */
-  lang?: string;
-  /** location id of the review Ex: 628307 */
-  location_id?: string;
-  /** published date of the review Ex: 2015-05-10T16:50:24-0400 */
-  published_date?: string;
-  /** review rating. Ex: "5" */
-  rating?: number;
-  /** number of helpful votes of the review Ex: 0 */
-  helpful_votes?: string;
-  /** image of the review */
-  rating_image_url?: string;
-  /** url of the review */
-  url?: string;
-  /** tripadvisor type Ex: En famille */
-  trip_type?: string;
-  /** travel date Ex:2015-04 */
-  travel_date?: ReviewsTravelDate;
-  /** text description of the review */
-  text?: ReviewsText;
-  user?: ReviewUserModel;
-  /** review title */
-  title?: ReviewsTitle;
-  owner_response?: OwnerResponse;
-  subratings?: ReviewsSubratings;
-}
-
-/**
- * reviews information
- */
-export type TripadvisorReviews = Reviews[];
-
-export interface TripAdvisorExtendedModel {
-  /** Unique TripAdvisor location ID of the resort. See https://developer-tripadvisor.com/content-api/documentation/location/ */
-  location_id?: string;
-  /** TripAdvisor url of the resort page. */
-  tripadvisor_url?: string;
-  /** Overall rating for this resort. Rating levels are defined as follows: 1 Terrible, 2 Poor, 3 Average, 4 Very good, 5 Excellent */
-  rating?: string;
-  /** URL to the bubble rating image for this location. */
-  rating_image_url?: string;
-  /** number of reviews. */
-  num_reviews?: number;
-  subratings?: TripadvisorSubratings;
-  awards?: TripadvisorAwards;
-  reviews?: TripadvisorReviews;
-}
-
-export interface ProposalSuggestionVilageModel {
-  /** The product id */
-  id: string;
-  /** The remaining stock for this product */
-  remaining_stock: number;
-  /** The initial stock for this product */
-  initial_stock: number;
-}
-
-export type ProposalSuggestionVilageListModel = ProposalSuggestionVilageModel[];
-
-/**
- * Product segmentation criteria
- */
-export interface SegmentationCriteriaIdLabelModel {
-  /** segmentation criteria identifier */
-  id: string;
-  /** segmentation criteria label */
-  label: string;
-}
-
-/**
- * list of product customer targets
- */
-export type CustomerTargets = SegmentationCriteriaIdLabelModel[];
-
-/**
- * list of product spirits
- */
-export type Spirits = SegmentationCriteriaIdLabelModel[];
-
-/**
- * list of product looked for experiences
- */
-export type LookedForExperiences = SegmentationCriteriaIdLabelModel[];
-
-/**
- * Product segmentation criteria list
- */
-export interface SegmentationCriteriaModel {
-  customer_targets: CustomerTargets;
-  spirits: Spirits;
-  looked_for_experiences: LookedForExperiences;
-}
-
-export interface RentalEquipmentUseCase {
-  /** Id of the use of this rentable equipment */
-  id: string;
-  /** Label of the use of this rentable equipment */
-  label?: string;
-}
-
-/**
- * Use of this rentable equipment
- */
-export type RentalEquipmentUseCases = RentalEquipmentUseCase[];
-
-/**
- * The type of this rentable equipment
- */
-export interface RentalEquipmentType {
-  /** Id of the type of this rentable equipment */
-  id?: string;
-  /** Label of the type of this rentable equipment */
-  label?: string;
-}
-
-/**
- * List of images of this rentable equipment
- */
-export type RentalEquipmentImages = string[];
-
-/**
- * Customer minimum age to benefits from this rentable equipment in months
- */
-export type RentalEquipmentAgeMin = 0 | null;
-
-/**
- * Customer maximum age to benefits from this rentable equipment in months
- */
-export type RentalEquipmentAgeMax = 0 | null;
-
-/**
- * Customer age to benefits from this rentable equipment in months
- */
-export interface RentalEquipmentAge {
-  /** Customer minimum age to benefits from this rentable equipment in months */
-  min?: RentalEquipmentAgeMin;
-  /** Customer maximum age to benefits from this rentable equipment in months */
-  max?: RentalEquipmentAgeMax;
-}
-
-/**
- * Minimum size of this rentable equipment
- */
-export type RentalEquipmentSizesMin = 0 | null;
-
-/**
- * Maximum size of this rentable equipment
- */
-export type RentalEquipmentSizesMax = 0 | null;
-
-/**
- * Size of this rentable equipment
- */
-export interface RentalEquipmentSizes {
-  /** Minimum size of this rentable equipment */
-  min?: RentalEquipmentSizesMin;
-  /** Maximum size of this rentable equipment */
-  max?: RentalEquipmentSizesMax;
-  /** Size unit of this rentable equipment */
-  unit?: string;
-}
-
-export interface RentalEquipmentPracticeLevel {
-  /** Id of the practice level of this rentable equipment */
-  id?: string;
-  /** Label of the practice level of this rentable equipment */
-  label?: string;
-}
-
-/**
- * Practice levels of this rentable equipment
- */
-export type RentalEquipmentPracticeLevelList = RentalEquipmentPracticeLevel[];
-
-/**
- * Range of this rentable equipment
- */
-export interface RentalEquipmentProductRange {
-  /** Id of the range of this rentable equipment */
-  id?: string;
-  /** Label of the range of this rentable equipment */
-  label?: string;
-}
-
-/**
- * List of available brands of rentable equipment
- */
-export type RentalEquipmentAvailableBrands = string[];
-
-/**
- * slot in the day for this activity
- */
-export type ActivityPriceTimeslotModel =
-  (typeof ActivityPriceTimeslotModel)[keyof typeof ActivityPriceTimeslotModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ActivityPriceTimeslotModel = {
-  MORNING: 'MORNING',
-  AFTERNOON_BEFORE_5PM: 'AFTERNOON_BEFORE_5PM',
-  AFTERNOON_AFTER_5PM: 'AFTERNOON_AFTER_5PM',
-  AFTERNOON: 'AFTERNOON',
-  SPECIFIC_DAY: 'SPECIFIC_DAY',
-  SPECIFIC_MORNING: 'SPECIFIC_MORNING',
-  SPECIFIC_AFTERNOON: 'SPECIFIC_AFTERNOON',
-  AFTERNOON_BEFORE_4PM: 'AFTERNOON_BEFORE_4PM',
-  AFTERNOON_AFTER_4PM: 'AFTERNOON_AFTER_4PM',
-} as const;
-
-/**
- * reference price for this product
- */
-export type RentalquipmentPricePrice = 0 | null;
-
-/**
- * The iso 3 currency. Ex: CNY,EUR,..
- * @minLength 3
- * @maxLength 3
- */
-export type RentalquipmentPriceCurrency = string | null;
-
-/**
- * last insertion date, last recalculation
- */
-export type RentalquipmentPriceLastInsertionDate = string | null;
-
-/**
- * Duration in day linked at the price
- */
-export type RentalquipmentPriceDurationInDay = number | null;
-
-export interface RentalquipmentPrice {
-  /** reference price for this product */
-  price: RentalquipmentPricePrice;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: RentalquipmentPriceCurrency;
-  /** last insertion date, last recalculation */
-  last_insertion_date: RentalquipmentPriceLastInsertionDate;
-  /** Duration in day linked at the price */
-  duration_in_day?: RentalquipmentPriceDurationInDay;
-  time_slot?: ActivityPriceTimeslotModel;
-}
-
-/**
- * Clubmed codes
- */
-export type ClubmedCodes = string[];
-
-export interface RentalEquipment {
-  /** Id of this rentable equipment */
-  id: string;
-  /** Label of this rentable equipment */
-  label?: string;
-  usecases?: RentalEquipmentUseCases;
-  type?: RentalEquipmentType;
-  images?: RentalEquipmentImages;
-  /** Short rentable equipment description */
-  short_description?: string;
-  /** Rentable equipment description */
-  long_description?: string;
-  age_in_months?: RentalEquipmentAge;
-  sizes?: RentalEquipmentSizes;
-  practice_levels?: RentalEquipmentPracticeLevelList;
-  product_range?: RentalEquipmentProductRange;
-  available_brands?: RentalEquipmentAvailableBrands;
-  /** Formalities required to rent this equipment */
-  formalities?: string;
-  /** Details about this rentable equipment */
-  further_information?: string;
-  target_price?: RentalquipmentPrice;
-  service_codes?: ClubmedCodes;
-}
-
-export type RentalEquipmentListModel = RentalEquipment[];
-
-export type PracticalInformationAccessModelTransferDistanceInKm = number | null;
-
-export type PracticalInformationAccessModelTransferDistanceInMiles = number | null;
-
-export type PracticalInformationAccessModelTransferDurationInMin = number | null;
-
-export interface PracticalInformationAccessModel {
-  type: string;
-  label: string;
-  id: string;
-  transfer_distance_in_km: PracticalInformationAccessModelTransferDistanceInKm;
-  transfer_distance_in_miles: PracticalInformationAccessModelTransferDistanceInMiles;
-  transfer_duration_in_min: PracticalInformationAccessModelTransferDurationInMin;
-}
-
-/**
- * List of the recommended place for accessing the product
- */
-export type PracticalInformationAccessesModel = PracticalInformationAccessModel[];
-
-export type PracticalInformationGpsCoordinatesAnyOf = {
-  latitude: string;
-  longitude: string;
-};
-
-export type PracticalInformationGpsCoordinates = PracticalInformationGpsCoordinatesAnyOf | null;
-
-export type PracticalInformationAddressModelAnyOf = {
-  place: string;
-  number: string;
-  street: string;
-  add_on: string;
-  city: string;
-  town: string;
-  zip_code: string;
-  state_or_district: string;
-  country: string;
-};
-
-export type PracticalInformationAddressModel = PracticalInformationAddressModelAnyOf | null;
-
-/**
- * list of items included in the price
- */
-export type PracticalInformationIncludedDescriptionModel = string[];
-
-/**
- * list of items not included in the price
- */
-export type PracticalInformationExcludedDescriptionModel = string[];
-
-/**
- * information regarding product price
- */
-export interface PriceInformationModel {
-  included_descriptions: PracticalInformationIncludedDescriptionModel;
-  excluded_descriptions: PracticalInformationExcludedDescriptionModel;
-}
-
-export interface ChecksInformationModel {
-  /** Description of the check-in for the product */
-  check_in_description?: string;
-  /** Description of the check-out for the product */
-  check_out_description?: string;
-  /** Additional information of the check_in/check-out for the product */
-  further_information?: string;
-}
-
-export interface PracticalInfoAdditionalItemModel {
-  /** Id of service / information */
-  id: string;
-  /** Name for the service / information */
-  label: string;
-  /** Service's / Information description */
-  description: string;
-  /** Pictogram url that represents the service */
-  icon: string;
-}
-
-export type Items = PracticalInfoAdditionalItemModel[];
-
-export interface PracticalInfoAdditionalModel {
-  /** Category of service / information */
-  label: string;
-  items: Items;
-}
-
-export type AdditionalInformationCategories = PracticalInfoAdditionalModel[];
-
-export type PracticalInfoSafeTogetherModelAnyOf = {
-  /** Safe together title section */
-  label: string;
-  /** Safe together description section */
-  description: string;
-  /** Safe together image url */
-  image: string;
-  /** http://mca-integration-cms-file-storage.s3.eu-west-1.amazonaws.com/2022-01/2021-01-20-Synchro_API-CC_0.pdf */
-  file: string;
-};
-
-export type PracticalInfoSafeTogetherModel = PracticalInfoSafeTogetherModelAnyOf | null;
-
-export interface PracticalInformationModel {
-  accesses: PracticalInformationAccessesModel;
-  gps_coordinates?: PracticalInformationGpsCoordinates;
-  address: PracticalInformationAddressModel;
-  prices_information: PriceInformationModel;
-  phone: string;
-  fax: string;
-  /** the email a customer can use to contact the resort */
-  email: string;
-  /** the email a customer can use to contact the resort about his room selection service */
-  room_selection_contact_email: string;
-  health_formalities: string;
-  passport_and_visas: string;
-  checks_information?: ChecksInformationModel;
-  additional_information_categories: AdditionalInformationCategories;
-  safe_together: PracticalInfoSafeTogetherModel;
-}
-
-/**
- * season on which the price is valid
- */
-export type ProductPackageInformativePriceSeasonModel =
-  (typeof ProductPackageInformativePriceSeasonModel)[keyof typeof ProductPackageInformativePriceSeasonModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProductPackageInformativePriceSeasonModel = {
-  SUMMER: 'SUMMER',
-  WINTER: 'WINTER',
-} as const;
-
-/**
- * additional cost by adult per night compare to the room only package
- */
-export type ProductPackageInformativePriceModelPerAdultPerNight = number | null;
-
-/**
- * additional cost by kid per night compare to the room only package
- */
-export type ProductPackageInformativePriceModelPerKidPerNight = number | null;
-
-/**
- * start date
- */
-export type ProductPackageInformativePriceModelStartDate = string | null;
-
-/**
- * end date
- */
-export type ProductPackageInformativePriceModelEndDate = string | null;
-
-export interface ProductPackageInformativePriceModel {
-  /** additional cost by adult per night compare to the room only package */
-  per_adult_per_night?: ProductPackageInformativePriceModelPerAdultPerNight;
-  /** additional cost by kid per night compare to the room only package */
-  per_kid_per_night?: ProductPackageInformativePriceModelPerKidPerNight;
-  season?: ProductPackageInformativePriceSeasonModel;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  /** start date */
-  start_date?: ProductPackageInformativePriceModelStartDate;
-  /** end date */
-  end_date?: ProductPackageInformativePriceModelEndDate;
-}
-
-export type InformativePrices = ProductPackageInformativePriceModel[];
-
-export interface ProductPackage {
-  /** a package_id from /products/{product_id}/packages resource */
-  id: string;
-  /** Label of the package */
-  label: string;
-  /** Title of the package */
-  title?: string;
-  /** Description of the package */
-  description?: string;
-  /** Additional information text */
-  additional_info?: string;
-  /** Picture url */
-  image?: string;
-  informative_price?: InformativePrices;
-}
-
-export type Packages = ProductPackage[];
-
-/**
- * type of the period, can be one of the opening or closing period types
- */
-export type PeriodsInfoTypeModel =
-  | 'SELLABLE_DATES'
-  | 'EXCLUSIVITY'
-  | 'UNAVAILABLE'
-  | 'EVENTS'
-  | 'EXPLOITATION_DATES'
-  | null;
-
-/**
- * inclusive start date
- */
-export type PeriodsInfoV0StartDate = string | null;
-
-/**
- * exclusive end date
- */
-export type PeriodsInfoV0EndDate = string | null;
-
-export interface PeriodsInfoV0 {
-  type?: PeriodsInfoTypeModel;
-  /** inclusive start date */
-  start_date?: PeriodsInfoV0StartDate;
-  /** exclusive end date */
-  end_date?: PeriodsInfoV0EndDate;
-}
-
-export type PeriodsInfoListV0 = PeriodsInfoV0[];
-
-export interface Period {
-  opening?: string;
-  closing?: string;
-}
-
-export type OpeningDateListModel = Period[];
-
-/**
- * "Meetings & Events" strong points"
- */
-export type MiceStrengths = string[];
-
-/**
- * Price per night or per trip
- */
-export type MiceBestPriceTypeModel =
-  (typeof MiceBestPriceTypeModel)[keyof typeof MiceBestPriceTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MiceBestPriceTypeModel = {
-  PER_NIGHT: 'PER_NIGHT',
-  PER_TRIP: 'PER_TRIP',
-} as const;
-
-export type MiceBestPriceModelAnyOf = {
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency?: string;
-  /** Price from */
-  amount?: number;
-  type?: MiceBestPriceTypeModel;
-};
-
-export type MiceBestPriceModel = MiceBestPriceModelAnyOf | null;
-
-export interface MiceModel {
-  /** link to display the product "Meetings & Events" fact sheet */
-  fact_sheet_url: string;
-  /** "Meetings & Events" description headline */
-  description_title: string;
-  /** "Meetings & Events" description for this product */
-  description: string;
-  /** "Meetings & Events" description to be used for seo" */
-  seo_description: string;
-  strengths: MiceStrengths;
-  best_price?: MiceBestPriceModel;
-}
-
-export interface InterventionCategoryAssetModel {
-  /** Type of intervention */
-  code: string;
-  /** Description of category */
-  label: string;
-  /** Type of asset */
-  type: string;
-  /** Maximum value */
-  max?: number;
-}
-
-export type InterventionCategoryAssetsModel = InterventionCategoryAssetModel[];
-
-export interface InterventionCategoryModel {
-  /** Category of intervention */
-  code: string;
-  /** Description of category */
-  label: string;
-  /** Icon of intervention */
-  icon_url: string;
-  assets: InterventionCategoryAssetsModel;
-}
-
-export type InterventionCategoriesModel = InterventionCategoryModel[];
-
-export interface GOCategoryModel {
-  /** GO's category code */
-  code: string;
-  /** GO's category label */
-  label: string;
-}
-
-/**
- * GO's categories
- */
-export type GOCategoriesModel = GOCategoryModel[];
-
-export interface GOModel {
-  /** Identify a unique GO */
-  id: string;
-  /** GO staff member label. Usually their first name and job title */
-  label: string;
-  /** GO staff member description */
-  description: string;
-  /** GO picture */
-  picture: string;
-  /** GO's name */
-  first_name: string;
-  /** GO's job */
-  job: string;
-  /** GO's favorite crazy sign */
-  crazy_sign: string;
-  /** GO's favorite resort */
-  favorite_resort: string;
-  /** GO's hidden talent */
-  hidden_talent: string;
-  /** GO's place of residence */
-  place_of_residence: string;
-  /** GO's spoken language */
-  spoken_languages: string;
-  categories: GOCategoriesModel;
-}
-
-export type GOStaffModel = GOModel[];
-
-export type GeoDataPolygonPropertiesAnyOf = {
-  id: string;
-};
-
-export type GeoDataPolygonProperties = GeoDataPolygonPropertiesAnyOf | null;
-
-export type GeoDataCoordinate = number[];
-
-export type GeoDataPolygonCoordinates = GeoDataCoordinate[];
-
-export type GeoDataPolygonCoordinatesList = GeoDataPolygonCoordinates[];
-
-export interface GeoDataPolygonGeometry {
-  type?: string;
-  coordinates?: GeoDataPolygonCoordinatesList;
-}
-
-export interface GeoDataFeature {
-  type: string;
-  properties?: GeoDataPolygonProperties;
-  geometry?: GeoDataPolygonGeometry;
-}
-
-export type GeoDataPolygonFeatures = GeoDataFeature[];
-
-export type PolygonsGeoJsonAnyOf = {
-  type: string;
-  features?: GeoDataPolygonFeatures;
-};
-
-export type PolygonsGeoJson = PolygonsGeoJsonAnyOf | null;
-
-export interface GeoDataRoomProperties {
-  id: string;
-}
-
-export interface Geometry {
-  type?: string;
-  coordinates?: GeoDataCoordinate;
-}
-
-export interface RoomsGeoJsonFeature {
-  type: string;
-  properties?: GeoDataRoomProperties;
-  geometry?: Geometry;
-}
-
-export type RoomsGeoJsonFeatures = RoomsGeoJsonFeature[];
-
-export type RoomsGeoJsonAnyOf = {
-  type: string;
-  features?: RoomsGeoJsonFeatures;
-};
-
-export type RoomsGeoJson = RoomsGeoJsonAnyOf | null;
-
-export interface GeoDataBuilding {
-  /** unique id of the building in this product */
-  id?: string;
-  /** building label */
-  label?: string;
-  /** true if an item in this building can be highlighted */
-  pickable?: boolean;
-}
-
-export type GeoDataBuildings = GeoDataBuilding[];
-
-/**
- * unique id of the product building in which the floor is located
- */
-export type GeoDataFloorBuildingId = string | null;
-
-export interface GeoDataFloor {
-  /** unique id of the floor in this product */
-  id?: string;
-  /** id of the geometry to apply to build this floor */
-  polygon_geo_json_id?: string;
-  /** unique id of the product building in which the floor is located */
-  building_id?: GeoDataFloorBuildingId;
-  /** floor label */
-  label?: string;
-  /** floor level. 0 for ground floor */
-  level?: number;
-  /** height of the floor item when selected */
-  height?: number;
-  /** height of the floor item in the building full view */
-  min_height?: number;
-  /** true if an item in this floor can be highlighted */
-  pickable?: boolean;
-}
-
-export type GeoDataFloors = GeoDataFloor[];
-
-export interface GeoDataRoom {
-  /** unique id of the room in this product */
-  id?: string;
-  /** id of the geometry to apply to build this room */
-  room_geometry_id?: string;
-  /** unique id of the product floor in which the room is located */
-  floor_id?: string;
-  /** room label */
-  label?: string;
-}
-
-export type GeoDataRooms = GeoDataRoom[];
-
-export interface GeoData {
-  polygons_geo_json?: PolygonsGeoJson;
-  rooms_geo_json?: RoomsGeoJson;
-  buildings?: GeoDataBuildings;
-  floors?: GeoDataFloors;
-  rooms?: GeoDataRooms;
-}
-
-export type ThemeLabels = string[];
-
-/**
- * Boarding time period
- */
-export type BoardingTimePeriodAnyOf = {
-  /** opening time */
-  opening_time_label: string;
-  /** closing time */
-  closing_time_label: string;
-  /** boarding meeting place information */
-  meeting_place: string;
-};
-
-/**
- * Boarding time period
- */
-export type BoardingTimePeriod = BoardingTimePeriodAnyOf | null;
-
-/**
- * Landing time period
- */
-export type LandingTimePeriodAnyOf = {
-  /** opening time */
-  opening_time_label: string;
-  /** closing time */
-  closing_time_label: string;
-};
-
-/**
- * Landing time period
- */
-export type LandingTimePeriod = LandingTimePeriodAnyOf | null;
-
-/**
- * Cruise detail
- */
-export interface CruiseDetailModel {
-  theme_labels?: ThemeLabels;
-  boarding?: BoardingTimePeriod;
-  landing?: LandingTimePeriod;
-}
-
-export interface BusinessSocialResponsibilityItemModel {
-  /** label of the BSR block */
-  label?: string;
-  /** description of the BSR block */
-  description?: string;
-  /** picture of the BSR block */
-  image?: string;
-}
-
-export type BusinessSocialResponsibilityItemsModel = BusinessSocialResponsibilityItemModel[];
-
-export interface BusinessSocialResponsibilityModel {
-  /** BSR catchphrase */
-  title?: string;
-  items?: BusinessSocialResponsibilityItemsModel;
-}
-
-/**
- * Thematic images
- */
-export type ActivitiesThematicImages = string[];
-
-/**
- * activities repartition for this Thematic
- */
-export interface ActivitiesThematicActivityCount {
-  on_demand?: number;
-  included?: number;
-}
-
-export interface ActivitiesThematic {
-  /** id of the Thematic */
-  id?: string;
-  /** title of the Thematic */
-  title?: string;
-  /** subtitle of the Thematic */
-  subtitle?: string;
-  /** description of the Thematic */
-  description?: string;
-  images?: ActivitiesThematicImages;
-  activity_count?: ActivitiesThematicActivityCount;
-  _links?: LinksModel;
-}
-
-export type ActivitiesThematics = ActivitiesThematic[];
-
-export type AccommodationCategoryModelRanking =
-  (typeof AccommodationCategoryModelRanking)[keyof typeof AccommodationCategoryModelRanking];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AccommodationCategoryModelRanking = {
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-} as const;
-
-/**
- * pictures relative to the category
- */
-export type AccommodationCategoryImagesModel = string[];
-
-/**
- * All those services are in all the accommodation of the category.
- */
-export type AccommodationCategoryServices = string[];
-
-/**
- * All those facilities are in all the accommodation of the category.
- */
-export type AccommodationCategoryFacilities = string[];
-
-/**
- * All those strengths are in all the accommodation of the category.
- */
-export type AccommodationCategoryStrengths = string[];
-
-/**
- * Links
- */
-export type AcommodationCategoryLinksModel = LinkModel[];
-
-/**
- * minimal capacity of an accommodation of the category
- */
-export type AccommodationCategoryModelMinCapacity = number | null;
-
-/**
- * maximum capacity of an accommodation of the category
- */
-export type AccommodationCategoryModelMaxCapacity = number | null;
-
-export interface AccommodationCategoryModel {
-  id: string;
-  /** name of the category (EX: Club) */
-  label: string;
-  ranking: AccommodationCategoryModelRanking;
-  images?: AccommodationCategoryImagesModel;
-  /** category_description of the category */
-  description?: string;
-  /** area of the smallest accommodation of the category */
-  min_area?: string;
-  /** area of the biggest accommodation of the category */
-  max_area?: string;
-  /** minimal capacity of an accommodation of the category */
-  min_capacity?: AccommodationCategoryModelMinCapacity;
-  /** maximum capacity of an accommodation of the category */
-  max_capacity?: AccommodationCategoryModelMaxCapacity;
-  services?: AccommodationCategoryServices;
-  facilities?: AccommodationCategoryFacilities;
-  strengths?: AccommodationCategoryStrengths;
-  _links?: AcommodationCategoryLinksModel;
-}
-
-export type AccommodationCategoriesList = AccommodationCategoryModel[];
-
-export interface DescriptionAccommodationCategoriesList {
-  /** picture relative to the category */
-  image?: string;
-  /** description of the category */
-  description?: string;
-  accommodation_categories?: AccommodationCategoriesList;
-}
-
-/**
- * External service type
- */
-export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExternalServiceType = {
-  CONCIERGERIE: 'CONCIERGERIE',
-  PARKING: 'PARKING',
-} as const;
-
-/**
- * white label service subtype
- */
-export type ExternalServiceSubtype =
-  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExternalServiceSubtype = {
-  BABYSITTING: 'BABYSITTING',
-  BABY_SKI_LESSON: 'BABY_SKI_LESSON',
-  BIRTHDAY_PARTY: 'BIRTHDAY_PARTY',
-  CELEBRATION: 'CELEBRATION',
-  CHAMPAGNE: 'CHAMPAGNE',
-  HONEYMOON: 'HONEYMOON',
-  PARKING: 'PARKING',
-  PHOTO_PACKAGE: 'PHOTO_PACKAGE',
-  WIFI: 'WIFI',
-  EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
-} as const;
-
-export interface ExternalServiceModel {
-  /** External service code */
-  id?: string;
-  type?: ExternalServiceType;
-  subtype?: ExternalServiceSubtype;
-  /** External service title */
-  title?: string;
-  /** External service description */
-  description?: string;
-  /** white label service image */
-  image?: string;
-}
-
-export type ExternalServicesModel = ExternalServiceModel[];
-
-export interface PspOfResortModel {
-  /**
-   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
-   * @pattern ^([EMS][0-9A-Z]+)$
-   */
-  id: string;
-}
-
-export interface AccommodationCodeModel {
-  /** Club Méditerranée accommodation code */
-  clubmed_id: string;
-  /** TOMA accommodation code */
-  TOMA_id: string;
-}
-
-export type AccommodationCodes = AccommodationCodeModel[];
-
-/**
- * Catalog type indicate if the category comes from standard Clubmed catalog or from Resort catalog.
- */
-export type CatalogType = (typeof CatalogType)[keyof typeof CatalogType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CatalogType = {
-  STANDARD: 'STANDARD',
-  EXTENDED: 'EXTENDED',
-} as const;
-
-export interface BusinessSocialResponsibilityActivityCategory {
-  /** Indicates if it is a happy to care activity category */
-  enabled: boolean;
-  /** Name of the business social responsibility initiative */
-  title?: string;
-  /** More information about the business social responsibility initiative */
-  description?: string;
-}
-
-/**
- * List of images of this activity
- */
-export type ResortActivityImages = string[];
-
-export type ChildrenActivityIdsModel = string[];
-
-/**
- * activity ranking to be used to sort a product activity list.
- */
-export type ProductActivityCategoryRankingModel =
-  (typeof ProductActivityCategoryRankingModel)[keyof typeof ProductActivityCategoryRankingModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProductActivityCategoryRankingModel = {
-  VERY_HIGH: 'VERY_HIGH',
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
-  LOW: 'LOW',
-  VERY_LOW: 'VERY_LOW',
-} as const;
-
-export type ProductActivityCountModelAnyOf = {
-  /** count of activity on demand in the category */
-  on_demand: number;
-  /** count of activity included in the category */
-  included_activity: number;
-};
-
-export type ProductActivityCountModel = ProductActivityCountModelAnyOf | null;
-
-export interface ActivityKeywordModel {
-  /** keyword unique id */
-  id: string;
-  /** keyword label */
-  label: string;
-}
-
-export type ActivityKeywordsModel = ActivityKeywordModel[];
-
-/**
- * reference price for this product
- */
-export type ActivityPriceModelPrice = 0 | null;
-
-/**
- * The iso 3 currency. Ex: CNY,EUR,..
- * @minLength 3
- * @maxLength 3
- */
-export type ActivityPriceModelCurrency = string | null;
-
-/**
- * last insertion date, last recalculation
- */
-export type ActivityPriceModelLastInsertionDate = string | null;
-
-/**
- * Duration in day linked at the price
- */
-export type ActivityPriceModelDurationInDay = number | null;
-
-export interface ActivityPriceModel {
-  /** reference price for this product */
-  price: ActivityPriceModelPrice;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: ActivityPriceModelCurrency;
-  /** last insertion date, last recalculation */
-  last_insertion_date: ActivityPriceModelLastInsertionDate;
-  /** Duration in day linked at the price */
-  duration_in_day?: ActivityPriceModelDurationInDay;
-  time_slot?: ActivityPriceTimeslotModel;
-}
-
-/**
- * list of brand logo images
- */
-export type ActivityBrandLogoUrlsModel = string[] | null;
-
-/**
- * Clubmed codes
- */
-export type ActivityServiceCodes = string[];
-
-/**
- * activity opening date for this period
- */
-export type ActivityOpeningDateModelStartDate = string | null;
-
-/**
- * activity closing date for this period
- */
-export type ActivityOpeningDateModelEndDate = string | null;
-
-export interface ActivityOpeningDateModel {
-  /** activity opening date for this period */
-  start_date: ActivityOpeningDateModelStartDate;
-  /** activity closing date for this period */
-  end_date: ActivityOpeningDateModelEndDate;
-}
-
-export type ActivityOpeningDatesModel = ActivityOpeningDateModel[];
-
-/**
- * Label of the restriction information of this activity
- */
-export type RestrictionInformationModelDescription = string | null;
-
-export interface RestrictionInformationModel {
-  /** ID of the restriction information of this activity */
-  id: string;
-  /** Label of the restriction information of this activity */
-  description?: RestrictionInformationModelDescription;
-}
-
-export type RestrictionsInformationModel = RestrictionInformationModel[];
-
-export interface ActivityTag {
-  /** id of the activity keyword */
-  id?: string;
-  /** label of the activity keyword */
-  label?: string;
-}
-
-export type ActivityTagsList = ActivityTag[];
-
-export type ProductActivityCategoryGpsCoordinatesAnyOf = {
-  latitude: string;
-  longitude: string;
-};
-
-export type ProductActivityCategoryGpsCoordinates =
-  ProductActivityCategoryGpsCoordinatesAnyOf | null;
-
-export interface ProductActivityCategory {
-  /** id of this category */
-  id: string;
-  catalog_type: CatalogType;
-  business_social_responsibility?: BusinessSocialResponsibilityActivityCategory;
-  /** label of this category */
-  label: string;
-  images?: ResortActivityImages;
-  /** category description */
-  description?: string;
-  /** id of the direct parent category in the category hierarchy */
-  parent_id?: string;
-  children_ids?: ChildrenActivityIdsModel;
-  /** true if this activity is a highlight */
-  must_try: boolean;
-  /** false if an extra cost is required to practice this activity */
-  is_included: boolean;
-  ranking: ProductActivityCategoryRankingModel;
-  activity_count: ProductActivityCountModel;
-  keywords: ActivityKeywordsModel;
-  target_price?: ActivityPriceModel;
-  /** global description regarding how to book activities of this category */
-  booking_description?: string;
-  /** terms and condition for the categorie activities practicing */
-  terms_and_conditions_description?: string;
-  /** information regarding equipment rental to practice the category activities */
-  equipment_rental_description?: string;
-  /** information regarding supervision for the category activities */
-  supervision_description?: string;
-  /** philosophy of the activity */
-  philosophy?: string;
-  brand_logo_url?: ActivityBrandLogoUrlsModel;
-  service_codes?: ActivityServiceCodes;
-  opening_dates?: ActivityOpeningDatesModel;
-  restriction_information?: RestrictionsInformationModel;
-  /** URL of booklet for this activities category */
-  booklet_url?: string;
-  activity_tags?: ActivityTagsList;
-  gps_coordinates?: ProductActivityCategoryGpsCoordinates;
-  _links?: LinksModel;
-}
-
-export type ProductActivityCategoriesModel = ProductActivityCategory[];
-
-/**
- * Comfort
- */
-export type ProductAreaComfortV0AnyOf = {
-  /** comfort grade level */
-  id?: string;
-  /** comfort grade level label */
-  label?: string;
-};
-
-/**
- * Comfort
- */
-export type ProductAreaComfortV0 = ProductAreaComfortV0AnyOf | null;
-
-/**
- * Area ranking to be used to sort a area list
- */
-export type ProductAreasRankingModelV0 =
-  (typeof ProductAreasRankingModelV0)[keyof typeof ProductAreasRankingModelV0];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProductAreasRankingModelV0 = {
-  VERY_HIGH: 'VERY_HIGH',
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
-  LOW: 'LOW',
-  VERY_LOW: 'VERY_LOW',
-} as const;
-
-export interface ProductAreaAssociatedAccessModel {
-  /** ID of access associated at this area */
-  id?: string;
-  /** Label of access associated at this area */
-  label?: string;
-}
-
-/**
- * Access associated to the area
- */
-export type ProductAreaAssociatedAccessListModel = ProductAreaAssociatedAccessModel[];
-
-/**
- * Information of this area
- */
-export type ProductAreaV0Description = string | null;
-
-/**
- * Comment at bottom of page for the description
- */
-export type ProductAreaV0Footnotes = string | null;
-
-/**
- * Additional services of this area
- */
-export type ProductAreaV0AdditionalServices = string | null;
-
-/**
- * Comment at bottom of page for the additional services
- */
-export type ProductAreaV0AdditionalServicesFootnotes = string | null;
-
-export interface ProductAreaV0 {
-  /** id of the area */
-  id: string;
-  /** label of the area */
-  label: string;
-  comfort?: ProductAreaComfortV0;
-  /** true if the area the main space of this product */
-  main_space?: boolean;
-  images?: ProductImagesModel;
-  /** Information of this area */
-  description?: ProductAreaV0Description;
-  /** Comment at bottom of page for the description */
-  footnotes?: ProductAreaV0Footnotes;
-  /** Additional services of this area */
-  additional_services?: ProductAreaV0AdditionalServices;
-  /** short description of area for this product */
-  short_description?: string;
-  ranking?: ProductAreasRankingModelV0;
-  associated_access?: ProductAreaAssociatedAccessListModel;
-  /** Comment at bottom of page for the additional services */
-  additional_services_footnotes?: ProductAreaV0AdditionalServicesFootnotes;
-  _links?: LinksModel;
-}
-
-/**
- * An area is a part of a product that has a certain level of comfort or that is restricted to certain people
- */
-export type ProductAreasV0 = ProductAreaV0[];
-
-/**
- * Availability status of the product at this date
- */
-export type BookableDatesCalenderAvailabilityStatusModelV0 =
-  (typeof BookableDatesCalenderAvailabilityStatusModelV0)[keyof typeof BookableDatesCalenderAvailabilityStatusModelV0];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BookableDatesCalenderAvailabilityStatusModelV0 = {
-  AVAILABLE: 'AVAILABLE',
-  CLOSED: 'CLOSED',
-  UNKNOWN: 'UNKNOWN',
-  NO_FLIGHT: 'NO_FLIGHT',
-  NO_DEPARTURE: 'NO_DEPARTURE',
-  FULL: 'FULL',
-  EXCLUSIVITY: 'EXCLUSIVITY',
-} as const;
-
-export type BookableDatesCalendarDurationsV0 = number[];
-
-export interface BookableDatesCalendarAvailabilityV0 {
-  status: BookableDatesCalenderAvailabilityStatusModelV0;
-  durations: BookableDatesCalendarDurationsV0;
-}
-
-export type BookableDatesCalendarAvailabilitiesV0 = BookableDatesCalendarAvailabilityV0[];
-
-export interface BookableDatesCalendarDayV0 {
-  /** Day identifier */
-  id: number;
-  availabilities: BookableDatesCalendarAvailabilitiesV0;
-}
-
-export type BookableDatesCalendarDaysV0 = BookableDatesCalendarDayV0[];
-
-export interface BookableDatesCalendarMonthV0 {
-  /** Month identifier */
-  id: number;
-  days: BookableDatesCalendarDaysV0;
-}
-
-export type BookableDatesCalendarMonthsV0 = BookableDatesCalendarMonthV0[];
-
-export interface BookableDatesCalendarV0 {
-  months: BookableDatesCalendarMonthsV0;
-}
-
-/**
- * list of possible journey duration for this product
- */
-export type Durations = number[];
-
-export interface BookingCriteriaDepartureOptionModel {
-  /** Code of this city. The “NO” id corresponds to the “without transport” option. Ex: "BOD" */
-  id: string;
-  /** Human readable label of this city. Ex: "Bordeaux" */
-  label: string;
-}
-
-/**
- * list of possible departure cities. NO if the product can't be booked with a transportation
- */
-export type BookingCriteriaDepartureOptions = BookingCriteriaDepartureOptionModel[];
-
-/**
- * criteria (departure cities, durations) available to book the product
- */
-export interface ProductBookingCriteriaModel {
-  durations?: Durations;
-  departure_options?: BookingCriteriaDepartureOptions;
-  /** Minimum times between the reservation date and the start of the stay */
-  offset_sell?: number;
-}
-
-export interface FlahInformationEvent {
-  /** Event title. Ex: "event title" */
-  title?: string;
-  /** Event subtitle. Ex: "event subtitle" */
-  subtitle?: string;
-  /** Event image. Ex: "http://image.com" */
-  image?: string;
-  /** Event description. Ex: "event description" */
-  description?: string;
-  /** More information link. Ex: "http://moreinformation.com" */
-  link?: string;
-}
-
-/**
- * List of commercial events.
- */
-export type FlahInformationEvents = FlahInformationEvent[];
-
-export interface FlashInformation {
-  events?: FlahInformationEvents;
-  /** Incentive booking image. Ex: "http://incentiveBookingImage.com */
-  incentive_booking_image?: string;
-}
-
-/**
- * Highlight type
- */
-export type HighlightTypeModel = (typeof HighlightTypeModel)[keyof typeof HighlightTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const HighlightTypeModel = {
-  CRUISE_THEME: 'CRUISE_THEME',
-  STRENGTHS: 'STRENGTHS',
-  BUSINESS_SOCIAL_RESPONSIBILITY: 'BUSINESS_SOCIAL_RESPONSIBILITY',
-  MEETINGS_AND_EVENTS: 'MEETINGS_AND_EVENTS',
-  MUST_TRY_EXPERIENCES: 'MUST_TRY_EXPERIENCES',
-  REASON_TO_GO: 'REASON_TO_GO',
-  REASON_TO_GO_EXCLUSIVE_COLLECTION_SPACE: 'REASON_TO_GO_EXCLUSIVE_COLLECTION_SPACE',
-  FD_KIDS_AND_FAMILY: 'FD_KIDS_AND_FAMILY',
-  FD_EDITORIAL: 'FD_EDITORIAL',
-} as const;
-
-/**
- * Tags related to highlights.
- */
-export type Tags = string[];
-
-export interface HighlightModel {
-  /** Highlight id */
-  id: string;
-  /** Highlight title in few words */
-  title: string;
-  type: HighlightTypeModel;
-  /** Highlight description in few word */
-  description: string;
-  /** Highlight immersive picture */
-  image: string;
-  /** Theme of this highlight */
-  theme: string;
-  tags?: Tags;
-}
-
-export type HighlightsModel = HighlightModel[];
-
-export type MeetingRoomImages = string[];
-
-/**
- * room area
- */
-export type AreaAnyOf = {
-  /** room area */
-  value?: number;
-  /** room area unit (m² or sqft) */
-  unit?: string;
-};
-
-/**
- * room area
- */
-export type Area = AreaAnyOf | null;
-
-/**
- * room length
- */
-export type LengthAnyOf = {
-  /** room length */
-  value?: number;
-  /** room length unit (m or ft) */
-  unit?: string;
-};
-
-/**
- * room length
- */
-export type Length = LengthAnyOf | null;
-
-/**
- * room width
- */
-export type WidthAnyOf = {
-  /** room width */
-  value?: number;
-  /** room width unit (m or ft) */
-  unit?: string;
-};
-
-/**
- * room width
- */
-export type Width = WidthAnyOf | null;
-
-/**
- * room height
- */
-export type HeightAnyOf = {
-  /** room height */
-  value?: number;
-  /** room height unit (m or ft) */
-  unit?: string;
-};
-
-/**
- * room height
- */
-export type Height = HeightAnyOf | null;
-
-/**
- * maximum number of persons fitting in the room with this type of arrangement
- */
-export type MeetingRoomArrangementMaxCapacity = number | null;
-
-export interface MeetingRoomArrangement {
-  /** type of possible arrangement (U_SHAPE, BOARDROOM, CLASSROOM, THEATRE, GALA_DINER) */
-  type: string;
-  /** maximum number of persons fitting in the room with this type of arrangement */
-  max_capacity: MeetingRoomArrangementMaxCapacity;
-}
-
-export type MeetingRoomArrangements = MeetingRoomArrangement[];
-
-/**
- * number of plugs in this room
- */
-export type MeetingRoomPlugsCount = number | null;
-
-/**
- * plugs voltage
- */
-export type MeetingRoomPlugsVoltage = number | null;
-
-export interface MeetingRoomPlugs {
-  /** number of plugs in this room */
-  count: MeetingRoomPlugsCount;
-  /** type of plugs (EUROPEAN, US, UK...) */
-  type: string;
-  /** plugs voltage */
-  voltage: MeetingRoomPlugsVoltage;
-}
-
-/**
- * stage area
- */
-export type MeetingRoomStageArea = number | null;
-
-export interface MeetingRoomStage {
-  /** true if a stage is available in the room */
-  available: boolean;
-  /** stage area */
-  area: MeetingRoomStageArea;
-  /** stage area unit (m² or sqft) */
-  unit: string;
-}
-
-/**
- * sound system capacity
- */
-export type MeetingRoomSoundSystemCapacity = number | null;
-
-export interface MeetingRoomSoundSystem {
-  /** true if a sound system is available in the room */
-  available: boolean;
-  /** sound system capacity */
-  capacity: MeetingRoomSoundSystemCapacity;
-  /** sound system capacity unit (watt) */
-  unit: string;
-}
-
-/**
- * video projector light capacity
- */
-export type MeetingRoomVideoProjectorLightCapacity = number | null;
-
-export interface MeetingRoomVideoProjector {
-  /** true if a video projector is available in the room */
-  available: boolean;
-  /** video projector light capacity */
-  light_capacity: MeetingRoomVideoProjectorLightCapacity;
-  /** video projector light capacity unit (lumen) */
-  unit: string;
-}
-
-export interface MeetingRoomSpecificEquipment {
-  plugs: MeetingRoomPlugs;
-  stage: MeetingRoomStage;
-  sound_system: MeetingRoomSoundSystem;
-  video_projector: MeetingRoomVideoProjector;
-}
-
-export interface MeetingRoomEquipment {
-  /** id of the piece of equipment */
-  id: string;
-  /** label of the piece of equipment */
-  label: string;
-}
-
-export type MeetingRoomEquipments = MeetingRoomEquipment[];
-
-/**
- * true if the room can be split with a physical separation
- */
-export type MeetingRoomPartitionableRooms = boolean | null;
-
-/**
- * true if the room is lighten with natural light
- */
-export type MeetingRoomNaturalLight = boolean | null;
-
-/**
- * number of windows in the room
- */
-export type MeetingRoomWindowsCount = number | null;
-
-export interface MeetingRoom {
-  /** room label */
-  label: string;
-  images: MeetingRoomImages;
-  area?: Area;
-  length?: Length;
-  width?: Width;
-  height?: Height;
-  arrangements: MeetingRoomArrangements;
-  /** true if the room can be split with a physical separation */
-  partitionable_rooms: MeetingRoomPartitionableRooms;
-  /** true if the room is lighten with natural light */
-  natural_light: MeetingRoomNaturalLight;
-  /** number of windows in the room */
-  windows_count: MeetingRoomWindowsCount;
-  specific_equipment: MeetingRoomSpecificEquipment;
-  equipments: MeetingRoomEquipments;
-}
-
-export type MeetingRoomList = MeetingRoom[];
-
-export interface MonthlyWeatherModel {
-  /** month of the year (starting from 1) */
-  month: number;
-  /** average minimal temperature of the month in degrees Celsius */
-  temp_min_C?: number;
-  /** average maximal temperature of the month in degrees Celsius */
-  temp_max_C?: number;
-  /** average minimal temperature of the month in degrees Fahrenheit */
-  temp_min_F?: number;
-  /** average maximal temperature of the month in degrees Fahrenheit */
-  temp_max_F?: number;
-  /** average snow level in centimeter */
-  snow_level_in_cm?: number;
-  /** average snow level in inches */
-  snow_level_in_inches?: number;
-}
-
-export type MonthlyWeatherItem = MonthlyWeatherModel[];
-
-export interface ProductMustTryExperience {
-  /** Experience id */
-  id: string;
-  /** Experience title in few words */
-  title: string;
-  /** Experience description in few word */
-  description: string;
-  /** Experience immersive picture */
-  image: string;
-}
-
-export type ProductMustTryExperiences = ProductMustTryExperience[];
-
-export interface DestinationBaseModel {
-  /** Product Country. Ex: "MOROCCO" */
-  country?: string;
-  /** ISO code 366 of the product's country. Ex: "MA" */
-  country_code?: string;
-  /** Product Area. Ex: "Africa" */
-  area?: string;
-}
-
-export interface Highlight {
-  /** ex: "FITNESS" */
-  id?: string;
-  /** ex:"Form" */
-  label?: string;
-  /** ex: "ACTIVITY" if this highlight is related to activities */
-  about?: string;
-}
-
-/**
- * Resort highlights available on this season.
- */
-export type Highlights = Highlight[];
-
-export interface TripadvisorLight {
-  /** Unique TripAdvisor location ID of the resort. See https://developer-tripadvisor.com/content-api/documentation/location/ */
-  location_id?: string;
-  /** TripAdvisor url of the resort page. */
-  tripadvisor_url?: string;
-  /** Overall rating for this resort. Rating levels are defined as follows: 1 Terrible, 2 Poor, 3 Average, 4 Very good, 5 Excellent */
-  rating?: string;
-  /** URL to the bubble rating image for this location. */
-  rating_image_url?: string;
-  /** number of reviews. */
-  num_reviews?: number;
-}
-
-/**
- * The iso 3 currency. Ex: CNY,EUR,..
- * @minLength 3
- * @maxLength 3
- */
-export type PriceBaseModelAnyOfCurrency = string | null;
-
-export type PriceBaseModelAnyOf = {
-  initial_price?: InitialPrice;
-  best_price?: BestPrice;
-  fee?: Fee;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency?: PriceBaseModelAnyOfCurrency;
-  terms_and_conditions?: TermsAndConditionsExtended;
-};
-
-export type PriceBaseModel = PriceBaseModelAnyOf | null;
-
-/**
- * Product strengths for the product
- */
-export type Strengths = string[];
-
-/**
- * Product season. Deprecated: use seasons instead.
- */
-export type Season = (typeof Season)[keyof typeof Season];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Season = {
-  WINTER: 'WINTER',
-  SUMMER: 'SUMMER',
-  ALL_YEAR: 'ALL_YEAR',
-} as const;
-
-export type ProductLightModelValidSeasons =
-  (typeof ProductLightModelValidSeasons)[keyof typeof ProductLightModelValidSeasons];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProductLightModelValidSeasons = {
-  WINTER: 'WINTER',
-  SUMMER: 'SUMMER',
-} as const;
-
-/**
- * opening seasons (SUMMER and/or WINTER)
- */
-export type ShoppingProductLightSeasonsModel = ProductLightModelValidSeasons[];
-
-/**
- * list of countries crossed by a tour
- */
-export type TourCountryLabels = string[];
-
-/**
- * range for a tour
- */
-export type RangeAnyOf = {
-  /** range id */
-  id: string;
-  /** range label */
-  label: string;
-};
-
-/**
- * range for a tour
- */
-export type Range = RangeAnyOf | null;
-
-/**
- * comfort level in Tridents. The level 5 is the best one Ex: 5
- */
-export type ProductListComfortLevel = number | null;
-
-/**
- * minimum authorized age in months to access this product
- * @minimum 0
- */
-export type ProductListMinAuthorizedAgeInMonths = number | null;
-
-export interface ProductList {
-  /** Product ID. Ex: "CHAC_SUMMER" stands for Chamonix in summer */
-  id: string;
-  /** Resort ID. Ex: "CHAC" */
-  resort_id: string;
-  /** Product Title. Ex: "Chamonix Mont-Blanc" */
-  title: string;
-  /** Product full title. Ex: "Clubmed Chamonix Mont-Blanc" */
-  full_title: string;
-  /** Product full name. */
-  full_name?: string;
-  destination?: DestinationBaseModel;
-  /** comfort level in Tridents. The level 5 is the best one Ex: 5 */
-  comfort_level?: ProductListComfortLevel;
-  /** Product comfort label. Ex: "5 tridents" */
-  comfort_label?: string;
-  type?: ProductTypeModel;
-  /** Resort description title. Ex: "Lulled by the art de vivre of Morocco, this resort is ideal for families." */
-  description_title?: string;
-  /** main product description. Ex:"Behind an imposing wooden door in the heart of Agadir, gardens lush with bouganvillea, ..."" */
-  description_1?: string;
-  /** "true" if children are not allowed. */
-  adult_only: boolean;
-  /** Resort image for this season. */
-  immersive_image?: string;
-  highlights?: Highlights;
-  tripadvisor?: TripadvisorLight;
-  price?: PriceBaseModel;
-  /** secondary product description */
-  description_2?: string;
-  strengths?: Strengths;
-  season?: Season;
-  seasons?: ShoppingProductLightSeasonsModel;
-  /**
-   * minimum authorized age in months to access this product
-   * @minimum 0
-   */
-  min_authorized_age_in_months?: ProductListMinAuthorizedAgeInMonths;
-  tour_country_labels?: TourCountryLabels;
-  range?: Range;
-  /** link to display the product fact sheet */
-  fact_sheet_url?: string;
-}
-
-/**
- * List of products for a locale.<br> The prices are for the entire season
- */
-export type Product = ProductList[];
-
-/**
- * The event type (ACTIVITY, DRESSCODE)
- */
-export type TimeslotsTypeModel = (typeof TimeslotsTypeModel)[keyof typeof TimeslotsTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TimeslotsTypeModel = {
-  ACTIVITY: 'ACTIVITY',
-  DRESSCODE: 'DRESSCODE',
-} as const;
-
-export type TimeslotScheduleTypeModelAnyOf = {
-  /** Schedule type code */
-  code?: string;
-  /** Schedule type label */
-  label?: string;
-  /** Schedule type color */
-  color?: string;
-};
-
-export type TimeslotScheduleTypeModel = TimeslotScheduleTypeModelAnyOf | null;
-
-/**
- * true when the activity is a night show, otherwise it's false
- */
-export type TimeslotModelIsNightShow = boolean | null;
-
-/**
- * true when the eGO wants to display information about the activity in the info corner, otherwise it's false
- */
-export type TimeslotModelIsHighlightInfoCorner = boolean | null;
-
-export interface TimeslotModel {
-  /** Event ID */
-  id: string;
-  /** Entity ID related to the current event (ACTIVITY, DRESSCODE) */
-  entity_id: string;
-  type: TimeslotsTypeModel;
-  /** Event title */
-  label: string;
-  /** Location title */
-  location_label: string;
-  /** The event description (HTML formatted) */
-  description: string;
-  /** The event image */
-  image: string;
-  /** Event start date time 
-Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]` */
-  start_date_time: string;
-  /** Event end date time 
-Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]` */
-  end_date_time: string;
-  /** true when the activity is a night show, otherwise it's false */
-  is_night_show: TimeslotModelIsNightShow;
-  /** true when the eGO wants to display information about the activity in the info corner, otherwise it's false */
-  is_highlight_info_corner: TimeslotModelIsHighlightInfoCorner;
-  schedule_type?: TimeslotScheduleTypeModel;
-  _links: LinksModel;
-}
-
-export type TimeslotsModel = TimeslotModel[];
-
-/**
- * size unit of the room
- */
-export type RoomAreaUnitModel = (typeof RoomAreaUnitModel)[keyof typeof RoomAreaUnitModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const RoomAreaUnitModel = {
-  'm²': 'm²',
-  sqft: 'sqft',
-} as const;
-
-/**
- * area of the room
- */
-export type RoomAreaAnyOf = {
-  /** size of the room */
-  size: number;
-  unit: RoomAreaUnitModel;
-};
-
-/**
- * area of the room
- */
-export type RoomArea = RoomAreaAnyOf | null;
-
-/**
- * id of the rooms next to this room
- */
-export type NearRoomIds = string[];
-
-export interface RoomsItem {
-  /** id of the room */
-  id: string;
-  /** label of the room */
-  label: string;
-  /** id of the accommodation category */
-  accommodation_category_id: string;
-  /** id of the accommodation type */
-  accommodation_type_id: string;
-  /** maximum number of persons */
-  max_capacity: number;
-  /** view from the room */
-  view?: string;
-  area?: RoomArea;
-  /**
-   * maximum number of folding beds that can be set up in the room
-   * @minimum 0
-   */
-  max_folding_bed?: number;
-  /**
-   * maximum number of baby beds that can be set up in the room
-   * @minimum 0
-   */
-  max_baby_bed?: number;
-  /**
-   * maximum number of sofa beds that can be set up in the room
-   * @minimum 0
-   */
-  max_sofa_bed?: number;
-  /** true if the room is near the center of the resort */
-  near_center?: boolean;
-  /** id of the room that can be connected with this room */
-  connected_room_id?: string;
-  near_room_ids?: NearRoomIds;
-  /** orientation of the room */
-  orientation?: string;
-  _links?: LinksModel;
-}
-
-export type RoomsList = RoomsItem[];
-
-/**
- * comfort level label
- */
-export type ComfortLevelModelAnyOfLabel = string | null;
-
-/**
- * hotel comfort level
- */
-export type ComfortLevelModelAnyOf = {
-  /** comfort level identifier */
-  id?: string;
-  /** comfort level label */
-  label?: ComfortLevelModelAnyOfLabel;
-};
-
-/**
- * hotel comfort level
- */
-export type ComfortLevelModel = ComfortLevelModelAnyOf | null;
-
-/**
- * an external hotel
- */
-export interface HotelModel {
-  /** hotel name */
-  name: string;
-  comfort_level?: ComfortLevelModel;
-}
-
-/**
- * list of external hotels
- */
-export type HotelsList = HotelModel[];
-
-/**
- * list of not included activities in the tour or cruise
- */
-export type AdditionalActivitiesList = string[];
-
-/**
- * stopover description
- */
-export type StopoverModelDescription = string | null;
-
-/**
- * arrival date at the stopover
- */
-export type StopoverModelDate = string | null;
-
-/**
- * arrival time at the stopover
- */
-export type StopoverModelArrivalTime = string | null;
-
-/**
- * departure time from the stopover
- */
-export type StopoverModelDepartureTime = string | null;
-
-/**
- * true if the nautical base is open for this stopover
- */
-export type StopoverModelNauticalBaseAvailability = boolean | null;
-
-/**
- * true if the water skiing is available during this stopover
- */
-export type StopoverModelWaterSkiingAvailability = boolean | null;
-
-/**
- * a stopover in a tour or cruise
- */
-export interface StopoverModel {
-  /** stopover identifier */
-  id: string;
-  /** stopover title */
-  title: string;
-  /** stopover description */
-  description?: StopoverModelDescription;
-  /** true if the stopover is a tour extension */
-  extension: boolean;
-  /** stopover day number in the itenerary */
-  itinerary_day: number;
-  /** arrival date at the stopover */
-  date?: StopoverModelDate;
-  /** arrival time at the stopover */
-  arrival_time?: StopoverModelArrivalTime;
-  /** departure time from the stopover */
-  departure_time?: StopoverModelDepartureTime;
-  hotels?: HotelsList;
-  additional_activities_labels?: AdditionalActivitiesList;
-  /** true if the nautical base is open for this stopover */
-  nautical_base_availability: StopoverModelNauticalBaseAvailability;
-  /** true if the water skiing is available during this stopover */
-  water_skiing_availability: StopoverModelWaterSkiingAvailability;
-}
-
-/**
- * List of stopovers of a tour or cruise
- */
-export type StopoversModel = StopoverModel[];
-
-export interface TourSpecificityBoardTypeModel {
-  /** type of board id */
-  id?: string;
-  /** type of board label */
-  label?: string;
-}
-
-export type TourSpecificyBoardTypesModel = TourSpecificityBoardTypeModel[];
-
-export interface TourSpecifityDuration {
-  /** extension duration in nights */
-  in_nights?: number;
-  /** extension duration in days */
-  in_days?: number;
-}
-
-export type CountryLabels = string[];
-
-export type PriceIncludingDescriptions = string[];
-
-export type PriceExcludingDescriptions = string[];
-
-export interface TourSpecificityExtensionModel {
-  /** extension name */
-  name: string;
-  /** extension description */
-  description?: string;
-  duration?: TourSpecifityDuration;
-  country_labels?: CountryLabels;
-  price_including_descriptions?: PriceIncludingDescriptions;
-  price_excluding_descriptions?: PriceExcludingDescriptions;
-}
-
-export type TourSpecificityExtensionsModel = TourSpecificityExtensionModel[];
-
-export type TourSpecificityTourKeyPoints = string[];
-
-export interface TourSpecificityDefaultIncludedCountryModel {
-  /** id country */
-  id: string;
-  /** label country */
-  label: string;
-}
-
-export type TourSpecificityDefaultIncludedCountriesModel =
-  TourSpecificityDefaultIncludedCountryModel[];
-
-export interface TourSpecificityModel {
-  board_types?: TourSpecificyBoardTypesModel;
-  extensions?: TourSpecificityExtensionsModel;
-  tour_key_points?: TourSpecificityTourKeyPoints;
-  default_included_countries?: TourSpecificityDefaultIncludedCountriesModel;
-}
-
-/**
- * latitude of the preview scene
- * @minimum -90
- * @maximum 90
- */
-export type PreviewParametersAnyOfLatitude = number | null;
-
-/**
- * longitude of the preview scene
- * @minimum -180
- * @maximum 180
- */
-export type PreviewParametersAnyOfLongitude = number | null;
-
-/**
- * compass heading of the camera at the preview scene
- * @minimum 0
- * @maximum 360
- */
-export type PreviewParametersAnyOfHeading = number | null;
-
-/**
- * up or down angle of the camera at the preview scene
- * @minimum -180
- * @maximum 180
- */
-export type PreviewParametersAnyOfPitch = number | null;
-
-/**
- * horizontal field of view of the image at the preview scene
- * @minimum 0
- * @maximum 120
- */
-export type PreviewParametersAnyOfFov = number | null;
-
-export type PreviewParametersAnyOf = {
-  /**
-   * latitude of the preview scene
-   * @minimum -90
-   * @maximum 90
-   */
-  latitude?: PreviewParametersAnyOfLatitude;
-  /**
-   * longitude of the preview scene
-   * @minimum -180
-   * @maximum 180
-   */
-  longitude?: PreviewParametersAnyOfLongitude;
-  /**
-   * compass heading of the camera at the preview scene
-   * @minimum 0
-   * @maximum 360
-   */
-  heading?: PreviewParametersAnyOfHeading;
-  /**
-   * up or down angle of the camera at the preview scene
-   * @minimum -180
-   * @maximum 180
-   */
-  pitch?: PreviewParametersAnyOfPitch;
-  /**
-   * horizontal field of view of the image at the preview scene
-   * @minimum 0
-   * @maximum 120
-   */
-  fov?: PreviewParametersAnyOfFov;
-};
-
-export type PreviewParameters = PreviewParametersAnyOf | null;
-
-export interface VirtualVisitModel {
-  /** google street view url */
-  url: string;
-  preview_parameters?: PreviewParameters;
-}
-
-export type VirtualVisitsModel = VirtualVisitModel[];
 
 /**
  * Station's period status
@@ -10083,6 +7684,2409 @@ export interface StationInformationModel {
 
 export type ProductWinterSportsInformationModel = StationInformationModel[];
 
+/**
+ * latitude of the preview scene
+ * @minimum -90
+ * @maximum 90
+ */
+export type PreviewParametersAnyOfLatitude = number | null;
+
+/**
+ * longitude of the preview scene
+ * @minimum -180
+ * @maximum 180
+ */
+export type PreviewParametersAnyOfLongitude = number | null;
+
+/**
+ * compass heading of the camera at the preview scene
+ * @minimum 0
+ * @maximum 360
+ */
+export type PreviewParametersAnyOfHeading = number | null;
+
+/**
+ * up or down angle of the camera at the preview scene
+ * @minimum -180
+ * @maximum 180
+ */
+export type PreviewParametersAnyOfPitch = number | null;
+
+/**
+ * horizontal field of view of the image at the preview scene
+ * @minimum 0
+ * @maximum 120
+ */
+export type PreviewParametersAnyOfFov = number | null;
+
+export type PreviewParametersAnyOf = {
+  /**
+   * latitude of the preview scene
+   * @minimum -90
+   * @maximum 90
+   */
+  latitude?: PreviewParametersAnyOfLatitude;
+  /**
+   * longitude of the preview scene
+   * @minimum -180
+   * @maximum 180
+   */
+  longitude?: PreviewParametersAnyOfLongitude;
+  /**
+   * compass heading of the camera at the preview scene
+   * @minimum 0
+   * @maximum 360
+   */
+  heading?: PreviewParametersAnyOfHeading;
+  /**
+   * up or down angle of the camera at the preview scene
+   * @minimum -180
+   * @maximum 180
+   */
+  pitch?: PreviewParametersAnyOfPitch;
+  /**
+   * horizontal field of view of the image at the preview scene
+   * @minimum 0
+   * @maximum 120
+   */
+  fov?: PreviewParametersAnyOfFov;
+};
+
+export type PreviewParameters = PreviewParametersAnyOf | null;
+
+export interface VirtualVisitModel {
+  /** google street view url */
+  url: string;
+  preview_parameters?: PreviewParameters;
+}
+
+export type VirtualVisitsModel = VirtualVisitModel[];
+
+export type MediaListModel = string[];
+
+export interface TourSpecificityBoardTypeModel {
+  /** type of board id */
+  id?: string;
+  /** type of board label */
+  label?: string;
+}
+
+export type TourSpecificyBoardTypesModel = TourSpecificityBoardTypeModel[];
+
+export interface TourSpecifityDuration {
+  /** extension duration in nights */
+  in_nights?: number;
+  /** extension duration in days */
+  in_days?: number;
+}
+
+export type CountryLabels = string[];
+
+export type PriceIncludingDescriptions = string[];
+
+export type PriceExcludingDescriptions = string[];
+
+export interface TourSpecificityExtensionModel {
+  /** extension name */
+  name: string;
+  /** extension description */
+  description?: string;
+  duration?: TourSpecifityDuration;
+  country_labels?: CountryLabels;
+  price_including_descriptions?: PriceIncludingDescriptions;
+  price_excluding_descriptions?: PriceExcludingDescriptions;
+}
+
+export type TourSpecificityExtensionsModel = TourSpecificityExtensionModel[];
+
+export type TourSpecificityTourKeyPoints = string[];
+
+export interface TourSpecificityDefaultIncludedCountryModel {
+  /** id country */
+  id: string;
+  /** label country */
+  label: string;
+}
+
+export type TourSpecificityDefaultIncludedCountriesModel =
+  TourSpecificityDefaultIncludedCountryModel[];
+
+export interface TourSpecificityModel {
+  board_types?: TourSpecificyBoardTypesModel;
+  extensions?: TourSpecificityExtensionsModel;
+  tour_key_points?: TourSpecificityTourKeyPoints;
+  default_included_countries?: TourSpecificityDefaultIncludedCountriesModel;
+}
+
+/**
+ * comfort level label
+ */
+export type ComfortLevelModelAnyOfLabel = string | null;
+
+/**
+ * hotel comfort level
+ */
+export type ComfortLevelModelAnyOf = {
+  /** comfort level identifier */
+  id?: string;
+  /** comfort level label */
+  label?: ComfortLevelModelAnyOfLabel;
+};
+
+/**
+ * hotel comfort level
+ */
+export type ComfortLevelModel = ComfortLevelModelAnyOf | null;
+
+/**
+ * an external hotel
+ */
+export interface HotelModel {
+  /** hotel name */
+  name: string;
+  comfort_level?: ComfortLevelModel;
+}
+
+/**
+ * list of external hotels
+ */
+export type HotelsList = HotelModel[];
+
+/**
+ * list of not included activities in the tour or cruise
+ */
+export type AdditionalActivitiesList = string[];
+
+/**
+ * stopover description
+ */
+export type StopoverModelDescription = string | null;
+
+/**
+ * arrival date at the stopover
+ */
+export type StopoverModelDate = string | null;
+
+/**
+ * arrival time at the stopover
+ */
+export type StopoverModelArrivalTime = string | null;
+
+/**
+ * departure time from the stopover
+ */
+export type StopoverModelDepartureTime = string | null;
+
+/**
+ * true if the nautical base is open for this stopover
+ */
+export type StopoverModelNauticalBaseAvailability = boolean | null;
+
+/**
+ * true if the water skiing is available during this stopover
+ */
+export type StopoverModelWaterSkiingAvailability = boolean | null;
+
+/**
+ * a stopover in a tour or cruise
+ */
+export interface StopoverModel {
+  /** stopover identifier */
+  id: string;
+  /** stopover title */
+  title: string;
+  /** stopover description */
+  description?: StopoverModelDescription;
+  /** true if the stopover is a tour extension */
+  extension: boolean;
+  /** stopover day number in the itenerary */
+  itinerary_day: number;
+  /** arrival date at the stopover */
+  date?: StopoverModelDate;
+  /** arrival time at the stopover */
+  arrival_time?: StopoverModelArrivalTime;
+  /** departure time from the stopover */
+  departure_time?: StopoverModelDepartureTime;
+  hotels?: HotelsList;
+  additional_activities_labels?: AdditionalActivitiesList;
+  /** true if the nautical base is open for this stopover */
+  nautical_base_availability: StopoverModelNauticalBaseAvailability;
+  /** true if the water skiing is available during this stopover */
+  water_skiing_availability: StopoverModelWaterSkiingAvailability;
+}
+
+/**
+ * List of stopovers of a tour or cruise
+ */
+export type StopoversModel = StopoverModel[];
+
+/**
+ * size unit of the room
+ */
+export type RoomAreaUnitModel = (typeof RoomAreaUnitModel)[keyof typeof RoomAreaUnitModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const RoomAreaUnitModel = {
+  'm²': 'm²',
+  sqft: 'sqft',
+} as const;
+
+/**
+ * area of the room
+ */
+export type RoomAreaAnyOf = {
+  /** size of the room */
+  size: number;
+  unit: RoomAreaUnitModel;
+};
+
+/**
+ * area of the room
+ */
+export type RoomArea = RoomAreaAnyOf | null;
+
+/**
+ * id of the rooms next to this room
+ */
+export type NearRoomIds = string[];
+
+export interface RoomsItem {
+  /** id of the room */
+  id: string;
+  /** label of the room */
+  label: string;
+  /** id of the accommodation category */
+  accommodation_category_id: string;
+  /** id of the accommodation type */
+  accommodation_type_id: string;
+  /** maximum number of persons */
+  max_capacity: number;
+  /** view from the room */
+  view?: string;
+  area?: RoomArea;
+  /**
+   * maximum number of folding beds that can be set up in the room
+   * @minimum 0
+   */
+  max_folding_bed?: number;
+  /**
+   * maximum number of baby beds that can be set up in the room
+   * @minimum 0
+   */
+  max_baby_bed?: number;
+  /**
+   * maximum number of sofa beds that can be set up in the room
+   * @minimum 0
+   */
+  max_sofa_bed?: number;
+  /** true if the room is near the center of the resort */
+  near_center?: boolean;
+  /** id of the room that can be connected with this room */
+  connected_room_id?: string;
+  near_room_ids?: NearRoomIds;
+  /** orientation of the room */
+  orientation?: string;
+  _links?: LinksModel;
+}
+
+export type RoomsList = RoomsItem[];
+
+/**
+ * The event type (ACTIVITY, DRESSCODE)
+ */
+export type TimeslotsTypeModel = (typeof TimeslotsTypeModel)[keyof typeof TimeslotsTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TimeslotsTypeModel = {
+  ACTIVITY: 'ACTIVITY',
+  DRESSCODE: 'DRESSCODE',
+} as const;
+
+export type TimeslotScheduleTypeModelAnyOf = {
+  /** Schedule type code */
+  code?: string;
+  /** Schedule type label */
+  label?: string;
+  /** Schedule type color */
+  color?: string;
+};
+
+export type TimeslotScheduleTypeModel = TimeslotScheduleTypeModelAnyOf | null;
+
+/**
+ * true when the activity is a night show, otherwise it's false
+ */
+export type TimeslotModelIsNightShow = boolean | null;
+
+/**
+ * true when the eGO wants to display information about the activity in the info corner, otherwise it's false
+ */
+export type TimeslotModelIsHighlightInfoCorner = boolean | null;
+
+export interface TimeslotModel {
+  /** Event ID */
+  id: string;
+  /** Entity ID related to the current event (ACTIVITY, DRESSCODE) */
+  entity_id: string;
+  type: TimeslotsTypeModel;
+  /** Event title */
+  label: string;
+  /** Location title */
+  location_label: string;
+  /** The event description (HTML formatted) */
+  description: string;
+  /** The event image */
+  image: string;
+  /** Event start date time 
+Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]` */
+  start_date_time: string;
+  /** Event end date time 
+Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]` */
+  end_date_time: string;
+  /** true when the activity is a night show, otherwise it's false */
+  is_night_show: TimeslotModelIsNightShow;
+  /** true when the eGO wants to display information about the activity in the info corner, otherwise it's false */
+  is_highlight_info_corner: TimeslotModelIsHighlightInfoCorner;
+  schedule_type?: TimeslotScheduleTypeModel;
+  _links: LinksModel;
+}
+
+export type TimeslotsModel = TimeslotModel[];
+
+export interface DestinationBaseModel {
+  /** Product Country. Ex: "MOROCCO" */
+  country?: string;
+  /** ISO code 366 of the product's country. Ex: "MA" */
+  country_code?: string;
+  /** Product Area. Ex: "Africa" */
+  area?: string;
+}
+
+export interface Highlight {
+  /** ex: "FITNESS" */
+  id?: string;
+  /** ex:"Form" */
+  label?: string;
+  /** ex: "ACTIVITY" if this highlight is related to activities */
+  about?: string;
+}
+
+/**
+ * Resort highlights available on this season.
+ */
+export type Highlights = Highlight[];
+
+export interface TripadvisorLight {
+  /** Unique TripAdvisor location ID of the resort. See https://developer-tripadvisor.com/content-api/documentation/location/ */
+  location_id?: string;
+  /** TripAdvisor url of the resort page. */
+  tripadvisor_url?: string;
+  /** Overall rating for this resort. Rating levels are defined as follows: 1 Terrible, 2 Poor, 3 Average, 4 Very good, 5 Excellent */
+  rating?: string;
+  /** URL to the bubble rating image for this location. */
+  rating_image_url?: string;
+  /** number of reviews. */
+  num_reviews?: number;
+}
+
+/**
+ * The iso 3 currency. Ex: CNY,EUR,..
+ * @minLength 3
+ * @maxLength 3
+ */
+export type PriceBaseModelAnyOfCurrency = string | null;
+
+export type PriceBaseModelAnyOf = {
+  initial_price?: InitialPrice;
+  best_price?: BestPrice;
+  fee?: Fee;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency?: PriceBaseModelAnyOfCurrency;
+  terms_and_conditions?: TermsAndConditionsExtended;
+};
+
+export type PriceBaseModel = PriceBaseModelAnyOf | null;
+
+/**
+ * Product strengths for the product
+ */
+export type Strengths = string[];
+
+/**
+ * Product season. Deprecated: use seasons instead.
+ */
+export type Season = (typeof Season)[keyof typeof Season];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Season = {
+  WINTER: 'WINTER',
+  SUMMER: 'SUMMER',
+  ALL_YEAR: 'ALL_YEAR',
+} as const;
+
+export type ProductLightModelValidSeasons =
+  (typeof ProductLightModelValidSeasons)[keyof typeof ProductLightModelValidSeasons];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProductLightModelValidSeasons = {
+  WINTER: 'WINTER',
+  SUMMER: 'SUMMER',
+} as const;
+
+/**
+ * opening seasons (SUMMER and/or WINTER)
+ */
+export type ShoppingProductLightSeasonsModel = ProductLightModelValidSeasons[];
+
+/**
+ * list of countries crossed by a tour
+ */
+export type TourCountryLabels = string[];
+
+/**
+ * range for a tour
+ */
+export type RangeAnyOf = {
+  /** range id */
+  id: string;
+  /** range label */
+  label: string;
+};
+
+/**
+ * range for a tour
+ */
+export type Range = RangeAnyOf | null;
+
+/**
+ * comfort level in Tridents. The level 5 is the best one Ex: 5
+ */
+export type ProductListComfortLevel = number | null;
+
+/**
+ * minimum authorized age in months to access this product
+ * @minimum 0
+ */
+export type ProductListMinAuthorizedAgeInMonths = number | null;
+
+export interface ProductList {
+  /** Product ID. Ex: "CHAC_SUMMER" stands for Chamonix in summer */
+  id: string;
+  /** Resort ID. Ex: "CHAC" */
+  resort_id: string;
+  /** Product Title. Ex: "Chamonix Mont-Blanc" */
+  title: string;
+  /** Product full title. Ex: "Clubmed Chamonix Mont-Blanc" */
+  full_title: string;
+  /** Product full name. */
+  full_name?: string;
+  destination?: DestinationBaseModel;
+  /** comfort level in Tridents. The level 5 is the best one Ex: 5 */
+  comfort_level?: ProductListComfortLevel;
+  /** Product comfort label. Ex: "5 tridents" */
+  comfort_label?: string;
+  type?: ProductTypeModel;
+  /** Resort description title. Ex: "Lulled by the art de vivre of Morocco, this resort is ideal for families." */
+  description_title?: string;
+  /** main product description. Ex:"Behind an imposing wooden door in the heart of Agadir, gardens lush with bouganvillea, ..."" */
+  description_1?: string;
+  /** "true" if children are not allowed. */
+  adult_only: boolean;
+  /** Resort image for this season. */
+  immersive_image?: string;
+  highlights?: Highlights;
+  tripadvisor?: TripadvisorLight;
+  price?: PriceBaseModel;
+  /** secondary product description */
+  description_2?: string;
+  strengths?: Strengths;
+  season?: Season;
+  seasons?: ShoppingProductLightSeasonsModel;
+  /**
+   * minimum authorized age in months to access this product
+   * @minimum 0
+   */
+  min_authorized_age_in_months?: ProductListMinAuthorizedAgeInMonths;
+  tour_country_labels?: TourCountryLabels;
+  range?: Range;
+  /** link to display the product fact sheet */
+  fact_sheet_url?: string;
+}
+
+/**
+ * List of products for a locale.<br> The prices are for the entire season
+ */
+export type Product = ProductList[];
+
+export interface Period {
+  opening?: string;
+  closing?: string;
+}
+
+export type OpeningDateListModel = Period[];
+
+export interface MonthlyWeatherModel {
+  /** month of the year (starting from 1) */
+  month: number;
+  /** average minimal temperature of the month in degrees Celsius */
+  temp_min_C?: number;
+  /** average maximal temperature of the month in degrees Celsius */
+  temp_max_C?: number;
+  /** average minimal temperature of the month in degrees Fahrenheit */
+  temp_min_F?: number;
+  /** average maximal temperature of the month in degrees Fahrenheit */
+  temp_max_F?: number;
+  /** average snow level in centimeter */
+  snow_level_in_cm?: number;
+  /** average snow level in inches */
+  snow_level_in_inches?: number;
+}
+
+export type MonthlyWeatherItem = MonthlyWeatherModel[];
+
+export type MeetingRoomImages = string[];
+
+/**
+ * room area
+ */
+export type AreaAnyOf = {
+  /** room area */
+  value?: number;
+  /** room area unit (m² or sqft) */
+  unit?: string;
+};
+
+/**
+ * room area
+ */
+export type Area = AreaAnyOf | null;
+
+/**
+ * room length
+ */
+export type LengthAnyOf = {
+  /** room length */
+  value?: number;
+  /** room length unit (m or ft) */
+  unit?: string;
+};
+
+/**
+ * room length
+ */
+export type Length = LengthAnyOf | null;
+
+/**
+ * room width
+ */
+export type WidthAnyOf = {
+  /** room width */
+  value?: number;
+  /** room width unit (m or ft) */
+  unit?: string;
+};
+
+/**
+ * room width
+ */
+export type Width = WidthAnyOf | null;
+
+/**
+ * room height
+ */
+export type HeightAnyOf = {
+  /** room height */
+  value?: number;
+  /** room height unit (m or ft) */
+  unit?: string;
+};
+
+/**
+ * room height
+ */
+export type Height = HeightAnyOf | null;
+
+/**
+ * maximum number of persons fitting in the room with this type of arrangement
+ */
+export type MeetingRoomArrangementMaxCapacity = number | null;
+
+export interface MeetingRoomArrangement {
+  /** type of possible arrangement (U_SHAPE, BOARDROOM, CLASSROOM, THEATRE, GALA_DINER) */
+  type: string;
+  /** maximum number of persons fitting in the room with this type of arrangement */
+  max_capacity: MeetingRoomArrangementMaxCapacity;
+}
+
+export type MeetingRoomArrangements = MeetingRoomArrangement[];
+
+/**
+ * number of plugs in this room
+ */
+export type MeetingRoomPlugsCount = number | null;
+
+/**
+ * plugs voltage
+ */
+export type MeetingRoomPlugsVoltage = number | null;
+
+export interface MeetingRoomPlugs {
+  /** number of plugs in this room */
+  count: MeetingRoomPlugsCount;
+  /** type of plugs (EUROPEAN, US, UK...) */
+  type: string;
+  /** plugs voltage */
+  voltage: MeetingRoomPlugsVoltage;
+}
+
+/**
+ * stage area
+ */
+export type MeetingRoomStageArea = number | null;
+
+export interface MeetingRoomStage {
+  /** true if a stage is available in the room */
+  available: boolean;
+  /** stage area */
+  area: MeetingRoomStageArea;
+  /** stage area unit (m² or sqft) */
+  unit: string;
+}
+
+/**
+ * sound system capacity
+ */
+export type MeetingRoomSoundSystemCapacity = number | null;
+
+export interface MeetingRoomSoundSystem {
+  /** true if a sound system is available in the room */
+  available: boolean;
+  /** sound system capacity */
+  capacity: MeetingRoomSoundSystemCapacity;
+  /** sound system capacity unit (watt) */
+  unit: string;
+}
+
+/**
+ * video projector light capacity
+ */
+export type MeetingRoomVideoProjectorLightCapacity = number | null;
+
+export interface MeetingRoomVideoProjector {
+  /** true if a video projector is available in the room */
+  available: boolean;
+  /** video projector light capacity */
+  light_capacity: MeetingRoomVideoProjectorLightCapacity;
+  /** video projector light capacity unit (lumen) */
+  unit: string;
+}
+
+export interface MeetingRoomSpecificEquipment {
+  plugs: MeetingRoomPlugs;
+  stage: MeetingRoomStage;
+  sound_system: MeetingRoomSoundSystem;
+  video_projector: MeetingRoomVideoProjector;
+}
+
+export interface MeetingRoomEquipment {
+  /** id of the piece of equipment */
+  id: string;
+  /** label of the piece of equipment */
+  label: string;
+}
+
+export type MeetingRoomEquipments = MeetingRoomEquipment[];
+
+/**
+ * true if the room can be split with a physical separation
+ */
+export type MeetingRoomPartitionableRooms = boolean | null;
+
+/**
+ * true if the room is lighten with natural light
+ */
+export type MeetingRoomNaturalLight = boolean | null;
+
+/**
+ * number of windows in the room
+ */
+export type MeetingRoomWindowsCount = number | null;
+
+export interface MeetingRoom {
+  /** room label */
+  label: string;
+  images: MeetingRoomImages;
+  area?: Area;
+  length?: Length;
+  width?: Width;
+  height?: Height;
+  arrangements: MeetingRoomArrangements;
+  /** true if the room can be split with a physical separation */
+  partitionable_rooms: MeetingRoomPartitionableRooms;
+  /** true if the room is lighten with natural light */
+  natural_light: MeetingRoomNaturalLight;
+  /** number of windows in the room */
+  windows_count: MeetingRoomWindowsCount;
+  specific_equipment: MeetingRoomSpecificEquipment;
+  equipments: MeetingRoomEquipments;
+}
+
+export type MeetingRoomList = MeetingRoom[];
+
+export interface InterventionCategoryAssetModel {
+  /** Type of intervention */
+  code: string;
+  /** Description of category */
+  label: string;
+  /** Type of asset */
+  type: string;
+  /** Maximum value */
+  max?: number;
+}
+
+export type InterventionCategoryAssetsModel = InterventionCategoryAssetModel[];
+
+export interface InterventionCategoryModel {
+  /** Category of intervention */
+  code: string;
+  /** Description of category */
+  label: string;
+  /** Icon of intervention */
+  icon_url: string;
+  assets: InterventionCategoryAssetsModel;
+}
+
+export type InterventionCategoriesModel = InterventionCategoryModel[];
+
+export interface GOCategoryModel {
+  /** GO's category code */
+  code: string;
+  /** GO's category label */
+  label: string;
+}
+
+/**
+ * GO's categories
+ */
+export type GOCategoriesModel = GOCategoryModel[];
+
+export interface GOModel {
+  /** Identify a unique GO */
+  id: string;
+  /** GO staff member label. Usually their first name and job title */
+  label: string;
+  /** GO staff member description */
+  description: string;
+  /** GO picture */
+  picture: string;
+  /** GO's name */
+  first_name: string;
+  /** GO's job */
+  job: string;
+  /** GO's favorite crazy sign */
+  crazy_sign: string;
+  /** GO's favorite resort */
+  favorite_resort: string;
+  /** GO's hidden talent */
+  hidden_talent: string;
+  /** GO's place of residence */
+  place_of_residence: string;
+  /** GO's spoken language */
+  spoken_languages: string;
+  categories: GOCategoriesModel;
+}
+
+export type GOStaffModel = GOModel[];
+
+export interface FlahInformationEvent {
+  /** Event title. Ex: "event title" */
+  title?: string;
+  /** Event subtitle. Ex: "event subtitle" */
+  subtitle?: string;
+  /** Event image. Ex: "http://image.com" */
+  image?: string;
+  /** Event description. Ex: "event description" */
+  description?: string;
+  /** More information link. Ex: "http://moreinformation.com" */
+  link?: string;
+}
+
+/**
+ * List of commercial events.
+ */
+export type FlahInformationEvents = FlahInformationEvent[];
+
+export interface FlashInformation {
+  events?: FlahInformationEvents;
+  /** Incentive booking image. Ex: "http://incentiveBookingImage.com */
+  incentive_booking_image?: string;
+}
+
+/**
+ * list of possible journey duration for this product
+ */
+export type Durations = number[];
+
+export interface BookingCriteriaDepartureOptionModel {
+  /** Code of this city. The “NO” id corresponds to the “without transport” option. Ex: "BOD" */
+  id: string;
+  /** Human readable label of this city. Ex: "Bordeaux" */
+  label: string;
+}
+
+/**
+ * list of possible departure cities. NO if the product can't be booked with a transportation
+ */
+export type BookingCriteriaDepartureOptions = BookingCriteriaDepartureOptionModel[];
+
+/**
+ * criteria (departure cities, durations) available to book the product
+ */
+export interface ProductBookingCriteriaModel {
+  durations?: Durations;
+  departure_options?: BookingCriteriaDepartureOptions;
+  /** Minimum times between the reservation date and the start of the stay */
+  offset_sell?: number;
+}
+
+/**
+ * Availability status of the product at this date
+ */
+export type BookableDatesCalenderAvailabilityStatusModelV0 =
+  (typeof BookableDatesCalenderAvailabilityStatusModelV0)[keyof typeof BookableDatesCalenderAvailabilityStatusModelV0];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BookableDatesCalenderAvailabilityStatusModelV0 = {
+  AVAILABLE: 'AVAILABLE',
+  CLOSED: 'CLOSED',
+  UNKNOWN: 'UNKNOWN',
+  NO_FLIGHT: 'NO_FLIGHT',
+  NO_DEPARTURE: 'NO_DEPARTURE',
+  FULL: 'FULL',
+  EXCLUSIVITY: 'EXCLUSIVITY',
+} as const;
+
+export type BookableDatesCalendarDurationsV0 = number[];
+
+export interface BookableDatesCalendarAvailabilityV0 {
+  status: BookableDatesCalenderAvailabilityStatusModelV0;
+  durations: BookableDatesCalendarDurationsV0;
+}
+
+export type BookableDatesCalendarAvailabilitiesV0 = BookableDatesCalendarAvailabilityV0[];
+
+export interface BookableDatesCalendarDayV0 {
+  /** Day identifier */
+  id: number;
+  availabilities: BookableDatesCalendarAvailabilitiesV0;
+}
+
+export type BookableDatesCalendarDaysV0 = BookableDatesCalendarDayV0[];
+
+export interface BookableDatesCalendarMonthV0 {
+  /** Month identifier */
+  id: number;
+  days: BookableDatesCalendarDaysV0;
+}
+
+export type BookableDatesCalendarMonthsV0 = BookableDatesCalendarMonthV0[];
+
+export interface BookableDatesCalendarV0 {
+  months: BookableDatesCalendarMonthsV0;
+}
+
+/**
+ * Thematic images
+ */
+export type ActivitiesThematicImages = string[];
+
+/**
+ * activities repartition for this Thematic
+ */
+export interface ActivitiesThematicActivityCount {
+  on_demand?: number;
+  included?: number;
+}
+
+export interface ActivitiesThematic {
+  /** id of the Thematic */
+  id?: string;
+  /** title of the Thematic */
+  title?: string;
+  /** subtitle of the Thematic */
+  subtitle?: string;
+  /** description of the Thematic */
+  description?: string;
+  images?: ActivitiesThematicImages;
+  activity_count?: ActivitiesThematicActivityCount;
+  _links?: LinksModel;
+}
+
+export type ActivitiesThematics = ActivitiesThematic[];
+
+/**
+ * External service type
+ */
+export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExternalServiceType = {
+  CONCIERGERIE: 'CONCIERGERIE',
+  PARKING: 'PARKING',
+} as const;
+
+/**
+ * white label service subtype
+ */
+export type ExternalServiceSubtype =
+  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExternalServiceSubtype = {
+  BABYSITTING: 'BABYSITTING',
+  BABY_SKI_LESSON: 'BABY_SKI_LESSON',
+  BIRTHDAY_PARTY: 'BIRTHDAY_PARTY',
+  CELEBRATION: 'CELEBRATION',
+  CHAMPAGNE: 'CHAMPAGNE',
+  HONEYMOON: 'HONEYMOON',
+  PARKING: 'PARKING',
+  PHOTO_PACKAGE: 'PHOTO_PACKAGE',
+  WIFI: 'WIFI',
+  EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
+} as const;
+
+export interface ExternalServiceModel {
+  /** External service code */
+  id?: string;
+  type?: ExternalServiceType;
+  subtype?: ExternalServiceSubtype;
+  /** External service title */
+  title?: string;
+  /** External service description */
+  description?: string;
+  /** white label service image */
+  image?: string;
+}
+
+export type ExternalServicesModel = ExternalServiceModel[];
+
+export interface PspOfResortModel {
+  /**
+   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
+   * @pattern ^([EMS][0-9A-Z]+)$
+   */
+  id: string;
+}
+
+export type AccommodationCategoryModelRanking =
+  (typeof AccommodationCategoryModelRanking)[keyof typeof AccommodationCategoryModelRanking];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccommodationCategoryModelRanking = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+} as const;
+
+/**
+ * pictures relative to the category
+ */
+export type AccommodationCategoryImagesModel = string[];
+
+/**
+ * All those services are in all the accommodation of the category.
+ */
+export type AccommodationCategoryServices = string[];
+
+/**
+ * All those facilities are in all the accommodation of the category.
+ */
+export type AccommodationCategoryFacilities = string[];
+
+/**
+ * All those strengths are in all the accommodation of the category.
+ */
+export type AccommodationCategoryStrengths = string[];
+
+/**
+ * Links
+ */
+export type AcommodationCategoryLinksModel = LinkModel[];
+
+/**
+ * minimal capacity of an accommodation of the category
+ */
+export type AccommodationCategoryModelMinCapacity = number | null;
+
+/**
+ * maximum capacity of an accommodation of the category
+ */
+export type AccommodationCategoryModelMaxCapacity = number | null;
+
+export interface AccommodationCategoryModel {
+  id: string;
+  /** name of the category (EX: Club) */
+  label: string;
+  ranking: AccommodationCategoryModelRanking;
+  images?: AccommodationCategoryImagesModel;
+  /** category_description of the category */
+  description?: string;
+  /** area of the smallest accommodation of the category */
+  min_area?: string;
+  /** area of the biggest accommodation of the category */
+  max_area?: string;
+  /** minimal capacity of an accommodation of the category */
+  min_capacity?: AccommodationCategoryModelMinCapacity;
+  /** maximum capacity of an accommodation of the category */
+  max_capacity?: AccommodationCategoryModelMaxCapacity;
+  services?: AccommodationCategoryServices;
+  facilities?: AccommodationCategoryFacilities;
+  strengths?: AccommodationCategoryStrengths;
+  _links?: AcommodationCategoryLinksModel;
+}
+
+export type AccommodationCategoriesList = AccommodationCategoryModel[];
+
+export interface DescriptionAccommodationCategoriesList {
+  /** picture relative to the category */
+  image?: string;
+  /** description of the category */
+  description?: string;
+  accommodation_categories?: AccommodationCategoriesList;
+}
+
+export interface AccommodationCodeModel {
+  /** Club Méditerranée accommodation code */
+  clubmed_id: string;
+  /** TOMA accommodation code */
+  TOMA_id: string;
+}
+
+export type AccommodationCodes = AccommodationCodeModel[];
+
+/**
+ * Catalog type indicate if the category comes from standard Clubmed catalog or from Resort catalog.
+ */
+export type CatalogType = (typeof CatalogType)[keyof typeof CatalogType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CatalogType = {
+  STANDARD: 'STANDARD',
+  EXTENDED: 'EXTENDED',
+} as const;
+
+export interface BusinessSocialResponsibilityActivityCategory {
+  /** Indicates if it is a happy to care activity category */
+  enabled: boolean;
+  /** Name of the business social responsibility initiative */
+  title?: string;
+  /** More information about the business social responsibility initiative */
+  description?: string;
+}
+
+/**
+ * List of images of this activity
+ */
+export type ResortActivityImages = string[];
+
+export type ChildrenActivityIdsModel = string[];
+
+/**
+ * activity ranking to be used to sort a product activity list.
+ */
+export type ProductActivityCategoryRankingModel =
+  (typeof ProductActivityCategoryRankingModel)[keyof typeof ProductActivityCategoryRankingModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProductActivityCategoryRankingModel = {
+  VERY_HIGH: 'VERY_HIGH',
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW',
+  VERY_LOW: 'VERY_LOW',
+} as const;
+
+export type ProductActivityCountModelAnyOf = {
+  /** count of activity on demand in the category */
+  on_demand: number;
+  /** count of activity included in the category */
+  included_activity: number;
+};
+
+export type ProductActivityCountModel = ProductActivityCountModelAnyOf | null;
+
+export interface ActivityKeywordModel {
+  /** keyword unique id */
+  id: string;
+  /** keyword label */
+  label: string;
+}
+
+export type ActivityKeywordsModel = ActivityKeywordModel[];
+
+/**
+ * slot in the day for this activity
+ */
+export type ActivityPriceTimeslotModel =
+  (typeof ActivityPriceTimeslotModel)[keyof typeof ActivityPriceTimeslotModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ActivityPriceTimeslotModel = {
+  MORNING: 'MORNING',
+  AFTERNOON_BEFORE_5PM: 'AFTERNOON_BEFORE_5PM',
+  AFTERNOON_AFTER_5PM: 'AFTERNOON_AFTER_5PM',
+  AFTERNOON: 'AFTERNOON',
+  SPECIFIC_DAY: 'SPECIFIC_DAY',
+  SPECIFIC_MORNING: 'SPECIFIC_MORNING',
+  SPECIFIC_AFTERNOON: 'SPECIFIC_AFTERNOON',
+  AFTERNOON_BEFORE_4PM: 'AFTERNOON_BEFORE_4PM',
+  AFTERNOON_AFTER_4PM: 'AFTERNOON_AFTER_4PM',
+} as const;
+
+/**
+ * reference price for this product
+ */
+export type ActivityPriceModelPrice = 0 | null;
+
+/**
+ * The iso 3 currency. Ex: CNY,EUR,..
+ * @minLength 3
+ * @maxLength 3
+ */
+export type ActivityPriceModelCurrency = string | null;
+
+/**
+ * last insertion date, last recalculation
+ */
+export type ActivityPriceModelLastInsertionDate = string | null;
+
+/**
+ * Duration in day linked at the price
+ */
+export type ActivityPriceModelDurationInDay = number | null;
+
+export interface ActivityPriceModel {
+  /** reference price for this product */
+  price: ActivityPriceModelPrice;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: ActivityPriceModelCurrency;
+  /** last insertion date, last recalculation */
+  last_insertion_date: ActivityPriceModelLastInsertionDate;
+  /** Duration in day linked at the price */
+  duration_in_day?: ActivityPriceModelDurationInDay;
+  time_slot?: ActivityPriceTimeslotModel;
+}
+
+/**
+ * list of brand logo images
+ */
+export type ActivityBrandLogoUrlsModel = string[] | null;
+
+/**
+ * Clubmed codes
+ */
+export type ActivityServiceCodes = string[];
+
+/**
+ * activity opening date for this period
+ */
+export type ActivityOpeningDateModelStartDate = string | null;
+
+/**
+ * activity closing date for this period
+ */
+export type ActivityOpeningDateModelEndDate = string | null;
+
+export interface ActivityOpeningDateModel {
+  /** activity opening date for this period */
+  start_date: ActivityOpeningDateModelStartDate;
+  /** activity closing date for this period */
+  end_date: ActivityOpeningDateModelEndDate;
+}
+
+export type ActivityOpeningDatesModel = ActivityOpeningDateModel[];
+
+/**
+ * Label of the restriction information of this activity
+ */
+export type RestrictionInformationModelDescription = string | null;
+
+export interface RestrictionInformationModel {
+  /** ID of the restriction information of this activity */
+  id: string;
+  /** Label of the restriction information of this activity */
+  description?: RestrictionInformationModelDescription;
+}
+
+export type RestrictionsInformationModel = RestrictionInformationModel[];
+
+export interface ActivityTag {
+  /** id of the activity keyword */
+  id?: string;
+  /** label of the activity keyword */
+  label?: string;
+}
+
+export type ActivityTagsList = ActivityTag[];
+
+export type ProductActivityCategoryGpsCoordinatesAnyOf = {
+  latitude: string;
+  longitude: string;
+};
+
+export type ProductActivityCategoryGpsCoordinates =
+  ProductActivityCategoryGpsCoordinatesAnyOf | null;
+
+export interface ProductActivityCategory {
+  /** id of this category */
+  id: string;
+  catalog_type: CatalogType;
+  business_social_responsibility?: BusinessSocialResponsibilityActivityCategory;
+  /** label of this category */
+  label: string;
+  images?: ResortActivityImages;
+  /** category description */
+  description?: string;
+  /** id of the direct parent category in the category hierarchy */
+  parent_id?: string;
+  children_ids?: ChildrenActivityIdsModel;
+  /** true if this activity is a highlight */
+  must_try: boolean;
+  /** false if an extra cost is required to practice this activity */
+  is_included: boolean;
+  ranking: ProductActivityCategoryRankingModel;
+  activity_count: ProductActivityCountModel;
+  keywords: ActivityKeywordsModel;
+  target_price?: ActivityPriceModel;
+  /** global description regarding how to book activities of this category */
+  booking_description?: string;
+  /** terms and condition for the categorie activities practicing */
+  terms_and_conditions_description?: string;
+  /** information regarding equipment rental to practice the category activities */
+  equipment_rental_description?: string;
+  /** information regarding supervision for the category activities */
+  supervision_description?: string;
+  /** philosophy of the activity */
+  philosophy?: string;
+  brand_logo_url?: ActivityBrandLogoUrlsModel;
+  service_codes?: ActivityServiceCodes;
+  opening_dates?: ActivityOpeningDatesModel;
+  restriction_information?: RestrictionsInformationModel;
+  /** URL of booklet for this activities category */
+  booklet_url?: string;
+  activity_tags?: ActivityTagsList;
+  gps_coordinates?: ProductActivityCategoryGpsCoordinates;
+  _links?: LinksModel;
+}
+
+export type ProductActivityCategoriesModel = ProductActivityCategory[];
+
+/**
+ * Comfort
+ */
+export type ProductAreaComfortV0AnyOf = {
+  /** comfort grade level */
+  id?: string;
+  /** comfort grade level label */
+  label?: string;
+};
+
+/**
+ * Comfort
+ */
+export type ProductAreaComfortV0 = ProductAreaComfortV0AnyOf | null;
+
+/**
+ * Area ranking to be used to sort a area list
+ */
+export type ProductAreasRankingModelV0 =
+  (typeof ProductAreasRankingModelV0)[keyof typeof ProductAreasRankingModelV0];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProductAreasRankingModelV0 = {
+  VERY_HIGH: 'VERY_HIGH',
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW',
+  VERY_LOW: 'VERY_LOW',
+} as const;
+
+export interface ProductAreaAssociatedAccessModel {
+  /** ID of access associated at this area */
+  id?: string;
+  /** Label of access associated at this area */
+  label?: string;
+}
+
+/**
+ * Access associated to the area
+ */
+export type ProductAreaAssociatedAccessListModel = ProductAreaAssociatedAccessModel[];
+
+/**
+ * Information of this area
+ */
+export type ProductAreaV0Description = string | null;
+
+/**
+ * Comment at bottom of page for the description
+ */
+export type ProductAreaV0Footnotes = string | null;
+
+/**
+ * Additional services of this area
+ */
+export type ProductAreaV0AdditionalServices = string | null;
+
+/**
+ * Comment at bottom of page for the additional services
+ */
+export type ProductAreaV0AdditionalServicesFootnotes = string | null;
+
+export interface ProductAreaV0 {
+  /** id of the area */
+  id: string;
+  /** label of the area */
+  label: string;
+  comfort?: ProductAreaComfortV0;
+  /** true if the area the main space of this product */
+  main_space?: boolean;
+  images?: ProductImagesModel;
+  /** Information of this area */
+  description?: ProductAreaV0Description;
+  /** Comment at bottom of page for the description */
+  footnotes?: ProductAreaV0Footnotes;
+  /** Additional services of this area */
+  additional_services?: ProductAreaV0AdditionalServices;
+  /** short description of area for this product */
+  short_description?: string;
+  ranking?: ProductAreasRankingModelV0;
+  associated_access?: ProductAreaAssociatedAccessListModel;
+  /** Comment at bottom of page for the additional services */
+  additional_services_footnotes?: ProductAreaV0AdditionalServicesFootnotes;
+  _links?: LinksModel;
+}
+
+/**
+ * An area is a part of a product that has a certain level of comfort or that is restricted to certain people
+ */
+export type ProductAreasV0 = ProductAreaV0[];
+
+export interface BusinessSocialResponsibilityItemModel {
+  /** label of the BSR block */
+  label?: string;
+  /** description of the BSR block */
+  description?: string;
+  /** picture of the BSR block */
+  image?: string;
+}
+
+export type BusinessSocialResponsibilityItemsModel = BusinessSocialResponsibilityItemModel[];
+
+export interface BusinessSocialResponsibilityModel {
+  /** BSR catchphrase */
+  title?: string;
+  items?: BusinessSocialResponsibilityItemsModel;
+}
+
+export type ThemeLabels = string[];
+
+/**
+ * Boarding time period
+ */
+export type BoardingTimePeriodAnyOf = {
+  /** opening time */
+  opening_time_label: string;
+  /** closing time */
+  closing_time_label: string;
+  /** boarding meeting place information */
+  meeting_place: string;
+};
+
+/**
+ * Boarding time period
+ */
+export type BoardingTimePeriod = BoardingTimePeriodAnyOf | null;
+
+/**
+ * Landing time period
+ */
+export type LandingTimePeriodAnyOf = {
+  /** opening time */
+  opening_time_label: string;
+  /** closing time */
+  closing_time_label: string;
+};
+
+/**
+ * Landing time period
+ */
+export type LandingTimePeriod = LandingTimePeriodAnyOf | null;
+
+/**
+ * Cruise detail
+ */
+export interface CruiseDetailModel {
+  theme_labels?: ThemeLabels;
+  boarding?: BoardingTimePeriod;
+  landing?: LandingTimePeriod;
+}
+
+export type GeoDataPolygonPropertiesAnyOf = {
+  id: string;
+};
+
+export type GeoDataPolygonProperties = GeoDataPolygonPropertiesAnyOf | null;
+
+export type GeoDataCoordinate = number[];
+
+export type GeoDataPolygonCoordinates = GeoDataCoordinate[];
+
+export type GeoDataPolygonCoordinatesList = GeoDataPolygonCoordinates[];
+
+export interface GeoDataPolygonGeometry {
+  type?: string;
+  coordinates?: GeoDataPolygonCoordinatesList;
+}
+
+export interface GeoDataFeature {
+  type: string;
+  properties?: GeoDataPolygonProperties;
+  geometry?: GeoDataPolygonGeometry;
+}
+
+export type GeoDataPolygonFeatures = GeoDataFeature[];
+
+export type PolygonsGeoJsonAnyOf = {
+  type: string;
+  features?: GeoDataPolygonFeatures;
+};
+
+export type PolygonsGeoJson = PolygonsGeoJsonAnyOf | null;
+
+export interface GeoDataRoomProperties {
+  id: string;
+}
+
+export interface Geometry {
+  type?: string;
+  coordinates?: GeoDataCoordinate;
+}
+
+export interface RoomsGeoJsonFeature {
+  type: string;
+  properties?: GeoDataRoomProperties;
+  geometry?: Geometry;
+}
+
+export type RoomsGeoJsonFeatures = RoomsGeoJsonFeature[];
+
+export type RoomsGeoJsonAnyOf = {
+  type: string;
+  features?: RoomsGeoJsonFeatures;
+};
+
+export type RoomsGeoJson = RoomsGeoJsonAnyOf | null;
+
+export interface GeoDataBuilding {
+  /** unique id of the building in this product */
+  id?: string;
+  /** building label */
+  label?: string;
+  /** true if an item in this building can be highlighted */
+  pickable?: boolean;
+}
+
+export type GeoDataBuildings = GeoDataBuilding[];
+
+/**
+ * unique id of the product building in which the floor is located
+ */
+export type GeoDataFloorBuildingId = string | null;
+
+export interface GeoDataFloor {
+  /** unique id of the floor in this product */
+  id?: string;
+  /** id of the geometry to apply to build this floor */
+  polygon_geo_json_id?: string;
+  /** unique id of the product building in which the floor is located */
+  building_id?: GeoDataFloorBuildingId;
+  /** floor label */
+  label?: string;
+  /** floor level. 0 for ground floor */
+  level?: number;
+  /** height of the floor item when selected */
+  height?: number;
+  /** height of the floor item in the building full view */
+  min_height?: number;
+  /** true if an item in this floor can be highlighted */
+  pickable?: boolean;
+}
+
+export type GeoDataFloors = GeoDataFloor[];
+
+export interface GeoDataRoom {
+  /** unique id of the room in this product */
+  id?: string;
+  /** id of the geometry to apply to build this room */
+  room_geometry_id?: string;
+  /** unique id of the product floor in which the room is located */
+  floor_id?: string;
+  /** room label */
+  label?: string;
+}
+
+export type GeoDataRooms = GeoDataRoom[];
+
+export interface GeoData {
+  polygons_geo_json?: PolygonsGeoJson;
+  rooms_geo_json?: RoomsGeoJson;
+  buildings?: GeoDataBuildings;
+  floors?: GeoDataFloors;
+  rooms?: GeoDataRooms;
+}
+
+/**
+ * Highlight type
+ */
+export type HighlightTypeModel = (typeof HighlightTypeModel)[keyof typeof HighlightTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const HighlightTypeModel = {
+  CRUISE_THEME: 'CRUISE_THEME',
+  STRENGTHS: 'STRENGTHS',
+  BUSINESS_SOCIAL_RESPONSIBILITY: 'BUSINESS_SOCIAL_RESPONSIBILITY',
+  MEETINGS_AND_EVENTS: 'MEETINGS_AND_EVENTS',
+  MUST_TRY_EXPERIENCES: 'MUST_TRY_EXPERIENCES',
+  REASON_TO_GO: 'REASON_TO_GO',
+  REASON_TO_GO_EXCLUSIVE_COLLECTION_SPACE: 'REASON_TO_GO_EXCLUSIVE_COLLECTION_SPACE',
+  FD_KIDS_AND_FAMILY: 'FD_KIDS_AND_FAMILY',
+  FD_EDITORIAL: 'FD_EDITORIAL',
+} as const;
+
+/**
+ * Tags related to highlights.
+ */
+export type Tags = string[];
+
+export interface HighlightModel {
+  /** Highlight id */
+  id: string;
+  /** Highlight title in few words */
+  title: string;
+  type: HighlightTypeModel;
+  /** Highlight description in few word */
+  description: string;
+  /** Highlight immersive picture */
+  image: string;
+  /** Theme of this highlight */
+  theme: string;
+  tags?: Tags;
+}
+
+export type HighlightsModel = HighlightModel[];
+
+/**
+ * "Meetings & Events" strong points"
+ */
+export type MiceStrengths = string[];
+
+/**
+ * Price per night or per trip
+ */
+export type MiceBestPriceTypeModel =
+  (typeof MiceBestPriceTypeModel)[keyof typeof MiceBestPriceTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MiceBestPriceTypeModel = {
+  PER_NIGHT: 'PER_NIGHT',
+  PER_TRIP: 'PER_TRIP',
+} as const;
+
+export type MiceBestPriceModelAnyOf = {
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency?: string;
+  /** Price from */
+  amount?: number;
+  type?: MiceBestPriceTypeModel;
+};
+
+export type MiceBestPriceModel = MiceBestPriceModelAnyOf | null;
+
+export interface MiceModel {
+  /** link to display the product "Meetings & Events" fact sheet */
+  fact_sheet_url: string;
+  /** "Meetings & Events" description headline */
+  description_title: string;
+  /** "Meetings & Events" description for this product */
+  description: string;
+  /** "Meetings & Events" description to be used for seo" */
+  seo_description: string;
+  strengths: MiceStrengths;
+  best_price?: MiceBestPriceModel;
+}
+
+export interface ProductMustTryExperience {
+  /** Experience id */
+  id: string;
+  /** Experience title in few words */
+  title: string;
+  /** Experience description in few word */
+  description: string;
+  /** Experience immersive picture */
+  image: string;
+}
+
+export type ProductMustTryExperiences = ProductMustTryExperience[];
+
+/**
+ * season on which the price is valid
+ */
+export type ProductPackageInformativePriceSeasonModel =
+  (typeof ProductPackageInformativePriceSeasonModel)[keyof typeof ProductPackageInformativePriceSeasonModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProductPackageInformativePriceSeasonModel = {
+  SUMMER: 'SUMMER',
+  WINTER: 'WINTER',
+} as const;
+
+/**
+ * additional cost by adult per night compare to the room only package
+ */
+export type ProductPackageInformativePriceModelPerAdultPerNight = number | null;
+
+/**
+ * additional cost by kid per night compare to the room only package
+ */
+export type ProductPackageInformativePriceModelPerKidPerNight = number | null;
+
+/**
+ * start date
+ */
+export type ProductPackageInformativePriceModelStartDate = string | null;
+
+/**
+ * end date
+ */
+export type ProductPackageInformativePriceModelEndDate = string | null;
+
+export interface ProductPackageInformativePriceModel {
+  /** additional cost by adult per night compare to the room only package */
+  per_adult_per_night?: ProductPackageInformativePriceModelPerAdultPerNight;
+  /** additional cost by kid per night compare to the room only package */
+  per_kid_per_night?: ProductPackageInformativePriceModelPerKidPerNight;
+  season?: ProductPackageInformativePriceSeasonModel;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  /** start date */
+  start_date?: ProductPackageInformativePriceModelStartDate;
+  /** end date */
+  end_date?: ProductPackageInformativePriceModelEndDate;
+}
+
+export type InformativePrices = ProductPackageInformativePriceModel[];
+
+export interface ProductPackage {
+  /** a package_id from /products/{product_id}/packages resource */
+  id: string;
+  /** Label of the package */
+  label: string;
+  /** Title of the package */
+  title?: string;
+  /** Description of the package */
+  description?: string;
+  /** Additional information text */
+  additional_info?: string;
+  /** Picture url */
+  image?: string;
+  informative_price?: InformativePrices;
+}
+
+export type Packages = ProductPackage[];
+
+/**
+ * type of the period, can be one of the opening or closing period types
+ */
+export type PeriodsInfoTypeModel =
+  | 'SELLABLE_DATES'
+  | 'EXCLUSIVITY'
+  | 'UNAVAILABLE'
+  | 'EVENTS'
+  | 'EXPLOITATION_DATES'
+  | null;
+
+/**
+ * inclusive start date
+ */
+export type PeriodsInfoV0StartDate = string | null;
+
+/**
+ * exclusive end date
+ */
+export type PeriodsInfoV0EndDate = string | null;
+
+export interface PeriodsInfoV0 {
+  type?: PeriodsInfoTypeModel;
+  /** inclusive start date */
+  start_date?: PeriodsInfoV0StartDate;
+  /** exclusive end date */
+  end_date?: PeriodsInfoV0EndDate;
+}
+
+export type PeriodsInfoListV0 = PeriodsInfoV0[];
+
+export type PracticalInformationAccessModelTransferDistanceInKm = number | null;
+
+export type PracticalInformationAccessModelTransferDistanceInMiles = number | null;
+
+export type PracticalInformationAccessModelTransferDurationInMin = number | null;
+
+export interface PracticalInformationAccessModel {
+  type: string;
+  label: string;
+  id: string;
+  transfer_distance_in_km: PracticalInformationAccessModelTransferDistanceInKm;
+  transfer_distance_in_miles: PracticalInformationAccessModelTransferDistanceInMiles;
+  transfer_duration_in_min: PracticalInformationAccessModelTransferDurationInMin;
+}
+
+/**
+ * List of the recommended place for accessing the product
+ */
+export type PracticalInformationAccessesModel = PracticalInformationAccessModel[];
+
+export type PracticalInformationGpsCoordinatesAnyOf = {
+  latitude: string;
+  longitude: string;
+};
+
+export type PracticalInformationGpsCoordinates = PracticalInformationGpsCoordinatesAnyOf | null;
+
+export type PracticalInformationAddressModelAnyOf = {
+  place: string;
+  number: string;
+  street: string;
+  add_on: string;
+  city: string;
+  town: string;
+  zip_code: string;
+  state_or_district: string;
+  country: string;
+};
+
+export type PracticalInformationAddressModel = PracticalInformationAddressModelAnyOf | null;
+
+/**
+ * list of items included in the price
+ */
+export type PracticalInformationIncludedDescriptionModel = string[];
+
+/**
+ * list of items not included in the price
+ */
+export type PracticalInformationExcludedDescriptionModel = string[];
+
+/**
+ * information regarding product price
+ */
+export interface PriceInformationModel {
+  included_descriptions: PracticalInformationIncludedDescriptionModel;
+  excluded_descriptions: PracticalInformationExcludedDescriptionModel;
+}
+
+export interface ChecksInformationModel {
+  /** Description of the check-in for the product */
+  check_in_description?: string;
+  /** Description of the check-out for the product */
+  check_out_description?: string;
+  /** Additional information of the check_in/check-out for the product */
+  further_information?: string;
+}
+
+export interface PracticalInfoAdditionalItemModel {
+  /** Id of service / information */
+  id: string;
+  /** Name for the service / information */
+  label: string;
+  /** Service's / Information description */
+  description: string;
+  /** Pictogram url that represents the service */
+  icon: string;
+}
+
+export type Items = PracticalInfoAdditionalItemModel[];
+
+export interface PracticalInfoAdditionalModel {
+  /** Category of service / information */
+  label: string;
+  items: Items;
+}
+
+export type AdditionalInformationCategories = PracticalInfoAdditionalModel[];
+
+export type PracticalInfoSafeTogetherModelAnyOf = {
+  /** Safe together title section */
+  label: string;
+  /** Safe together description section */
+  description: string;
+  /** Safe together image url */
+  image: string;
+  /** http://mca-integration-cms-file-storage.s3.eu-west-1.amazonaws.com/2022-01/2021-01-20-Synchro_API-CC_0.pdf */
+  file: string;
+};
+
+export type PracticalInfoSafeTogetherModel = PracticalInfoSafeTogetherModelAnyOf | null;
+
+export interface PracticalInformationModel {
+  accesses: PracticalInformationAccessesModel;
+  gps_coordinates?: PracticalInformationGpsCoordinates;
+  address: PracticalInformationAddressModel;
+  prices_information: PriceInformationModel;
+  phone: string;
+  fax: string;
+  /** the email a customer can use to contact the resort */
+  email: string;
+  /** the email a customer can use to contact the resort about his room selection service */
+  room_selection_contact_email: string;
+  health_formalities: string;
+  passport_and_visas: string;
+  checks_information?: ChecksInformationModel;
+  additional_information_categories: AdditionalInformationCategories;
+  safe_together: PracticalInfoSafeTogetherModel;
+}
+
+export interface RentalEquipmentUseCase {
+  /** Id of the use of this rentable equipment */
+  id: string;
+  /** Label of the use of this rentable equipment */
+  label?: string;
+}
+
+/**
+ * Use of this rentable equipment
+ */
+export type RentalEquipmentUseCases = RentalEquipmentUseCase[];
+
+/**
+ * The type of this rentable equipment
+ */
+export interface RentalEquipmentType {
+  /** Id of the type of this rentable equipment */
+  id?: string;
+  /** Label of the type of this rentable equipment */
+  label?: string;
+}
+
+/**
+ * List of images of this rentable equipment
+ */
+export type RentalEquipmentImages = string[];
+
+/**
+ * Customer minimum age to benefits from this rentable equipment in months
+ */
+export type RentalEquipmentAgeMin = 0 | null;
+
+/**
+ * Customer maximum age to benefits from this rentable equipment in months
+ */
+export type RentalEquipmentAgeMax = 0 | null;
+
+/**
+ * Customer age to benefits from this rentable equipment in months
+ */
+export interface RentalEquipmentAge {
+  /** Customer minimum age to benefits from this rentable equipment in months */
+  min?: RentalEquipmentAgeMin;
+  /** Customer maximum age to benefits from this rentable equipment in months */
+  max?: RentalEquipmentAgeMax;
+}
+
+/**
+ * Minimum size of this rentable equipment
+ */
+export type RentalEquipmentSizesMin = 0 | null;
+
+/**
+ * Maximum size of this rentable equipment
+ */
+export type RentalEquipmentSizesMax = 0 | null;
+
+/**
+ * Size of this rentable equipment
+ */
+export interface RentalEquipmentSizes {
+  /** Minimum size of this rentable equipment */
+  min?: RentalEquipmentSizesMin;
+  /** Maximum size of this rentable equipment */
+  max?: RentalEquipmentSizesMax;
+  /** Size unit of this rentable equipment */
+  unit?: string;
+}
+
+export interface RentalEquipmentPracticeLevel {
+  /** Id of the practice level of this rentable equipment */
+  id?: string;
+  /** Label of the practice level of this rentable equipment */
+  label?: string;
+}
+
+/**
+ * Practice levels of this rentable equipment
+ */
+export type RentalEquipmentPracticeLevelList = RentalEquipmentPracticeLevel[];
+
+/**
+ * Range of this rentable equipment
+ */
+export interface RentalEquipmentProductRange {
+  /** Id of the range of this rentable equipment */
+  id?: string;
+  /** Label of the range of this rentable equipment */
+  label?: string;
+}
+
+/**
+ * List of available brands of rentable equipment
+ */
+export type RentalEquipmentAvailableBrands = string[];
+
+/**
+ * reference price for this product
+ */
+export type RentalquipmentPricePrice = 0 | null;
+
+/**
+ * The iso 3 currency. Ex: CNY,EUR,..
+ * @minLength 3
+ * @maxLength 3
+ */
+export type RentalquipmentPriceCurrency = string | null;
+
+/**
+ * last insertion date, last recalculation
+ */
+export type RentalquipmentPriceLastInsertionDate = string | null;
+
+/**
+ * Duration in day linked at the price
+ */
+export type RentalquipmentPriceDurationInDay = number | null;
+
+export interface RentalquipmentPrice {
+  /** reference price for this product */
+  price: RentalquipmentPricePrice;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: RentalquipmentPriceCurrency;
+  /** last insertion date, last recalculation */
+  last_insertion_date: RentalquipmentPriceLastInsertionDate;
+  /** Duration in day linked at the price */
+  duration_in_day?: RentalquipmentPriceDurationInDay;
+  time_slot?: ActivityPriceTimeslotModel;
+}
+
+/**
+ * Clubmed codes
+ */
+export type ClubmedCodes = string[];
+
+export interface RentalEquipment {
+  /** Id of this rentable equipment */
+  id: string;
+  /** Label of this rentable equipment */
+  label?: string;
+  usecases?: RentalEquipmentUseCases;
+  type?: RentalEquipmentType;
+  images?: RentalEquipmentImages;
+  /** Short rentable equipment description */
+  short_description?: string;
+  /** Rentable equipment description */
+  long_description?: string;
+  age_in_months?: RentalEquipmentAge;
+  sizes?: RentalEquipmentSizes;
+  practice_levels?: RentalEquipmentPracticeLevelList;
+  product_range?: RentalEquipmentProductRange;
+  available_brands?: RentalEquipmentAvailableBrands;
+  /** Formalities required to rent this equipment */
+  formalities?: string;
+  /** Details about this rentable equipment */
+  further_information?: string;
+  target_price?: RentalquipmentPrice;
+  service_codes?: ClubmedCodes;
+}
+
+export type RentalEquipmentListModel = RentalEquipment[];
+
+/**
+ * Product segmentation criteria
+ */
+export interface SegmentationCriteriaIdLabelModel {
+  /** segmentation criteria identifier */
+  id: string;
+  /** segmentation criteria label */
+  label: string;
+}
+
+/**
+ * list of product customer targets
+ */
+export type CustomerTargets = SegmentationCriteriaIdLabelModel[];
+
+/**
+ * list of product spirits
+ */
+export type Spirits = SegmentationCriteriaIdLabelModel[];
+
+/**
+ * list of product looked for experiences
+ */
+export type LookedForExperiences = SegmentationCriteriaIdLabelModel[];
+
+/**
+ * Product segmentation criteria list
+ */
+export interface SegmentationCriteriaModel {
+  customer_targets: CustomerTargets;
+  spirits: Spirits;
+  looked_for_experiences: LookedForExperiences;
+}
+
+export interface ProposalSuggestionVilageModel {
+  /** The product id */
+  id: string;
+  /** The remaining stock for this product */
+  remaining_stock: number;
+  /** The initial stock for this product */
+  initial_stock: number;
+}
+
+export type ProposalSuggestionVilageListModel = ProposalSuggestionVilageModel[];
+
+export interface Subratings {
+  /** image of the rating. */
+  rating_image_url?: string;
+  /** name of the rating. Ex: rate_location */
+  name?: string;
+  /** value of the rating. Ex: 4.5 */
+  value?: string;
+  /** localization of the rating. */
+  localized_name?: string;
+}
+
+/**
+ * subratings information
+ */
+export type TripadvisorSubratings = Subratings[];
+
+export interface Images {
+  /** tiny format of the image. */
+  tiny?: string;
+  /** small format of the image. */
+  small?: string;
+  /** large format of the image. */
+  large?: string;
+}
+
+/**
+ * categories of award
+ */
+export type Categories = string[];
+
+export interface Awards {
+  /** award type. */
+  award_type?: string;
+  /** year of the award Ex:2015. */
+  year?: string;
+  images?: Images;
+  categories?: Categories;
+  /** display name of the award Ex: traverler's choice. */
+  display_name?: string;
+}
+
+/**
+ * awards information
+ */
+export type TripadvisorAwards = Awards[];
+
+/**
+ * name of the user location, maybe null.
+ */
+export type UserLocationName = string | null;
+
+/**
+ * id of the user location maybe null.
+ */
+export type UserLocationId = string | null;
+
+export interface UserLocation {
+  /** name of the user location, maybe null. */
+  name?: UserLocationName;
+  /** id of the user location maybe null. */
+  id?: UserLocationId;
+}
+
+/**
+ * username of the reviewer Ex: Helene B.
+ */
+export type ReviewUserModelUsername = string | null;
+
+/**
+ * reviewer badge.
+ */
+export type ReviewUserModelReviewerBadge = string | null;
+
+export interface ReviewUserModel {
+  /** username of the reviewer Ex: Helene B. */
+  username?: ReviewUserModelUsername;
+  user_location?: UserLocation;
+  /** count of review Ex: 1 */
+  review_count?: string;
+  /** reviewer badge. */
+  reviewer_badge?: ReviewUserModelReviewerBadge;
+}
+
+/**
+ * owner id
+ */
+export type OwnerResponseAnyOfId = string | null;
+
+/**
+ * owner lang
+ */
+export type OwnerResponseAnyOfLang = string | null;
+
+/**
+ * owner response date
+ */
+export type OwnerResponseAnyOfPublishedDate = string | null;
+
+/**
+ * owner response author
+ */
+export type OwnerResponseAnyOfAuthor = string | null;
+
+/**
+ * owner response text
+ */
+export type OwnerResponseAnyOfText = string | null;
+
+/**
+ * owner response title
+ */
+export type OwnerResponseAnyOfTitle = string | null;
+
+/**
+ * owner of the response, maybe null
+ */
+export type OwnerResponseAnyOf = {
+  /** owner id */
+  id?: OwnerResponseAnyOfId;
+  /** owner lang */
+  lang?: OwnerResponseAnyOfLang;
+  /** owner response date */
+  published_date?: OwnerResponseAnyOfPublishedDate;
+  /** owner response author */
+  author?: OwnerResponseAnyOfAuthor;
+  /** owner response text */
+  text?: OwnerResponseAnyOfText;
+  /** owner response title */
+  title?: OwnerResponseAnyOfTitle;
+};
+
+/**
+ * owner of the response, maybe null
+ */
+export type OwnerResponse = OwnerResponseAnyOf | null;
+
+/**
+ * subratings array of the review
+ */
+export type ReviewsSubratings = Subratings[];
+
+/**
+ * travel date Ex:2015-04
+ */
+export type ReviewsTravelDate = string | null;
+
+/**
+ * text description of the review
+ */
+export type ReviewsText = string | null;
+
+/**
+ * review title
+ */
+export type ReviewsTitle = string | null;
+
+export interface Reviews {
+  /** id of the review Ex: 271180947 */
+  id?: string;
+  /** language of the review Ex: fr */
+  lang?: string;
+  /** location id of the review Ex: 628307 */
+  location_id?: string;
+  /** published date of the review Ex: 2015-05-10T16:50:24-0400 */
+  published_date?: string;
+  /** review rating. Ex: "5" */
+  rating?: number;
+  /** number of helpful votes of the review Ex: 0 */
+  helpful_votes?: string;
+  /** image of the review */
+  rating_image_url?: string;
+  /** url of the review */
+  url?: string;
+  /** tripadvisor type Ex: En famille */
+  trip_type?: string;
+  /** travel date Ex:2015-04 */
+  travel_date?: ReviewsTravelDate;
+  /** text description of the review */
+  text?: ReviewsText;
+  user?: ReviewUserModel;
+  /** review title */
+  title?: ReviewsTitle;
+  owner_response?: OwnerResponse;
+  subratings?: ReviewsSubratings;
+}
+
+/**
+ * reviews information
+ */
+export type TripadvisorReviews = Reviews[];
+
+export interface TripAdvisorExtendedModel {
+  /** Unique TripAdvisor location ID of the resort. See https://developer-tripadvisor.com/content-api/documentation/location/ */
+  location_id?: string;
+  /** TripAdvisor url of the resort page. */
+  tripadvisor_url?: string;
+  /** Overall rating for this resort. Rating levels are defined as follows: 1 Terrible, 2 Poor, 3 Average, 4 Very good, 5 Excellent */
+  rating?: string;
+  /** URL to the bubble rating image for this location. */
+  rating_image_url?: string;
+  /** number of reviews. */
+  num_reviews?: number;
+  subratings?: TripadvisorSubratings;
+  awards?: TripadvisorAwards;
+  reviews?: TripadvisorReviews;
+}
+
+/**
+ * temperature unit code
+ */
+export type Unit = (typeof Unit)[keyof typeof Unit];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Unit = {
+  CELSIUS: 'CELSIUS',
+  FAHRENHEIT: 'FAHRENHEIT',
+} as const;
+
+/**
+ * day minimum temperature
+ */
+export type ProductWeatherForecastTemperatureModelMin = number | null;
+
+/**
+ * day maximum temperature
+ */
+export type ProductWeatherForecastTemperatureModelMax = number | null;
+
+/**
+ * morning temperature
+ */
+export type ProductWeatherForecastTemperatureModelMorning = number | null;
+
+/**
+ * afternoon temperature
+ */
+export type ProductWeatherForecastTemperatureModelAfternoon = number | null;
+
+/**
+ * evening temperature
+ */
+export type ProductWeatherForecastTemperatureModelEvening = number | null;
+
+/**
+ * night temperature
+ */
+export type ProductWeatherForecastTemperatureModelNight = number | null;
+
+export interface ProductWeatherForecastTemperatureModel {
+  /** day minimum temperature */
+  min: ProductWeatherForecastTemperatureModelMin;
+  /** day maximum temperature */
+  max: ProductWeatherForecastTemperatureModelMax;
+  /** morning temperature */
+  morning: ProductWeatherForecastTemperatureModelMorning;
+  /** afternoon temperature */
+  afternoon: ProductWeatherForecastTemperatureModelAfternoon;
+  /** evening temperature */
+  evening: ProductWeatherForecastTemperatureModelEvening;
+  /** night temperature */
+  night: ProductWeatherForecastTemperatureModelNight;
+}
+
+/**
+ * code for the weather description. Can be used to display a weather icon
+ */
+export type Code = (typeof Code)[keyof typeof Code];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Code = {
+  RAIN: 'RAIN',
+  THUNDERSTORM: 'THUNDERSTORM',
+  SNOW: 'SNOW',
+  MIST: 'MIST',
+  CLEAR_SKY: 'CLEAR_SKY',
+  FEW_CLOUDS: 'FEW_CLOUDS',
+  SCATERRED_CLOUDS: 'SCATERRED_CLOUDS',
+  BROKEN_CLOUDS: 'BROKEN_CLOUDS',
+  SHOWER_RAIN: 'SHOWER_RAIN',
+} as const;
+
+export interface ProductWeatherForecastWeatherModel {
+  code: Code;
+  /** weather description */
+  description: string;
+}
+
+/**
+ * forecast date
+ */
+export type ProductWeatherForecastModelDate = string | null;
+
+export interface ProductWeatherForecastModel {
+  /** forecast id */
+  id: string;
+  /** forecast date */
+  date: ProductWeatherForecastModelDate;
+  unit: Unit;
+  temperature: ProductWeatherForecastTemperatureModel;
+  weather: ProductWeatherForecastWeatherModel;
+}
+
+export type ProductWeatherForecastListModel = ProductWeatherForecastModel[];
+
 export interface Address {
   /** Spa's address's city */
   city: string;
@@ -10193,265 +10197,6 @@ export interface SpaInformationModel {
   /** Can cancel spa appointment before this limit (in hours) */
   cancellation_hours_limit: SpaInformationModelCancellationHoursLimit;
 }
-
-export interface TransportAxisModel {
-  /** Departure city code */
-  departure_city_code: string;
-  /** Arrival city code */
-  arrival_city_code: string;
-}
-
-export type GetProposalTransportAxesModel = TransportAxisModel[];
-
-export interface SellerCommissionModel {
-  /** earnings for a sale */
-  total: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-/**
- * The type of rate
- */
-export type RateType = (typeof RateType)[keyof typeof RateType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const RateType = {
-  STANDARD_RATE: 'STANDARD_RATE',
-  FLEXIBLE_RATE: 'FLEXIBLE_RATE',
-  NON_REFUNDABLE_RATE: 'NON_REFUNDABLE_RATE',
-} as const;
-
-export interface ProposalGetAlternativeRateModel {
-  type: RateType;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  /** Indicates the price difference between the applicable rate and the already applied rate of the given proposal */
-  price_difference: number;
-}
-
-export type ProposalAlternativeRatesModel = ProposalGetAlternativeRateModel[];
-
-/**
- * Indicates the way of the journey (outbound / inbound)
- */
-export type TransportConfigurationJourneyWayType =
-  (typeof TransportConfigurationJourneyWayType)[keyof typeof TransportConfigurationJourneyWayType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TransportConfigurationJourneyWayType = {
-  INBOUND: 'INBOUND',
-  OUTBOUND: 'OUTBOUND',
-  WITHIN_TOUR: 'WITHIN_TOUR',
-} as const;
-
-/**
- * Full name of the city
- */
-export type TravelSectionCityLabel = string | null;
-
-export interface TravelSectionCity {
-  /** City code, on three letters */
-  id?: string;
-  /** Full name of the city */
-  label?: TravelSectionCityLabel;
-}
-
-export type TravelSectionStepTimeModelAnyOf = {
-  /** Indicates the journey's minimum time */
-  min?: string;
-  /** Indicates the journey's minimum time */
-  max?: string;
-};
-
-export type TravelSectionStepTimeModel = TravelSectionStepTimeModelAnyOf | null;
-
-export interface TravelSectionStepWithTimeObjectModel {
-  city?: TravelSectionCity;
-  /** date */
-  date?: string;
-  time?: TravelSectionStepTimeModel;
-}
-
-export interface TransportConfigurationJourneyModel {
-  way: TransportConfigurationJourneyWayType;
-  departure?: TravelSectionStepWithTimeObjectModel;
-  arrival?: TravelSectionStepWithTimeObjectModel;
-}
-
-export type TransportConfigurationJourneysModel = TransportConfigurationJourneyModel[];
-
-/**
- * Transport information indicating its class. [ PLANE_ECONOMY, PLANE_ECONOMY_PLUS, PLANE_BUSINESS, PLANE_PREMIUM, PLANE_FIRST, TRAIN_FIRST, TRAIN_SECOND ]
- */
-export type TransportConfigurationTransportClassModel =
-  (typeof TransportConfigurationTransportClassModel)[keyof typeof TransportConfigurationTransportClassModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TransportConfigurationTransportClassModel = {
-  PLANE_ECONOMY: 'PLANE_ECONOMY',
-  PLANE_ECONOMY_PLUS: 'PLANE_ECONOMY_PLUS',
-  PLANE_BUSINESS: 'PLANE_BUSINESS',
-  PLANE_PREMIUM: 'PLANE_PREMIUM',
-  PLANE_FIRST: 'PLANE_FIRST',
-  TRAIN_FIRST: 'TRAIN_FIRST',
-  TRAIN_SECOND: 'TRAIN_SECOND',
-} as const;
-
-export type TransportConfigurationConnectionDurationModelAnyOf = {
-  /** Indicates the proposal's transport connection minimum duration (in minutes) */
-  min: number;
-  /** Indicates the proposal's transport connection maximum duration (in minutes) */
-  max: number;
-};
-
-export type TransportConfigurationConnectionDurationModel =
-  TransportConfigurationConnectionDurationModelAnyOf | null;
-
-export type TransportConfigurationIsTransportStationsChangedAllowedModelAnyOf = {
-  /** Indicates if the airport change between connections is allowed or not. For exemple, if allowed, an attendee might have a connection in Paris Orly, and go to CDG to take his next flight. */
-  on_connection: boolean;
-  /** Indicates if the airport change between inbound and outbound is allowed or not. For exemple, if allowed, an attendee can leave from Paris Orly and come back at Paris CDG. */
-  along_roundtrip: boolean;
-};
-
-export type TransportConfigurationIsTransportStationsChangedAllowedModel =
-  TransportConfigurationIsTransportStationsChangedAllowedModelAnyOf | null;
-
-/**
- * Indicates the list of imposed companies
- */
-export type TransportConfigurationImposedCompaniesModel = string[];
-
-/**
- * Indicates the list of imposed connection cities
- */
-export type TransportConfigurationImposedConnectionCitiesModel = string[];
-
-/**
- * Indicates the list of excluded companies
- */
-export type TransportConfigurationExcludedCompaniesModel = string[];
-
-/**
- * Indicates the list of Clubmed blacklisted companies for the concerned transport axe.
- */
-export type TransportConfigurationForbiddenCompaniesModel = string[];
-
-/**
- * Indicates the list of excluded connection cities
- */
-export type TransportConfigurationExcludedConnectionCitiesModel = string[];
-
-/**
- * Indicates the proposal's max connections
- */
-export type TransportConfigurationModelMaxConnections = number | null;
-
-export interface TransportConfigurationModel {
-  journeys?: TransportConfigurationJourneysModel;
-  transport_class?: TransportConfigurationTransportClassModel;
-  /** Indicates if the proposal's default transportation is a direct flight only */
-  is_direct_flight_only: boolean;
-  /** Indicates the proposal's max connections */
-  max_connections: TransportConfigurationModelMaxConnections;
-  transport_connection_duration?: TransportConfigurationConnectionDurationModel;
-  is_transport_stations_changes_allowed?: TransportConfigurationIsTransportStationsChangedAllowedModel;
-  /** Indicates if cabin mixing is allowed or not */
-  is_cabin_mixing_allowed: boolean;
-  /** Indicates if flight companies mixing is allowed or not */
-  is_companies_mixing_allowed: boolean;
-  imposed_companies?: TransportConfigurationImposedCompaniesModel;
-  imposed_connection_cities?: TransportConfigurationImposedConnectionCitiesModel;
-  excluded_companies?: TransportConfigurationExcludedCompaniesModel;
-  forbidden_companies?: TransportConfigurationForbiddenCompaniesModel;
-  excluded_connection_cities?: TransportConfigurationExcludedConnectionCitiesModel;
-}
-
-export interface ProposalPackageDifferentialPriceModel {
-  /** Indicates the price difference between the applicable package and the already applied package of the given proposal. */
-  amount: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-export interface ProposalPackageModel {
-  /** a package_id from /products/{product_id}/packages resource */
-  id: string;
-  differential_price?: ProposalPackageDifferentialPriceModel;
-  _links?: LinksModel;
-}
-
-export type ProposalPackagesModel = ProposalPackageModel[];
-
-/**
- * Attendee type [MAIN, KID, ADULT]
- */
-export type AccommodationsArrangementAttendeeTypeModel =
-  (typeof AccommodationsArrangementAttendeeTypeModel)[keyof typeof AccommodationsArrangementAttendeeTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AccommodationsArrangementAttendeeTypeModel = {
-  MAIN: 'MAIN',
-  ADULT: 'ADULT',
-  KID: 'KID',
-} as const;
-
-/**
- * Attendee birthdate (YYYYMMDD)
- */
-export type AccommodationsArrangementAttendeeModelBirthdate = string | null;
-
-export interface AccommodationsArrangementAttendeeModel {
-  /** Attendee id in this booking */
-  id: string;
-  type: AccommodationsArrangementAttendeeTypeModel;
-  /** Attendee birthdate (YYYYMMDD) */
-  birthdate: AccommodationsArrangementAttendeeModelBirthdate;
-  /** Customer id */
-  customer_id?: string;
-}
-
-export type AccommodationsArrangementAttendeesModel = AccommodationsArrangementAttendeeModel[];
-
-export interface AccommodationCategoryWithLinkModel {
-  /** id of the category */
-  id: string;
-  /** label of the category */
-  label: string;
-  _links?: LinksModel;
-}
-
-export type AccommodationCategoriesWithLinksModel = AccommodationCategoryWithLinkModel[];
-
-export interface AccommodationArrangementResponseV0Model {
-  /** id of the accommodation */
-  accommodation_id: string;
-  /** label of the accommodation */
-  label: string;
-  /** number of accommodations where the attendees will be allocated */
-  quantity: number;
-  /** Indicate if the room is sharable */
-  shared_room: boolean;
-  attendees: AccommodationsArrangementAttendeesModel;
-  accommodation_categories?: AccommodationCategoriesWithLinksModel;
-  _links?: LinksModel;
-}
-
-export type AccommodationsArrangementResponseListV0Model =
-  AccommodationArrangementResponseV0Model[];
 
 /**
  * slot in the day for this service
@@ -10595,6 +10340,265 @@ export interface ProposalService {
 
 export type ProposalServices = ProposalService[];
 
+export interface SellerCommissionModel {
+  /** earnings for a sale */
+  total: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+/**
+ * The type of rate
+ */
+export type RateType = (typeof RateType)[keyof typeof RateType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const RateType = {
+  STANDARD_RATE: 'STANDARD_RATE',
+  FLEXIBLE_RATE: 'FLEXIBLE_RATE',
+  NON_REFUNDABLE_RATE: 'NON_REFUNDABLE_RATE',
+} as const;
+
+export interface ProposalGetAlternativeRateModel {
+  type: RateType;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  /** Indicates the price difference between the applicable rate and the already applied rate of the given proposal */
+  price_difference: number;
+}
+
+export type ProposalAlternativeRatesModel = ProposalGetAlternativeRateModel[];
+
+/**
+ * Attendee type [MAIN, KID, ADULT]
+ */
+export type AccommodationsArrangementAttendeeTypeModel =
+  (typeof AccommodationsArrangementAttendeeTypeModel)[keyof typeof AccommodationsArrangementAttendeeTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccommodationsArrangementAttendeeTypeModel = {
+  MAIN: 'MAIN',
+  ADULT: 'ADULT',
+  KID: 'KID',
+} as const;
+
+/**
+ * Attendee birthdate (YYYYMMDD)
+ */
+export type AccommodationsArrangementAttendeeModelBirthdate = string | null;
+
+export interface AccommodationsArrangementAttendeeModel {
+  /** Attendee id in this booking */
+  id: string;
+  type: AccommodationsArrangementAttendeeTypeModel;
+  /** Attendee birthdate (YYYYMMDD) */
+  birthdate: AccommodationsArrangementAttendeeModelBirthdate;
+  /** Customer id */
+  customer_id?: string;
+}
+
+export type AccommodationsArrangementAttendeesModel = AccommodationsArrangementAttendeeModel[];
+
+export interface AccommodationCategoryWithLinkModel {
+  /** id of the category */
+  id: string;
+  /** label of the category */
+  label: string;
+  _links?: LinksModel;
+}
+
+export type AccommodationCategoriesWithLinksModel = AccommodationCategoryWithLinkModel[];
+
+export interface AccommodationArrangementResponseV0Model {
+  /** id of the accommodation */
+  accommodation_id: string;
+  /** label of the accommodation */
+  label: string;
+  /** number of accommodations where the attendees will be allocated */
+  quantity: number;
+  /** Indicate if the room is sharable */
+  shared_room: boolean;
+  attendees: AccommodationsArrangementAttendeesModel;
+  accommodation_categories?: AccommodationCategoriesWithLinksModel;
+  _links?: LinksModel;
+}
+
+export type AccommodationsArrangementResponseListV0Model =
+  AccommodationArrangementResponseV0Model[];
+
+export interface ProposalPackageDifferentialPriceModel {
+  /** Indicates the price difference between the applicable package and the already applied package of the given proposal. */
+  amount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+export interface ProposalPackageModel {
+  /** a package_id from /products/{product_id}/packages resource */
+  id: string;
+  differential_price?: ProposalPackageDifferentialPriceModel;
+  _links?: LinksModel;
+}
+
+export type ProposalPackagesModel = ProposalPackageModel[];
+
+/**
+ * Indicates the way of the journey (outbound / inbound)
+ */
+export type TransportConfigurationJourneyWayType =
+  (typeof TransportConfigurationJourneyWayType)[keyof typeof TransportConfigurationJourneyWayType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TransportConfigurationJourneyWayType = {
+  INBOUND: 'INBOUND',
+  OUTBOUND: 'OUTBOUND',
+  WITHIN_TOUR: 'WITHIN_TOUR',
+} as const;
+
+/**
+ * Full name of the city
+ */
+export type TravelSectionCityLabel = string | null;
+
+export interface TravelSectionCity {
+  /** City code, on three letters */
+  id?: string;
+  /** Full name of the city */
+  label?: TravelSectionCityLabel;
+}
+
+export type TravelSectionStepTimeModelAnyOf = {
+  /** Indicates the journey's minimum time */
+  min?: string;
+  /** Indicates the journey's minimum time */
+  max?: string;
+};
+
+export type TravelSectionStepTimeModel = TravelSectionStepTimeModelAnyOf | null;
+
+export interface TravelSectionStepWithTimeObjectModel {
+  city?: TravelSectionCity;
+  /** date */
+  date?: string;
+  time?: TravelSectionStepTimeModel;
+}
+
+export interface TransportConfigurationJourneyModel {
+  way: TransportConfigurationJourneyWayType;
+  departure?: TravelSectionStepWithTimeObjectModel;
+  arrival?: TravelSectionStepWithTimeObjectModel;
+}
+
+export type TransportConfigurationJourneysModel = TransportConfigurationJourneyModel[];
+
+/**
+ * Transport information indicating its class. [ PLANE_ECONOMY, PLANE_ECONOMY_PLUS, PLANE_BUSINESS, PLANE_PREMIUM, PLANE_FIRST, TRAIN_FIRST, TRAIN_SECOND ]
+ */
+export type TransportConfigurationTransportClassModel =
+  (typeof TransportConfigurationTransportClassModel)[keyof typeof TransportConfigurationTransportClassModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TransportConfigurationTransportClassModel = {
+  PLANE_ECONOMY: 'PLANE_ECONOMY',
+  PLANE_ECONOMY_PLUS: 'PLANE_ECONOMY_PLUS',
+  PLANE_BUSINESS: 'PLANE_BUSINESS',
+  PLANE_PREMIUM: 'PLANE_PREMIUM',
+  PLANE_FIRST: 'PLANE_FIRST',
+  TRAIN_FIRST: 'TRAIN_FIRST',
+  TRAIN_SECOND: 'TRAIN_SECOND',
+} as const;
+
+export type TransportConfigurationConnectionDurationModelAnyOf = {
+  /** Indicates the proposal's transport connection minimum duration (in minutes) */
+  min: number;
+  /** Indicates the proposal's transport connection maximum duration (in minutes) */
+  max: number;
+};
+
+export type TransportConfigurationConnectionDurationModel =
+  TransportConfigurationConnectionDurationModelAnyOf | null;
+
+export type TransportConfigurationIsTransportStationsChangedAllowedModelAnyOf = {
+  /** Indicates if the airport change between connections is allowed or not. For exemple, if allowed, an attendee might have a connection in Paris Orly, and go to CDG to take his next flight. */
+  on_connection: boolean;
+  /** Indicates if the airport change between inbound and outbound is allowed or not. For exemple, if allowed, an attendee can leave from Paris Orly and come back at Paris CDG. */
+  along_roundtrip: boolean;
+};
+
+export type TransportConfigurationIsTransportStationsChangedAllowedModel =
+  TransportConfigurationIsTransportStationsChangedAllowedModelAnyOf | null;
+
+/**
+ * Indicates the list of imposed companies
+ */
+export type TransportConfigurationImposedCompaniesModel = string[];
+
+/**
+ * Indicates the list of imposed connection cities
+ */
+export type TransportConfigurationImposedConnectionCitiesModel = string[];
+
+/**
+ * Indicates the list of excluded companies
+ */
+export type TransportConfigurationExcludedCompaniesModel = string[];
+
+/**
+ * Indicates the list of Clubmed blacklisted companies for the concerned transport axe.
+ */
+export type TransportConfigurationForbiddenCompaniesModel = string[];
+
+/**
+ * Indicates the list of excluded connection cities
+ */
+export type TransportConfigurationExcludedConnectionCitiesModel = string[];
+
+/**
+ * Indicates the proposal's max connections
+ */
+export type TransportConfigurationModelMaxConnections = number | null;
+
+export interface TransportConfigurationModel {
+  journeys?: TransportConfigurationJourneysModel;
+  transport_class?: TransportConfigurationTransportClassModel;
+  /** Indicates if the proposal's default transportation is a direct flight only */
+  is_direct_flight_only: boolean;
+  /** Indicates the proposal's max connections */
+  max_connections: TransportConfigurationModelMaxConnections;
+  transport_connection_duration?: TransportConfigurationConnectionDurationModel;
+  is_transport_stations_changes_allowed?: TransportConfigurationIsTransportStationsChangedAllowedModel;
+  /** Indicates if cabin mixing is allowed or not */
+  is_cabin_mixing_allowed: boolean;
+  /** Indicates if flight companies mixing is allowed or not */
+  is_companies_mixing_allowed: boolean;
+  imposed_companies?: TransportConfigurationImposedCompaniesModel;
+  imposed_connection_cities?: TransportConfigurationImposedConnectionCitiesModel;
+  excluded_companies?: TransportConfigurationExcludedCompaniesModel;
+  forbidden_companies?: TransportConfigurationForbiddenCompaniesModel;
+  excluded_connection_cities?: TransportConfigurationExcludedConnectionCitiesModel;
+}
+
+export interface TransportAxisModel {
+  /** Departure city code */
+  departure_city_code: string;
+  /** Arrival city code */
+  arrival_city_code: string;
+}
+
+export type GetProposalTransportAxesModel = TransportAxisModel[];
+
 export type TravelerResponseModelUnicodeFirstName = string | null;
 
 export type TravelerResponseModelUnicodeLastName = string | null;
@@ -10645,6 +10649,405 @@ export interface TravelerResponseModel {
 }
 
 export type TravelerListModel = TravelerResponseModel[];
+
+/**
+ * Loyalty type
+ */
+export type LoyaltyType = (typeof LoyaltyType)[keyof typeof LoyaltyType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LoyaltyType = {
+  FREQUENCY: 'FREQUENCY',
+  BOOKING: 'BOOKING',
+  BIRTHDAY: 'BIRTHDAY',
+  BOOSTER: 'BOOSTER',
+  BONUS: 'BONUS',
+  ADDED: 'ADDED',
+  TRANSFER: 'TRANSFER',
+  SPONSORHSIP: 'SPONSORHSIP',
+  FLIGGY: 'FLIGGY',
+  PURCHASES_IN_RESORT: 'PURCHASES_IN_RESORT',
+  YEARLY_BONUS: 'YEARLY_BONUS',
+} as const;
+
+/**
+ * ids of the different products of the booking
+ */
+export type ProductIds = string[];
+
+/**
+ * Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate = string | null;
+
+/**
+ * Related booking info
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModelAnyOf = {
+  /**
+   * booking Id (file number)
+   * @pattern ^\d+$
+   */
+  id: string;
+  /** Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example */
+  arrival_date: CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate;
+  product_ids: ProductIds;
+};
+
+/**
+ * Related booking info
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModel =
+  CustomerLoyaltyDetailsRelatedBookingModelAnyOf | null;
+
+/**
+ * Points expiration date
+ */
+export type CustomerLoyaltyDetailsModelExpirationDate = string | null;
+
+export interface CustomerLoyaltyDetailsModel {
+  type: LoyaltyType;
+  /**
+   * Number of points
+   * @minimum 0
+   */
+  points: number;
+  /** Points expiration date */
+  expiration_date: CustomerLoyaltyDetailsModelExpirationDate;
+  /** true when points are expired */
+  expired: boolean;
+  related_booking: CustomerLoyaltyDetailsRelatedBookingModel;
+}
+
+export type CustomerLoyaltyDetailsResponseModel = CustomerLoyaltyDetailsModel[];
+
+/**
+ * booking's status
+ */
+export type BaseBookingStatusModel =
+  (typeof BaseBookingStatusModel)[keyof typeof BaseBookingStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseBookingStatusModel = {
+  OPTION: 'OPTION',
+  CANCELED: 'CANCELED',
+  VALIDATED: 'VALIDATED',
+  PARTIALLY_VALIDATED: 'PARTIALLY_VALIDATED',
+  EXPIRED: 'EXPIRED',
+  UNKNOWN: 'UNKNOWN',
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  MUTE: 'MUTE',
+  EXPIRED_OPTION: 'EXPIRED_OPTION',
+  QUOTATION: 'QUOTATION',
+  HOPE: 'HOPE',
+  EXPIRED_HOPE: 'EXPIRED_HOPE',
+  EXPIRED_QUOTATION: 'EXPIRED_QUOTATION',
+  REQUEST: 'REQUEST',
+  ARCHIVED: 'ARCHIVED',
+} as const;
+
+/**
+ * booking payment's status
+ */
+export type BaseBookingPaymentStatusModel =
+  (typeof BaseBookingPaymentStatusModel)[keyof typeof BaseBookingPaymentStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseBookingPaymentStatusModel = {
+  PAID: 'PAID',
+  UNPAID: 'UNPAID',
+  IN_CREDIT: 'IN_CREDIT',
+  PENDING: 'PENDING',
+  UNKNOWN: 'UNKNOWN',
+} as const;
+
+/**
+ * type of booking
+ */
+export type CustomerBookingTypeModel =
+  (typeof CustomerBookingTypeModel)[keyof typeof CustomerBookingTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CustomerBookingTypeModel = {
+  CLUBMED_RESORT: 'CLUBMED_RESORT',
+  CLUBMED_CRUISE: 'CLUBMED_CRUISE',
+  CLUBMED_CIRCUIT: 'CLUBMED_CIRCUIT',
+} as const;
+
+/**
+ * status of the feedback form
+ */
+export type GMFeedbackStatusesModel =
+  (typeof GMFeedbackStatusesModel)[keyof typeof GMFeedbackStatusesModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GMFeedbackStatusesModel = {
+  AVAILABLE: 'AVAILABLE',
+  UNAVAILABLE: 'UNAVAILABLE',
+} as const;
+
+export type GMFeedbackModelAnyOf = {
+  status?: GMFeedbackStatusesModel;
+  _links?: LinksModel;
+};
+
+export type GMFeedbackModel = GMFeedbackModelAnyOf | null;
+
+/**
+ * adult attendees number
+ */
+export type AttendeesModelAnyOfAdultsCount =
+  (typeof AttendeesModelAnyOfAdultsCount)[keyof typeof AttendeesModelAnyOfAdultsCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AttendeesModelAnyOfAdultsCount = {
+  NUMBER_0: 0,
+} as const;
+
+/**
+ * children attendees number
+ */
+export type AttendeesModelAnyOfChildrenCount =
+  (typeof AttendeesModelAnyOfChildrenCount)[keyof typeof AttendeesModelAnyOfChildrenCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AttendeesModelAnyOfChildrenCount = {
+  NUMBER_0: 0,
+} as const;
+
+export type AttendeesModelAnyOf = {
+  /** adult attendees number */
+  adults_count?: AttendeesModelAnyOfAdultsCount;
+  /** children attendees number */
+  children_count?: AttendeesModelAnyOfChildrenCount;
+  _links?: LinksModel;
+};
+
+export type AttendeesModel = AttendeesModelAnyOf | null;
+
+/**
+ * Transportation mode
+ */
+export type CustomerBookingStayOutwardTripTransportationModeModel =
+  (typeof CustomerBookingStayOutwardTripTransportationModeModel)[keyof typeof CustomerBookingStayOutwardTripTransportationModeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CustomerBookingStayOutwardTripTransportationModeModel = {
+  PLANE: 'PLANE',
+  TRAIN: 'TRAIN',
+  BOAT: 'BOAT',
+  UNKNOWN: 'UNKNOWN',
+} as const;
+
+/**
+ * city of departure
+ */
+export type CustomerBookingOutwardTripModelAnyOfDepartureCity = string | null;
+
+/**
+ * city of arrival
+ */
+export type CustomerBookingOutwardTripModelAnyOfArrivalCity = string | null;
+
+/**
+ * number of attendees concerned by this trip
+ */
+export type CustomerBookingOutwardTripModelAnyOfAttendeesCount =
+  (typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount)[keyof typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CustomerBookingOutwardTripModelAnyOfAttendeesCount = {
+  NUMBER_0: 0,
+} as const;
+
+export type CustomerBookingOutwardTripModelAnyOf = {
+  /** city of departure */
+  departure_city?: CustomerBookingOutwardTripModelAnyOfDepartureCity;
+  /** city of arrival */
+  arrival_city?: CustomerBookingOutwardTripModelAnyOfArrivalCity;
+  transportation?: CustomerBookingStayOutwardTripTransportationModeModel;
+  /** number of attendees concerned by this trip */
+  attendees_count?: CustomerBookingOutwardTripModelAnyOfAttendeesCount;
+};
+
+export type CustomerBookingOutwardTripModel = CustomerBookingOutwardTripModelAnyOf | null;
+
+export type StayAccommodationRoomsModel = RoomModel[];
+
+/**
+ * accommodation occupancy start date
+ */
+export type StayAccommodationModelStartDate = string | null;
+
+/**
+ * accommodation occupancy end date
+ */
+export type StayAccommodationModelEndDate = string | null;
+
+/**
+ * false if there is no baby bed in the room
+ */
+export type StayAccommodationModelBabyBed = boolean | null;
+
+/**
+ * Indicate if the room is sharable
+ */
+export type StayAccommodationModelSharedRoom = boolean | null;
+
+/**
+ * number of persons in the room
+ */
+export type StayAccommodationModelOccupation = 0 | null;
+
+export interface StayAccommodationModel {
+  /** accommodation occupancy start date */
+  start_date?: StayAccommodationModelStartDate;
+  /** accommodation occupancy end date */
+  end_date?: StayAccommodationModelEndDate;
+  /** number of accommodations for the id and time period */
+  quantity: number;
+  /** false if there is no baby bed in the room */
+  baby_bed?: StayAccommodationModelBabyBed;
+  /** Indicate if the room is sharable */
+  shared_room?: StayAccommodationModelSharedRoom;
+  /** number of persons in the room */
+  occupation?: StayAccommodationModelOccupation;
+  /** accommodation id */
+  accommodation_id?: string;
+  rooms?: StayAccommodationRoomsModel;
+  _links?: LinksModel;
+}
+
+export type StayAccommodationsModel = StayAccommodationModel[];
+
+/**
+ * List of attendee
+ */
+export type BookingPackageAttendeeIdsModel = string[];
+
+/**
+ * package label
+ */
+export type BookingPackageModelLabel = string | null;
+
+export interface BookingPackageModel {
+  /** package id of the booking */
+  id: string;
+  /** package label */
+  label?: BookingPackageModelLabel;
+  attendee_ids?: BookingPackageAttendeeIdsModel;
+  _links?: LinksModel;
+}
+
+export type BookingPackagesModel = BookingPackageModel[];
+
+/**
+ * resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD
+ */
+export type CustomerBookingStayModelResortArrivalDate = string | null;
+
+/**
+ * false if no upsell can be applied to this booking using the api
+ */
+export type CustomerBookingStayModelApiUpsellAvailable = boolean | null;
+
+export interface CustomerBookingStayModel {
+  /** stay id */
+  id?: string;
+  /** product concerned by the booking */
+  product_id?: string;
+  /** Label (name of product) */
+  label?: string;
+  product_type?: ProductTypeModel;
+  /** resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD */
+  resort_arrival_date?: CustomerBookingStayModelResortArrivalDate;
+  /** duration of the stay */
+  duration?: number;
+  gm_feedback?: GMFeedbackModel;
+  attendees?: AttendeesModel;
+  outward_trip?: CustomerBookingOutwardTripModel;
+  /** false if no upsell can be applied to this booking using the api */
+  api_upsell_available: CustomerBookingStayModelApiUpsellAvailable;
+  accommodations?: StayAccommodationsModel;
+  packages?: BookingPackagesModel;
+  _links?: LinksModel;
+}
+
+/**
+ * list of stays, filled except when type=CLUBMED_CRUISE
+ */
+export type CustomerBookingStaysModel = CustomerBookingStayModel[];
+
+/**
+ * Status of the easy arrival
+ */
+export type ValidEasyArrivalStatuesModel =
+  | 'UNAVAILABLE'
+  | 'AVAILABLE'
+  | 'UNEDITABLE'
+  | 'DONE'
+  | null;
+
+/**
+ * The easy arrival service can be associated to a given booking. This service eases the arrival in the resort, by example, the skis can be directly put in your lockers or your children habits are known by the staff of the children club.<br>The GM feedback form about the stay allows the Club Med staff to improve their services
+ */
+export interface EasyArrivalModel {
+  status?: ValidEasyArrivalStatuesModel;
+  _links?: LinksModel;
+}
+
+/**
+ * YYYYMMDD
+ */
+export type CustomerBookingModelCreationDate = string | null;
+
+/**
+ * true if the booking is composed of mulitple sales contracts, owned by different customers. Online sale processes are not possible in this case.
+ */
+export type CustomerBookingModelMultipleSaleContracts = boolean | null;
+
+/**
+ * Link to the Clubmed countdown builder and sharing page.
+ */
+export type CustomerBookingModelDepartureCountdownHref = string | null;
+
+/**
+ * expiration date time of an option => filled only when booking_status=OPTION
+ */
+export type CustomerBookingModelExpirationDateTime = string | null;
+
+/**
+ * Language/Country the booking has been created with
+ */
+export type CustomerBookingModelLocale = string | null;
+
+export interface CustomerBookingModel {
+  /** booking id */
+  id: string;
+  /** YYYYMMDD */
+  creation_date?: CustomerBookingModelCreationDate;
+  /** YYYYMMDD */
+  departure_date?: string;
+  /** YYYYMMDD */
+  return_date?: string;
+  booking_status?: BaseBookingStatusModel;
+  payment_status?: BaseBookingPaymentStatusModel;
+  /** true if the booking is composed of mulitple sales contracts, owned by different customers. Online sale processes are not possible in this case. */
+  multiple_sale_contracts: CustomerBookingModelMultipleSaleContracts;
+  /** Link to the Clubmed countdown builder and sharing page. */
+  departure_countdown_href: CustomerBookingModelDepartureCountdownHref;
+  /** expiration date time of an option => filled only when booking_status=OPTION */
+  expiration_date_time?: CustomerBookingModelExpirationDateTime;
+  vendor?: VendorModel;
+  type?: CustomerBookingTypeModel;
+  stays?: CustomerBookingStaysModel;
+  easy_arrival?: EasyArrivalModel;
+  /** Language/Country the booking has been created with */
+  locale?: CustomerBookingModelLocale;
+  _links?: LinksModel;
+}
+
+export type CustomerBookingsModel = CustomerBookingModel[];
 
 /**
  * customer profile first name. Cannot be modified. Use customers/{customer_id}/profile instead
@@ -11231,405 +11634,6 @@ export interface TravelDocumentModel {
 }
 
 /**
- * booking's status
- */
-export type BaseBookingStatusModel =
-  (typeof BaseBookingStatusModel)[keyof typeof BaseBookingStatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseBookingStatusModel = {
-  OPTION: 'OPTION',
-  CANCELED: 'CANCELED',
-  VALIDATED: 'VALIDATED',
-  PARTIALLY_VALIDATED: 'PARTIALLY_VALIDATED',
-  EXPIRED: 'EXPIRED',
-  UNKNOWN: 'UNKNOWN',
-  PENDING_PAYMENT: 'PENDING_PAYMENT',
-  MUTE: 'MUTE',
-  EXPIRED_OPTION: 'EXPIRED_OPTION',
-  QUOTATION: 'QUOTATION',
-  HOPE: 'HOPE',
-  EXPIRED_HOPE: 'EXPIRED_HOPE',
-  EXPIRED_QUOTATION: 'EXPIRED_QUOTATION',
-  REQUEST: 'REQUEST',
-  ARCHIVED: 'ARCHIVED',
-} as const;
-
-/**
- * booking payment's status
- */
-export type BaseBookingPaymentStatusModel =
-  (typeof BaseBookingPaymentStatusModel)[keyof typeof BaseBookingPaymentStatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseBookingPaymentStatusModel = {
-  PAID: 'PAID',
-  UNPAID: 'UNPAID',
-  IN_CREDIT: 'IN_CREDIT',
-  PENDING: 'PENDING',
-  UNKNOWN: 'UNKNOWN',
-} as const;
-
-/**
- * type of booking
- */
-export type CustomerBookingTypeModel =
-  (typeof CustomerBookingTypeModel)[keyof typeof CustomerBookingTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CustomerBookingTypeModel = {
-  CLUBMED_RESORT: 'CLUBMED_RESORT',
-  CLUBMED_CRUISE: 'CLUBMED_CRUISE',
-  CLUBMED_CIRCUIT: 'CLUBMED_CIRCUIT',
-} as const;
-
-/**
- * status of the feedback form
- */
-export type GMFeedbackStatusesModel =
-  (typeof GMFeedbackStatusesModel)[keyof typeof GMFeedbackStatusesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GMFeedbackStatusesModel = {
-  AVAILABLE: 'AVAILABLE',
-  UNAVAILABLE: 'UNAVAILABLE',
-} as const;
-
-export type GMFeedbackModelAnyOf = {
-  status?: GMFeedbackStatusesModel;
-  _links?: LinksModel;
-};
-
-export type GMFeedbackModel = GMFeedbackModelAnyOf | null;
-
-/**
- * adult attendees number
- */
-export type AttendeesModelAnyOfAdultsCount =
-  (typeof AttendeesModelAnyOfAdultsCount)[keyof typeof AttendeesModelAnyOfAdultsCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AttendeesModelAnyOfAdultsCount = {
-  NUMBER_0: 0,
-} as const;
-
-/**
- * children attendees number
- */
-export type AttendeesModelAnyOfChildrenCount =
-  (typeof AttendeesModelAnyOfChildrenCount)[keyof typeof AttendeesModelAnyOfChildrenCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AttendeesModelAnyOfChildrenCount = {
-  NUMBER_0: 0,
-} as const;
-
-export type AttendeesModelAnyOf = {
-  /** adult attendees number */
-  adults_count?: AttendeesModelAnyOfAdultsCount;
-  /** children attendees number */
-  children_count?: AttendeesModelAnyOfChildrenCount;
-  _links?: LinksModel;
-};
-
-export type AttendeesModel = AttendeesModelAnyOf | null;
-
-/**
- * Transportation mode
- */
-export type CustomerBookingStayOutwardTripTransportationModeModel =
-  (typeof CustomerBookingStayOutwardTripTransportationModeModel)[keyof typeof CustomerBookingStayOutwardTripTransportationModeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CustomerBookingStayOutwardTripTransportationModeModel = {
-  PLANE: 'PLANE',
-  TRAIN: 'TRAIN',
-  BOAT: 'BOAT',
-  UNKNOWN: 'UNKNOWN',
-} as const;
-
-/**
- * city of departure
- */
-export type CustomerBookingOutwardTripModelAnyOfDepartureCity = string | null;
-
-/**
- * city of arrival
- */
-export type CustomerBookingOutwardTripModelAnyOfArrivalCity = string | null;
-
-/**
- * number of attendees concerned by this trip
- */
-export type CustomerBookingOutwardTripModelAnyOfAttendeesCount =
-  (typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount)[keyof typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CustomerBookingOutwardTripModelAnyOfAttendeesCount = {
-  NUMBER_0: 0,
-} as const;
-
-export type CustomerBookingOutwardTripModelAnyOf = {
-  /** city of departure */
-  departure_city?: CustomerBookingOutwardTripModelAnyOfDepartureCity;
-  /** city of arrival */
-  arrival_city?: CustomerBookingOutwardTripModelAnyOfArrivalCity;
-  transportation?: CustomerBookingStayOutwardTripTransportationModeModel;
-  /** number of attendees concerned by this trip */
-  attendees_count?: CustomerBookingOutwardTripModelAnyOfAttendeesCount;
-};
-
-export type CustomerBookingOutwardTripModel = CustomerBookingOutwardTripModelAnyOf | null;
-
-export type StayAccommodationRoomsModel = RoomModel[];
-
-/**
- * accommodation occupancy start date
- */
-export type StayAccommodationModelStartDate = string | null;
-
-/**
- * accommodation occupancy end date
- */
-export type StayAccommodationModelEndDate = string | null;
-
-/**
- * false if there is no baby bed in the room
- */
-export type StayAccommodationModelBabyBed = boolean | null;
-
-/**
- * Indicate if the room is sharable
- */
-export type StayAccommodationModelSharedRoom = boolean | null;
-
-/**
- * number of persons in the room
- */
-export type StayAccommodationModelOccupation = 0 | null;
-
-export interface StayAccommodationModel {
-  /** accommodation occupancy start date */
-  start_date?: StayAccommodationModelStartDate;
-  /** accommodation occupancy end date */
-  end_date?: StayAccommodationModelEndDate;
-  /** number of accommodations for the id and time period */
-  quantity: number;
-  /** false if there is no baby bed in the room */
-  baby_bed?: StayAccommodationModelBabyBed;
-  /** Indicate if the room is sharable */
-  shared_room?: StayAccommodationModelSharedRoom;
-  /** number of persons in the room */
-  occupation?: StayAccommodationModelOccupation;
-  /** accommodation id */
-  accommodation_id?: string;
-  rooms?: StayAccommodationRoomsModel;
-  _links?: LinksModel;
-}
-
-export type StayAccommodationsModel = StayAccommodationModel[];
-
-/**
- * List of attendee
- */
-export type BookingPackageAttendeeIdsModel = string[];
-
-/**
- * package label
- */
-export type BookingPackageModelLabel = string | null;
-
-export interface BookingPackageModel {
-  /** package id of the booking */
-  id: string;
-  /** package label */
-  label?: BookingPackageModelLabel;
-  attendee_ids?: BookingPackageAttendeeIdsModel;
-  _links?: LinksModel;
-}
-
-export type BookingPackagesModel = BookingPackageModel[];
-
-/**
- * resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD
- */
-export type CustomerBookingStayModelResortArrivalDate = string | null;
-
-/**
- * false if no upsell can be applied to this booking using the api
- */
-export type CustomerBookingStayModelApiUpsellAvailable = boolean | null;
-
-export interface CustomerBookingStayModel {
-  /** stay id */
-  id?: string;
-  /** product concerned by the booking */
-  product_id?: string;
-  /** Label (name of product) */
-  label?: string;
-  product_type?: ProductTypeModel;
-  /** resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD */
-  resort_arrival_date?: CustomerBookingStayModelResortArrivalDate;
-  /** duration of the stay */
-  duration?: number;
-  gm_feedback?: GMFeedbackModel;
-  attendees?: AttendeesModel;
-  outward_trip?: CustomerBookingOutwardTripModel;
-  /** false if no upsell can be applied to this booking using the api */
-  api_upsell_available: CustomerBookingStayModelApiUpsellAvailable;
-  accommodations?: StayAccommodationsModel;
-  packages?: BookingPackagesModel;
-  _links?: LinksModel;
-}
-
-/**
- * list of stays, filled except when type=CLUBMED_CRUISE
- */
-export type CustomerBookingStaysModel = CustomerBookingStayModel[];
-
-/**
- * Status of the easy arrival
- */
-export type ValidEasyArrivalStatuesModel =
-  | 'UNAVAILABLE'
-  | 'AVAILABLE'
-  | 'UNEDITABLE'
-  | 'DONE'
-  | null;
-
-/**
- * The easy arrival service can be associated to a given booking. This service eases the arrival in the resort, by example, the skis can be directly put in your lockers or your children habits are known by the staff of the children club.<br>The GM feedback form about the stay allows the Club Med staff to improve their services
- */
-export interface EasyArrivalModel {
-  status?: ValidEasyArrivalStatuesModel;
-  _links?: LinksModel;
-}
-
-/**
- * YYYYMMDD
- */
-export type CustomerBookingModelCreationDate = string | null;
-
-/**
- * true if the booking is composed of mulitple sales contracts, owned by different customers. Online sale processes are not possible in this case.
- */
-export type CustomerBookingModelMultipleSaleContracts = boolean | null;
-
-/**
- * Link to the Clubmed countdown builder and sharing page.
- */
-export type CustomerBookingModelDepartureCountdownHref = string | null;
-
-/**
- * expiration date time of an option => filled only when booking_status=OPTION
- */
-export type CustomerBookingModelExpirationDateTime = string | null;
-
-/**
- * Language/Country the booking has been created with
- */
-export type CustomerBookingModelLocale = string | null;
-
-export interface CustomerBookingModel {
-  /** booking id */
-  id: string;
-  /** YYYYMMDD */
-  creation_date?: CustomerBookingModelCreationDate;
-  /** YYYYMMDD */
-  departure_date?: string;
-  /** YYYYMMDD */
-  return_date?: string;
-  booking_status?: BaseBookingStatusModel;
-  payment_status?: BaseBookingPaymentStatusModel;
-  /** true if the booking is composed of mulitple sales contracts, owned by different customers. Online sale processes are not possible in this case. */
-  multiple_sale_contracts: CustomerBookingModelMultipleSaleContracts;
-  /** Link to the Clubmed countdown builder and sharing page. */
-  departure_countdown_href: CustomerBookingModelDepartureCountdownHref;
-  /** expiration date time of an option => filled only when booking_status=OPTION */
-  expiration_date_time?: CustomerBookingModelExpirationDateTime;
-  vendor?: VendorModel;
-  type?: CustomerBookingTypeModel;
-  stays?: CustomerBookingStaysModel;
-  easy_arrival?: EasyArrivalModel;
-  /** Language/Country the booking has been created with */
-  locale?: CustomerBookingModelLocale;
-  _links?: LinksModel;
-}
-
-export type CustomerBookingsModel = CustomerBookingModel[];
-
-/**
- * Loyalty type
- */
-export type LoyaltyType = (typeof LoyaltyType)[keyof typeof LoyaltyType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const LoyaltyType = {
-  FREQUENCY: 'FREQUENCY',
-  BOOKING: 'BOOKING',
-  BIRTHDAY: 'BIRTHDAY',
-  BOOSTER: 'BOOSTER',
-  BONUS: 'BONUS',
-  ADDED: 'ADDED',
-  TRANSFER: 'TRANSFER',
-  SPONSORHSIP: 'SPONSORHSIP',
-  FLIGGY: 'FLIGGY',
-  PURCHASES_IN_RESORT: 'PURCHASES_IN_RESORT',
-  YEARLY_BONUS: 'YEARLY_BONUS',
-} as const;
-
-/**
- * ids of the different products of the booking
- */
-export type ProductIds = string[];
-
-/**
- * Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example
- */
-export type CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate = string | null;
-
-/**
- * Related booking info
- */
-export type CustomerLoyaltyDetailsRelatedBookingModelAnyOf = {
-  /**
-   * booking Id (file number)
-   * @pattern ^\d+$
-   */
-  id: string;
-  /** Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example */
-  arrival_date: CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate;
-  product_ids: ProductIds;
-};
-
-/**
- * Related booking info
- */
-export type CustomerLoyaltyDetailsRelatedBookingModel =
-  CustomerLoyaltyDetailsRelatedBookingModelAnyOf | null;
-
-/**
- * Points expiration date
- */
-export type CustomerLoyaltyDetailsModelExpirationDate = string | null;
-
-export interface CustomerLoyaltyDetailsModel {
-  type: LoyaltyType;
-  /**
-   * Number of points
-   * @minimum 0
-   */
-  points: number;
-  /** Points expiration date */
-  expiration_date: CustomerLoyaltyDetailsModelExpirationDate;
-  /** true when points are expired */
-  expired: boolean;
-  related_booking: CustomerLoyaltyDetailsRelatedBookingModel;
-}
-
-export type CustomerLoyaltyDetailsResponseModel = CustomerLoyaltyDetailsModel[];
-
-/**
  * email
  */
 export type ProfileModelV1Email = string | null;
@@ -11741,6 +11745,16 @@ export interface ProfileModelV1 {
   /** Locale with ISO 639-1 language and ISO 3166-1 country */
   locale?: string;
 }
+
+export type Keywords = string[];
+
+export interface MediaModelV1 {
+  /** url of the product media Ex: "http://image.jpg" */
+  url?: string;
+  keywords?: Keywords;
+}
+
+export type MediaListModelV1 = MediaModelV1[];
 
 /**
  * type of the facility
@@ -12392,592 +12406,25 @@ export interface AccommodationModelV1 {
 
 export type AccommodationsModelV1 = AccommodationModelV1[];
 
-export type TransferServiceCodesArray = string[];
+/**
+ * inclusive start date
+ */
+export type PeriodsInfoStartDate = string | null;
 
 /**
- * distance between the access and the product
+ * exclusive end date
  */
-export type ProductTransferV1DistanceValue = number | null;
+export type PeriodsInfoEndDate = string | null;
 
-export interface ProductTransferV1Distance {
-  /** distance between the access and the product */
-  value?: ProductTransferV1DistanceValue;
-  /** unit of the distance */
-  unit?: string;
+export interface PeriodsInfo {
+  type?: PeriodsInfoTypeModel;
+  /** inclusive start date */
+  start_date?: PeriodsInfoStartDate;
+  /** exclusive end date */
+  end_date?: PeriodsInfoEndDate;
 }
 
-/**
- * maximum number of passengers allowed for this transportation
- */
-export type ProductTransferV1TransportationPassengerCapacity = number | null;
-
-export interface ProductTransferV1Transportation {
-  /** id of the transportation mean */
-  id: string;
-  /** label of the transportation type */
-  label: string;
-  /** maximum number of passengers allowed for this transportation */
-  passenger_capacity?: ProductTransferV1TransportationPassengerCapacity;
-}
-
-export type ProductTransferV1Transportations = ProductTransferV1Transportation[];
-
-export interface ProductTransferV1Access {
-  /** id of the access to the product */
-  id?: string;
-  /** type of access (AIRPORT, TRAIN_STATION, ...) */
-  type?: string;
-  /** access label */
-  label?: string;
-}
-
-/**
- * duration in minutes
- */
-export type ProductTransferV1DurationInMinutes = number | null;
-
-/**
- * average waiting time before transfer
- */
-export type ProductTransferV1WaitingTimeInMinutes = number | null;
-
-export interface ProductTransferV1 {
-  /** id */
-  id: string;
-  /** type of customer targeted by this transfer */
-  customer_target?: string;
-  /** transfer label */
-  label?: string;
-  service_codes?: TransferServiceCodesArray;
-  /** transfer description */
-  description?: string;
-  /** duration in minutes */
-  duration_in_minutes?: ProductTransferV1DurationInMinutes;
-  distance?: ProductTransferV1Distance;
-  transportation_means?: ProductTransferV1Transportations;
-  access?: ProductTransferV1Access;
-  /** average waiting time before transfer */
-  waiting_time_in_minutes?: ProductTransferV1WaitingTimeInMinutes;
-}
-
-export type ProductTransferV1List = ProductTransferV1[];
-
-export type RestaurantImages = string[];
-
-export interface RestaurantOpeningHourModel {
-  /** restaurant opening hour */
-  opening?: string;
-  /** restaurant closing hour */
-  closing?: string;
-  /** restaurant label */
-  label: string;
-}
-
-export type RestaurantOpeningHoursModel = RestaurantOpeningHourModel[];
-
-export interface OpeningHoursByDayModel {
-  /** Weekdays are displayed as the first 2 letters of their english names - ie MO stands for MONDAY */
-  id?: string;
-  hours?: RestaurantOpeningHoursModel;
-}
-
-/**
- * restaurant opening hours by days
- */
-export type OpeningHoursByDaysModel = OpeningHoursByDayModel[];
-
-export interface RestaurantOpeningHours {
-  /** restaurant opening hour */
-  opening_hour?: string;
-  /** restaurant closing hour */
-  closing_hour?: string;
-  /** possibility for an opening extension */
-  opening_extension_possibility?: boolean;
-  by_days?: OpeningHoursByDaysModel;
-}
-
-/**
- * description of the restaurant specificities for seminars or events
- */
-export type RestaurantSeminarAndEventModelV1Description = string | null;
-
-export interface RestaurantSeminarAndEventModelV1 {
-  /** description of the restaurant specificities for seminars or events */
-  description?: RestaurantSeminarAndEventModelV1Description;
-}
-
-/**
- * number of seats inside
- */
-export type RestaurantSeatingCapacityInside = 0 | null;
-
-/**
- * number of seats outside
- */
-export type RestaurantSeatingCapacityOutside = 0 | null;
-
-export interface RestaurantSeatingCapacity {
-  /** number of seats inside */
-  inside?: RestaurantSeatingCapacityInside;
-  /** number of seats outside */
-  outside?: RestaurantSeatingCapacityOutside;
-}
-
-export type RestaurantTypeModelAnyOf = {
-  /** Restaurant type ID */
-  id?: string;
-  /** Restaurant type label */
-  label?: string;
-};
-
-export type RestaurantTypeModel = RestaurantTypeModelAnyOf | null;
-
-export interface RestaurantMealSpecialityModel {
-  /** Restaurant speciality label ID */
-  id?: string;
-  /** Restaurant speciality label */
-  label?: string;
-}
-
-export type RestaurantMealsSpecialityModel = RestaurantMealSpecialityModel[];
-
-/**
- * importance of this restaurant between all the restaurants of this product
- */
-export type FacilityRankings = (typeof FacilityRankings)[keyof typeof FacilityRankings];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const FacilityRankings = {
-  VERY_HIGH: 'VERY_HIGH',
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
-  LOW: 'LOW',
-  VERY_LOW: 'VERY_LOW',
-} as const;
-
-export type RestaurantModelGpsCoordinatesAnyOf = {
-  /** latitude of GPS coordinates of this facility */
-  latitude: string;
-  /** longitude of GPS coordinates of this facility */
-  longitude: string;
-};
-
-export type RestaurantModelGpsCoordinates = RestaurantModelGpsCoordinatesAnyOf | null;
-
-export interface RestaurantModelV1 {
-  /** unique id of the restaurant */
-  id: string;
-  /** name of the restaurant */
-  name: string;
-  images?: RestaurantImages;
-  opening_hours?: RestaurantOpeningHours;
-  /** description of the restaurant */
-  description?: string;
-  /** additional information */
-  additional_description: string;
-  seminar_and_event?: RestaurantSeminarAndEventModelV1;
-  seating_capacity?: RestaurantSeatingCapacity;
-  type?: RestaurantTypeModel;
-  meals_speciality?: RestaurantMealsSpecialityModel;
-  ranking?: FacilityRankings;
-  gps_coordinates?: RestaurantModelGpsCoordinates;
-}
-
-export type RestaurantsModelV1 = RestaurantModelV1[];
-
-/**
- * Availability status of the product at this date
- */
-export type BookableDatesCalenderAvailabilityStatusModel =
-  (typeof BookableDatesCalenderAvailabilityStatusModel)[keyof typeof BookableDatesCalenderAvailabilityStatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BookableDatesCalenderAvailabilityStatusModel = {
-  OPEN: 'OPEN',
-  CLOSED: 'CLOSED',
-  NO_DEPARTURE: 'NO_DEPARTURE',
-  FULL: 'FULL',
-  NO_FLIGHT: 'NO_FLIGHT',
-  EXCLUSIVITY: 'EXCLUSIVITY',
-  SIBLING_OPEN: 'SIBLING_OPEN',
-  PRE_BOOKABLE: 'PRE_BOOKABLE',
-} as const;
-
-export type BookableDatesCalendarDurations = number[];
-
-/**
- * id of the sibling product from another season. For example TIGC_WINTER is the sibling product of TIGC_SUMMER, and vice versa.
- */
-export type BookableDatesCalendarAvailabilitySiblingId = string | null;
-
-export interface BookableDatesCalendarAvailability {
-  status: BookableDatesCalenderAvailabilityStatusModel;
-  /** id of the sibling product from another season. For example TIGC_WINTER is the sibling product of TIGC_SUMMER, and vice versa. */
-  sibling_id?: BookableDatesCalendarAvailabilitySiblingId;
-  durations: BookableDatesCalendarDurations;
-}
-
-export type BookableDatesCalendarAvailabilities = BookableDatesCalendarAvailability[];
-
-export interface BookableDatesCalendarDay {
-  /** Day identifier */
-  id: number;
-  availabilities: BookableDatesCalendarAvailabilities;
-}
-
-export type BookableDatesCalendarDays = BookableDatesCalendarDay[];
-
-export interface BookableDatesCalendarMonth {
-  /** Month identifier */
-  id: number;
-  days: BookableDatesCalendarDays;
-}
-
-export type BookableDatesCalendarMonths = BookableDatesCalendarMonth[];
-
-export interface BookableDatesCalendar {
-  months: BookableDatesCalendarMonths;
-}
-
-/**
- * Bar list of pictures url
- */
-export type ListProductBarsImagesModel = string[];
-
-export interface HoursModel {
-  /** bar opening hour */
-  opening?: string;
-  /** bar closing hour */
-  closing?: string;
-  /** Indicates the opening hour's name */
-  label: string;
-}
-
-export type Hours = HoursModel[];
-
-export interface ByDayModel {
-  /** bar opening hour */
-  id?: string;
-  hours?: Hours;
-}
-
-export type ByDaysModel = ByDayModel[];
-
-/**
- * bar opening hours information
- */
-export interface ProductBarOpeningHours {
-  /** bar opening hour */
-  opening_hour?: string;
-  /** bar closing hour */
-  closing_hour?: string;
-  /** possibility for an opening extension */
-  opening_extension_possibility?: boolean;
-  by_days?: ByDaysModel;
-}
-
-/**
- * information regarding seminar and events
- */
-export interface SeminarAndEvent {
-  /** description of the restaurant specificities for seminars or events */
-  description?: string;
-}
-
-/**
- * nb of available seats inside the bar
- */
-export type SeatingCapacityInside = number | null;
-
-/**
- * nb of available seats on the terrasse of the bar
- */
-export type SeatingCapacityOutside = number | null;
-
-/**
- * bar seating capacity indoor/outdoor
- */
-export interface SeatingCapacity {
-  /** nb of available seats inside the bar */
-  inside: SeatingCapacityInside;
-  /** nb of available seats on the terrasse of the bar */
-  outside: SeatingCapacityOutside;
-}
-
-export type ProductBarTypesModelAnyOf = {
-  /** unique id describing the bar's type */
-  id: string;
-  /** bar type with displayable flavour */
-  label: string;
-};
-
-export type ProductBarTypesModel = ProductBarTypesModelAnyOf | null;
-
-/**
- * importance of this bar between all the bars of this product
- */
-export type ProductBarsRankingModel =
-  (typeof ProductBarsRankingModel)[keyof typeof ProductBarsRankingModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProductBarsRankingModel = {
-  VERY_HIGH: 'VERY_HIGH',
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
-  LOW: 'LOW',
-  VERY_LOW: 'VERY_LOW',
-} as const;
-
-export type BarModelGpsCoordinatesAnyOf = {
-  /** latitude of GPS coordinates of this facility */
-  latitude: string;
-  /** longitude of GPS coordinates of this facility */
-  longitude: string;
-};
-
-export type BarModelGpsCoordinates = BarModelGpsCoordinatesAnyOf | null;
-
-export interface ProductBarModel {
-  /** unique id of the bar */
-  id: string;
-  /** Bar name */
-  name?: string;
-  images?: ListProductBarsImagesModel;
-  opening_hours: ProductBarOpeningHours;
-  description?: string;
-  /** additional information for village animation */
-  additional_description?: string;
-  seminar_and_event: SeminarAndEvent;
-  seating_capacity?: SeatingCapacity;
-  type: ProductBarTypesModel;
-  restriction_information: RestrictionsInformationModel;
-  ranking?: ProductBarsRankingModel;
-  gps_coordinates?: BarModelGpsCoordinates;
-}
-
-/**
- * List of bars
- */
-export type ProductBarsModel = ProductBarModel[];
-
-export type SalesTagsModel = string[];
-
-export interface SalesChannelModel {
-  /** Banner to display for this ClubMed tool */
-  context?: string;
-  tags: SalesTagsModel;
-}
-
-export type SalesChannel = SalesChannelModel[];
-
-export type InformationBannerToastModelAnyOf = {
-  /** Title of the banner */
-  title?: string;
-  /** Description of the banner */
-  description?: string;
-  /** Picto of the banner */
-  picto?: string;
-  /** ID of the color for the banner */
-  color_id?: string;
-  /** Icon of the banner */
-  icon_name?: string;
-};
-
-export type InformationBannerToastModel = InformationBannerToastModelAnyOf | null;
-
-/**
- * End datetime of the countdown
- */
-export type InformationBannerCountdownModelAnyOfEndDateTime = string | null;
-
-export type InformationBannerCountdownModelAnyOf = {
-  /** End datetime of the countdown */
-  end_date_time?: InformationBannerCountdownModelAnyOfEndDateTime;
-  /**  label of days to displays in the countdown */
-  days_label?: string;
-  /** label of hours to displays in the countdown */
-  hours_label?: string;
-  /** label of minutes to display in the countdown */
-  minutes_label?: string;
-  /** label of seconds to display in the countdown */
-  seconds_label?: string;
-};
-
-export type InformationBannerCountdownModel = InformationBannerCountdownModelAnyOf | null;
-
-export type InformationBannerPopinModelAnyOf = {
-  /**  title of the popin */
-  title?: string;
-  /** subtitle of the popin */
-  subtitle?: string;
-  /** description of the popin */
-  description?: string;
-  /** Button label of the popin */
-  button_label?: string;
-  /** url to redirect in the popin */
-  url?: string;
-  /** image of the popin */
-  image?: string;
-  /** ID of color for the popin */
-  color_id?: string;
-};
-
-export type InformationBannerPopinModel = InformationBannerPopinModelAnyOf | null;
-
-export type InformationBannerTagModelAnyOf = {
-  /** Tag's title */
-  title?: string;
-  /** ID of color for the text's tag */
-  text_color_id?: string;
-  /** ID of color for the tag's background */
-  background_color_id?: string;
-};
-
-export type InformationBannerTagModel = InformationBannerTagModelAnyOf | null;
-
-/**
- * Banner to display for reservation beginning on that date
- */
-export type InformationBannerModelStartDate = string | null;
-
-/**
- * Banner to display for reservation ending on that date
- */
-export type InformationBannerModelEndDate = string | null;
-
-export interface InformationBannerModel {
-  /** id of the information banners */
-  id: string;
-  /** Banner to display for reservation beginning on that date */
-  start_date?: InformationBannerModelStartDate;
-  /** Banner to display for reservation ending on that date */
-  end_date?: InformationBannerModelEndDate;
-  sales_channel: SalesChannel;
-  toaster?: InformationBannerToastModel;
-  countdown?: InformationBannerCountdownModel;
-  popin?: InformationBannerPopinModel;
-  tag?: InformationBannerTagModel;
-}
-
-export type InformationBannersModel = InformationBannerModel[];
-
-/**
- * rate of occupancy of the product
- */
-export type TermsAndConditionsV1AnyOfOccupancyRate = number | null;
-
-/**
- * Departure date on which the best price is based on. Ex: "2016-01-25"
- */
-export type TermsAndConditionsV1AnyOfDepartureDate = string | null;
-
-/**
- * Departure date on which the best price is based on. Ex: "2016-01-25"
- */
-export type TermsAndConditionsV1AnyOfArrivalDate = string | null;
-
-/**
- * Total duration of the transport in minutes
- */
-export type TermsAndConditionsV1AnyOfTransportDurationInMin = number | null;
-
-/**
- * Number of adults allowed, on which the best price is based on.
- */
-export type TermsAndConditionsV1AnyOfAdultsCount = number | null;
-
-/**
- * Number of children allowed, on which the best price is based on.
- */
-export type TermsAndConditionsV1AnyOfChildrenCount = number | null;
-
-/**
- * Indicates the instalment count: that means on how many instalments the best price can be devided
- */
-export type TermsAndConditionsV1AnyOfInstalmentCount = number | null;
-
-export type TermsAndConditionsV1AnyOf = {
-  /** rate of occupancy of the product */
-  occupancy_rate?: TermsAndConditionsV1AnyOfOccupancyRate;
-  departure_city?: DepartureCityV1;
-  departure_location?: DepartureLocationModelV1;
-  /** Departure date on which the best price is based on. Ex: "2016-01-25" */
-  departure_date?: TermsAndConditionsV1AnyOfDepartureDate;
-  /** Departure date on which the best price is based on. Ex: "2016-01-25" */
-  arrival_date?: TermsAndConditionsV1AnyOfArrivalDate;
-  /** Duration (number of days) on which the best price is based on. Ex: 7 */
-  duration?: number;
-  /** Total duration of the transport in minutes */
-  transport_duration_in_min?: TermsAndConditionsV1AnyOfTransportDurationInMin;
-  /** Duration (number of days) journey included */
-  total_duration?: number;
-  /** Number of adults allowed, on which the best price is based on. */
-  adults_count?: TermsAndConditionsV1AnyOfAdultsCount;
-  /** Number of children allowed, on which the best price is based on. */
-  children_count?: TermsAndConditionsV1AnyOfChildrenCount;
-  /** package in which the price is applied */
-  package?: string;
-  accommodations?: CalendarAccommodationsV1;
-  offers?: OffersV1;
-  default_price_display?: DefaultPriceDisplay;
-  /** indicates whether the displayed price includes fees or not */
-  fees_included?: boolean;
-  /** Indicates the instalment count: that means on how many instalments the best price can be devided */
-  instalment_count?: TermsAndConditionsV1AnyOfInstalmentCount;
-  _links?: LinksModel;
-};
-
-export type TermsAndConditionsV1 = TermsAndConditionsV1AnyOf | null;
-
-export type CalendarPriceV1AnyOf = {
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency?: string;
-  per_trip?: PricePerTripV1;
-  per_night?: PricePerNightV1;
-  /** boolean saying if the price is the best of the month */
-  is_best_price_month?: boolean;
-};
-
-export type CalendarPriceV1 = CalendarPriceV1AnyOf | null;
-
-export type DayV1SiblingId = string | null;
-
-export interface DayV1 {
-  /** id of the day. Ex: "20151129" */
-  id: number;
-  /** give the status availability of the product in that date. Ex: "UNKNOWN: request a quote", "CLOSED: the product is closed ", "NO_FLIGHT: No flight has been found ", "NO_DEPARTURE: the product is not for sale", "FULL: The product is full ", "AVAILABLE: the product can be booked" , "EXCLUSIVITY": The product can not be book for exclusivity clause" */
-  availability: string;
-  sibling_id?: DayV1SiblingId;
-  terms_and_conditions?: TermsAndConditionsV1;
-  price?: CalendarPriceV1;
-}
-
-/**
- * Array of days returned by the calendar
- */
-export type DaysV1 = DayV1[];
-
-export interface MonthV1 {
-  /** id of the month array. Ex: "201511" */
-  id: number;
-  days?: DaysV1;
-}
-
-/**
- * Array of months returned by the calendar
- */
-export type MonthsV1 = MonthV1[];
-
-/**
- * Price calendar.
- */
-export interface CalendarModelV1 {
-  months?: MonthsV1;
-}
+export type PeriodsInfoList = PeriodsInfo[];
 
 /**
  * Images of this childcare
@@ -13144,34 +12591,591 @@ export interface ChildcareModelV1 {
 export type ProductChildcareListModelV1 = ChildcareModelV1[];
 
 /**
- * inclusive start date
+ * rate of occupancy of the product
  */
-export type PeriodsInfoStartDate = string | null;
+export type TermsAndConditionsV1AnyOfOccupancyRate = number | null;
 
 /**
- * exclusive end date
+ * Departure date on which the best price is based on. Ex: "2016-01-25"
  */
-export type PeriodsInfoEndDate = string | null;
+export type TermsAndConditionsV1AnyOfDepartureDate = string | null;
 
-export interface PeriodsInfo {
-  type?: PeriodsInfoTypeModel;
-  /** inclusive start date */
-  start_date?: PeriodsInfoStartDate;
-  /** exclusive end date */
-  end_date?: PeriodsInfoEndDate;
+/**
+ * Departure date on which the best price is based on. Ex: "2016-01-25"
+ */
+export type TermsAndConditionsV1AnyOfArrivalDate = string | null;
+
+/**
+ * Total duration of the transport in minutes
+ */
+export type TermsAndConditionsV1AnyOfTransportDurationInMin = number | null;
+
+/**
+ * Number of adults allowed, on which the best price is based on.
+ */
+export type TermsAndConditionsV1AnyOfAdultsCount = number | null;
+
+/**
+ * Number of children allowed, on which the best price is based on.
+ */
+export type TermsAndConditionsV1AnyOfChildrenCount = number | null;
+
+/**
+ * Indicates the instalment count: that means on how many instalments the best price can be devided
+ */
+export type TermsAndConditionsV1AnyOfInstalmentCount = number | null;
+
+export type TermsAndConditionsV1AnyOf = {
+  /** rate of occupancy of the product */
+  occupancy_rate?: TermsAndConditionsV1AnyOfOccupancyRate;
+  departure_city?: DepartureCityV1;
+  departure_location?: DepartureLocationModelV1;
+  /** Departure date on which the best price is based on. Ex: "2016-01-25" */
+  departure_date?: TermsAndConditionsV1AnyOfDepartureDate;
+  /** Departure date on which the best price is based on. Ex: "2016-01-25" */
+  arrival_date?: TermsAndConditionsV1AnyOfArrivalDate;
+  /** Duration (number of days) on which the best price is based on. Ex: 7 */
+  duration?: number;
+  /** Total duration of the transport in minutes */
+  transport_duration_in_min?: TermsAndConditionsV1AnyOfTransportDurationInMin;
+  /** Duration (number of days) journey included */
+  total_duration?: number;
+  /** Number of adults allowed, on which the best price is based on. */
+  adults_count?: TermsAndConditionsV1AnyOfAdultsCount;
+  /** Number of children allowed, on which the best price is based on. */
+  children_count?: TermsAndConditionsV1AnyOfChildrenCount;
+  /** package in which the price is applied */
+  package?: string;
+  accommodations?: CalendarAccommodationsV1;
+  offers?: OffersV1;
+  default_price_display?: DefaultPriceDisplay;
+  /** indicates whether the displayed price includes fees or not */
+  fees_included?: boolean;
+  /** Indicates the instalment count: that means on how many instalments the best price can be devided */
+  instalment_count?: TermsAndConditionsV1AnyOfInstalmentCount;
+  _links?: LinksModel;
+};
+
+export type TermsAndConditionsV1 = TermsAndConditionsV1AnyOf | null;
+
+export type CalendarPriceV1AnyOf = {
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency?: string;
+  per_trip?: PricePerTripV1;
+  per_night?: PricePerNightV1;
+  /** boolean saying if the price is the best of the month */
+  is_best_price_month?: boolean;
+};
+
+export type CalendarPriceV1 = CalendarPriceV1AnyOf | null;
+
+export type DayV1SiblingId = string | null;
+
+export interface DayV1 {
+  /** id of the day. Ex: "20151129" */
+  id: number;
+  /** give the status availability of the product in that date. Ex: "UNKNOWN: request a quote", "CLOSED: the product is closed ", "NO_FLIGHT: No flight has been found ", "NO_DEPARTURE: the product is not for sale", "FULL: The product is full ", "AVAILABLE: the product can be booked" , "EXCLUSIVITY": The product can not be book for exclusivity clause" */
+  availability: string;
+  sibling_id?: DayV1SiblingId;
+  terms_and_conditions?: TermsAndConditionsV1;
+  price?: CalendarPriceV1;
 }
 
-export type PeriodsInfoList = PeriodsInfo[];
+/**
+ * Array of days returned by the calendar
+ */
+export type DaysV1 = DayV1[];
 
-export type Keywords = string[];
+export interface MonthV1 {
+  /** id of the month array. Ex: "201511" */
+  id: number;
+  days?: DaysV1;
+}
 
-export interface MediaModelV1 {
-  /** url of the product media Ex: "http://image.jpg" */
+/**
+ * Array of months returned by the calendar
+ */
+export type MonthsV1 = MonthV1[];
+
+/**
+ * Price calendar.
+ */
+export interface CalendarModelV1 {
+  months?: MonthsV1;
+}
+
+export type SalesTagsModel = string[];
+
+export interface SalesChannelModel {
+  /** Banner to display for this ClubMed tool */
+  context?: string;
+  tags: SalesTagsModel;
+}
+
+export type SalesChannel = SalesChannelModel[];
+
+export type InformationBannerToastModelAnyOf = {
+  /** Title of the banner */
+  title?: string;
+  /** Description of the banner */
+  description?: string;
+  /** Picto of the banner */
+  picto?: string;
+  /** ID of the color for the banner */
+  color_id?: string;
+  /** Icon of the banner */
+  icon_name?: string;
+};
+
+export type InformationBannerToastModel = InformationBannerToastModelAnyOf | null;
+
+/**
+ * End datetime of the countdown
+ */
+export type InformationBannerCountdownModelAnyOfEndDateTime = string | null;
+
+export type InformationBannerCountdownModelAnyOf = {
+  /** End datetime of the countdown */
+  end_date_time?: InformationBannerCountdownModelAnyOfEndDateTime;
+  /**  label of days to displays in the countdown */
+  days_label?: string;
+  /** label of hours to displays in the countdown */
+  hours_label?: string;
+  /** label of minutes to display in the countdown */
+  minutes_label?: string;
+  /** label of seconds to display in the countdown */
+  seconds_label?: string;
+};
+
+export type InformationBannerCountdownModel = InformationBannerCountdownModelAnyOf | null;
+
+export type InformationBannerPopinModelAnyOf = {
+  /**  title of the popin */
+  title?: string;
+  /** subtitle of the popin */
+  subtitle?: string;
+  /** description of the popin */
+  description?: string;
+  /** Button label of the popin */
+  button_label?: string;
+  /** url to redirect in the popin */
   url?: string;
-  keywords?: Keywords;
+  /** image of the popin */
+  image?: string;
+  /** ID of color for the popin */
+  color_id?: string;
+};
+
+export type InformationBannerPopinModel = InformationBannerPopinModelAnyOf | null;
+
+export type InformationBannerTagModelAnyOf = {
+  /** Tag's title */
+  title?: string;
+  /** ID of color for the text's tag */
+  text_color_id?: string;
+  /** ID of color for the tag's background */
+  background_color_id?: string;
+};
+
+export type InformationBannerTagModel = InformationBannerTagModelAnyOf | null;
+
+/**
+ * Banner to display for reservation beginning on that date
+ */
+export type InformationBannerModelStartDate = string | null;
+
+/**
+ * Banner to display for reservation ending on that date
+ */
+export type InformationBannerModelEndDate = string | null;
+
+export interface InformationBannerModel {
+  /** id of the information banners */
+  id: string;
+  /** Banner to display for reservation beginning on that date */
+  start_date?: InformationBannerModelStartDate;
+  /** Banner to display for reservation ending on that date */
+  end_date?: InformationBannerModelEndDate;
+  sales_channel: SalesChannel;
+  toaster?: InformationBannerToastModel;
+  countdown?: InformationBannerCountdownModel;
+  popin?: InformationBannerPopinModel;
+  tag?: InformationBannerTagModel;
 }
 
-export type MediaListModelV1 = MediaModelV1[];
+export type InformationBannersModel = InformationBannerModel[];
+
+/**
+ * Bar list of pictures url
+ */
+export type ListProductBarsImagesModel = string[];
+
+export interface HoursModel {
+  /** bar opening hour */
+  opening?: string;
+  /** bar closing hour */
+  closing?: string;
+  /** Indicates the opening hour's name */
+  label: string;
+}
+
+export type Hours = HoursModel[];
+
+export interface ByDayModel {
+  /** bar opening hour */
+  id?: string;
+  hours?: Hours;
+}
+
+export type ByDaysModel = ByDayModel[];
+
+/**
+ * bar opening hours information
+ */
+export interface ProductBarOpeningHours {
+  /** bar opening hour */
+  opening_hour?: string;
+  /** bar closing hour */
+  closing_hour?: string;
+  /** possibility for an opening extension */
+  opening_extension_possibility?: boolean;
+  by_days?: ByDaysModel;
+}
+
+/**
+ * information regarding seminar and events
+ */
+export interface SeminarAndEvent {
+  /** description of the restaurant specificities for seminars or events */
+  description?: string;
+}
+
+/**
+ * nb of available seats inside the bar
+ */
+export type SeatingCapacityInside = number | null;
+
+/**
+ * nb of available seats on the terrasse of the bar
+ */
+export type SeatingCapacityOutside = number | null;
+
+/**
+ * bar seating capacity indoor/outdoor
+ */
+export interface SeatingCapacity {
+  /** nb of available seats inside the bar */
+  inside: SeatingCapacityInside;
+  /** nb of available seats on the terrasse of the bar */
+  outside: SeatingCapacityOutside;
+}
+
+export type ProductBarTypesModelAnyOf = {
+  /** unique id describing the bar's type */
+  id: string;
+  /** bar type with displayable flavour */
+  label: string;
+};
+
+export type ProductBarTypesModel = ProductBarTypesModelAnyOf | null;
+
+/**
+ * importance of this bar between all the bars of this product
+ */
+export type ProductBarsRankingModel =
+  (typeof ProductBarsRankingModel)[keyof typeof ProductBarsRankingModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProductBarsRankingModel = {
+  VERY_HIGH: 'VERY_HIGH',
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW',
+  VERY_LOW: 'VERY_LOW',
+} as const;
+
+export type BarModelGpsCoordinatesAnyOf = {
+  /** latitude of GPS coordinates of this facility */
+  latitude: string;
+  /** longitude of GPS coordinates of this facility */
+  longitude: string;
+};
+
+export type BarModelGpsCoordinates = BarModelGpsCoordinatesAnyOf | null;
+
+export interface ProductBarModel {
+  /** unique id of the bar */
+  id: string;
+  /** Bar name */
+  name?: string;
+  images?: ListProductBarsImagesModel;
+  opening_hours: ProductBarOpeningHours;
+  description?: string;
+  /** additional information for village animation */
+  additional_description?: string;
+  seminar_and_event: SeminarAndEvent;
+  seating_capacity?: SeatingCapacity;
+  type: ProductBarTypesModel;
+  restriction_information: RestrictionsInformationModel;
+  ranking?: ProductBarsRankingModel;
+  gps_coordinates?: BarModelGpsCoordinates;
+}
+
+/**
+ * List of bars
+ */
+export type ProductBarsModel = ProductBarModel[];
+
+/**
+ * Availability status of the product at this date
+ */
+export type BookableDatesCalenderAvailabilityStatusModel =
+  (typeof BookableDatesCalenderAvailabilityStatusModel)[keyof typeof BookableDatesCalenderAvailabilityStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BookableDatesCalenderAvailabilityStatusModel = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  NO_DEPARTURE: 'NO_DEPARTURE',
+  FULL: 'FULL',
+  NO_FLIGHT: 'NO_FLIGHT',
+  EXCLUSIVITY: 'EXCLUSIVITY',
+  SIBLING_OPEN: 'SIBLING_OPEN',
+  PRE_BOOKABLE: 'PRE_BOOKABLE',
+} as const;
+
+export type BookableDatesCalendarDurations = number[];
+
+/**
+ * id of the sibling product from another season. For example TIGC_WINTER is the sibling product of TIGC_SUMMER, and vice versa.
+ */
+export type BookableDatesCalendarAvailabilitySiblingId = string | null;
+
+export interface BookableDatesCalendarAvailability {
+  status: BookableDatesCalenderAvailabilityStatusModel;
+  /** id of the sibling product from another season. For example TIGC_WINTER is the sibling product of TIGC_SUMMER, and vice versa. */
+  sibling_id?: BookableDatesCalendarAvailabilitySiblingId;
+  durations: BookableDatesCalendarDurations;
+}
+
+export type BookableDatesCalendarAvailabilities = BookableDatesCalendarAvailability[];
+
+export interface BookableDatesCalendarDay {
+  /** Day identifier */
+  id: number;
+  availabilities: BookableDatesCalendarAvailabilities;
+}
+
+export type BookableDatesCalendarDays = BookableDatesCalendarDay[];
+
+export interface BookableDatesCalendarMonth {
+  /** Month identifier */
+  id: number;
+  days: BookableDatesCalendarDays;
+}
+
+export type BookableDatesCalendarMonths = BookableDatesCalendarMonth[];
+
+export interface BookableDatesCalendar {
+  months: BookableDatesCalendarMonths;
+}
+
+export type RestaurantImages = string[];
+
+export interface RestaurantOpeningHourModel {
+  /** restaurant opening hour */
+  opening?: string;
+  /** restaurant closing hour */
+  closing?: string;
+  /** restaurant label */
+  label: string;
+}
+
+export type RestaurantOpeningHoursModel = RestaurantOpeningHourModel[];
+
+export interface OpeningHoursByDayModel {
+  /** Weekdays are displayed as the first 2 letters of their english names - ie MO stands for MONDAY */
+  id?: string;
+  hours?: RestaurantOpeningHoursModel;
+}
+
+/**
+ * restaurant opening hours by days
+ */
+export type OpeningHoursByDaysModel = OpeningHoursByDayModel[];
+
+export interface RestaurantOpeningHours {
+  /** restaurant opening hour */
+  opening_hour?: string;
+  /** restaurant closing hour */
+  closing_hour?: string;
+  /** possibility for an opening extension */
+  opening_extension_possibility?: boolean;
+  by_days?: OpeningHoursByDaysModel;
+}
+
+/**
+ * description of the restaurant specificities for seminars or events
+ */
+export type RestaurantSeminarAndEventModelV1Description = string | null;
+
+export interface RestaurantSeminarAndEventModelV1 {
+  /** description of the restaurant specificities for seminars or events */
+  description?: RestaurantSeminarAndEventModelV1Description;
+}
+
+/**
+ * number of seats inside
+ */
+export type RestaurantSeatingCapacityInside = 0 | null;
+
+/**
+ * number of seats outside
+ */
+export type RestaurantSeatingCapacityOutside = 0 | null;
+
+export interface RestaurantSeatingCapacity {
+  /** number of seats inside */
+  inside?: RestaurantSeatingCapacityInside;
+  /** number of seats outside */
+  outside?: RestaurantSeatingCapacityOutside;
+}
+
+export type RestaurantTypeModelAnyOf = {
+  /** Restaurant type ID */
+  id?: string;
+  /** Restaurant type label */
+  label?: string;
+};
+
+export type RestaurantTypeModel = RestaurantTypeModelAnyOf | null;
+
+export interface RestaurantMealSpecialityModel {
+  /** Restaurant speciality label ID */
+  id?: string;
+  /** Restaurant speciality label */
+  label?: string;
+}
+
+export type RestaurantMealsSpecialityModel = RestaurantMealSpecialityModel[];
+
+/**
+ * importance of this restaurant between all the restaurants of this product
+ */
+export type FacilityRankings = (typeof FacilityRankings)[keyof typeof FacilityRankings];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const FacilityRankings = {
+  VERY_HIGH: 'VERY_HIGH',
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW',
+  VERY_LOW: 'VERY_LOW',
+} as const;
+
+export type RestaurantModelGpsCoordinatesAnyOf = {
+  /** latitude of GPS coordinates of this facility */
+  latitude: string;
+  /** longitude of GPS coordinates of this facility */
+  longitude: string;
+};
+
+export type RestaurantModelGpsCoordinates = RestaurantModelGpsCoordinatesAnyOf | null;
+
+export interface RestaurantModelV1 {
+  /** unique id of the restaurant */
+  id: string;
+  /** name of the restaurant */
+  name: string;
+  images?: RestaurantImages;
+  opening_hours?: RestaurantOpeningHours;
+  /** description of the restaurant */
+  description?: string;
+  /** additional information */
+  additional_description: string;
+  seminar_and_event?: RestaurantSeminarAndEventModelV1;
+  seating_capacity?: RestaurantSeatingCapacity;
+  type?: RestaurantTypeModel;
+  meals_speciality?: RestaurantMealsSpecialityModel;
+  ranking?: FacilityRankings;
+  gps_coordinates?: RestaurantModelGpsCoordinates;
+}
+
+export type RestaurantsModelV1 = RestaurantModelV1[];
+
+export type TransferServiceCodesArray = string[];
+
+/**
+ * distance between the access and the product
+ */
+export type ProductTransferV1DistanceValue = number | null;
+
+export interface ProductTransferV1Distance {
+  /** distance between the access and the product */
+  value?: ProductTransferV1DistanceValue;
+  /** unit of the distance */
+  unit?: string;
+}
+
+/**
+ * maximum number of passengers allowed for this transportation
+ */
+export type ProductTransferV1TransportationPassengerCapacity = number | null;
+
+export interface ProductTransferV1Transportation {
+  /** id of the transportation mean */
+  id: string;
+  /** label of the transportation type */
+  label: string;
+  /** maximum number of passengers allowed for this transportation */
+  passenger_capacity?: ProductTransferV1TransportationPassengerCapacity;
+}
+
+export type ProductTransferV1Transportations = ProductTransferV1Transportation[];
+
+export interface ProductTransferV1Access {
+  /** id of the access to the product */
+  id?: string;
+  /** type of access (AIRPORT, TRAIN_STATION, ...) */
+  type?: string;
+  /** access label */
+  label?: string;
+}
+
+/**
+ * duration in minutes
+ */
+export type ProductTransferV1DurationInMinutes = number | null;
+
+/**
+ * average waiting time before transfer
+ */
+export type ProductTransferV1WaitingTimeInMinutes = number | null;
+
+export interface ProductTransferV1 {
+  /** id */
+  id: string;
+  /** type of customer targeted by this transfer */
+  customer_target?: string;
+  /** transfer label */
+  label?: string;
+  service_codes?: TransferServiceCodesArray;
+  /** transfer description */
+  description?: string;
+  /** duration in minutes */
+  duration_in_minutes?: ProductTransferV1DurationInMinutes;
+  distance?: ProductTransferV1Distance;
+  transportation_means?: ProductTransferV1Transportations;
+  access?: ProductTransferV1Access;
+  /** average waiting time before transfer */
+  waiting_time_in_minutes?: ProductTransferV1WaitingTimeInMinutes;
+}
+
+export type ProductTransferV1List = ProductTransferV1[];
 
 /**
  * Indicates thematic's children'id
@@ -13298,35 +13302,6 @@ export interface ProposalPriceDetailsPerHouseholdResponseModel {
   households?: ProposalPriceDetailsResponseHouseholdsModel;
 }
 
-export interface AccommodationsCategoryResponseWithLinksModel {
-  /** id of the category */
-  id: string;
-  /** label of the category */
-  label: string;
-  _links?: LinksModel;
-}
-
-export type AccommodationsCategoriesResponseWithLinksModel =
-  AccommodationsCategoryResponseWithLinksModel[];
-
-export interface AccommodationArrangementResponseModel {
-  /** id of the accommodation */
-  id: string;
-  /** label of the accommodation */
-  label: string;
-  /** if merge_accomodation is false then the number of occupants in the accommodation is displayed, otherwise we display the sum of all the occupants in the same accommodation category */
-  occupancy: number;
-  /** number of accommodations where the attendees will be allocated */
-  quantity: number;
-  /** Indicate if the room is sharable */
-  shared_room: boolean;
-  attendees: AccommodationsArrangementAttendeesModel;
-  accommodation_categories?: AccommodationsCategoriesResponseWithLinksModel;
-  _links?: LinksModel;
-}
-
-export type GetAccommodtionsArrangementResponseModel = AccommodationArrangementResponseModel[];
-
 /**
  * Remaining stock for this arrangement
  */
@@ -13388,6 +13363,35 @@ export interface BestAccommodationModel {
 }
 
 export type BestAccommodationsModel = BestAccommodationModel[];
+
+export interface AccommodationsCategoryResponseWithLinksModel {
+  /** id of the category */
+  id: string;
+  /** label of the category */
+  label: string;
+  _links?: LinksModel;
+}
+
+export type AccommodationsCategoriesResponseWithLinksModel =
+  AccommodationsCategoryResponseWithLinksModel[];
+
+export interface AccommodationArrangementResponseModel {
+  /** id of the accommodation */
+  id: string;
+  /** label of the accommodation */
+  label: string;
+  /** if merge_accomodation is false then the number of occupants in the accommodation is displayed, otherwise we display the sum of all the occupants in the same accommodation category */
+  occupancy: number;
+  /** number of accommodations where the attendees will be allocated */
+  quantity: number;
+  /** Indicate if the room is sharable */
+  shared_room: boolean;
+  attendees: AccommodationsArrangementAttendeesModel;
+  accommodation_categories?: AccommodationsCategoriesResponseWithLinksModel;
+  _links?: LinksModel;
+}
+
+export type GetAccommodtionsArrangementResponseModel = AccommodationArrangementResponseModel[];
 
 /**
  * direction of the transport, INBOUND or OUTBOUND
@@ -16467,15 +16471,6 @@ export interface AttendeePackageUpgradeModel {
  */
 export type AttendeesPackageUpgradeModel = AttendeePackageUpgradeModel[];
 
-export interface CustomerBookingCrmHistoryItemModel {
-  /** Sub-division of a booking. A booking_id can have severals bulletin_ids */
-  bulletin_number?: string;
-  /** Url to use so as to retrieve GM's emails */
-  url?: string;
-}
-
-export type CustomerBookingCrmHistoryItemsModel = CustomerBookingCrmHistoryItemModel[];
-
 /**
  * mimeType
  */
@@ -16523,6 +16518,15 @@ export interface SupportRequestAttachedDocumentV0 {
 }
 
 export type AttachedDocuments = SupportRequestAttachedDocumentV0[];
+
+export interface CustomerBookingCrmHistoryItemModel {
+  /** Sub-division of a booking. A booking_id can have severals bulletin_ids */
+  bulletin_number?: string;
+  /** Url to use so as to retrieve GM's emails */
+  url?: string;
+}
+
+export type CustomerBookingCrmHistoryItemsModel = CustomerBookingCrmHistoryItemModel[];
 
 export type ExpensesConsumerProfileModelCustomerId = number | null;
 
@@ -17626,6 +17630,26 @@ export type ValidServiceTransferInformationWaysModel =
   | null;
 
 /**
+ * indicates the travel company code, on two letters.
+ */
+export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfId = string | null;
+
+/**
+ * full company name
+ */
+export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfLabel = string | null;
+
+export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf = {
+  /** indicates the travel company code, on two letters. */
+  id?: BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfId;
+  /** full company name */
+  label?: BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfLabel;
+};
+
+export type BookingTransferInfoCustomerTravelingInformationTravelCompany =
+  BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf | null;
+
+/**
  * arrival or departure travel time
  * @pattern ^\d+:\d+:\d+.\d+$
  */
@@ -17636,11 +17660,6 @@ export type BookingTransferInfoCustomerTravelingInformationAnyOfTime = string | 
  * @maxLength 6
  */
 export type BookingTransferInfoCustomerTravelingInformationAnyOfTravelReference = string | null;
-
-/**
- * travel company label
- */
-export type BookingTransferInfoCustomerTravelingInformationAnyOfTravelCompany = string | null;
 
 /**
  * information provided by the customer to insure the service delivery
@@ -17656,8 +17675,7 @@ export type BookingTransferInfoCustomerTravelingInformationAnyOf = {
    * @maxLength 6
    */
   travel_reference?: BookingTransferInfoCustomerTravelingInformationAnyOfTravelReference;
-  /** travel company label */
-  travel_company?: BookingTransferInfoCustomerTravelingInformationAnyOfTravelCompany;
+  travel_company?: BookingTransferInfoCustomerTravelingInformationTravelCompany;
 };
 
 /**
@@ -17666,13 +17684,15 @@ export type BookingTransferInfoCustomerTravelingInformationAnyOf = {
 export type BookingTransferInfoCustomerTravelingInformation =
   BookingTransferInfoCustomerTravelingInformationAnyOf | null;
 
+export type TransfersBookingFromAnyOfId = string | null;
+
 export type TransfersBookingFromAnyOfLabel = string | null;
 
 /**
  * transfer pickup place
  */
 export type TransfersBookingFromAnyOf = {
-  id?: string;
+  id?: TransfersBookingFromAnyOfId;
   label?: TransfersBookingFromAnyOfLabel;
 };
 
@@ -17681,13 +17701,15 @@ export type TransfersBookingFromAnyOf = {
  */
 export type TransfersBookingFrom = TransfersBookingFromAnyOf | null;
 
+export type TransfersBookingToAnyOfId = string | null;
+
 export type TransfersBookingToAnyOfLabel = string | null;
 
 /**
  * transfer drop off place
  */
 export type TransfersBookingToAnyOf = {
-  id?: string;
+  id?: TransfersBookingToAnyOfId;
   label?: TransfersBookingToAnyOfLabel;
 };
 
@@ -19885,6 +19907,8 @@ export const ValidOptinChannelModelV1 = {
   EMAIL: 'EMAIL',
   PHONE: 'PHONE',
   SMS: 'SMS',
+  CGU_2: 'CGU_2',
+  CONFORMITY: 'CONFORMITY',
 } as const;
 
 export interface SubscriptionV1OptinModel {
@@ -19895,7 +19919,6 @@ export interface SubscriptionV1OptinModel {
 
 /**
  * @minItems 1
- * @maxItems 1
  */
 export type SubscriptionsV1CreationOptinsModel = SubscriptionV1OptinModel[];
 
@@ -19920,79 +19943,79 @@ export type SubscriptionsV1CreationNewsletterSubscriptionsModel = string[];
 /**
  * A valid email adress.
  */
-export type SubscriptionsV1CreationModelEmail = string | null;
+export type SubscriptionsCreationV1ModelEmail = string | null;
 
 /**
  * Customer civility, based on the civilities resource.
  */
-export type SubscriptionsV1CreationModelCivilityCode = string | null;
+export type SubscriptionsCreationV1ModelCivilityCode = string | null;
 
 /**
  * The customer first name, Ex : Jean
  * @maxLength 20
  */
-export type SubscriptionsV1CreationModelFirstName = string | null;
+export type SubscriptionsCreationV1ModelFirstName = string | null;
 
 /**
  * The customer first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤
  * @maxLength 100
  */
-export type SubscriptionsV1CreationModelUnicodeFirstName = string | null;
+export type SubscriptionsCreationV1ModelUnicodeFirstName = string | null;
 
 /**
  * The customer last name Ex: Chang
  * @maxLength 30
  */
-export type SubscriptionsV1CreationModelLastName = string | null;
+export type SubscriptionsCreationV1ModelLastName = string | null;
 
 /**
  * The customer last name in unicode character, useful in double byte countries like China,  Ex : 昌
  * @maxLength 100
  */
-export type SubscriptionsV1CreationModelUnicodeLastName = string | null;
+export type SubscriptionsCreationV1ModelUnicodeLastName = string | null;
 
 /**
  * A phone number.
  */
-export type SubscriptionsV1CreationModelPhone = string | null;
+export type SubscriptionsCreationV1ModelPhone = string | null;
 
 /**
  * The customer date of birth in the YYYYMMDD or YYYY-MM-DD format. 
 Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]`
  */
-export type SubscriptionsV1CreationModelBirthdate = string | null;
+export type SubscriptionsCreationV1ModelBirthdate = string | null;
 
-export interface SubscriptionsV1CreationModel {
+export interface SubscriptionsCreationV1Model {
   /** A valid email adress. */
-  email?: SubscriptionsV1CreationModelEmail;
+  email?: SubscriptionsCreationV1ModelEmail;
   gender?: SubscriptionsV1CreationGenderModel;
   /** Customer civility, based on the civilities resource. */
-  civility_code?: SubscriptionsV1CreationModelCivilityCode;
+  civility_code?: SubscriptionsCreationV1ModelCivilityCode;
   /**
    * The customer first name, Ex : Jean
    * @maxLength 20
    */
-  first_name?: SubscriptionsV1CreationModelFirstName;
+  first_name?: SubscriptionsCreationV1ModelFirstName;
   /**
    * The customer first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤
    * @maxLength 100
    */
-  unicode_first_name?: SubscriptionsV1CreationModelUnicodeFirstName;
+  unicode_first_name?: SubscriptionsCreationV1ModelUnicodeFirstName;
   /**
    * The customer last name Ex: Chang
    * @maxLength 30
    */
-  last_name?: SubscriptionsV1CreationModelLastName;
+  last_name?: SubscriptionsCreationV1ModelLastName;
   /**
    * The customer last name in unicode character, useful in double byte countries like China,  Ex : 昌
    * @maxLength 100
    */
-  unicode_last_name?: SubscriptionsV1CreationModelUnicodeLastName;
+  unicode_last_name?: SubscriptionsCreationV1ModelUnicodeLastName;
   /** A phone number. */
-  phone?: SubscriptionsV1CreationModelPhone;
+  phone?: SubscriptionsCreationV1ModelPhone;
   /** The customer date of birth in the YYYYMMDD or YYYY-MM-DD format. 
 Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]` */
-  birthdate?: SubscriptionsV1CreationModelBirthdate;
+  birthdate?: SubscriptionsCreationV1ModelBirthdate;
   optins: SubscriptionsV1CreationOptinsModel;
   origin_code?: OriginCodeV1;
   newsletter_subscriptions: SubscriptionsV1CreationNewsletterSubscriptionsModel;
@@ -21138,53 +21161,29 @@ export interface ProposalsSearchV3PayloadModel {
  */
 export type ProposalsSearchV3ResponseModel = ProposalResponseModelV1[];
 
-export type BookingShareOptinListModel = OptinModel[];
-
-export interface BookingShareAttendee {
+export interface RoomStatusEventPayload {
   /**
    * Customer ID (neolid clic)
    * @pattern ^[1-9][0-9]*$
    */
-  customer_id: string;
-  /** Email of the attendee */
+  customer_id?: string;
+  /** The room Id */
+  room_id: string;
+  status: Status;
+}
+
+export interface CreateBookingRoomInterventionModel {
+  /** The intervention category code */
+  code: string;
+  /** The concerned room the current intervention */
+  room_id: string;
+  assets: BookingInterventionAssetsModel;
+  /** The phone number to contact the GM */
+  contact: string;
+  /** The e-mail to contact the GM */
   email: string;
-  optins?: BookingShareOptinListModel;
-}
-
-export type BookingShareAttendees = BookingShareAttendee[];
-
-/**
- * Determine the nature of the call
- */
-export type ValidBookingShareTypesModel =
-  (typeof ValidBookingShareTypesModel)[keyof typeof ValidBookingShareTypesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ValidBookingShareTypesModel = {
-  TRIPS: 'TRIPS',
-  SELL_CONTRACTS: 'SELL_CONTRACTS',
-} as const;
-
-export interface BookingShareModel {
-  attendees?: BookingShareAttendees;
-  /**
-   * customer id of a booking main customer
-   * @pattern ^[1-9][0-9]*$
-   */
-  main_customer_id: string;
-  /** Email of the seller recorded in the booking */
-  seller_email?: string;
-  /** Email of the attendee not part of the file */
-  other_email?: string;
-  type?: ValidBookingShareTypesModel;
-}
-
-export interface PostBookingRenewalPayloadModel {
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id: string;
+  /** The customer id (only for GO connection) */
+  customer_id?: string;
 }
 
 export interface BookingCommentRequest {
@@ -21243,29 +21242,53 @@ export interface BookingCommentResponse {
   last_update?: BookingCommentLastUpdate;
 }
 
-export interface CreateBookingRoomInterventionModel {
-  /** The intervention category code */
-  code: string;
-  /** The concerned room the current intervention */
-  room_id: string;
-  assets: BookingInterventionAssetsModel;
-  /** The phone number to contact the GM */
-  contact: string;
-  /** The e-mail to contact the GM */
-  email: string;
-  /** The customer id (only for GO connection) */
-  customer_id?: string;
-}
-
-export interface RoomStatusEventPayload {
+export interface PostBookingRenewalPayloadModel {
   /**
    * Customer ID (neolid clic)
    * @pattern ^[1-9][0-9]*$
    */
-  customer_id?: string;
-  /** The room Id */
-  room_id: string;
-  status: Status;
+  customer_id: string;
+}
+
+export type BookingShareOptinListModel = OptinModel[];
+
+export interface BookingShareAttendee {
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id: string;
+  /** Email of the attendee */
+  email: string;
+  optins?: BookingShareOptinListModel;
+}
+
+export type BookingShareAttendees = BookingShareAttendee[];
+
+/**
+ * Determine the nature of the call
+ */
+export type ValidBookingShareTypesModel =
+  (typeof ValidBookingShareTypesModel)[keyof typeof ValidBookingShareTypesModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ValidBookingShareTypesModel = {
+  TRIPS: 'TRIPS',
+  SELL_CONTRACTS: 'SELL_CONTRACTS',
+} as const;
+
+export interface BookingShareModel {
+  attendees?: BookingShareAttendees;
+  /**
+   * customer id of a booking main customer
+   * @pattern ^[1-9][0-9]*$
+   */
+  main_customer_id: string;
+  /** Email of the seller recorded in the booking */
+  seller_email?: string;
+  /** Email of the attendee not part of the file */
+  other_email?: string;
+  type?: ValidBookingShareTypesModel;
 }
 
 export type ContactEventWayModel = (typeof ContactEventWayModel)[keyof typeof ContactEventWayModel];
@@ -21428,6 +21451,82 @@ export interface ContactEventModel {
   prioritization?: PrioritizationModel;
 }
 
+export interface SponsorshipsPostModel {
+  /**
+   * A valid email adress
+   * @pattern ^[^\s@]+@[^\s@]+\.[^\s@]+$
+   */
+  email: string;
+  /** user's civility :see the /civilities resource */
+  civility: string;
+  /**
+   * The user first name, Ex : Jean
+   * @maxLength 20
+   */
+  first_name: string;
+  /** The user first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤 */
+  unicode_first_name?: string;
+  /**
+   * The user last name Ex: Chang
+   * @maxLength 30
+   */
+  last_name: string;
+  /** The user last name in unicode character, useful in double byte countries like China,  Ex : 昌 */
+  unicode_last_name?: string;
+}
+
+export interface AssignCustomerToProposalsSummaryElement {
+  /**
+   * Proposal identifier
+   * @pattern ^\d+$
+   */
+  proposal_id: string;
+  /** proposal identifier */
+  opportunity_id?: string;
+}
+
+export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
+
+/**
+ * adult attendees number
+ */
+export type CreateBookmarkModelAdultsCount =
+  (typeof CreateBookmarkModelAdultsCount)[keyof typeof CreateBookmarkModelAdultsCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CreateBookmarkModelAdultsCount = {
+  NUMBER_0: 0,
+} as const;
+
+/**
+ * children attendees number
+ */
+export type CreateBookmarkModelChildrenCount = 0 | null;
+
+export interface CreateBookmarkModel {
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
+  resort_departure_date?: string;
+  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
+  resort_arrival_date?: string;
+  /** Total number of journey attendees. */
+  number_attendees?: number;
+  /** adult attendees number */
+  adults_count: CreateBookmarkModelAdultsCount;
+  /** children attendees number */
+  children_count?: CreateBookmarkModelChildrenCount;
+  birthdates?: CreateBookmarksBirthdatesModel;
+  /** The departure option id from product/id booking criteria. */
+  departure_option_id?: string;
+  price?: CreateBookmarkPriceModel;
+}
+
+/**
+ * List of bookmarks
+ */
+export type CreateBookmarksModel = CreateBookmarkModel[];
+
 /**
  * PHONE/CHAT
  */
@@ -21540,82 +21639,6 @@ export interface ResponseSaleInteractionsModelV0 {
   interaction: ResponseSaleInteractionModel;
 }
 
-/**
- * adult attendees number
- */
-export type CreateBookmarkModelAdultsCount =
-  (typeof CreateBookmarkModelAdultsCount)[keyof typeof CreateBookmarkModelAdultsCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateBookmarkModelAdultsCount = {
-  NUMBER_0: 0,
-} as const;
-
-/**
- * children attendees number
- */
-export type CreateBookmarkModelChildrenCount = 0 | null;
-
-export interface CreateBookmarkModel {
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
-  resort_departure_date?: string;
-  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
-  resort_arrival_date?: string;
-  /** Total number of journey attendees. */
-  number_attendees?: number;
-  /** adult attendees number */
-  adults_count: CreateBookmarkModelAdultsCount;
-  /** children attendees number */
-  children_count?: CreateBookmarkModelChildrenCount;
-  birthdates?: CreateBookmarksBirthdatesModel;
-  /** The departure option id from product/id booking criteria. */
-  departure_option_id?: string;
-  price?: CreateBookmarkPriceModel;
-}
-
-/**
- * List of bookmarks
- */
-export type CreateBookmarksModel = CreateBookmarkModel[];
-
-export interface AssignCustomerToProposalsSummaryElement {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  proposal_id: string;
-  /** proposal identifier */
-  opportunity_id?: string;
-}
-
-export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
-
-export interface SponsorshipsPostModel {
-  /**
-   * A valid email adress
-   * @pattern ^[^\s@]+@[^\s@]+\.[^\s@]+$
-   */
-  email: string;
-  /** user's civility :see the /civilities resource */
-  civility: string;
-  /**
-   * The user first name, Ex : Jean
-   * @maxLength 20
-   */
-  first_name: string;
-  /** The user first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤 */
-  unicode_first_name?: string;
-  /**
-   * The user last name Ex: Chang
-   * @maxLength 30
-   */
-  last_name: string;
-  /** The user last name in unicode character, useful in double byte countries like China,  Ex : 昌 */
-  unicode_last_name?: string;
-}
-
 export type PostSurveyQuestionsModel = SurveyQuestionModel[];
 
 /**
@@ -21632,36 +21655,6 @@ export interface PostSurveyModel {
 }
 
 export type PostSurveysModel = PostSurveyModel[];
-
-export interface ProposalsSummaryElement {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  proposal_id: string;
-  /** ID of the proposal identifier */
-  opportunity_id?: string;
-}
-
-export type ProposalsSummaryList = ProposalsSummaryElement[];
-
-export interface ProposalsSummarySeller {
-  name?: string;
-  /** phone number of the seller */
-  phone?: string;
-  /** email of the seller */
-  email?: string;
-}
-
-export interface AssignPartnerToProposalsSummaryModel {
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id?: string;
-  proposals?: ProposalsSummaryList;
-  seller?: ProposalsSummarySeller;
-}
 
 export type CreationContactModelJobTitle = string | null;
 
@@ -21694,6 +21687,36 @@ export interface PartnerContactModel {
   preferred_language?: PartnerContactModelPreferredLanguage;
   phones?: PhonesModel;
   id: string;
+}
+
+export interface ProposalsSummaryElement {
+  /**
+   * Proposal identifier
+   * @pattern ^\d+$
+   */
+  proposal_id: string;
+  /** ID of the proposal identifier */
+  opportunity_id?: string;
+}
+
+export type ProposalsSummaryList = ProposalsSummaryElement[];
+
+export interface ProposalsSummarySeller {
+  name?: string;
+  /** phone number of the seller */
+  phone?: string;
+  /** email of the seller */
+  email?: string;
+}
+
+export interface AssignPartnerToProposalsSummaryModel {
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id?: string;
+  proposals?: ProposalsSummaryList;
+  seller?: ProposalsSummarySeller;
 }
 
 export interface PostPaymentAliasResponse {
@@ -24409,7 +24432,7 @@ export const SubscriptionUpdateOperationModel = {
   unsubscribe: 'unsubscribe',
 } as const;
 
-export interface SubscriptionsV1UpdateModel {
+export interface SubscriptionsUpdateV1Model {
   operation: SubscriptionUpdateOperationModel;
   parameters: string;
 }
@@ -25282,3 +25305,939 @@ export type PostV0PaymentsPaymentIdRedirectRequestResult = NonNullable<
 export type PostV1PaymentsPaymentIdNotifyResult = NonNullable<
   Awaited<ReturnType<typeof postV1PaymentsPaymentIdNotify>>
 >;
+
+export const getGetV1PaymentProvidersResponseMock = (): PaymentProviderListModel2 =>
+  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+    id: faker.helpers.fromRegExp('^([EMS][0-9A-Z]+)$'),
+    label: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    connection_type: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    logo: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
+    category_payment_method: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    billing_address_form: faker.datatype.boolean(),
+    description: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    payment_methods: faker.helpers.arrayElement([
+      Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+        id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        label: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+        image: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+        currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
+        category: faker.helpers.arrayElement([
+          faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+          undefined,
+        ]),
+        time_payment_conditions: faker.helpers.arrayElement([
+          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+            () => ({
+              id: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              payment_count: faker.helpers.arrayElement([
+                faker.helpers.arrayElement([
+                  faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                  null,
+                ]),
+                undefined,
+              ]),
+              charge_percentage: faker.helpers.arrayElement([
+                faker.helpers.arrayElement([
+                  faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                  null,
+                ]),
+                undefined,
+              ]),
+              required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
+              charge_amount: faker.helpers.arrayElement([
+                faker.helpers.arrayElement([
+                  faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                  null,
+                ]),
+                undefined,
+              ]),
+            }),
+          ),
+          undefined,
+        ]),
+      })),
+      undefined,
+    ]),
+  }));
+
+export const getGetV2ProposalsProposalIdResponseMock = (
+  overrideResponse: Partial<ProposalResponseModelV1> = {},
+): ProposalResponseModelV1 => ({
+  id: faker.helpers.fromRegExp('^\d+$'),
+  product_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  booking_id: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), null]),
+    undefined,
+  ]),
+  package_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  label: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  resort_arrival_date: faker.date.past().toISOString().split('T')[0],
+  resort_departure_date: faker.date.past().toISOString().split('T')[0],
+  price: faker.helpers.arrayElement([
+    {
+      total: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      total_without_discount: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      trip: faker.helpers.arrayElement([
+        {
+          initial_price: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+          initial_price_with_fees: faker.number.float({
+            min: undefined,
+            max: undefined,
+            fractionDigits: 2,
+          }),
+          fees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+            () => ({
+              type: faker.helpers.arrayElement(Object.values(ProposalPriceFeeModel)),
+              amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
+            }),
+          ),
+        },
+        undefined,
+      ]),
+      included_services: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+          link: faker.helpers.arrayElement([
+            {
+              rel: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              method: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              href: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              label: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+            },
+            undefined,
+          ]),
+          _links: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                rel: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                method: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                href: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      package_options: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          type: faker.helpers.arrayElement(Object.values(ProposalServiceTypes)),
+          amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
+          amount_without_discount: faker.number.float({
+            min: 0,
+            max: undefined,
+            fractionDigits: 2,
+          }),
+        })),
+        undefined,
+      ]),
+      total_without_fees: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      currency: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 3, max: 3 } }),
+        undefined,
+      ]),
+      total_without_transport: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      yield_pricing_variation: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      discounts: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          type: faker.helpers.arrayElement(Object.values(DiscountTypeModel)),
+          amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
+          code: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          offer_id: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          service_id: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          _links: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                rel: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                method: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                href: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      is_transfer_included: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+    },
+    undefined,
+  ]),
+  duration: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
+    undefined,
+  ]),
+  alternative_price: faker.helpers.arrayElement([
+    {
+      total: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      total_without_discount: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      discounts: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          type: faker.helpers.arrayElement(Object.values(ProposalPriceDiscountModel)),
+          amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
+          offer_id: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          service_id: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          code: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          _links: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                rel: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                method: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                href: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      trip: faker.helpers.arrayElement([
+        {
+          initial_price: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+          initial_price_with_fees: faker.number.float({
+            min: undefined,
+            max: undefined,
+            fractionDigits: 2,
+          }),
+          fees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+            () => ({
+              type: faker.helpers.arrayElement(Object.values(ProposalPriceFeeModel)),
+              amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
+            }),
+          ),
+        },
+        undefined,
+      ]),
+      included_services: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+          link: faker.helpers.arrayElement([
+            {
+              rel: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              method: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              href: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+              label: faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                undefined,
+              ]),
+            },
+            undefined,
+          ]),
+          _links: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                rel: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                method: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                href: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      package_options: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          type: faker.helpers.arrayElement(Object.values(ProposalServiceTypes)),
+          amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
+          amount_without_discount: faker.number.float({
+            min: 0,
+            max: undefined,
+            fractionDigits: 2,
+          }),
+        })),
+        undefined,
+      ]),
+      total_without_fees: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      currency: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 3, max: 3 } }),
+        undefined,
+      ]),
+      total_without_transport: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      yield_pricing_variation: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  accommodations: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    quantity: faker.helpers.arrayElement([faker.number.int({ min: 1, max: undefined }), undefined]),
+    shared_room: faker.datatype.boolean(),
+    link: faker.helpers.arrayElement([
+      {
+        rel: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+        method: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+        href: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+        label: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+      },
+      undefined,
+    ]),
+    _links: faker.helpers.arrayElement([
+      Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+        rel: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+        method: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+        href: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+        label: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+      })),
+      undefined,
+    ]),
+  })),
+  remaining_stock: faker.number.int({ min: 0, max: undefined }),
+  option_available: faker.datatype.boolean(),
+  option_durability: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  households: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      attendees: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          id: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          birthdate: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          customer_id: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          customer_type: faker.helpers.arrayElement([
+            faker.helpers.arrayElement(Object.values(ProposalResponseCustomerTypeModel)),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  locale: faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+  _links: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      rel: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      method: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      href: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      label: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  transportation_summary: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      way: faker.helpers.arrayElement(Object.values(Way)),
+      departure_city: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      arrival_city: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      transportation_type: faker.helpers.arrayElement(Object.values(TransportationType)),
+      cancellation_policy_type: faker.helpers.arrayElement(
+        Object.values(CancellationPolicyTypeModel),
+      ),
+      is_transfer_included: faker.datatype.boolean(),
+      clubmed_transport: faker.datatype.boolean(),
+      departure_date: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        null,
+      ]),
+      arrival_date: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        null,
+      ]),
+    })),
+    undefined,
+  ]),
+  extend_persistence: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+  auto_optionable_status: faker.helpers.arrayElement(Object.values(AutoOptionableStatus)),
+  is_bookable: faker.datatype.boolean(),
+  creation_date_time: faker.helpers.arrayElement([
+    faker.date.past().toISOString().split('T')[0],
+    undefined,
+  ]),
+  vendor: faker.helpers.arrayElement([
+    {
+      salesman_id: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+    },
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetV0PaymentsPaymentIdStatusResponseMock = (
+  overrideResponse: Partial<PaymentStatusModel> = {},
+): PaymentStatusModel => ({
+  finalisePaymentResponse: {
+    paiement: {
+      action_code: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(ActionCode)),
+        undefined,
+      ]),
+      channel_code: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      statutPaiement: faker.helpers.arrayElement(Object.values(StatutPaiement)),
+      serveurId: faker.helpers.fromRegExp('^[EM][0-9A-Z]+$'),
+      montantVersement: faker.helpers.fromRegExp('^[0-9]+[.][0-9]{2}$'),
+      codeDevise: faker.helpers.fromRegExp('^[A-Z]{3}$'),
+    },
+    dossier: {
+      numeroDossier: faker.helpers.fromRegExp('^[0-9]+$'),
+      numeroContrat: faker.helpers.fromRegExp('^[0-9]+$'),
+      numeroClient: faker.helpers.fromRegExp('^[0-9]+$'),
+    },
+    error: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  },
+  errors: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetV1ProposalsProposalIdPaymentScheduleResponseMock = (
+  overrideResponse: Partial<ProposalPaymentScheduleModelV1> = {},
+): ProposalPaymentScheduleModelV1 => ({
+  currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
+  commission_included: faker.datatype.boolean(),
+  households: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      attendees: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          customer_id: faker.helpers.arrayElement([
+            faker.helpers.fromRegExp('^[1-9][0-9]*$'),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      total: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
+      deposit_repayment_schedule: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          expected_payment_amount: faker.helpers.arrayElement([
+            faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
+            undefined,
+          ]),
+          deadline: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            null,
+          ]),
+        })),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock = (
+  overrideResponse: Partial<CustomerBookingPaymentScheduleModel> = {},
+): CustomerBookingPaymentScheduleModel => ({
+  currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
+  paid: faker.helpers.arrayElement([
+    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+    undefined,
+  ]),
+  total: faker.helpers.arrayElement([
+    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+    undefined,
+  ]),
+  payment_schedules: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      amount: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      deadline: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getPostV1PaymentsResponseMock = (
+  overrideResponse: Partial<PaymentIdModel> = {},
+): PaymentIdModel => ({
+  id: faker.helpers.fromRegExp('^[0-9a-zA-Z]+([-_][0-9a-zA-Z]+)*$'),
+  ...overrideResponse,
+});
+
+export const getPostV3BookingsResponseMock = (
+  overrideResponse: Partial<CreateBookingResponseModel | CreateBookingResponseModel> = {},
+): CreateBookingResponseModel | CreateBookingResponseModel =>
+  faker.helpers.arrayElement([
+    {
+      booking_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      households: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        attendees: faker.helpers.arrayElement([
+          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+            () => ({
+              customer_id: faker.number.int({ min: undefined, max: undefined }),
+              type: faker.helpers.arrayElement(Object.values(CreateBookingResponseTypesModel)),
+            }),
+          ),
+          undefined,
+        ]),
+      })),
+      option_durability: faker.helpers.arrayElement([null]),
+      ...overrideResponse,
+    },
+    {
+      booking_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      households: Array.from(
+        { length: faker.number.int({ min: 1, max: 10 }) },
+        (_, i) => i + 1,
+      ).map(() => ({
+        attendees: faker.helpers.arrayElement([
+          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+            () => ({
+              customer_id: faker.number.int({ min: undefined, max: undefined }),
+              type: faker.helpers.arrayElement(Object.values(CreateBookingResponseTypesModel)),
+            }),
+          ),
+          undefined,
+        ]),
+      })),
+      option_durability: faker.helpers.arrayElement([null]),
+      ...overrideResponse,
+    },
+  ]);
+
+export const getPostV0PaymentsPaymentIdRedirectRequestResponseMock = (
+  overrideResponse: Partial<ProviderParametersModel> = {},
+): ProviderParametersModel => ({
+  url: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  method: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  headers: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  body: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getPostV1PaymentsPaymentIdNotifyResponseMock = (
+  overrideResponse: Partial<NotifyPaymentOrderNotificationStatus> = {},
+): NotifyPaymentOrderNotificationStatus => ({
+  booking_id: faker.helpers.fromRegExp('^\d+$'),
+  payment_status: faker.helpers.arrayElement(Object.values(PaymentStatus)),
+  payment_amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+  payment_currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
+  provider_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  payment_method: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetV1PaymentProvidersMockHandler = (
+  overrideResponse?:
+    | PaymentProviderListModel2
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<PaymentProviderListModel2> | PaymentProviderListModel2),
+) => {
+  return http.get('*/v1/payment_providers', async (info) => {
+    await delay(1000);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetV1PaymentProvidersResponseMock(),
+      ),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+};
+
+export const getGetV2ProposalsProposalIdMockHandler = (
+  overrideResponse?:
+    | ProposalResponseModelV1
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ProposalResponseModelV1> | ProposalResponseModelV1),
+) => {
+  return http.get('*/v2/proposals/:proposalId', async (info) => {
+    await delay(1000);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetV2ProposalsProposalIdResponseMock(),
+      ),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+};
+
+export const getGetV0PaymentsPaymentIdStatusMockHandler = (
+  overrideResponse?:
+    | PaymentStatusModel
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<PaymentStatusModel> | PaymentStatusModel),
+) => {
+  return http.get('*/v0/payments/:paymentId/status', async (info) => {
+    await delay(1000);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetV0PaymentsPaymentIdStatusResponseMock(),
+      ),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+};
+
+export const getGetV1ProposalsProposalIdPaymentScheduleMockHandler = (
+  overrideResponse?:
+    | ProposalPaymentScheduleModelV1
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ProposalPaymentScheduleModelV1> | ProposalPaymentScheduleModelV1),
+) => {
+  return http.get('*/v1/proposals/:proposalId/payment_schedule', async (info) => {
+    await delay(1000);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetV1ProposalsProposalIdPaymentScheduleResponseMock(),
+      ),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+};
+
+export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler = (
+  overrideResponse?:
+    | CustomerBookingPaymentScheduleModel
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<CustomerBookingPaymentScheduleModel> | CustomerBookingPaymentScheduleModel),
+) => {
+  return http.get(
+    '*/v0/customers/:customerId/bookings/:bookingId/payment_schedules',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+  );
+};
+
+export const getPostV1PaymentsMockHandler = (
+  overrideResponse?:
+    | PaymentIdModel
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<PaymentIdModel> | PaymentIdModel),
+) => {
+  return http.post('*/v1/payments', async (info) => {
+    await delay(1000);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getPostV1PaymentsResponseMock(),
+      ),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+};
+
+export const getPostV3BookingsMockHandler = (
+  overrideResponse?:
+    | CreateBookingResponseModel
+    | CreateBookingResponseModel
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) =>
+        | Promise<CreateBookingResponseModel | CreateBookingResponseModel>
+        | CreateBookingResponseModel
+        | CreateBookingResponseModel),
+) => {
+  return http.post('*/v3/bookings', async (info) => {
+    await delay(1000);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getPostV3BookingsResponseMock(),
+      ),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+};
+
+export const getPostV0PaymentsPaymentIdRedirectRequestMockHandler = (
+  overrideResponse?:
+    | ProviderParametersModel
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<ProviderParametersModel> | ProviderParametersModel),
+) => {
+  return http.post('*/v0/payments/:paymentId/redirect_request', async (info) => {
+    await delay(1000);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getPostV0PaymentsPaymentIdRedirectRequestResponseMock(),
+      ),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+};
+
+export const getPostV1PaymentsPaymentIdNotifyMockHandler = (
+  overrideResponse?:
+    | NotifyPaymentOrderNotificationStatus
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<NotifyPaymentOrderNotificationStatus> | NotifyPaymentOrderNotificationStatus),
+) => {
+  return http.post('*/v1/payments/:paymentId/notify', async (info) => {
+    await delay(1000);
+
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getPostV1PaymentsPaymentIdNotifyResponseMock(),
+      ),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+};
+export const getClubMedAPIMock = () => [
+  getGetV1PaymentProvidersMockHandler(),
+  getGetV2ProposalsProposalIdMockHandler(),
+  getGetV0PaymentsPaymentIdStatusMockHandler(),
+  getGetV1ProposalsProposalIdPaymentScheduleMockHandler(),
+  getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler(),
+  getPostV1PaymentsMockHandler(),
+  getPostV3BookingsMockHandler(),
+  getPostV0PaymentsPaymentIdRedirectRequestMockHandler(),
+  getPostV1PaymentsPaymentIdNotifyMockHandler(),
+];

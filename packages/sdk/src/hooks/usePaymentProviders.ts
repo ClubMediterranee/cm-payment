@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { usePaymentProviders } from './data/usePaymentProviders';
 import { useFormContext } from './utils/useForm';
 
-export function usePaymentProvidersCheckboxes() {
+export function usePaymentProvidersForm() {
   const { data: paymentProviders = [], isSuccess } = usePaymentProviders();
 
   const { register, setValue, trigger, watch } = useFormContext();

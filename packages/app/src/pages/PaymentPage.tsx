@@ -1,6 +1,6 @@
 import { Cgv } from '@clubmed/payment-sdk/components/Cgv';
 import { IframeProvider } from '@clubmed/payment-sdk/components/IframeProvider.js';
-import { PaymentProvidersCheckboxes } from '@clubmed/payment-sdk/components/PaymentProvidersCheckboxes.js';
+import { PaymentProviders } from '@clubmed/payment-sdk/components/PaymentProviders.js';
 import { PaymentSchedule } from '@clubmed/payment-sdk/components/PaymentSchedule';
 import { useDisclosure } from '@clubmed/payment-sdk/hooks/utils/useDisclosure';
 import { SDKFormProvider } from '@clubmed/payment-sdk/providers/SDKFormProvider.js';
@@ -74,7 +74,7 @@ export function PaymentPage() {
             Quel moyen de paiement souhaitez-vous utiliser ?
           </h2>
           <Suspense fallback={<div>Loading</div>}>
-            <PaymentProvidersCheckboxes />
+            <PaymentProviders />
           </Suspense>
         </div>
         <Cgv />

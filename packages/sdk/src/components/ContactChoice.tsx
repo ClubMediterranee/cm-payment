@@ -1,12 +1,10 @@
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
-import { Icon, type IconicNames } from '@clubmed/trident-icons';
-import { Card } from '@clubmed/trident-ui/molecules/Card';
-import { Checkbox, Checkboxes } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
+import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
 
 import { GLOBAL_SDK_SETTINGS } from '../config';
 import { useFormContext } from '../hooks/utils/useForm';
-import { SDKFormData } from '../types/FormData';
+import { FormPanel } from './ui/FormPanel';
 
 type Props = {
   contactMethodProviders?: string[];
@@ -15,7 +13,6 @@ type Props = {
     name: string;
     label: string;
     type: string;
-    icon: IconicNames;
   }[];
 };
 
@@ -26,7 +23,9 @@ export const ContactChoice = ({
   const { register, setValue, watch } = useFormContext();
   const watchedTemplateId = watch('template_id');
   const watchedProviderId = watch('provider_id');
-  const displayContactChoice = contactMethodProviders.find((id) => watchedProviderId?.includes(id));
+  const displayContactChoice = contactMethodProviders.find((id) =>
+    Array.isArray(watchedProviderId) ? watchedProviderId.includes(id) : watchedProviderId === id,
+  );
 
   if (!displayContactChoice) {
     return null;
@@ -36,36 +35,36 @@ export const ContactChoice = ({
     <div className="w-full flex flex-col gap-16">
       <h2 className="text-h3 font-serif">Quel type de canal ?</h2>
 
-      <Checkboxes className="flex flex-col gap-16">
-        {choices.map(({ id, name, type, icon, label }) => {
-          const isChecked = id === watchedTemplateId;
+      <RadioGroup className="flex flex-col gap-16" value={watchedTemplateId}>
+        {choices.map(({ id, name, type, label }) => {
           return (
-            <Card title="" key={id} icon={icon as keyof typeof Icon}>
+            <FormPanel key={id}>
               <div className="flex flex-col space-y-16 w-full">
-                <Checkbox
+                <Radio
                   value={id}
                   {...register('template_id')}
-                  onChange={setValue}
-                  checked={isChecked}
+                  onChange={(_, value) => setValue('template_id', value || '')}
                 >
                   <span data-textid="ContactChoicesLabel">Par {label}</span>
-                </Checkbox>
+                </Radio>
 
-                {isChecked && (
+                {id === watchedTemplateId && (
                   <TextField
                     type={type}
-                    {...register(`billing_details.${name}` as keyof SDKFormData['billing_details'])}
+                    {...register(`billing_details.${name}` as Parameters<typeof register>[0])}
                     data-name={'InputFor_' + name}
                     data-testid={'InputFor_' + name}
-                    onChange={setValue}
+                    onChange={(name, value) =>
+                      setValue(name as Parameters<typeof setValue>[0], value)
+                    }
                     label={label}
                   />
                 )}
               </div>
-            </Card>
+            </FormPanel>
           );
         })}
-      </Checkboxes>
+      </RadioGroup>
     </div>
   );
 };

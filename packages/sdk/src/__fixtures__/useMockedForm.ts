@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
-import { type FieldErrors, useForm } from 'react-hook-form';
+import { type FieldErrors } from 'react-hook-form';
+
+import { useForm } from '../hooks/utils/useForm';
 
 export type TestArgs<T> = {
   onError?: (errors: FieldErrors) => void;
