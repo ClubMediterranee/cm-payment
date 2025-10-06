@@ -1,6 +1,4 @@
 import {
-  getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock,
-  getGetV1ProposalsProposalIdPaymentScheduleResponseMock,
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../../../__generated__';
@@ -14,8 +12,6 @@ vi.mock('../../../utils/fetcher', () => ({
 vi.mock('../../../__generated__', () => ({
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules: vi.fn(),
   getV1ProposalsProposalIdPaymentSchedule: vi.fn(),
-  getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock: vi.fn(),
-  getGetV1ProposalsProposalIdPaymentScheduleResponseMock: vi.fn(),
 }));
 
 const mockGetV0 = vi.mocked(getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules);

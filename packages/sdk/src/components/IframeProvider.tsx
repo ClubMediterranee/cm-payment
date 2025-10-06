@@ -1,9 +1,12 @@
 import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config';
 import { usePaymentRedirect } from '@clubmed/payment-sdk/hooks/data/usePaymentRedirect';
+import { PspProviders } from '@clubmed/payment-sdk/types/PspProviders';
 import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
+
+import { useFormContext } from '../hooks/utils/useForm';
 
 // Rename by SdkIframePayment ?
 export const IframeProvider = () => {
@@ -26,7 +29,7 @@ export const IframeProvider = () => {
   const watchedForm = useWatch({ control });
 
   const displayProviderIframe =
-    isValid && GLOBAL_SDK_SETTINGS.iframeProviders.includes(watch('provider_id'));
+    isValid && GLOBAL_SDK_SETTINGS.iframeProviders.includes(watch('provider_id') as PspProviders);
 
   useEffect(() => {
     if (displayProviderIframe) {

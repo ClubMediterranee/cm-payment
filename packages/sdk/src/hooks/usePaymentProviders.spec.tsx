@@ -18,7 +18,7 @@ describe('usePaymentProvidersForm', () => {
     vi.resetAllMocks();
   });
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => {
+  const Wrapper = ({ children }: { children: React.ReactNode }) => {
     const methods = useMockedForm({
       defaultValues: {
         provider_id: '',
@@ -38,7 +38,7 @@ describe('usePaymentProvidersForm', () => {
       isSuccess: true,
     });
 
-    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper });
+    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
 
     expect(result.current.paymentProviders).toEqual(mockProviders);
     expect(result.current.register).toBeDefined();
@@ -58,10 +58,11 @@ describe('usePaymentProvidersForm', () => {
       isSuccess: true,
     });
 
-    renderHook(() => usePaymentProvidersForm(), { wrapper });
+    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
 
-    // Note: With real form provider, we test behavior rather than implementation
-    // The hook should set the value, we test this through the form's state
+    // Test that the hook returns the providers when successful
+    expect(result.current.paymentProviders).toEqual(mockProviders);
+    expect(result.current.watchedProviderId).toBeDefined();
   });
 
   it('should not set default when data is not successful', () => {
@@ -72,7 +73,7 @@ describe('usePaymentProvidersForm', () => {
       isSuccess: false,
     });
 
-    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper });
+    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
 
     expect(result.current.paymentProviders).toEqual(mockProviders);
   });
@@ -83,7 +84,7 @@ describe('usePaymentProvidersForm', () => {
       isSuccess: true,
     });
 
-    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper });
+    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
 
     expect(result.current.paymentProviders).toEqual([]);
   });
@@ -94,7 +95,7 @@ describe('usePaymentProvidersForm', () => {
       isSuccess: true,
     });
 
-    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper });
+    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
 
     expect(result.current.paymentProviders).toEqual([]);
     expect(result.current.watchedProviderId).toBeDefined();

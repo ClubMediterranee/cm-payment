@@ -5,8 +5,11 @@ import React, { isValidElement } from 'react';
 function getAvailableComponent(children: React.ReactNode): symbol[] {
   function flattenChildren(children: React.ReactNode): React.ReactNode[] {
     return React.Children.toArray(children).flatMap((child) => {
-      if (isValidElement(child) && child.props?.children) {
-        return [child, ...flattenChildren(child.props.children)];
+      if (isValidElement(child)) {
+        const props = child.props as Record<string, unknown>;
+        if (props.children) {
+          return [child, ...flattenChildren(props.children as React.ReactNode)];
+        }
       }
       return child;
     });
@@ -14,9 +17,13 @@ function getAvailableComponent(children: React.ReactNode): symbol[] {
 
   return flattenChildren(children)
     .map((child) => {
-      return (child as { type: { COMPONENT_KEY?: symbol } })?.type?.COMPONENT_KEY;
+      if (isValidElement(child)) {
+        const elementType = child.type as { COMPONENT_KEY?: symbol };
+        return elementType?.COMPONENT_KEY;
+      }
+      return undefined;
     })
-    .filter(Boolean) as symbol[];
+    .filter((key): key is symbol => Boolean(key));
 }
 
 export function validateComponents(issuer: OidcIssuerTypes, children: React.ReactNode) {
