@@ -1,5 +1,5 @@
 import { SDKFormData } from '@clubmed/payment-sdk/types/FormData';
-import { COOKIE_KEYS, setCookie } from '@clubmed/payment-sdk/utils/storage/cookies';
+import { setCookie } from '@clubmed/payment-sdk/utils/storage/cookies';
 import { noop, useMutation } from '@tanstack/react-query';
 
 import { useOidcContext, useSDKPaymentContext } from '../utils/useSDKPaymentContext';
@@ -21,7 +21,7 @@ export const usePaymentRedirect = ({
   const { withAuth } = useOidcContext();
 
   if (callbackUrl) {
-    setCookie(COOKIE_KEYS.CALLBACK_URL, callbackUrl);
+    setCookie('callback_url', callbackUrl);
   }
 
   const mutationFn = (formData: SDKFormData) =>

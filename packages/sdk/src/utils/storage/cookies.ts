@@ -1,10 +1,8 @@
 import Cookies from 'js-cookie';
 
-export const COOKIE_KEYS = {
-  CALLBACK_URL: 'callback_url',
-} as const;
+type COOKIE_KEYS = 'callback_url';
 
-export const setCookie = (key: string, value: string, expires = 1 / 48): void => {
+export const setCookie = (key: COOKIE_KEYS, value: string, expires = 1 / 48): void => {
   Cookies.set(key, value, {
     sameSite: 'none',
     secure: true,
@@ -12,6 +10,6 @@ export const setCookie = (key: string, value: string, expires = 1 / 48): void =>
   });
 };
 
-export const getCookie = (key: string): string | undefined => {
+export const getCookie = (key: COOKIE_KEYS): string | undefined => {
   return Cookies.get(key);
 };

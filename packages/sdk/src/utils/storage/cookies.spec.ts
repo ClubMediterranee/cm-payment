@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 
-import { COOKIE_KEYS, getCookie, setCookie } from './cookies.js';
+import { getCookie, setCookie } from './cookies.js';
 
 vi.mock('js-cookie', () => ({
   default: {
@@ -18,10 +18,10 @@ describe('cookies service', () => {
 
   describe('setCookie', () => {
     it('should set cookie with correct options when value is provided', () => {
-      const key = 'test_key';
+      const key = 'callback_url';
       const value = 'test_value';
 
-      setCookie(key, value);
+      setCookie('callback_url', value);
 
       expect(mockCookies.set).toHaveBeenCalledWith(key, value, {
         sameSite: 'none',
@@ -31,11 +31,11 @@ describe('cookies service', () => {
     });
 
     it('should set cookie with custom expiration when provided', () => {
-      const key = 'test_key';
+      const key = 'callback_url';
       const value = 'test_value';
       const expires = 7;
 
-      setCookie(key, value, expires);
+      setCookie('callback_url', value, expires);
 
       expect(mockCookies.set).toHaveBeenCalledWith(key, value, {
         sameSite: 'none',
@@ -43,23 +43,11 @@ describe('cookies service', () => {
         expires: 7,
       });
     });
-
-    it('should use COOKIE_KEYS constant for callback URL', () => {
-      const value = 'https://example.com/callback';
-
-      setCookie(COOKIE_KEYS.CALLBACK_URL, value);
-
-      expect(mockCookies.set).toHaveBeenCalledWith('callback_url', value, {
-        sameSite: 'none',
-        secure: true,
-        expires: 1 / 48,
-      });
-    });
   });
 
   describe('getCookie', () => {
     it('should get cookie value', () => {
-      const key = 'test_key';
+      const key = 'callback_url';
       const expectedValue = 'test_value';
       mockCookies.get.mockReturnValue(expectedValue);
 
@@ -70,7 +58,7 @@ describe('cookies service', () => {
     });
 
     it('should return undefined when cookie does not exist', () => {
-      const key = 'non_existent_key';
+      const key = 'callback_url';
       mockCookies.get.mockReturnValue(undefined);
 
       const result = getCookie(key);
@@ -79,11 +67,11 @@ describe('cookies service', () => {
       expect(result).toBeUndefined();
     });
 
-    it('should use COOKIE_KEYS constant for callback URL', () => {
+    it('should use callback_url key when getting cookie', () => {
       const expectedUrl = 'https://example.com/callback';
       mockCookies.get.mockReturnValue(expectedUrl);
 
-      const result = getCookie(COOKIE_KEYS.CALLBACK_URL);
+      const result = getCookie('callback_url');
 
       expect(mockCookies.get).toHaveBeenCalledWith('callback_url');
       expect(result).toBe(expectedUrl);
@@ -92,20 +80,20 @@ describe('cookies service', () => {
 
   describe('Cookie security settings', () => {
     it('should use secure: true for all cookies', () => {
-      setCookie('test_key', 'test_value');
+      setCookie('callback_url', 'test_value');
 
       expect(mockCookies.set).toHaveBeenCalledWith(
-        'test_key',
+        'callback_url',
         'test_value',
         expect.objectContaining({ secure: true }),
       );
     });
 
     it('should use sameSite: none for all cookies', () => {
-      setCookie('test_key', 'test_value');
+      setCookie('callback_url', 'test_value');
 
       expect(mockCookies.set).toHaveBeenCalledWith(
-        'test_key',
+        'callback_url',
         'test_value',
         expect.objectContaining({ sameSite: 'none' }),
       );
@@ -114,10 +102,10 @@ describe('cookies service', () => {
 
   describe('Cookie expiration', () => {
     it('should default to 30 minutes (1/48 days) expiration', () => {
-      setCookie('test_key', 'test_value');
+      setCookie('callback_url', 'test_value');
 
       expect(mockCookies.set).toHaveBeenCalledWith(
-        'test_key',
+        'callback_url',
         'test_value',
         expect.objectContaining({ expires: 1 / 48 }),
       );
