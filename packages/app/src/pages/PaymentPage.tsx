@@ -1,8 +1,8 @@
 import { Cgv } from '@clubmed/payment-sdk/components/Cgv';
+import { IframeProvider } from '@clubmed/payment-sdk/components/IframeProvider.js';
+import { PaymentProviders } from '@clubmed/payment-sdk/components/PaymentProviders.js';
 import { PaymentSchedule } from '@clubmed/payment-sdk/components/PaymentSchedule';
-import { IframeProvider } from '@clubmed/payment-sdk/components/providers/IframeProvider.js';
-import { PaymentProvidersCheckboxes } from '@clubmed/payment-sdk/components/providers/PaymentProvidersCheckboxes.js';
-import { useDisclosure } from '@clubmed/payment-sdk/hooks/useDisclosure';
+import { useDisclosure } from '@clubmed/payment-sdk/hooks/utils/useDisclosure';
 import { SDKFormProvider } from '@clubmed/payment-sdk/providers/SDKFormProvider.js';
 import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
 import classNames from 'classnames';
@@ -19,6 +19,11 @@ export function PaymentPage() {
   const ref = useRef<HTMLParagraphElement | null>(null);
   const [error, setError] = useState<Error>();
 
+  const onError = (error: Error) => {
+    setError(error);
+    onLoadEnd();
+  };
+
   useEffect(() => {
     if (error) {
       ref.current?.scrollIntoView();
@@ -33,7 +38,7 @@ export function PaymentPage() {
     return (
       <div
         className={classNames(
-          'flex flex-col gap-8 row-start-2 items-center mx-auto w-10/12 md:max-w-1/2',
+          'flex flex-col gap-8 row-start-2 items-center mx-auto w-10/12 md:max-w-[49rem]',
         )}
       >
         <div>
@@ -49,7 +54,7 @@ export function PaymentPage() {
   return (
     <div
       className={classNames(
-        'flex flex-col gap-8 row-start-2 items-center mx-auto w-10/12 md:max-w-1/2',
+        'flex flex-col gap-8 row-start-2 items-center mx-auto w-10/12 md:max-w-[49rem]',
       )}
     >
       <h1 className="text-h3 w-full mb-8">Payment</h1>
@@ -57,7 +62,7 @@ export function PaymentPage() {
         <Stay stay={stay!} />
       </Suspense>
 
-      <SDKFormProvider onError={setError} onLoad={onLoad} onLoadEnd={onLoadEnd}>
+      <SDKFormProvider onError={onError} onLoad={onLoad} onLoadEnd={onLoadEnd}>
         <div className="w-full">
           <h2 className="text-h5 mb-16 font-serif">Choisissez l'échéancier de paiement</h2>
           <Suspense fallback={<div>loading</div>}>
@@ -69,7 +74,7 @@ export function PaymentPage() {
             Quel moyen de paiement souhaitez-vous utiliser ?
           </h2>
           <Suspense fallback={<div>Loading</div>}>
-            <PaymentProvidersCheckboxes />
+            <PaymentProviders />
           </Suspense>
         </div>
         <Cgv />

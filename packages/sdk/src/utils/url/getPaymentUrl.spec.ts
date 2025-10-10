@@ -1,4 +1,4 @@
-import { OidcIssuerTypes } from '../types/SDKOptions.js';
+import { OidcIssuerTypes } from '../../types/SDKOptions.js';
 import { getPaymentUrl } from './getPaymentUrl.js';
 
 // Mock navigator.language

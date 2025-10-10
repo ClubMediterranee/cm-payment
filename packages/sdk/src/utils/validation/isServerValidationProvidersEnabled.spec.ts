@@ -1,14 +1,19 @@
-import { GLOBAL_SDK_SETTINGS } from '../config.js';
+import { GLOBAL_SDK_SETTINGS } from '../../config.js';
 import { isServerValidationProvidersEnabled } from './isServerValidationProvidersEnabled.js';
 
 // Mock the config
-vi.mock('../config.js', () => ({
+vi.mock('../../config.js', () => ({
   GLOBAL_SDK_SETTINGS: {
     serverValidationProviders: ['provider1', 'provider2', 'validProvider'],
   },
 }));
 
+const mockConfig = vi.mocked(GLOBAL_SDK_SETTINGS);
+
 describe('isServerValidationProvidersEnabled', () => {
+  beforeEach(() => {
+    mockConfig.serverValidationProviders = ['provider1', 'provider2', 'validProvider'];
+  });
   it('should return true when paymentId is provided and provider_id is in serverValidationProviders', () => {
     // Arrange
     const paymentId = 'payment-123';
@@ -154,9 +159,7 @@ describe('isServerValidationProvidersEnabled', () => {
   });
 
   it('should handle empty serverValidationProviders array', () => {
-    // Arrange - Mock empty array
-    vi.mocked(GLOBAL_SDK_SETTINGS).serverValidationProviders = [];
-
+    mockConfig.serverValidationProviders = [];
     const paymentId = 'payment-123';
     const provider_id = 'provider1';
 
@@ -165,12 +168,5 @@ describe('isServerValidationProvidersEnabled', () => {
 
     // Assert
     expect(result).toBe(false);
-
-    // Reset mock
-    vi.mocked(GLOBAL_SDK_SETTINGS).serverValidationProviders = [
-      'provider1',
-      'provider2',
-      'validProvider',
-    ];
   });
 });

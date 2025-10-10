@@ -1,7 +1,7 @@
-import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config.js';
+import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config';
 import { useQuery } from '@tanstack/react-query';
 
-import { getV0PaymentsPaymentIdStatus } from '../__generated__';
+import { getV0PaymentsPaymentIdStatus } from '../../__generated__';
 
 export const usePaymentStatus = ({ paymentId }: { paymentId: string }) => {
   const search = new URLSearchParams(document.location.search);

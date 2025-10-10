@@ -1,14 +1,22 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
-import { getV1PaymentProviders } from '../__generated__';
-import { useOidcContext } from './useSDKPaymentContext.js';
+import { usePaymentProviders } from './data/usePaymentProviders';
+import { useFormContext } from './utils/useForm';
 
-export const usePaymentProviders = () => {
-  const { withAuth } = useOidcContext();
+export function usePaymentProvidersForm() {
+  const { data: paymentProviders = [], isSuccess } = usePaymentProviders();
 
-  return useSuspenseQuery({
-    queryKey: ['paymentProviders'],
-    queryFn: () => getV1PaymentProviders({ withAuth }),
-    retry: false,
-  });
-};
+  const { register, setValue, trigger, watch } = useFormContext();
+
+  const watchedProviderId = watch('provider_id');
+
+  useEffect(() => {
+    if (isSuccess && paymentProviders.length > 0) {
+      setValue('provider_id', paymentProviders[0]?.id, {
+        shouldValidate: true,
+      });
+    }
+  }, [isSuccess, paymentProviders, setValue]);
+
+  return { paymentProviders, register, setValue, trigger, watchedProviderId };
+}

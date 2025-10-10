@@ -1,7 +1,9 @@
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
-import { Card } from '@clubmed/trident-ui/molecules/Card';
 import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
-import { useFormContext } from 'react-hook-form';
+
+import { useFormContext } from '../hooks/utils/useForm';
+import { SDKFormData } from '../types/FormData';
+import { FormPanel } from './ui/FormPanel';
 
 export const Cgv = () => {
   const { register, setValue, trigger } = useFormContext();
@@ -9,15 +11,15 @@ export const Cgv = () => {
   return (
     <div>
       <h2 className="text-h5 mb-16 font-serif">Conditions Générales de Vente</h2>
-      <Card icon="Edit" title="Conditions Générales de Vente Modifiées 2">
+      <FormPanel>
         <Checkbox
           {...register('cgv', {
             required: 'Vous devez accepter les conditions générales de vente',
             validate: (value) => value === true || 'Vous devez accepter les CGV',
           })}
           onChange={(name, value) => {
-            setValue(name, value);
-            trigger(name);
+            setValue(name as keyof SDKFormData, value);
+            trigger(name as keyof SDKFormData);
           }}
           required
         >
@@ -27,7 +29,7 @@ export const Cgv = () => {
           septembre 2021 (détails sur la page du Resort). J'accepte les Conditions Générales de
           Vente et déclare avoir pris également connaissance du Formulaire d’information.*
         </Checkbox>
-      </Card>
+      </FormPanel>
     </div>
   );
 };

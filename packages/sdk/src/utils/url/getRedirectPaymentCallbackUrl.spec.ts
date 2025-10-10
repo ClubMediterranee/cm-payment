@@ -1,8 +1,8 @@
-import { getSDKPaymentOptions } from '../providers/SDKConfigProvider.js';
+import { getSDKPaymentOptions } from '../../providers/SDKConfigProvider.js';
 import { getRedirectPaymentCallbackUrl } from './getRedirectPaymentCallbackUrl.js';
 
 // Mock the getSDKPaymentOptions function
-vi.mock('../providers/SDKConfigProvider.js', () => ({
+vi.mock('../../providers/SDKConfigProvider.js', () => ({
   getSDKPaymentOptions: vi.fn(),
 }));
 

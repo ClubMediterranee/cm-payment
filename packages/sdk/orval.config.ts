@@ -17,6 +17,7 @@ export default defineConfig({
       target: join(root, 'src/__generated__/index.ts'),
       mode: 'single',
       prettier: true,
+      mock: true,
       override: {
         mutator: {
           path: './src/utils/fetcher.ts',

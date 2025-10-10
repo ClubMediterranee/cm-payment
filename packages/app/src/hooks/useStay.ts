@@ -1,6 +1,8 @@
-import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/useSDKPaymentContext';
+import {
+  useOidcContext,
+  useSDKPaymentContext,
+} from '@clubmed/payment-sdk/hooks/utils/useSDKPaymentContext';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from 'react-oidc-context';
 
 import {
   getV2ProposalsProposalId,
@@ -16,11 +18,7 @@ export type StayModel = {
 
 export const useStay = () => {
   const { proposalId, bookingId, customerId } = useSDKPaymentContext();
-  const { user } = useAuth();
-  // TODO Jerome tu pourras clarifier cette ligne ? est-ce que c'est le issuerType ?
-  // ou est-ce que c'est pour savoir si le user est connecté ?
-  // Ca me parait bizarre car tu rentres en mode connecté sur le parcours quoi qu'il arrive non ?
-  const profile = user?.profile.type;
+  const { withAuth } = useOidcContext();
 
   // devrait etre déclouplé du hook dans son fichier à part
   // Facilite les TU du hook et du service si tu sépares bien les responsabilités
@@ -40,7 +38,7 @@ export const useStay = () => {
       };
     }
 
-    const data = await getV2ProposalsProposalId(proposalId!, { withAuth: !!profile });
+    const data = await getV2ProposalsProposalId(proposalId!, { withAuth });
 
     return {
       productId: data.product_id,

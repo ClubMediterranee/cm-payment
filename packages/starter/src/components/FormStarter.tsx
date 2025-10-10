@@ -1,5 +1,5 @@
-import { getPaymentUrl } from '@clubmed/payment-sdk/services/getPaymentUrl.js';
 import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions';
+import { getPaymentUrl } from '@clubmed/payment-sdk/utils/url/getPaymentUrl.js';
 import { Button } from '@clubmed/trident-ui/molecules/Buttons/v2/Button';
 import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
 import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
