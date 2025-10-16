@@ -1,23 +1,46 @@
 import {
+  Action,
+  getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
+  getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule,
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
-} from '@clubmed/payment-sdk/__generated__';
-import { SDKOptions } from '@clubmed/payment-sdk/types/SDKOptions';
+} from '../../../__generated__';
+import { getSDKPaymentOptions } from '../../../providers/SDKConfigProvider.js';
 
-export const getPaymentSchedule = ({
-  bookingId,
-  proposalId,
-  customerId,
-}: Pick<SDKOptions, 'bookingId' | 'proposalId' | 'customerId'>) => {
-  if (bookingId) {
+const isBookingAction = (
+  action: Action,
+): action is
+  | typeof Action.PAYMENT_OPTION
+  | typeof Action.PAYMENT_SOLDE
+  | typeof Action.PAYMENT_PARTIAL => {
+  return [Action.PAYMENT_OPTION, Action.PAYMENT_SOLDE, Action.PAYMENT_PARTIAL].includes(
+    action as any,
+  );
+};
+
+export const getPaymentSchedule = () => {
+  const { bookingId, proposalId, customerId, action } = getSDKPaymentOptions();
+
+  if (action === Action.PAYMENT_RESA) {
+    return getV1ProposalsProposalIdPaymentSchedule(proposalId!);
+  }
+
+  if (isBookingAction(action) && bookingId) {
     return getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules(customerId, bookingId, {
       withAuth: true,
     });
   }
 
-  if (!proposalId) {
-    throw new Error('Either bookingId or proposalId must be provided');
+  if (action === Action.PAYMENT_CART) {
+    return getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule(customerId, bookingId!, {
+      withAuth: true,
+    });
   }
 
-  return getV1ProposalsProposalIdPaymentSchedule(proposalId!);
+  if (action === Action.PAYMENT_UPGRADE_ROOM) {
+    return getV0CustomersCustomerIdBookingsBookingIdCartAccommodations(customerId, bookingId!, {
+      withAuth: true,
+    });
+  }
+  throw new Error('Either bookingId or proposalId must be provided');
 };

@@ -7,35 +7,35 @@ import { useFormContext } from '../hooks/utils/useForm';
 import { FormPanel } from './ui/FormPanel';
 
 export const PaymentSchedule = () => {
-  const { paymentSchedule } = usePaymentSchedule();
+  const { paymentSchedule, isSuccess } = usePaymentSchedule();
   const { register, setValue, watch } = useFormContext();
   const watchedAmount = watch('amount');
 
   useEffect(() => {
-    if (paymentSchedule.length > 0 && !watchedAmount) {
-      setValue('amount', paymentSchedule[0]?.amount || 0);
+    if (isSuccess && paymentSchedule.length > 0) {
+      setValue('amount', (paymentSchedule[0]?.amount ?? '').toString());
     }
-  }, [paymentSchedule, setValue, watchedAmount]);
+  }, [isSuccess, paymentSchedule, setValue]);
 
   return (
     <FormPanel>
-      <input type="hidden" />
       <RadioGroup className="flex flex-col" value={watchedAmount}>
-        {paymentSchedule.map((props, index) => {
+        {paymentSchedule.map(({ amount, currency, deadline = null }) => {
           return (
-            <Radio
-              key={index}
-              value={props.amount}
-              {...register('amount')}
-              onChange={(_, value) => setValue('amount', Number(value) || 0)}
-              className="my-20"
-            >
-              Je paie le montant de{' '}
-              <span className="font-bold text-sienna mx-4">
-                {props.amount} {props.currency}
-              </span>
-              {'deadline' in props ? ` avant le ${props.deadline}` : ''}
-            </Radio>
+            <div key={amount}>
+              <Radio
+                className="my-20"
+                {...register('amount')}
+                onChange={(_, value) => setValue('amount', value || '')}
+                value={amount?.toString()}
+              >
+                Je paie le montant de{' '}
+                <span className="font-bold text-sienna mx-4">
+                  {amount} {currency}
+                </span>
+                {deadline ? ` avant le ${deadline}` : ''}
+              </Radio>
+            </div>
           );
         })}
       </RadioGroup>

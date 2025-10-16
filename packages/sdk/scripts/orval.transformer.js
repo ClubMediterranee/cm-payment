@@ -2,6 +2,8 @@ export const ENDPOINTS = [
   'POST /v1/payments/{payment_id}/notify',
   'GET /v1/payment_providers',
   'GET /v0/customers/{customer_id}/bookings/{booking_id}/payment_schedules',
+  'GET /v0/customers/{customer_id}/bookings/{booking_id}/cart/payment_schedule',
+  'GET /v0/customers/{customer_id}/bookings/{booking_id}/cart/accommodations',
   'GET /v1/proposals/{proposal_id}/payment_schedule',
   'GET /v0/payments/{payment_id}/status',
   'GET /v2/proposals/{proposal_id}',

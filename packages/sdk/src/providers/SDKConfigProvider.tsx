@@ -6,16 +6,14 @@ import type {
 import type { PropsWithChildren } from 'react';
 import { createContext } from 'react';
 
-import { Action, BookingStatus } from '../__generated__';
+import { Action } from '../__generated__';
 
-const ACTIONS = {
-  [BookingStatus.OPTION]: Action.PAYMENT_OPTION,
-  [BookingStatus.VALIDATED]: Action.PAYMENT_SOLDE,
-  DEFAULT: Action.PAYMENT_RESA,
-} as const;
+export type SDKConfigProviderProps = PropsWithChildren<
+  Omit<SDKOptions, 'action'> & { action?: Action }
+>;
 
 export const SDKConfigContext = createContext<SDKOptions>({
-  action: Action.PAYMENT_RESA as Action,
+  action: '' as unknown as Action,
   url: '',
   proposalId: '',
   bookingId: '',
@@ -26,14 +24,6 @@ export const SDKConfigContext = createContext<SDKOptions>({
   callbackUrl: '',
 });
 
-const getAction = (status?: BookingStatus) => {
-  return ACTIONS[status as keyof typeof ACTIONS] || ACTIONS.DEFAULT;
-};
-
-export type SDKPaymentProviderProps = PropsWithChildren<
-  Omit<SDKOptions, 'action'> & { status?: BookingStatus }
->;
-
 const ref: { value: SDKOptions } = {
   value: {} as SDKOptions,
 };
@@ -42,8 +32,13 @@ export function getSDKPaymentOptions() {
   return ref.value;
 }
 
-export const SDKConfigProvider = ({ children, ...props }: SDKPaymentProviderProps) => {
-  const action = getAction(props.status);
+export const SDKConfigProvider = ({ children, ...props }: SDKConfigProviderProps) => {
+  let action = props.action;
+
+  // TO DO: remove this and replace with action from booking or proposal status
+  if (!action) {
+    action = props.bookingId ? Action.PAYMENT_SOLDE : Action.PAYMENT_RESA;
+  }
 
   ref.value = {
     ...props,

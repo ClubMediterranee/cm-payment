@@ -1,59 +1,90 @@
 import type {
-  CustomerBookingPaymentSchedule,
+  CartUpgradeRoomModel,
   CustomerBookingPaymentScheduleModel,
-  DepositRepaymentScheduleModelListV1,
-  DepositRepaymentScheduleModelV1,
-  PaymentSchedules,
+  PaymentScheduleModel,
   ProposalPaymentScheduleModelV1,
 } from '../../../__generated__';
 
-type MergedScheduleData = {
+type PaymentSchedule = {
   currency: string;
-  paid?: number;
   total?: number;
-  payment_schedules?: PaymentSchedules;
-  deposit_repayment_schedule?: DepositRepaymentScheduleModelListV1;
+  payment_schedules: Array<{
+    amount?: number;
+    deadline?: string;
+  }>;
 };
 
-type ScheduleItem = CustomerBookingPaymentSchedule | DepositRepaymentScheduleModelV1;
+const isCartUpgradeRoom = (data: any): data is CartUpgradeRoomModel => 'price' in data;
 
-const getAmount = (item: ScheduleItem): number | undefined => {
-  if ('expected_payment_amount' in item) return item.expected_payment_amount;
-  if ('amount' in item) return item.amount;
-  return undefined;
+const isProposalSchedule = (data: any): data is ProposalPaymentScheduleModelV1 =>
+  'households' in data;
+
+const selectUpgradeSchedule = (data: CartUpgradeRoomModel): PaymentSchedule => {
+  return {
+    currency: data.price?.currency || '',
+    total: data.price?.amount,
+    payment_schedules: [{ amount: data.price?.amount, deadline: undefined }],
+  };
+};
+
+const selectProposalSchedule = (data: ProposalPaymentScheduleModelV1): PaymentSchedule => {
+  const household = data.households?.[0];
+  return {
+    currency: data.currency || 'EUR',
+    total: household?.total,
+    payment_schedules: (household?.deposit_repayment_schedule || []).map((item) => ({
+      amount: item.expected_payment_amount,
+      deadline: item.deadline || undefined,
+    })),
+  };
+};
+
+const buildScheduleFromMergedData = (data: PaymentSchedule) => {
+  const schedule = [];
+  const currency = data.currency || '';
+  const payments = data.payment_schedules || [];
+
+  if (payments.length < 2) {
+    if (payments[0]?.amount !== undefined) {
+      schedule.push({
+        amount: payments[0].amount,
+        currency,
+      });
+    }
+    return schedule;
+  }
+
+  schedule.push({
+    amount: data.total,
+    currency,
+  });
+
+  if (payments[0]?.amount !== undefined) {
+    schedule.push({
+      amount: payments[0].amount,
+      currency,
+      deadline: payments[0].deadline,
+    });
+  }
+  return schedule;
 };
 
 export const selectPaymentSchedule = (
-  data: CustomerBookingPaymentScheduleModel | ProposalPaymentScheduleModelV1,
+  data:
+    | CartUpgradeRoomModel
+    | ProposalPaymentScheduleModelV1
+    | PaymentScheduleModel
+    | CustomerBookingPaymentScheduleModel,
 ) => {
-  const mappedSchedule: MergedScheduleData = {
-    ...data,
-    ...('households' in data ? data.households?.[0] : {}),
-  };
-  const schedule = [];
+  let normalizedData: PaymentSchedule;
 
-  const mappedPaymentSchedule = [
-    ...(mappedSchedule.payment_schedules || []),
-    ...(mappedSchedule.deposit_repayment_schedule || []),
-  ].map((item) => ({
-    amount: getAmount(item),
-    currency: mappedSchedule.currency,
-    deadline: item.deadline,
-  }));
-
-  if (!('paid' in data) || !data.paid) {
-    schedule.push({
-      amount: mappedSchedule.total,
-      currency: mappedSchedule.currency,
-    });
+  if (isCartUpgradeRoom(data)) {
+    normalizedData = selectUpgradeSchedule(data);
+  } else if (isProposalSchedule(data)) {
+    normalizedData = selectProposalSchedule(data);
+  } else {
+    normalizedData = data as PaymentSchedule;
   }
 
-  if (
-    mappedPaymentSchedule?.length > 2 ||
-    ('paid' in data && mappedPaymentSchedule?.length === 2)
-  ) {
-    schedule.push({ ...mappedPaymentSchedule[0] });
-  }
-
-  return schedule;
+  return buildScheduleFromMergedData(normalizedData);
 };
