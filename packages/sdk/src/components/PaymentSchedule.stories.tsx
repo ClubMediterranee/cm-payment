@@ -162,6 +162,9 @@ const meta: Meta<typeof PaymentSchedule> = {
   loaders: [mswLoader],
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      disable: true,
+    },
   },
 };
 
