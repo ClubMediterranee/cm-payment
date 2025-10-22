@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 
 import { MockedFormProvider } from '../__fixtures__/MockedFormProvider';
 import { useMockedForm } from '../__fixtures__/useMockedForm';
-import { usePaymentProvidersForm } from './usePaymentProviders';
+import { usePaymentProvidersForm } from './usePaymentProvidersForm';
 
 // Mock the data hook
 vi.mock('./data/usePaymentProviders', () => ({

@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 
 import { Action } from '../__generated__';
+import { FeatureFlipsProvider } from '../providers/FeatureFlipsProvider';
 import { SDKConfigProvider } from '../providers/SDKConfigProvider';
 import { OidcIssuerTypes } from '../types/SDKOptions';
 import { MockedFormProvider } from './MockedFormProvider';
@@ -70,7 +71,11 @@ export const MockedProvider = ({
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <MockedFormProvider {...methods}>{children}</MockedFormProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <FeatureFlipsProvider locale="fr-FR">
+            <MockedFormProvider {...methods}>{children}</MockedFormProvider>
+          </FeatureFlipsProvider>
+        </Suspense>
       </QueryClientProvider>
     </SDKConfigProvider>
   );

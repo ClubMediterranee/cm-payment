@@ -14,7 +14,7 @@ import { LoadingPage } from './LoadingPage.js';
 
 export function PaymentPage() {
   const { isLoading, stay, status } = useStay();
-  const { isOpen, onOpen: onLoad, onClose: onLoadEnd } = useDisclosure();
+  const { isOpen: isPaymentLoading, onOpen: onLoad, onClose: onLoadEnd } = useDisclosure();
 
   const ref = useRef<HTMLParagraphElement | null>(null);
   const [error, setError] = useState<Error>();
@@ -30,7 +30,7 @@ export function PaymentPage() {
     }
   }, [error]);
 
-  if (isLoading || isOpen) {
+  if (isLoading || isPaymentLoading) {
     return <LoadingPage />;
   }
 
@@ -65,17 +65,13 @@ export function PaymentPage() {
       <SDKFormProvider onError={onError} onLoad={onLoad} onLoadEnd={onLoadEnd}>
         <div className="w-full">
           <h2 className="text-h5 mb-16 font-serif">Choisissez l'échéancier de paiement</h2>
-          <Suspense fallback={<div>loading</div>}>
-            <PaymentSchedule />
-          </Suspense>
+          <PaymentSchedule />
         </div>
         <div className="w-full">
           <h2 className="text-h5 mb-16 font-serif">
             Quel moyen de paiement souhaitez-vous utiliser ?
           </h2>
-          <Suspense fallback={<div>Loading</div>}>
-            <PaymentProviders />
-          </Suspense>
+          <PaymentProviders />
         </div>
         <Cgv />
         <IframeProvider />
