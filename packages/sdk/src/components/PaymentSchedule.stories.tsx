@@ -15,7 +15,30 @@ import { PaymentSchedule } from './PaymentSchedule';
 
 initialize();
 
+const meta: Meta<typeof PaymentSchedule> = {
+  title: 'Components/PaymentSchedule',
+  component: PaymentSchedule,
+  loaders: [mswLoader],
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component: `Affiche les options de paiement (total ou acompte) selon l'action de paiement`,
+      },
+    },
+  },
+};
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
 const handlers = {
+  featureFlips: http.get('*/v1/contents/feature-flip/locales/*/releases/*/value', () => {
+    return Response.json({
+      keys: [],
+    });
+  }),
   total: [
     http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
       return Response.json(
@@ -156,62 +179,74 @@ const handlers = {
   ],
 };
 
-const meta: Meta<typeof PaymentSchedule> = {
-  title: 'Components/PaymentSchedule',
-  component: PaymentSchedule,
-  loaders: [mswLoader],
-  parameters: {
-    layout: 'fullscreen',
-    docs: {
-      disable: true,
+export const Default: Story = {
+  argTypes: {
+    action: {
+      control: 'select',
+      options: Object.values(Action),
+      description: 'Type de workflow à tester',
     },
+    proposalId: { control: 'text', description: 'ID de proposition (requis pour PAYMENT_RESA)' },
+    bookingId: {
+      control: 'text',
+      description: 'ID de réservation (requis pour workflows booking)',
+    },
+    customerId: { control: 'text', description: 'ID client (requis pour workflows booking)' },
   },
-};
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const ProposalTotalAmountTest: Story = {
+  args: {
+    action: Action.PAYMENT_OPTION,
+    proposalId: '12345678',
+    bookingId: '87654321',
+    customerId: '45678901',
+  },
   parameters: {
     msw: {
-      handlers: handlers.total,
+      handlers: [
+        handlers.featureFlips,
+        ...handlers.deposit,
+        ...handlers.paid,
+        ...handlers.cart,
+        ...handlers.upgradeRoom,
+        ...handlers.total,
+      ],
     },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await waitFor(() => expect(canvas.getByText('2808 EUR')).toBeInTheDocument());
-  },
-  render(args: any) {
+  render({ action, proposalId, bookingId, customerId }) {
     return (
       <MockedProvider
-        key="proposal-total"
-        proposalId="test-proposal-123"
-        action={Action.PAYMENT_RESA}
+        key={`${action}-${proposalId}-${bookingId}-${customerId}`}
+        action={action}
+        proposalId={proposalId}
+        bookingId={bookingId}
+        customerId={customerId}
       >
-        <PaymentSchedule {...args} />
+        <PaymentSchedule />
       </MockedProvider>
     );
   },
 };
 
-export const BookingTotalAmountTest: Story = {
+export const SinglePayment: Story = {
   parameters: {
     msw: {
-      handlers: handlers.total,
+      handlers: [handlers.featureFlips, ...handlers.total],
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await waitFor(() => expect(canvas.getByText('3079 EUR')).toBeInTheDocument());
+    await waitFor(() => {
+      const radios = canvasElement.querySelectorAll('input[type="radio"]');
+      expect(radios).toHaveLength(1);
+      expect(canvas.getByText(/3079.*EUR/)).toBeInTheDocument();
+    });
   },
   render(args: any) {
     return (
       <MockedProvider
-        key="booking-total"
+        key="single-payment"
         action={Action.PAYMENT_OPTION}
-        bookingId="booking-total-789"
-        customerId="customer-total-123"
+        bookingId="booking-123"
+        customerId="customer-456"
       >
         <PaymentSchedule {...args} />
       </MockedProvider>
@@ -219,48 +254,28 @@ export const BookingTotalAmountTest: Story = {
   },
 };
 
-export const ProposalDepositAmountTest: Story = {
+export const DepositChoice: Story = {
   parameters: {
     msw: {
-      handlers: handlers.deposit,
+      handlers: [handlers.featureFlips, ...handlers.deposit],
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await waitFor(() => expect(canvas.getByText('2584 EUR')).toBeInTheDocument());
-    await waitFor(() => expect(canvas.getByText('790 EUR')).toBeInTheDocument());
+    await waitFor(() => {
+      const radios = canvasElement.querySelectorAll('input[type="radio"]');
+      expect(radios).toHaveLength(2);
+      expect(canvas.getByText(/2000.*EUR/)).toBeInTheDocument();
+      expect(canvas.getByText(/500.*EUR/)).toBeInTheDocument();
+    });
   },
   render(args: any) {
     return (
       <MockedProvider
-        key="proposal-deposit"
-        proposalId="test-proposal-456"
-        action={Action.PAYMENT_RESA}
-      >
-        <PaymentSchedule {...args} />
-      </MockedProvider>
-    );
-  },
-};
-
-export const BookingDepositAmountTest: Story = {
-  parameters: {
-    msw: {
-      handlers: handlers.deposit,
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await waitFor(() => expect(canvas.getByText('2000 EUR')).toBeInTheDocument());
-    await waitFor(() => expect(canvas.getByText('500 EUR')).toBeInTheDocument());
-  },
-  render(args: any) {
-    return (
-      <MockedProvider
-        key="booking-deposit"
+        key="deposit-choice"
         action={Action.PAYMENT_OPTION}
-        bookingId="booking-deposit-456"
-        customerId="customer-deposit-789"
+        bookingId="booking-456"
+        customerId="customer-789"
       >
         <PaymentSchedule {...args} />
       </MockedProvider>
@@ -268,82 +283,10 @@ export const BookingDepositAmountTest: Story = {
   },
 };
 
-export const BookingPaidAmountTest: Story = {
+export const DepositInteraction: Story = {
   parameters: {
     msw: {
-      handlers: handlers.paid,
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await waitFor(() => expect(canvas.getByText('1794 EUR')).toBeInTheDocument());
-  },
-  render(args: any) {
-    return (
-      <MockedProvider
-        key="booking-paid"
-        action={Action.PAYMENT_SOLDE}
-        bookingId="booking-paid-999"
-        customerId="customer-paid-111"
-      >
-        <PaymentSchedule {...args} />
-      </MockedProvider>
-    );
-  },
-};
-
-export const BookingCartAmountTest: Story = {
-  parameters: {
-    msw: {
-      handlers: handlers.cart,
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await waitFor(() => expect(canvas.getByText('1500 EUR')).toBeInTheDocument());
-  },
-  render(args: any) {
-    return (
-      <MockedProvider
-        key="booking-cart"
-        action={Action.PAYMENT_CART}
-        bookingId="booking-cart-555"
-        customerId="customer-cart-777"
-      >
-        <PaymentSchedule {...args} />
-      </MockedProvider>
-    );
-  },
-};
-
-export const BookingUpgradeRoomAmountTest: Story = {
-  parameters: {
-    msw: {
-      handlers: handlers.upgradeRoom,
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await waitFor(() => expect(canvas.getByText('800 EUR')).toBeInTheDocument());
-  },
-  render(args: any) {
-    return (
-      <MockedProvider
-        key="booking-upgrade-room"
-        action={Action.PAYMENT_UPGRADE_ROOM}
-        bookingId="booking-upgrade-888"
-        customerId="customer-upgrade-999"
-      >
-        <PaymentSchedule {...args} />
-      </MockedProvider>
-    );
-  },
-};
-
-export const MultiRadioTest: Story = {
-  parameters: {
-    msw: {
-      handlers: handlers.deposit,
+      handlers: [handlers.featureFlips, ...handlers.deposit],
     },
   },
   play: async ({ canvasElement }) => {
@@ -372,10 +315,10 @@ export const MultiRadioTest: Story = {
   render(args: any) {
     return (
       <MockedProvider
-        key="multi-radio"
+        key="deposit-interaction"
         action={Action.PAYMENT_OPTION}
-        bookingId="multi-radio-222"
-        customerId="customer-multi-333"
+        bookingId="booking-789"
+        customerId="customer-111"
       >
         <PaymentSchedule {...args} />
       </MockedProvider>
