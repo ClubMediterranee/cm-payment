@@ -22,25 +22,33 @@ export const getPaymentSchedule = () => {
   const { bookingId, proposalId, customerId, action } = getSDKPaymentOptions();
 
   if (action === Action.PAYMENT_RESA) {
-    return getV1ProposalsProposalIdPaymentSchedule(proposalId!);
+    if (!proposalId) {
+      throw new Error('proposalId is required for PAYMENT_RESA action');
+    }
+    return getV1ProposalsProposalIdPaymentSchedule(proposalId);
   }
 
-  if (isBookingAction(action) && bookingId) {
+  if (!bookingId) {
+    throw new Error('bookingId is required for this action');
+  }
+
+  if (isBookingAction(action)) {
     return getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules(customerId, bookingId, {
       withAuth: true,
     });
   }
 
   if (action === Action.PAYMENT_CART) {
-    return getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule(customerId, bookingId!, {
+    return getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule(customerId, bookingId, {
       withAuth: true,
     });
   }
 
   if (action === Action.PAYMENT_UPGRADE_ROOM) {
-    return getV0CustomersCustomerIdBookingsBookingIdCartAccommodations(customerId, bookingId!, {
+    return getV0CustomersCustomerIdBookingsBookingIdCartAccommodations(customerId, bookingId, {
       withAuth: true,
     });
   }
-  throw new Error('Either bookingId or proposalId must be provided');
+
+  throw new Error('Invalid action');
 };

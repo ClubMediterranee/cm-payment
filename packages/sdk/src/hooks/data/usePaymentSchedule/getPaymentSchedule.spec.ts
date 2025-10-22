@@ -150,7 +150,7 @@ describe('getPaymentSchedule', () => {
       proposalId: 'proposal-789',
     });
 
-    expect(() => getPaymentSchedule()).toThrow('Either bookingId or proposalId must be provided');
+    expect(() => getPaymentSchedule()).toThrow('bookingId is required for this action');
     expect(mockGetV0).not.toHaveBeenCalled();
     expect(mockGetV1).not.toHaveBeenCalled();
   });
@@ -163,7 +163,7 @@ describe('getPaymentSchedule', () => {
       proposalId: 'proposal-789',
     });
 
-    expect(() => getPaymentSchedule()).toThrow('Either bookingId or proposalId must be provided');
+    expect(() => getPaymentSchedule()).toThrow('Invalid action');
     expect(mockGetV0).not.toHaveBeenCalled();
     expect(mockGetV1).not.toHaveBeenCalled();
   });
@@ -182,5 +182,79 @@ describe('getPaymentSchedule', () => {
     expect(result).toBeDefined();
     expect(result).toEqual(mockData);
     expect(mockGetV1).toHaveBeenCalledWith('proposal-789');
+  });
+
+  it('should throw error for PAYMENT_CART without bookingId', () => {
+    mockGetSDKPaymentOptions.mockReturnValue({
+      action: Action.PAYMENT_CART,
+      bookingId: null,
+      customerId: 'customer-456',
+      proposalId: 'proposal-789',
+    });
+
+    expect(() => getPaymentSchedule()).toThrow('bookingId is required for this action');
+    expect(mockGetCartPaymentSchedule).not.toHaveBeenCalled();
+  });
+
+  it('should throw error for PAYMENT_UPGRADE_ROOM without bookingId', () => {
+    mockGetSDKPaymentOptions.mockReturnValue({
+      action: Action.PAYMENT_UPGRADE_ROOM,
+      bookingId: undefined,
+      customerId: 'customer-456',
+      proposalId: 'proposal-789',
+    });
+
+    expect(() => getPaymentSchedule()).toThrow('bookingId is required for this action');
+    expect(mockGetCartAccommodations).not.toHaveBeenCalled();
+  });
+
+  it('should call V1 API for PAYMENT_RESA even without bookingId', () => {
+    mockGetSDKPaymentOptions.mockReturnValue({
+      action: Action.PAYMENT_RESA,
+      proposalId: 'proposal-789',
+      customerId: 'customer-456',
+      bookingId: undefined,
+    });
+
+    getPaymentSchedule();
+
+    expect(mockGetV1).toHaveBeenCalledWith('proposal-789');
+    expect(mockGetV0).not.toHaveBeenCalled();
+  });
+
+  it('should throw error for PAYMENT_SOLDE with null bookingId', () => {
+    mockGetSDKPaymentOptions.mockReturnValue({
+      action: Action.PAYMENT_SOLDE,
+      bookingId: null,
+      customerId: 'customer-456',
+      proposalId: 'proposal-789',
+    });
+
+    expect(() => getPaymentSchedule()).toThrow('bookingId is required for this action');
+    expect(mockGetV0).not.toHaveBeenCalled();
+  });
+
+  it('should throw error for PAYMENT_RESA without proposalId', () => {
+    mockGetSDKPaymentOptions.mockReturnValue({
+      action: Action.PAYMENT_RESA,
+      proposalId: undefined,
+      customerId: 'customer-456',
+      bookingId: 'booking-123',
+    });
+
+    expect(() => getPaymentSchedule()).toThrow('proposalId is required for PAYMENT_RESA action');
+    expect(mockGetV1).not.toHaveBeenCalled();
+  });
+
+  it('should throw error for PAYMENT_RESA with null proposalId', () => {
+    mockGetSDKPaymentOptions.mockReturnValue({
+      action: Action.PAYMENT_RESA,
+      proposalId: null,
+      customerId: 'customer-456',
+      bookingId: 'booking-123',
+    });
+
+    expect(() => getPaymentSchedule()).toThrow('proposalId is required for PAYMENT_RESA action');
+    expect(mockGetV1).not.toHaveBeenCalled();
   });
 });

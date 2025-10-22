@@ -112,4 +112,60 @@ describe('selectPaymentSchedule', () => {
       { amount: 500, currency: 'EUR', deadline: '2024-01-15' },
     ]);
   });
+
+  it('should handle cart upgrade room without price', () => {
+    const data = {
+      price: undefined,
+      accommodations: [],
+    };
+
+    const result = selectPaymentSchedule(data);
+    expect(result).toEqual([]);
+  });
+
+  it('should handle payment schedule with undefined amount', () => {
+    const data = {
+      currency: 'EUR',
+      total: 500,
+      payment_schedules: [{ amount: undefined, deadline: '2024-01-15' }],
+    };
+
+    const result = selectPaymentSchedule(data);
+    expect(result).toEqual([]);
+  });
+
+  it('should handle 2+ payments with undefined first amount', () => {
+    const data = {
+      currency: 'EUR',
+      total: 1000,
+      payment_schedules: [
+        { amount: undefined, deadline: '2024-01-15' },
+        { amount: 400, deadline: '2024-02-15' },
+      ],
+    };
+
+    const result = selectPaymentSchedule(data);
+    expect(result).toEqual([{ amount: 1000, currency: 'EUR' }]);
+  });
+
+  it('should handle proposal without deadline', () => {
+    const data = {
+      currency: 'EUR',
+      households: [
+        {
+          total: 1500,
+          deposit_repayment_schedule: [
+            { expected_payment_amount: 750, deadline: undefined },
+            { expected_payment_amount: 750, deadline: '2024-02-15' },
+          ],
+        },
+      ],
+    };
+
+    const result = selectPaymentSchedule(data);
+    expect(result).toEqual([
+      { amount: 1500, currency: 'EUR' },
+      { amount: 750, currency: 'EUR', deadline: undefined },
+    ]);
+  });
 });
