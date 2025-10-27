@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3315.2
+ * OpenAPI spec version: 0.3317.4
  */
 import { faker } from '@faker-js/faker';
 
@@ -7207,6 +7207,8 @@ export interface CruiseThematicModel {
  */
 export type CruiseThematicsModel = CruiseThematicModel[];
 
+export type MediaListModel = string[];
+
 /**
  * Station's period status
  */
@@ -7761,8 +7763,6 @@ export interface VirtualVisitModel {
 }
 
 export type VirtualVisitsModel = VirtualVisitModel[];
-
-export type MediaListModel = string[];
 
 export interface TourSpecificityBoardTypeModel {
   /** type of board id */
@@ -8600,173 +8600,95 @@ export interface BookableDatesCalendarV0 {
 }
 
 /**
- * Thematic images
+ * Comfort
  */
-export type ActivitiesThematicImages = string[];
+export type ProductAreaComfortV0AnyOf = {
+  /** comfort grade level */
+  id?: string;
+  /** comfort grade level label */
+  label?: string;
+};
 
 /**
- * activities repartition for this Thematic
+ * Comfort
  */
-export interface ActivitiesThematicActivityCount {
-  on_demand?: number;
-  included?: number;
+export type ProductAreaComfortV0 = ProductAreaComfortV0AnyOf | null;
+
+/**
+ * Area ranking to be used to sort a area list
+ */
+export type ProductAreasRankingModelV0 =
+  (typeof ProductAreasRankingModelV0)[keyof typeof ProductAreasRankingModelV0];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProductAreasRankingModelV0 = {
+  VERY_HIGH: 'VERY_HIGH',
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW',
+  VERY_LOW: 'VERY_LOW',
+} as const;
+
+export interface ProductAreaAssociatedAccessModel {
+  /** ID of access associated at this area */
+  id?: string;
+  /** Label of access associated at this area */
+  label?: string;
 }
 
-export interface ActivitiesThematic {
-  /** id of the Thematic */
-  id?: string;
-  /** title of the Thematic */
-  title?: string;
-  /** subtitle of the Thematic */
-  subtitle?: string;
-  /** description of the Thematic */
-  description?: string;
-  images?: ActivitiesThematicImages;
-  activity_count?: ActivitiesThematicActivityCount;
+/**
+ * Access associated to the area
+ */
+export type ProductAreaAssociatedAccessListModel = ProductAreaAssociatedAccessModel[];
+
+/**
+ * Information of this area
+ */
+export type ProductAreaV0Description = string | null;
+
+/**
+ * Comment at bottom of page for the description
+ */
+export type ProductAreaV0Footnotes = string | null;
+
+/**
+ * Additional services of this area
+ */
+export type ProductAreaV0AdditionalServices = string | null;
+
+/**
+ * Comment at bottom of page for the additional services
+ */
+export type ProductAreaV0AdditionalServicesFootnotes = string | null;
+
+export interface ProductAreaV0 {
+  /** id of the area */
+  id: string;
+  /** label of the area */
+  label: string;
+  comfort?: ProductAreaComfortV0;
+  /** true if the area the main space of this product */
+  main_space?: boolean;
+  images?: ProductImagesModel;
+  /** Information of this area */
+  description?: ProductAreaV0Description;
+  /** Comment at bottom of page for the description */
+  footnotes?: ProductAreaV0Footnotes;
+  /** Additional services of this area */
+  additional_services?: ProductAreaV0AdditionalServices;
+  /** short description of area for this product */
+  short_description?: string;
+  ranking?: ProductAreasRankingModelV0;
+  associated_access?: ProductAreaAssociatedAccessListModel;
+  /** Comment at bottom of page for the additional services */
+  additional_services_footnotes?: ProductAreaV0AdditionalServicesFootnotes;
   _links?: LinksModel;
 }
 
-export type ActivitiesThematics = ActivitiesThematic[];
-
 /**
- * External service type
+ * An area is a part of a product that has a certain level of comfort or that is restricted to certain people
  */
-export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExternalServiceType = {
-  CONCIERGERIE: 'CONCIERGERIE',
-  PARKING: 'PARKING',
-} as const;
-
-/**
- * white label service subtype
- */
-export type ExternalServiceSubtype =
-  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExternalServiceSubtype = {
-  BABYSITTING: 'BABYSITTING',
-  BABY_SKI_LESSON: 'BABY_SKI_LESSON',
-  BIRTHDAY_PARTY: 'BIRTHDAY_PARTY',
-  CELEBRATION: 'CELEBRATION',
-  CHAMPAGNE: 'CHAMPAGNE',
-  HONEYMOON: 'HONEYMOON',
-  PARKING: 'PARKING',
-  PHOTO_PACKAGE: 'PHOTO_PACKAGE',
-  WIFI: 'WIFI',
-  EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
-} as const;
-
-export interface ExternalServiceModel {
-  /** External service code */
-  id?: string;
-  type?: ExternalServiceType;
-  subtype?: ExternalServiceSubtype;
-  /** External service title */
-  title?: string;
-  /** External service description */
-  description?: string;
-  /** white label service image */
-  image?: string;
-}
-
-export type ExternalServicesModel = ExternalServiceModel[];
-
-export interface PspOfResortModel {
-  /**
-   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
-   * @pattern ^([EMS][0-9A-Z]+)$
-   */
-  id: string;
-}
-
-export type AccommodationCategoryModelRanking =
-  (typeof AccommodationCategoryModelRanking)[keyof typeof AccommodationCategoryModelRanking];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AccommodationCategoryModelRanking = {
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-} as const;
-
-/**
- * pictures relative to the category
- */
-export type AccommodationCategoryImagesModel = string[];
-
-/**
- * All those services are in all the accommodation of the category.
- */
-export type AccommodationCategoryServices = string[];
-
-/**
- * All those facilities are in all the accommodation of the category.
- */
-export type AccommodationCategoryFacilities = string[];
-
-/**
- * All those strengths are in all the accommodation of the category.
- */
-export type AccommodationCategoryStrengths = string[];
-
-/**
- * Links
- */
-export type AcommodationCategoryLinksModel = LinkModel[];
-
-/**
- * minimal capacity of an accommodation of the category
- */
-export type AccommodationCategoryModelMinCapacity = number | null;
-
-/**
- * maximum capacity of an accommodation of the category
- */
-export type AccommodationCategoryModelMaxCapacity = number | null;
-
-export interface AccommodationCategoryModel {
-  id: string;
-  /** name of the category (EX: Club) */
-  label: string;
-  ranking: AccommodationCategoryModelRanking;
-  images?: AccommodationCategoryImagesModel;
-  /** category_description of the category */
-  description?: string;
-  /** area of the smallest accommodation of the category */
-  min_area?: string;
-  /** area of the biggest accommodation of the category */
-  max_area?: string;
-  /** minimal capacity of an accommodation of the category */
-  min_capacity?: AccommodationCategoryModelMinCapacity;
-  /** maximum capacity of an accommodation of the category */
-  max_capacity?: AccommodationCategoryModelMaxCapacity;
-  services?: AccommodationCategoryServices;
-  facilities?: AccommodationCategoryFacilities;
-  strengths?: AccommodationCategoryStrengths;
-  _links?: AcommodationCategoryLinksModel;
-}
-
-export type AccommodationCategoriesList = AccommodationCategoryModel[];
-
-export interface DescriptionAccommodationCategoriesList {
-  /** picture relative to the category */
-  image?: string;
-  /** description of the category */
-  description?: string;
-  accommodation_categories?: AccommodationCategoriesList;
-}
-
-export interface AccommodationCodeModel {
-  /** Club Méditerranée accommodation code */
-  clubmed_id: string;
-  /** TOMA accommodation code */
-  TOMA_id: string;
-}
-
-export type AccommodationCodes = AccommodationCodeModel[];
+export type ProductAreasV0 = ProductAreaV0[];
 
 /**
  * Catalog type indicate if the category comes from standard Clubmed catalog or from Resort catalog.
@@ -8989,96 +8911,174 @@ export interface ProductActivityCategory {
 
 export type ProductActivityCategoriesModel = ProductActivityCategory[];
 
-/**
- * Comfort
- */
-export type ProductAreaComfortV0AnyOf = {
-  /** comfort grade level */
-  id?: string;
-  /** comfort grade level label */
-  label?: string;
-};
+export interface AccommodationCodeModel {
+  /** Club Méditerranée accommodation code */
+  clubmed_id: string;
+  /** TOMA accommodation code */
+  TOMA_id: string;
+}
+
+export type AccommodationCodes = AccommodationCodeModel[];
 
 /**
- * Comfort
+ * External service type
  */
-export type ProductAreaComfortV0 = ProductAreaComfortV0AnyOf | null;
-
-/**
- * Area ranking to be used to sort a area list
- */
-export type ProductAreasRankingModelV0 =
-  (typeof ProductAreasRankingModelV0)[keyof typeof ProductAreasRankingModelV0];
+export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProductAreasRankingModelV0 = {
-  VERY_HIGH: 'VERY_HIGH',
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
-  LOW: 'LOW',
-  VERY_LOW: 'VERY_LOW',
+export const ExternalServiceType = {
+  CONCIERGERIE: 'CONCIERGERIE',
+  PARKING: 'PARKING',
 } as const;
 
-export interface ProductAreaAssociatedAccessModel {
-  /** ID of access associated at this area */
+/**
+ * white label service subtype
+ */
+export type ExternalServiceSubtype =
+  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExternalServiceSubtype = {
+  BABYSITTING: 'BABYSITTING',
+  BABY_SKI_LESSON: 'BABY_SKI_LESSON',
+  BIRTHDAY_PARTY: 'BIRTHDAY_PARTY',
+  CELEBRATION: 'CELEBRATION',
+  CHAMPAGNE: 'CHAMPAGNE',
+  HONEYMOON: 'HONEYMOON',
+  PARKING: 'PARKING',
+  PHOTO_PACKAGE: 'PHOTO_PACKAGE',
+  WIFI: 'WIFI',
+  EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
+} as const;
+
+export interface ExternalServiceModel {
+  /** External service code */
   id?: string;
-  /** Label of access associated at this area */
-  label?: string;
+  type?: ExternalServiceType;
+  subtype?: ExternalServiceSubtype;
+  /** External service title */
+  title?: string;
+  /** External service description */
+  description?: string;
+  /** white label service image */
+  image?: string;
+}
+
+export type ExternalServicesModel = ExternalServiceModel[];
+
+export interface PspOfResortModel {
+  /**
+   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
+   * @pattern ^([EMS][0-9A-Z]+)$
+   */
+  id: string;
+}
+
+export type AccommodationCategoryModelRanking =
+  (typeof AccommodationCategoryModelRanking)[keyof typeof AccommodationCategoryModelRanking];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccommodationCategoryModelRanking = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+} as const;
+
+/**
+ * pictures relative to the category
+ */
+export type AccommodationCategoryImagesModel = string[];
+
+/**
+ * All those services are in all the accommodation of the category.
+ */
+export type AccommodationCategoryServices = string[];
+
+/**
+ * All those facilities are in all the accommodation of the category.
+ */
+export type AccommodationCategoryFacilities = string[];
+
+/**
+ * All those strengths are in all the accommodation of the category.
+ */
+export type AccommodationCategoryStrengths = string[];
+
+/**
+ * Links
+ */
+export type AcommodationCategoryLinksModel = LinkModel[];
+
+/**
+ * minimal capacity of an accommodation of the category
+ */
+export type AccommodationCategoryModelMinCapacity = number | null;
+
+/**
+ * maximum capacity of an accommodation of the category
+ */
+export type AccommodationCategoryModelMaxCapacity = number | null;
+
+export interface AccommodationCategoryModel {
+  id: string;
+  /** name of the category (EX: Club) */
+  label: string;
+  ranking: AccommodationCategoryModelRanking;
+  images?: AccommodationCategoryImagesModel;
+  /** category_description of the category */
+  description?: string;
+  /** area of the smallest accommodation of the category */
+  min_area?: string;
+  /** area of the biggest accommodation of the category */
+  max_area?: string;
+  /** minimal capacity of an accommodation of the category */
+  min_capacity?: AccommodationCategoryModelMinCapacity;
+  /** maximum capacity of an accommodation of the category */
+  max_capacity?: AccommodationCategoryModelMaxCapacity;
+  services?: AccommodationCategoryServices;
+  facilities?: AccommodationCategoryFacilities;
+  strengths?: AccommodationCategoryStrengths;
+  _links?: AcommodationCategoryLinksModel;
+}
+
+export type AccommodationCategoriesList = AccommodationCategoryModel[];
+
+export interface DescriptionAccommodationCategoriesList {
+  /** picture relative to the category */
+  image?: string;
+  /** description of the category */
+  description?: string;
+  accommodation_categories?: AccommodationCategoriesList;
 }
 
 /**
- * Access associated to the area
+ * Thematic images
  */
-export type ProductAreaAssociatedAccessListModel = ProductAreaAssociatedAccessModel[];
+export type ActivitiesThematicImages = string[];
 
 /**
- * Information of this area
+ * activities repartition for this Thematic
  */
-export type ProductAreaV0Description = string | null;
+export interface ActivitiesThematicActivityCount {
+  on_demand?: number;
+  included?: number;
+}
 
-/**
- * Comment at bottom of page for the description
- */
-export type ProductAreaV0Footnotes = string | null;
-
-/**
- * Additional services of this area
- */
-export type ProductAreaV0AdditionalServices = string | null;
-
-/**
- * Comment at bottom of page for the additional services
- */
-export type ProductAreaV0AdditionalServicesFootnotes = string | null;
-
-export interface ProductAreaV0 {
-  /** id of the area */
-  id: string;
-  /** label of the area */
-  label: string;
-  comfort?: ProductAreaComfortV0;
-  /** true if the area the main space of this product */
-  main_space?: boolean;
-  images?: ProductImagesModel;
-  /** Information of this area */
-  description?: ProductAreaV0Description;
-  /** Comment at bottom of page for the description */
-  footnotes?: ProductAreaV0Footnotes;
-  /** Additional services of this area */
-  additional_services?: ProductAreaV0AdditionalServices;
-  /** short description of area for this product */
-  short_description?: string;
-  ranking?: ProductAreasRankingModelV0;
-  associated_access?: ProductAreaAssociatedAccessListModel;
-  /** Comment at bottom of page for the additional services */
-  additional_services_footnotes?: ProductAreaV0AdditionalServicesFootnotes;
+export interface ActivitiesThematic {
+  /** id of the Thematic */
+  id?: string;
+  /** title of the Thematic */
+  title?: string;
+  /** subtitle of the Thematic */
+  subtitle?: string;
+  /** description of the Thematic */
+  description?: string;
+  images?: ActivitiesThematicImages;
+  activity_count?: ActivitiesThematicActivityCount;
   _links?: LinksModel;
 }
 
-/**
- * An area is a part of a product that has a certain level of comfort or that is restricted to certain people
- */
-export type ProductAreasV0 = ProductAreaV0[];
+export type ActivitiesThematics = ActivitiesThematic[];
 
 export interface BusinessSocialResponsibilityItemModel {
   /** label of the BSR block */
@@ -11746,16 +11746,6 @@ export interface ProfileModelV1 {
   locale?: string;
 }
 
-export type Keywords = string[];
-
-export interface MediaModelV1 {
-  /** url of the product media Ex: "http://image.jpg" */
-  url?: string;
-  keywords?: Keywords;
-}
-
-export type MediaListModelV1 = MediaModelV1[];
-
 /**
  * type of the facility
  */
@@ -13176,6 +13166,16 @@ export interface ProductTransferV1 {
 }
 
 export type ProductTransferV1List = ProductTransferV1[];
+
+export type Keywords = string[];
+
+export interface MediaModelV1 {
+  /** url of the product media Ex: "http://image.jpg" */
+  url?: string;
+  keywords?: Keywords;
+}
+
+export type MediaListModelV1 = MediaModelV1[];
 
 /**
  * Indicates thematic's children'id
@@ -16407,31 +16407,93 @@ export interface Sellcontract {
  */
 export type Sellcontractlist = Sellcontract[];
 
-export interface CustomerBookingPaymentSchedule {
-  /** amount to pay before the deadline */
-  amount?: number;
-  /** deadline for payment of the amount */
-  deadline?: string;
+export type ExpensesConsumerProfileModelCustomerId = number | null;
+
+export interface ExpensesConsumerProfileModel {
+  /** name */
+  last_name: string;
+  /** surname */
+  first_name: string;
+  customer_id?: ExpensesConsumerProfileModelCustomerId;
 }
 
-export type PaymentSchedules = CustomerBookingPaymentSchedule[];
-
-/**
- * Payment schedule of a booking
- */
-export interface CustomerBookingPaymentScheduleModel {
+export interface ExpensesPurchasePriceModel {
+  /** amount of the purchase without any discount */
+  amount_without_discount: number;
+  /** amount of the discount */
+  discount_amount: number;
+  /** amount payed with gift pass */
+  gift_pass_amount: number;
+  /** payroll amount */
+  amount_with_discount: number;
   /**
    * The iso 3 currency. Ex: CNY,EUR,..
    * @minLength 3
    * @maxLength 3
    */
   currency: string;
-  /** amount already paid */
-  paid?: number;
-  /** total amount to pay */
-  total?: number;
-  payment_schedules?: PaymentSchedules;
 }
+
+/**
+ * date on time of this purchase
+ */
+export type ExpensesConsumerPurchaseModelOperationDate = string | null;
+
+/**
+ * purchase quantity of this item
+ */
+export type ExpensesConsumerPurchaseModelQuantity =
+  (typeof ExpensesConsumerPurchaseModelQuantity)[keyof typeof ExpensesConsumerPurchaseModelQuantity];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExpensesConsumerPurchaseModelQuantity = {
+  NUMBER_0: 0,
+} as const;
+
+export interface ExpensesConsumerPurchaseModel {
+  /** category code of the purchased product */
+  category_code: string;
+  /** category label of the purchased product */
+  category_label: string;
+  /** label of the purchased product */
+  label: string;
+  /** operation type */
+  operation_type: string;
+  /** date on time of this purchase */
+  operation_date: ExpensesConsumerPurchaseModelOperationDate;
+  /** Codified value, looking like a bank card brand, required by accountant department. */
+  payment_method: string;
+  /** purchase quantity of this item */
+  quantity: ExpensesConsumerPurchaseModelQuantity;
+  price?: ExpensesPurchasePriceModel;
+}
+
+export type ExpensesConsumerPurchasesModel = ExpensesConsumerPurchaseModel[];
+
+export interface ExpensesConsumerModel {
+  profile?: ExpensesConsumerProfileModel;
+  purchases: ExpensesConsumerPurchasesModel;
+}
+
+export type ExpensesConsumersModel = ExpensesConsumerModel[];
+
+export type CustomerBookingExpensesItemModelBookingId = number | null;
+
+/**
+ * date on time of the last modified of this information
+ */
+export type CustomerBookingExpensesItemModelLastModifiedDate = string | null;
+
+export interface CustomerBookingExpensesItemModel {
+  booking_id?: CustomerBookingExpensesItemModelBookingId;
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** date on time of the last modified of this information */
+  last_modified_date?: CustomerBookingExpensesItemModelLastModifiedDate;
+  consumers: ExpensesConsumersModel;
+}
+
+export type CustomerBookingExpensesModel = CustomerBookingExpensesItemModel[];
 
 /**
  * Package price per attendee
@@ -16528,93 +16590,31 @@ export interface CustomerBookingCrmHistoryItemModel {
 
 export type CustomerBookingCrmHistoryItemsModel = CustomerBookingCrmHistoryItemModel[];
 
-export type ExpensesConsumerProfileModelCustomerId = number | null;
-
-export interface ExpensesConsumerProfileModel {
-  /** name */
-  last_name: string;
-  /** surname */
-  first_name: string;
-  customer_id?: ExpensesConsumerProfileModelCustomerId;
+export interface CustomerBookingPaymentSchedule {
+  /** amount to pay before the deadline */
+  amount?: number;
+  /** deadline for payment of the amount */
+  deadline?: string;
 }
 
-export interface ExpensesPurchasePriceModel {
-  /** amount of the purchase without any discount */
-  amount_without_discount: number;
-  /** amount of the discount */
-  discount_amount: number;
-  /** amount payed with gift pass */
-  gift_pass_amount: number;
-  /** payroll amount */
-  amount_with_discount: number;
+export type PaymentSchedules = CustomerBookingPaymentSchedule[];
+
+/**
+ * Payment schedule of a booking
+ */
+export interface CustomerBookingPaymentScheduleModel {
   /**
    * The iso 3 currency. Ex: CNY,EUR,..
    * @minLength 3
    * @maxLength 3
    */
   currency: string;
+  /** amount already paid */
+  paid?: number;
+  /** total amount to pay */
+  total?: number;
+  payment_schedules?: PaymentSchedules;
 }
-
-/**
- * date on time of this purchase
- */
-export type ExpensesConsumerPurchaseModelOperationDate = string | null;
-
-/**
- * purchase quantity of this item
- */
-export type ExpensesConsumerPurchaseModelQuantity =
-  (typeof ExpensesConsumerPurchaseModelQuantity)[keyof typeof ExpensesConsumerPurchaseModelQuantity];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExpensesConsumerPurchaseModelQuantity = {
-  NUMBER_0: 0,
-} as const;
-
-export interface ExpensesConsumerPurchaseModel {
-  /** category code of the purchased product */
-  category_code: string;
-  /** category label of the purchased product */
-  category_label: string;
-  /** label of the purchased product */
-  label: string;
-  /** operation type */
-  operation_type: string;
-  /** date on time of this purchase */
-  operation_date: ExpensesConsumerPurchaseModelOperationDate;
-  /** Codified value, looking like a bank card brand, required by accountant department. */
-  payment_method: string;
-  /** purchase quantity of this item */
-  quantity: ExpensesConsumerPurchaseModelQuantity;
-  price?: ExpensesPurchasePriceModel;
-}
-
-export type ExpensesConsumerPurchasesModel = ExpensesConsumerPurchaseModel[];
-
-export interface ExpensesConsumerModel {
-  profile?: ExpensesConsumerProfileModel;
-  purchases: ExpensesConsumerPurchasesModel;
-}
-
-export type ExpensesConsumersModel = ExpensesConsumerModel[];
-
-export type CustomerBookingExpensesItemModelBookingId = number | null;
-
-/**
- * date on time of the last modified of this information
- */
-export type CustomerBookingExpensesItemModelLastModifiedDate = string | null;
-
-export interface CustomerBookingExpensesItemModel {
-  booking_id?: CustomerBookingExpensesItemModelBookingId;
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** date on time of the last modified of this information */
-  last_modified_date?: CustomerBookingExpensesItemModelLastModifiedDate;
-  consumers: ExpensesConsumersModel;
-}
-
-export type CustomerBookingExpensesModel = CustomerBookingExpensesItemModel[];
 
 /**
  * Employee's gender
@@ -20811,6 +20811,7 @@ export const NotifyMemoizeFilterModel = {
   STOPOVERS: 'STOPOVERS',
   THEMATICS: 'THEMATICS',
   TRANSPORT_STATIONS: 'TRANSPORT_STATIONS',
+  PRODUCT_IDS_WITH_SIBLING: 'PRODUCT_IDS_WITH_SIBLING',
 } as const;
 
 export type NotifyMemoizeFiltersModel = NotifyMemoizeFilterModel[];
@@ -22897,16 +22898,6 @@ export interface NotifyPaymentOrderNotificationStatus {
 }
 
 /**
- * Sales network id returned by the /partners/{partner_id}/sales_networks resources. Ex: OPERA_00_P2T
- */
-export type RefreshProposalInputSalesNetworkId = string | null;
-
-export interface RefreshProposalInput {
-  /** Sales network id returned by the /partners/{partner_id}/sales_networks resources. Ex: OPERA_00_P2T */
-  sales_network_id?: RefreshProposalInputSalesNetworkId;
-}
-
-/**
  *  
 Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
  */
@@ -23141,6 +23132,16 @@ export type AvailableTransportsModelV1 = AvailableTransportModelV1[];
 export interface UpdateProposalTransportModelV1 {
   /** id of the chosen transportation provided through, POST /v0/alternative_transports */
   id: string;
+}
+
+/**
+ * Sales network id returned by the /partners/{partner_id}/sales_networks resources. Ex: OPERA_00_P2T
+ */
+export type RefreshProposalInputSalesNetworkId = string | null;
+
+export interface RefreshProposalInput {
+  /** Sales network id returned by the /partners/{partner_id}/sales_networks resources. Ex: OPERA_00_P2T */
+  sales_network_id?: RefreshProposalInputSalesNetworkId;
 }
 
 /**
@@ -25196,6 +25197,37 @@ export const getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules = (
 };
 
 /**
+ * @summary Retrieves the accommodations a cart contains for a given booking.
+ */
+export const getV0CustomersCustomerIdBookingsBookingIdCartAccommodations = (
+  customerId: string,
+  bookingId: string,
+  options?: SecondParameter<typeof fetcher>,
+) => {
+  return fetcher<CartUpgradeRoomModel>(
+    { url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`, method: 'GET' },
+    options,
+  );
+};
+
+/**
+ * @summary Get the payment schedule for a cart that contains a given booking.
+ */
+export const getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule = (
+  customerId: string,
+  bookingId: string,
+  options?: SecondParameter<typeof fetcher>,
+) => {
+  return fetcher<PaymentScheduleModel>(
+    {
+      url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/payment_schedule`,
+      method: 'GET',
+    },
+    options,
+  );
+};
+
+/**
  * @summary Post the status of a payment
  */
 export const postV1Payments = (
@@ -25296,6 +25328,12 @@ export type GetV1ProposalsProposalIdPaymentScheduleResult = NonNullable<
 >;
 export type GetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResult = NonNullable<
   Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules>>
+>;
+export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = NonNullable<
+  Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartAccommodations>>
+>;
+export type GetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResult = NonNullable<
+  Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule>>
 >;
 export type PostV1PaymentsResult = NonNullable<Awaited<ReturnType<typeof postV1Payments>>>;
 export type PostV3BookingsResult = NonNullable<Awaited<ReturnType<typeof postV3Bookings>>>;
@@ -25938,6 +25976,65 @@ export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesRespons
   ...overrideResponse,
 });
 
+export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock = (
+  overrideResponse: Partial<CartUpgradeRoomModel> = {},
+): CartUpgradeRoomModel => ({
+  price: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  accommodations: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      attendees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+        () => ({
+          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          type: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          birthdate: faker.helpers.arrayElement([
+            faker.date.past().toISOString().split('T')[0],
+            undefined,
+          ]),
+        }),
+      ),
+      quantity: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+      occupancy: faker.number.int({ min: undefined, max: undefined }),
+    })),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
+export const getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock = (
+  overrideResponse: Partial<PaymentScheduleModel> = {},
+): PaymentScheduleModel => ({
+  currency: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    null,
+  ]),
+  paid: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([
+      faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+      null,
+    ]),
+    undefined,
+  ]),
+  total: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([
+      faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+      null,
+    ]),
+    undefined,
+  ]),
+  payment_schedules: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      amount: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        undefined,
+      ]),
+      deadline: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getPostV1PaymentsResponseMock = (
   overrideResponse: Partial<PaymentIdModel> = {},
 ): PaymentIdModel => ({
@@ -26135,6 +26232,58 @@ export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHan
   );
 };
 
+export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler = (
+  overrideResponse?:
+    | CartUpgradeRoomModel
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<CartUpgradeRoomModel> | CartUpgradeRoomModel),
+) => {
+  return http.get(
+    '*/v0/customers/:customerId/bookings/:bookingId/cart/accommodations',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+  );
+};
+
+export const getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler = (
+  overrideResponse?:
+    | PaymentScheduleModel
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<PaymentScheduleModel> | PaymentScheduleModel),
+) => {
+  return http.get(
+    '*/v0/customers/:customerId/bookings/:bookingId/cart/payment_schedule',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+  );
+};
+
 export const getPostV1PaymentsMockHandler = (
   overrideResponse?:
     | PaymentIdModel
@@ -26236,6 +26385,8 @@ export const getClubMedAPIMock = () => [
   getGetV0PaymentsPaymentIdStatusMockHandler(),
   getGetV1ProposalsProposalIdPaymentScheduleMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler(),
+  getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler(),
+  getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler(),
   getPostV1PaymentsMockHandler(),
   getPostV3BookingsMockHandler(),
   getPostV0PaymentsPaymentIdRedirectRequestMockHandler(),

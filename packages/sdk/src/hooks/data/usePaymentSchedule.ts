@@ -1,18 +1,15 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { useSDKPaymentContext } from '../utils/useSDKPaymentContext';
 import { getPaymentSchedule } from './usePaymentSchedule/getPaymentSchedule';
 import { selectPaymentSchedule } from './usePaymentSchedule/selectPaymentSchedule';
 
 export const usePaymentSchedule = () => {
-  const { proposalId, bookingId, customerId } = useSDKPaymentContext();
-
-  const { data: paymentSchedule } = useSuspenseQuery({
+  const { data: paymentSchedule, isSuccess } = useSuspenseQuery({
     queryKey: ['paymentSchedule'],
-    queryFn: () => getPaymentSchedule({ bookingId, proposalId, customerId }),
+    queryFn: getPaymentSchedule,
     retry: false,
     select: selectPaymentSchedule,
   });
 
-  return { paymentSchedule };
+  return { paymentSchedule, isSuccess };
 };

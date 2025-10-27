@@ -41,7 +41,7 @@ export const getPaymentRedirectUrl = async (
       customer_id,
       currency: 'EUR',
       action,
-      amount: formData.amount,
+      amount: Number(formData.amount),
       provider_id: formData.provider_id,
     },
     { withAuth },

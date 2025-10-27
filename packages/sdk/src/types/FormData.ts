@@ -2,7 +2,7 @@ import type { BillingDetailsModel } from '../__generated__';
 
 export type SDKFormData = {
   // Payment amount
-  amount: number;
+  amount: string;
 
   // Payment provider selection
   provider_id: string;
