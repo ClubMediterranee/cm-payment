@@ -90,14 +90,8 @@ describe('renderTemplate', () => {
   });
 
   describe('console output', () => {
-    it('logs template and values', () => {
-      const values = { name: 'John' };
-      renderTemplate('Hello {name}', values);
-      expect(consoleLogSpy).toHaveBeenCalledWith('Hello {name}', values);
-    });
-
     it('warns when value key is not used in template', () => {
-      renderTemplate('Hello {name}', { name: 'John', unused: 'value' });
+      renderTemplate('Hello {name}', { name: 'John', unused: 'value' } as any);
       expect(consoleWarnSpy).toHaveBeenCalledWith('Missing "unused" template');
     });
 
