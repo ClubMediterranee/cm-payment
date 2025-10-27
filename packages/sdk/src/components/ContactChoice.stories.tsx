@@ -80,7 +80,7 @@ export const WithInteractions: Story = {
 
     // Vérifier que le composant est rendu
     await waitFor(() => {
-      expect(canvas.getByText('Quel type de canal ?')).toBeInTheDocument();
+      expect(canvas.getByText('What type of channel?')).toBeInTheDocument();
     });
 
     // Vérifier la présence des deux options
@@ -203,7 +203,7 @@ export const AccessibilityTest: Story = {
     const canvas = within(canvasElement);
 
     // Vérifier que le titre est un heading
-    const heading = canvas.getByRole('heading', { name: /Quel type de canal/ });
+    const heading = canvas.getByRole('heading', { name: /What type of channel/ });
     expect(heading).toBeInTheDocument();
 
     // Vérifier que les radios sont accessibles
@@ -259,7 +259,7 @@ export const InteractionBetweenOptions: Story = {
 
     // Vérifier que le champ email est visible
     expect(canvas.getByLabelText('Email')).toBeInTheDocument();
-    expect(canvas.queryByLabelText('Téléphone')).not.toBeInTheDocument();
+    expect(canvas.queryByLabelText('Phone')).not.toBeInTheDocument();
 
     // Saisir une valeur dans le champ email
     const emailField = canvas.getByLabelText('Email');

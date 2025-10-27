@@ -67,7 +67,7 @@ export const WithInteractions: Story = {
     const canvas = within(canvasElement);
 
     // Vérifier que le composant est rendu
-    expect(canvas.getByText('Conditions Générales de Vente')).toBeInTheDocument();
+    expect(canvas.getByText('Terms and Conditions')).toBeInTheDocument();
 
     // Trouver le checkbox
     const checkbox = canvas.getByRole('checkbox');
@@ -75,7 +75,7 @@ export const WithInteractions: Story = {
     await expect(checkbox).not.toBeChecked();
 
     // Vérifier que le texte des CGV est présent
-    await expect(canvas.getByText(/La validation de ma réservation implique/)).toBeInTheDocument();
+    await expect(canvas.getByText(/Validating my reservation implies/)).toBeInTheDocument();
 
     // Cliquer sur le checkbox pour le cocher
     await userEvent.click(checkbox);
@@ -134,7 +134,7 @@ export const AccessibilityTest: Story = {
     const canvas = within(canvasElement);
 
     // Vérifier que le titre est un heading
-    const heading = canvas.getByRole('heading', { name: /Conditions Générales de Vente/ });
+    const heading = canvas.getByRole('heading', { name: /Terms and Conditions/ });
     expect(heading).toBeInTheDocument();
 
     // Vérifier que le checkbox est accessible via le clavier

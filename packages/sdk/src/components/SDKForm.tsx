@@ -33,7 +33,7 @@ export function SDKForm({ children, onError, onLoad }: PropsWithChildren<Props>)
   return (
     <form
       onSubmit={methods.handleSubmit((formData) => mutate(formData))}
-      className="w-full flex flex-col justify-center items-center gap-24"
+      className="w-full flex flex-col justify-center items-center gap-24 text-b4"
     >
       {children}
     </form>

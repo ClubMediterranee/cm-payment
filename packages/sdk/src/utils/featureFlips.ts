@@ -7,5 +7,9 @@ export const hasFlip = (key: string): boolean => {
   const localeOverrideKey = `override.${locale}.${prefixedKey}`;
   const cachedFlips = getCachedFlips();
 
-  return cachedFlips[localeOverrideKey] || cachedFlips[prefixedKey];
+  if (cachedFlips[localeOverrideKey] !== undefined) {
+    return cachedFlips[localeOverrideKey];
+  }
+
+  return cachedFlips[prefixedKey];
 };

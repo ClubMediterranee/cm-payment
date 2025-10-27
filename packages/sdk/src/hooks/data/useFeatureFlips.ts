@@ -1,11 +1,10 @@
-import { CMS_URL } from '@clubmed/payment-sdk/config/cms';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import type { FeatureFlipsResponse } from '../../types/FeatureFlips';
 
-const fetchFeatureFlips = async (): Promise<FeatureFlipsResponse> => {
+export const fetchFeatureFlips = async (): Promise<FeatureFlipsResponse> => {
   const response = await fetch(
-    `${CMS_URL}/v1/contents/feature-flip/locales/fr-FR/releases/live/value`,
+    `${import.meta.env.VITE_CMS_URL}/v1/contents/feature-flip/locales/fr-FR/releases/live/value`,
   );
 
   const json = await response.json();

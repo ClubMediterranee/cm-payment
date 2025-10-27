@@ -4,67 +4,130 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
-import { Action, type PaymentProviderListModel2 } from '../__generated__';
+import {
+  Action,
+  getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock,
+} from '../__generated__';
 import { PaymentProviders } from './PaymentProviders';
 
 initialize();
 
-const featureFlipsHandler = http.get(
-  '*/v1/contents/feature-flip/locales/*/releases/*/value',
-  () => {
+const commonHandlers = [
+  http.get('*/v1/contents/feature-flip/locales/*/releases/*/value', () => {
     return Response.json({
       keys: [
         { key: 'featureFlipping.psp.provider_1', value: true },
         { key: 'featureFlipping.psp.provider_2', value: true },
-        { key: 'featureFlipping.psp.credit_card', value: true },
-        { key: 'featureFlipping.psp.bank_transfer', value: true },
+        { key: 'featureFlipping.psp.provider_3', value: true },
       ],
     });
-  },
-);
-
+  }),
+  http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
+    return Response.json(
+      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+        currency: 'EUR',
+        total: 3079,
+        paid: 0,
+        payment_schedules: [
+          {
+            deadline: '20251006',
+            amount: 3079,
+          },
+        ],
+      }),
+    );
+  }),
+];
 const handlers = {
-  multipleProviders: [
-    featureFlipsHandler,
+  creditCard: [
+    ...commonHandlers,
     http.get('*/v1/payment_providers', () => {
-      const providers: PaymentProviderListModel2 = [
+      return Response.json([
+        {
+          id: 'PROVIDER_1',
+          label: 'Carte bancaire',
+          description: 'Payer par carte bancaire',
+          connection_type: 'REDIRECT',
+          category_payment_method: 'CreditCard',
+          billing_address_form: true,
+          required_delay_before_departure: 0,
+        },
+      ]);
+    }),
+  ],
+  bankTransfer: [
+    ...commonHandlers,
+    http.get('*/v1/payment_providers', () => {
+      return Response.json([
+        {
+          id: 'PROVIDER_2',
+          label: 'Virement bancaire',
+          description: 'Payer par virement bancaire',
+          connection_type: 'OFFLINE',
+          category_payment_method: 'BankTransfer',
+          billing_address_form: false,
+          required_delay_before_departure: 0,
+        },
+      ]);
+    }),
+  ],
+  paypal: [
+    ...commonHandlers,
+    http.get('*/v1/payment_providers', () => {
+      return Response.json([
+        {
+          id: 'PROVIDER_3',
+          label: 'Paypal',
+          description: 'Payer avec Paypal',
+          connection_type: 'REDIRECT',
+          category_payment_method: 'Paypal',
+          billing_address_form: true,
+          required_delay_before_departure: 0,
+        },
+      ]);
+    }),
+  ],
+  multipleProviders: [
+    ...commonHandlers,
+    http.get('*/v1/payment_providers', () => {
+      return Response.json([
         {
           id: 'PROVIDER_1',
           label: 'Moyen de paiement 1',
-          description: 'Payer avec le moyen 1',
+          description: 'Provider 1',
           connection_type: 'REDIRECT',
-          category_payment_method: 'CARD',
+          category_payment_method: '',
           billing_address_form: true,
           required_delay_before_departure: 0,
         },
         {
           id: 'PROVIDER_2',
           label: 'Moyen de paiement 2',
-          description: 'Payer avec le moyen 2',
+          description: 'Provider 2',
           connection_type: 'OFFLINE',
-          category_payment_method: 'TRANSFER',
+          category_payment_method: '',
           billing_address_form: false,
           required_delay_before_departure: 0,
         },
-      ];
-      return Response.json(providers);
-    }),
-  ],
-  singleProvider: [
-    featureFlipsHandler,
-    http.get('*/v1/payment_providers', () => {
-      const providers: PaymentProviderListModel2 = [
         {
-          id: 'CREDIT_CARD',
-          label: 'Carte bancaire',
-          description: 'Payer par carte bancaire',
+          id: 'PROVIDER_3',
+          label: 'Moyen de paiement 3',
+          description: '',
           connection_type: 'REDIRECT',
-          category_payment_method: 'CARD',
+          category_payment_method: '',
           billing_address_form: true,
           required_delay_before_departure: 0,
         },
-      ];
-      return Response.json(providers);
+        {
+          id: 'PROVIDER_4',
+          label: 'Moyen de paiement 4',
+          description: 'Par autre moyen',
+          connection_type: 'REDIRECT',
+          category_payment_method: '',
+          billing_address_form: true,
+          required_delay_before_departure: 0,
+        },
+      ]);
     }),
   ],
 };
@@ -86,10 +149,6 @@ Le composant filtre automatiquement les moyens de paiement selon les feature fli
 
 **Convention** : \`featureFlipping.psp.{provider_id_lowercase}\`
 
-**Exemples** :
-- Provider \`CREDIT_CARD\` → Feature flip \`featureFlipping.psp.credit_card\`
-- Provider \`PAYPAL\` → Feature flip \`featureFlipping.psp.paypal\`
-
 ## API
 
 Endpoint : \`GET /v1/payment_providers\`
@@ -105,27 +164,31 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const MultipleProvidersTest: Story = {
+export const CreditCard: Story = {
   parameters: {
     msw: {
-      handlers: handlers.multipleProviders,
+      handlers: handlers.creditCard,
     },
   },
   play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
-      expect(radios.length).toBeGreaterThan(1);
+      expect(radios.length).toBe(1);
+      expect(canvas.getByText('Payer par carte bancaire')).toBeInTheDocument();
+
+      expect(canvas.getByTestId('icon-CreditCard')).toBeInTheDocument();
     });
   },
   render(args: any) {
     return (
       <MockedProvider
-        key="multiple-providers"
-        action={Action.PAYMENT_RESA}
-        proposalId="test-proposal-123"
-        formDefaultValues={{
-          amount: '1500 EUR',
-          provider_id: '',
+        key="credit-card"
+        action={Action.PAYMENT_OPTION}
+        bookingId="booking-123"
+        customerId="customer-456"
+        defaultValues={{
+          amount: '2500',
         }}
       >
         <PaymentProviders {...args} />
@@ -134,32 +197,68 @@ export const MultipleProvidersTest: Story = {
   },
 };
 
-export const SingleProviderTest: Story = {
+export const BankTransfer: Story = {
   parameters: {
     msw: {
-      handlers: handlers.singleProvider,
+      handlers: handlers.bankTransfer,
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await waitFor(() => expect(canvas.getByText('Payer par carte bancaire')).toBeInTheDocument());
+    await waitFor(() => {
+      const radios = canvasElement.querySelectorAll('input[type="radio"]');
+      expect(radios.length).toBe(1);
+      expect(canvas.getByText('Payer par virement bancaire')).toBeInTheDocument();
+
+      expect(
+        canvas.getByText('Secure 100% payment (direct connection with your bank)'),
+      ).toBeInTheDocument();
+      expect(canvas.getByText('No payment limit for standard bank transfers')).toBeInTheDocument();
+
+      const creditCardIcon = canvasElement.querySelector('svg[data-icon-name="CreditCard"]');
+      expect(creditCardIcon).not.toBeInTheDocument();
+    });
   },
   render(args: any) {
     return (
       <MockedProvider
-        key="single-provider"
+        key="bank-transfer"
         action={Action.PAYMENT_OPTION}
         bookingId="booking-123"
         customerId="customer-456"
-        formDefaultValues={{
-          amount: '2500 EUR',
-          provider_id: '',
-          template_id: '',
-          cgv: false,
-          billing_details: {
-            email: '',
-            mobile_phone: '',
-          },
+        defaultValues={{
+          amount: '1800',
+        }}
+      >
+        <PaymentProviders {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+export const Paypal: Story = {
+  parameters: {
+    msw: {
+      handlers: handlers.paypal,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() => {
+      const radios = canvasElement.querySelectorAll('input[type="radio"]');
+      expect(radios.length).toBe(1);
+      expect(canvas.getByText('Payer avec Paypal')).toBeInTheDocument();
+    });
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="paypal"
+        action={Action.PAYMENT_OPTION}
+        bookingId="booking-123"
+        customerId="customer-456"
+        defaultValues={{
+          amount: '3200',
         }}
       >
         <PaymentProviders {...args} />
@@ -171,80 +270,51 @@ export const SingleProviderTest: Story = {
 export const RadioSelectionTest: Story = {
   parameters: {
     msw: {
-      handlers: [
-        featureFlipsHandler,
-        http.get('*/v1/payment_providers', () => {
-          const providers: PaymentProviderListModel2 = [
-            {
-              id: 'CREDIT_CARD',
-              label: 'Carte bancaire',
-              description: 'Payer par carte bancaire',
-              connection_type: 'REDIRECT',
-              category_payment_method: 'CARD',
-              billing_address_form: true,
-              required_delay_before_departure: 0,
-            },
-            {
-              id: 'BANK_TRANSFER',
-              label: 'Virement bancaire',
-              description: 'Payer par virement',
-              connection_type: 'CLUBMED',
-              category_payment_method: 'TRANSFER',
-              billing_address_form: false,
-              required_delay_before_departure: 0,
-            },
-            {
-              id: 'PAYPAL',
-              label: 'Paypal',
-              description: 'Payer par Paypal',
-              connection_type: 'CLUBMED',
-              category_payment_method: 'TRANSFER',
-              billing_address_form: false,
-              required_delay_before_departure: 0,
-            },
-          ];
-          return Response.json(providers);
-        }),
-      ],
+      handlers: handlers.multipleProviders,
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await waitFor(() => {
-      const radios = canvasElement.querySelectorAll('input[type="radio"]');
-      expect(radios).toHaveLength(2);
+    const radios = await waitFor(() => {
+      const radioElements = canvasElement.querySelectorAll('input[type="radio"]');
+      expect(radioElements).toHaveLength(3);
+      return radioElements;
     });
 
-    expect(canvas.queryByText('Payer par Paypal')).not.toBeInTheDocument();
-
-    const radios = canvasElement.querySelectorAll('input[type="radio"]');
     const firstRadio = radios[0] as HTMLInputElement;
     const secondRadio = radios[1] as HTMLInputElement;
+    const thirdRadio = radios[2] as HTMLInputElement;
 
-    expect(firstRadio).toBeChecked();
+    await waitFor(() => {
+      expect(firstRadio).toBeChecked();
+    });
     expect(secondRadio).not.toBeChecked();
+    expect(thirdRadio).not.toBeChecked();
 
     await userEvent.click(secondRadio);
 
-    expect(secondRadio).toBeChecked();
+    await waitFor(() => {
+      expect(secondRadio).toBeChecked();
+    });
     expect(firstRadio).not.toBeChecked();
+    expect(thirdRadio).not.toBeChecked();
+
+    await userEvent.click(thirdRadio);
+
+    await waitFor(() => {
+      expect(thirdRadio).toBeChecked();
+    });
+    expect(firstRadio).not.toBeChecked();
+    expect(secondRadio).not.toBeChecked();
   },
   render(args: any) {
     return (
       <MockedProvider
         key="radio-selection"
-        action={Action.PAYMENT_RESA}
-        proposalId="test-proposal-789"
-        formDefaultValues={{
-          amount: '3000 EUR',
-          provider_id: '',
-          template_id: '',
-          cgv: false,
-          billing_details: {
-            email: '',
-            mobile_phone: '',
-          },
+        action={Action.PAYMENT_OPTION}
+        bookingId="12345678"
+        customerId="123456789"
+        defaultValues={{
+          amount: '3000',
         }}
       >
         <PaymentProviders {...args} />

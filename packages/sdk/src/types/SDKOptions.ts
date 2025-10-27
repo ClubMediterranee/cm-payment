@@ -1,5 +1,7 @@
 import { Action } from '@clubmed/payment-sdk/__generated__/index.js';
 
+import { SDKContent } from './Content';
+
 export enum OidcIssuerTypes {
   GM = 'GM',
   GO = 'GO',
@@ -59,4 +61,8 @@ export type SDKOptions = {
    * OIDC settings for authentication.
    */
   oidc: OidcSettings;
+  /**
+   * Content for the SDK.
+   */
+  content: SDKContent;
 };

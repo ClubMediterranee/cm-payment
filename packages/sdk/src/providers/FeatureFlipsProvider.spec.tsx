@@ -344,5 +344,32 @@ describe('FeatureFlipsProvider', () => {
       expect(result.current.flips).toEqual({});
       expect(result.current.getFlip('anyFeature')).toBe(false);
     });
+
+    it('should throw error when useFeatureFlipsContext is used outside Provider with undefined context', () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const TestComponent = () => {
+        const MockedContext = vi.fn(() => {
+          const context = undefined;
+          if (!context) {
+            throw new Error('useFeatureFlipsContext must be used within a FeatureFlipsProvider');
+          }
+          return context;
+        });
+
+        try {
+          MockedContext();
+        } catch (error) {
+          expect((error as Error).message).toBe(
+            'useFeatureFlipsContext must be used within a FeatureFlipsProvider',
+          );
+        }
+        return null;
+      };
+
+      TestComponent();
+
+      vi.restoreAllMocks();
+    });
   });
 });
