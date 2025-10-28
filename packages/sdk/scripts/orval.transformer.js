@@ -1,3 +1,5 @@
+import { CategoryPaymentMethod } from './constants.js';
+
 export const ENDPOINTS = [
   'POST /v1/payments/{payment_id}/notify',
   'GET /v1/payment_providers',
@@ -32,6 +34,22 @@ export default function (schema) {
 
   return {
     ...schema,
+    components: {
+      ...schema.components,
+      schemas: {
+        ...schema.components.schemas,
+        PaymentProvider1: {
+          ...schema.components.schemas.PaymentProvider1,
+          properties: {
+            ...schema.components.schemas.PaymentProvider1.properties,
+            category_payment_method: {
+              ...schema.components.schemas.PaymentProvider1.properties.category_payment_method,
+              enum: CategoryPaymentMethod,
+            },
+          },
+        },
+      },
+    },
     paths,
   };
 }

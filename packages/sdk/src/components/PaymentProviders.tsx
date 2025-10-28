@@ -5,6 +5,7 @@ import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import clsx from 'clsx';
 import { useWatch } from 'react-hook-form';
 
+import { PaymentProvider1CategoryPaymentMethod } from '../__generated__';
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
 import { useSDKConfig } from '../providers/SDKConfigProvider';
 import { renderTemplate } from '../utils/renderTemplate';
@@ -12,7 +13,7 @@ import { PaymentProviderRules } from './PaymentProviders/PaymentProviderRules';
 import { FormPanel } from './ui/FormPanel';
 
 const PROVIDER_ICON = {
-  CreditCard: 'CreditCard',
+  [PaymentProvider1CategoryPaymentMethod.CreditCard]: 'CreditCard',
 };
 
 export const PaymentProviders = () => {
@@ -25,9 +26,10 @@ export const PaymentProviders = () => {
   const watchedAmount = useWatch({ name: 'amount' });
 
   const PROVIDER_LABEL = {
-    CreditCard: content.paymentProviders.creditCard.label,
-    BankTransfer: content.paymentProviders.bankTransfer.label,
-    Paypal: content.paymentProviders.paypal.label,
+    [PaymentProvider1CategoryPaymentMethod.CreditCard]: content.paymentProviders.creditCard.label,
+    [PaymentProvider1CategoryPaymentMethod.BankTransfer]:
+      content.paymentProviders.bankTransfer.label,
+    [PaymentProvider1CategoryPaymentMethod.Paypal]: content.paymentProviders.paypal.label,
   };
 
   return (
@@ -46,7 +48,8 @@ export const PaymentProviders = () => {
             >
               <div>
                 <p className="font-bold text-b3">{provider.description || ''}</p>
-                {provider.category_payment_method === 'BankTransfer' && (
+                {provider.category_payment_method ===
+                  PaymentProvider1CategoryPaymentMethod.BankTransfer && (
                   <PaymentProviderRules className="mt-12" />
                 )}
                 <Radio

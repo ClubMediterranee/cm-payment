@@ -270,17 +270,26 @@ export const DepositInteraction: Story = {
     const firstRadio = radios[0] as HTMLInputElement;
     const secondRadio = radios[1] as HTMLInputElement;
 
-    expect(firstRadio).toBeChecked();
+    await waitFor(() => {
+      expect(firstRadio).not.toBeChecked();
+    });
+
     expect(secondRadio).not.toBeChecked();
 
     await userEvent.click(secondRadio);
 
-    expect(secondRadio).toBeChecked();
+    await waitFor(() => {
+      expect(secondRadio).toBeChecked();
+    });
+
     expect(firstRadio).not.toBeChecked();
 
     await userEvent.click(firstRadio);
 
-    expect(firstRadio).toBeChecked();
+    await waitFor(() => {
+      expect(firstRadio).toBeChecked();
+    });
+
     expect(secondRadio).not.toBeChecked();
   },
   render(args: any) {
