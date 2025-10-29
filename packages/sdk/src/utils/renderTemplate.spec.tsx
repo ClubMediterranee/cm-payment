@@ -3,7 +3,6 @@ import { render } from '@testing-library/react';
 import { renderTemplate } from './renderTemplate';
 
 describe('renderTemplate', () => {
-  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
   let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
@@ -11,7 +10,6 @@ describe('renderTemplate', () => {
   });
 
   afterEach(() => {
-    consoleLogSpy.mockRestore();
     consoleWarnSpy.mockRestore();
   });
 
