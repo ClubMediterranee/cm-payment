@@ -8,7 +8,7 @@ import { createContext, useContext } from 'react';
 
 import { Action } from '../__generated__';
 import { defaultContent } from '../content/default';
-import { deepMerge } from '../utils/deepMerge';
+import { mergeFromPattern } from '../utils/mergeFromPattern';
 
 export type SDKConfigProviderProps = PropsWithChildren<
   Omit<SDKOptions, 'action' | 'content'> & {
@@ -41,7 +41,7 @@ export function getSDKPaymentOptions() {
 export const SDKConfigProvider = ({ children, ...props }: SDKConfigProviderProps) => {
   let action = props.action;
 
-  const activeContent = deepMerge(defaultContent, props.content || {});
+  const activeContent = mergeFromPattern(defaultContent, props.content);
 
   // TO DO: remove this and replace with action from booking or proposal status
   if (!action) {

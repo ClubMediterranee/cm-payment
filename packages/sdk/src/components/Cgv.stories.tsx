@@ -111,12 +111,12 @@ export const ValidationTest: Story = {
     // (Dans un vrai formulaire, cela déclencherait la validation)
 
     // Vérifier que le checkbox est requis
-    await expect(checkbox).toHaveAttribute('required');
 
     // Cocher puis décocher rapidement pour tester le changement d'état
     await userEvent.click(checkbox);
     await userEvent.click(checkbox);
 
+    await expect(canvas.getByText('You must accept the T&C')).toBeInTheDocument();
     // Vérifier que le formulaire reste cohérent
     expect(checkbox).not.toBeChecked();
   },
