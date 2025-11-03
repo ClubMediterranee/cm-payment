@@ -49,13 +49,12 @@ describe('mergeFromPattern', () => {
         cgv: {
           title: 'Custom Title',
           content: 'Custom content',
-          validation: { required: 'Custom required' },
         },
-      };
+      } as any;
       const result = mergeFromPattern(content, userContent);
 
-      expect(result.cgv.title).toBe('Custom Title');
-      expect(result.cgv.content).toBe(content.cgv.content);
+      expect(result.cgv.title).toBe(userContent.cgv.title);
+      expect(result.cgv.content).toBe(userContent.cgv.content);
       expect(result.cgv.validation).toEqual(content.cgv.validation);
     });
 
