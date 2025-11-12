@@ -9,17 +9,6 @@ vi.mock('../../../utils/fetcher', () => ({
 }));
 
 describe('selectPaymentSchedule', () => {
-  it('should return empty array when no payment schedules', () => {
-    const data = {
-      currency: 'EUR',
-      total: 500,
-      payment_schedules: [],
-    };
-
-    const result = selectPaymentSchedule(data);
-    expect(result).toEqual([]);
-  });
-
   it('should return first payment when 1 payment schedule', () => {
     const data = {
       currency: 'EUR',
@@ -94,7 +83,6 @@ describe('selectPaymentSchedule', () => {
     expect(result).toEqual([{ amount: 250, currency: 'EUR' }]);
   });
 
-  // Test cas > 2 paiements
   it('should return total + first payment when more than 2 payment schedules', () => {
     const data = getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
       currency: 'EUR',
@@ -113,25 +101,14 @@ describe('selectPaymentSchedule', () => {
     ]);
   });
 
-  it('should handle cart upgrade room without price', () => {
-    const data = {
-      price: undefined,
-      accommodations: [],
-    };
-
-    const result = selectPaymentSchedule(data);
-    expect(result).toEqual([]);
-  });
-
-  it('should handle payment schedule with undefined amount', () => {
+  it('should throw error when no payment schedule', () => {
     const data = {
       currency: 'EUR',
       total: 500,
       payment_schedules: [{ amount: undefined, deadline: '2024-01-15' }],
     };
 
-    const result = selectPaymentSchedule(data);
-    expect(result).toEqual([]);
+    expect(() => selectPaymentSchedule(data)).toThrowError('No payment schedule found');
   });
 
   it('should handle 2+ payments with undefined first amount', () => {

@@ -1,7 +1,4 @@
-import {
-  useOidcContext,
-  useSDKPaymentContext,
-} from '@clubmed/payment-sdk/hooks/utils/useSDKPaymentContext';
+import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -17,17 +14,14 @@ export type StayModel = {
 };
 
 export const useStay = () => {
-  const { proposalId, bookingId, customerId } = useSDKPaymentContext();
-  const { withAuth } = useOidcContext();
+  const { type, id, customerId } = useCapsConfigContext();
 
   // devrait etre déclouplé du hook dans son fichier à part
   // Facilite les TU du hook et du service si tu sépares bien les responsabilités
   // ex: services/getStay.ts
   const getStay = async (): Promise<StayModel> => {
-    if (bookingId) {
-      const data = await getV3CustomersCustomerIdBookingsBookingId(customerId, bookingId, {
-        withAuth: true,
-      });
+    if (type === 'booking') {
+      const data = await getV3CustomersCustomerIdBookingsBookingId(customerId!, id);
 
       const stay = data.stays?.[0];
       return {
@@ -38,7 +32,7 @@ export const useStay = () => {
       };
     }
 
-    const data = await getV2ProposalsProposalId(proposalId!, { withAuth });
+    const data = await getV2ProposalsProposalId(id!);
 
     return {
       productId: data.product_id,
@@ -54,7 +48,7 @@ export const useStay = () => {
     status,
     error,
   } = useQuery({
-    queryKey: ['stay', bookingId || proposalId],
+    queryKey: ['stay', id, type],
     queryFn: getStay,
     retry: false,
   });

@@ -1,24 +1,24 @@
-import { SDKContent } from '../types/Content';
+import { Content } from '../types/Content';
 
-export const defaultContent: SDKContent = {
+export const defaultContent: Content = {
   paymentProviders: {
     validation: {
       required: 'You must choose a payment method',
     },
     creditCard: {
-      label: 'I pay by credit card the amount of {amount} {currency}',
+      label: 'I pay by credit card the amount of {amount}',
     },
     paypal: {
-      label: 'I pay by PayPal the amount of {amount} {currency}',
+      label: 'I pay by PayPal the amount of {amount}',
     },
     bankTransfer: {
-      label: 'I pay by bank transfer the amount of {amount} {currency}',
+      label: 'I pay by bank transfer the amount of {amount}',
       security: 'Secure 100% payment (direct connection with your bank)',
       paymentCap: 'No payment limit for standard bank transfers',
     },
   },
   paymentSchedule: {
-    payAmount: 'I pay the amount of {amount} {currency}',
+    payAmount: 'I pay the amount of {amount}',
     deadline: 'before {deadline}',
   },
   cgv: {

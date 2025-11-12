@@ -1,8 +1,11 @@
-import type { BillingDetailsModel } from '../__generated__';
+import type { Action, BillingDetailsModel } from '../__generated__';
 
-export type SDKFormData = {
+export type CapsFormData = {
   // Payment amount
   amount: string;
+
+  // Payment currency
+  currency: string;
 
   // Payment provider selection
   provider_id: string;
@@ -15,4 +18,7 @@ export type SDKFormData = {
 
   // Billing details for contact form
   billing_details: BillingDetailsModel;
+
+  // Action
+  action: Action;
 };

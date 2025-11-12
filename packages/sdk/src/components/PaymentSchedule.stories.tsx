@@ -16,11 +16,6 @@ import { PaymentSchedule } from './PaymentSchedule';
 initialize();
 
 const handlers = [
-  http.get('*/v1/contents/feature-flip/locales/*/releases/*/value', () => {
-    return Response.json({
-      keys: [],
-    });
-  }),
   http.get('*/v0/customers/*/bookings/booking-total/payment_schedules', () => {
     return Response.json(
       getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
@@ -182,19 +177,30 @@ export const Default: Story = {
     proposalId: {
       control: 'select',
       description: 'ID de proposition (requis pour PAYMENT_RESA)',
-      options: ['proposal-deposit', 'proposal-total'],
+      options: [undefined, 'proposal-deposit', 'proposal-total'],
+      mapping: {
+        None: undefined,
+        'Proposal Deposit': 'proposal-deposit',
+        'Proposal Total': 'proposal-total',
+      },
     },
     bookingId: {
       control: 'select',
       description: 'ID de réservation (requis pour workflows booking)',
-      options: ['booking-deposit', 'booking-paid', 'booking-total'],
+      options: [undefined, 'booking-deposit', 'booking-paid', 'booking-total'],
+      mapping: {
+        None: undefined,
+        'Booking Deposit': 'booking-deposit',
+        'Booking Paid': 'booking-paid',
+        'Booking Total': 'booking-total',
+      },
     },
     customerId: { control: 'text', description: 'ID client (requis pour workflows booking)' },
   },
   args: {
     action: Action.PAYMENT_RESA,
     proposalId: 'proposal-total',
-    bookingId: 'booking-total',
+    bookingId: undefined,
     customerId: '45678901',
   },
   render({ action, proposalId, bookingId, customerId }) {
@@ -218,7 +224,7 @@ export const SinglePayment: Story = {
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios).toHaveLength(1);
-      expect(canvas.getByText(/3079/)).toBeInTheDocument();
+      expect(canvas.getByText(/3\s?079.*€/)).toBeInTheDocument();
     });
   },
   render(args: any) {
@@ -241,8 +247,8 @@ export const DepositChoice: Story = {
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios).toHaveLength(2);
-      expect(canvas.getByText(/2000/)).toBeInTheDocument();
-      expect(canvas.getByText(/500/)).toBeInTheDocument();
+      expect(canvas.getByText(/2\s?000.*€/)).toBeInTheDocument();
+      expect(canvas.getByText(/500.*€/)).toBeInTheDocument();
     });
   },
   render(args: any) {

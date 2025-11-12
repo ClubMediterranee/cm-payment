@@ -1,4 +1,4 @@
-import { OidcIssuerTypes } from '../../types/SDKOptions';
+import { OidcIssuerTypes } from '../../types/CapsSettings';
 import { TOKENS } from '../../types/Tokens';
 import { validateComponents } from './validateComponents';
 

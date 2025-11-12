@@ -86,5 +86,10 @@ export const selectPaymentSchedule = (
     normalizedData = data as PaymentSchedule;
   }
 
-  return buildScheduleFromMergedData(normalizedData);
+  const paymentSchedules = buildScheduleFromMergedData(normalizedData);
+
+  if (!paymentSchedules.length) {
+    throw new Error('No payment schedule found');
+  }
+  return paymentSchedules;
 };

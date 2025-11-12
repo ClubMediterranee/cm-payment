@@ -1,5 +1,5 @@
-import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config.js';
-import type { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
+import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config.js';
+import type { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings.js';
 import React, { isValidElement } from 'react';
 
 function getAvailableComponent(children: React.ReactNode): symbol[] {
@@ -28,7 +28,8 @@ function getAvailableComponent(children: React.ReactNode): symbol[] {
 
 export function validateComponents(issuer: OidcIssuerTypes, children: React.ReactNode) {
   const symbols = getAvailableComponent(children);
-  const requiredSymbols = GLOBAL_SDK_SETTINGS.components[issuer];
+
+  const requiredSymbols = GLOBAL_CAPS_SETTINGS.components[issuer];
 
   if (!requiredSymbols) {
     throw new Error(`No components defined for issuer type: ${issuer}`);

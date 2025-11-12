@@ -13,15 +13,6 @@ import { PaymentProviders } from './PaymentProviders';
 initialize();
 
 const commonHandlers = [
-  http.get('*/v1/contents/feature-flip/locales/*/releases/*/value', () => {
-    return Response.json({
-      keys: [
-        { key: 'featureFlipping.psp.provider_1', value: true },
-        { key: 'featureFlipping.psp.provider_2', value: true },
-        { key: 'featureFlipping.psp.provider_3', value: true },
-      ],
-    });
-  }),
   http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
     return Response.json(
       getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
@@ -38,6 +29,17 @@ const commonHandlers = [
     );
   }),
 ];
+
+const commonMockedProviderProps = {
+  action: Action.PAYMENT_OPTION,
+  bookingId: 'booking-123',
+  customerId: 'customer-456',
+  featureFlips: {
+    'featureFlipping.psp.provider_1': true,
+    'featureFlipping.psp.provider_2': true,
+    'featureFlipping.psp.provider_3': true,
+  },
+};
 const handlers = {
   creditCard: [
     ...commonHandlers,
@@ -184,9 +186,7 @@ export const CreditCard: Story = {
     return (
       <MockedProvider
         key="credit-card"
-        action={Action.PAYMENT_OPTION}
-        bookingId="booking-123"
-        customerId="customer-456"
+        {...commonMockedProviderProps}
         defaultValues={{
           amount: '2500',
         }}
@@ -223,9 +223,7 @@ export const BankTransfer: Story = {
     return (
       <MockedProvider
         key="bank-transfer"
-        action={Action.PAYMENT_OPTION}
-        bookingId="booking-123"
-        customerId="customer-456"
+        {...commonMockedProviderProps}
         defaultValues={{
           amount: '1800',
         }}
@@ -254,9 +252,7 @@ export const Paypal: Story = {
     return (
       <MockedProvider
         key="paypal"
-        action={Action.PAYMENT_OPTION}
-        bookingId="booking-123"
-        customerId="customer-456"
+        {...commonMockedProviderProps}
         defaultValues={{
           amount: '3200',
         }}
@@ -310,7 +306,7 @@ export const RadioSelectionTest: Story = {
     return (
       <MockedProvider
         key="radio-selection"
-        action={Action.PAYMENT_OPTION}
+        {...commonMockedProviderProps}
         bookingId="12345678"
         customerId="123456789"
         defaultValues={{

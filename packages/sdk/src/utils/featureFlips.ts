@@ -1,15 +1,15 @@
-import { getCachedFlips } from '../providers/FeatureFlipsProvider';
-import { getSDKPaymentOptions } from '../providers/SDKConfigProvider';
+import { getFeaturesFlips } from '../hooks/data/useFeatureFlips';
+import { getCapsConfig } from '../providers/CapsConfigProvider';
 
 export const hasFlip = (key: string): boolean => {
   const prefixedKey = key.startsWith('featureFlipping.') ? key : `featureFlipping.${key}`;
-  const { locale } = getSDKPaymentOptions();
+  const { locale } = getCapsConfig();
   const localeOverrideKey = `override.${locale}.${prefixedKey}`;
-  const cachedFlips = getCachedFlips();
+  const featuresFlips = getFeaturesFlips() ?? {};
 
-  if (cachedFlips[localeOverrideKey] !== undefined) {
-    return cachedFlips[localeOverrideKey];
+  if (featuresFlips[localeOverrideKey] !== undefined) {
+    return featuresFlips[localeOverrideKey];
   }
 
-  return cachedFlips[prefixedKey];
+  return featuresFlips[prefixedKey] ?? false;
 };

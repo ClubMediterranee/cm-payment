@@ -6,7 +6,7 @@ import { useFormContext } from './utils/useForm';
 export function usePaymentProvidersForm() {
   const { data: paymentProviders = [] } = usePaymentProviders();
 
-  const { register, setValue, trigger, watch } = useFormContext();
+  const { register, setValue, watch } = useFormContext();
 
   const watchedProviderId = watch('provider_id');
 
@@ -18,5 +18,5 @@ export function usePaymentProvidersForm() {
     }
   }, [paymentProviders, setValue]);
 
-  return { paymentProviders, register, setValue, trigger, watchedProviderId };
+  return { paymentProviders, register, setValue, watchedProviderId };
 }

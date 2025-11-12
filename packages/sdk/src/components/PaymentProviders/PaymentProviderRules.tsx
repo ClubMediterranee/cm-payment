@@ -1,9 +1,9 @@
-import { useSDKConfig } from '@clubmed/payment-sdk/providers/SDKConfigProvider';
+import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
 import { Icon } from '@clubmed/trident-icons';
 import clsx from 'clsx';
 
 export const PaymentProviderRules = ({ className }: { className?: string }) => {
-  const { content } = useSDKConfig();
+  const { content } = useCapsConfigContext();
 
   return (
     <div className={clsx('mb-25 border-sienna p-6 border-1 text-b5', className)}>

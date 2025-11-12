@@ -35,7 +35,6 @@ describe('usePaymentProvidersForm', () => {
 
     mockUsePaymentProviders.mockReturnValue({
       data: mockProviders,
-      isSuccess: true,
     });
 
     const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
@@ -47,7 +46,7 @@ describe('usePaymentProvidersForm', () => {
     expect(result.current.watchedProviderId).toBeDefined();
   });
 
-  it('should set first provider as default when data is successful and providers exist', () => {
+  it('should set first provider as default when providers exist', () => {
     const mockProviders = [
       { id: 'provider-1', description: 'Provider 1' },
       { id: 'provider-2', description: 'Provider 2' },
@@ -55,33 +54,17 @@ describe('usePaymentProvidersForm', () => {
 
     mockUsePaymentProviders.mockReturnValue({
       data: mockProviders,
-      isSuccess: true,
     });
 
     const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
 
-    // Test that the hook returns the providers when successful
     expect(result.current.paymentProviders).toEqual(mockProviders);
     expect(result.current.watchedProviderId).toBeDefined();
   });
 
-  it('should not set default when data is not successful', () => {
-    const mockProviders = [{ id: 'provider-1', description: 'Provider 1' }];
-
-    mockUsePaymentProviders.mockReturnValue({
-      data: mockProviders,
-      isSuccess: false,
-    });
-
-    const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
-
-    expect(result.current.paymentProviders).toEqual(mockProviders);
-  });
-
-  it('should not set default when no providers exist', () => {
+  it('should handle empty providers list', () => {
     mockUsePaymentProviders.mockReturnValue({
       data: [],
-      isSuccess: true,
     });
 
     const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });
@@ -92,7 +75,6 @@ describe('usePaymentProvidersForm', () => {
   it('should handle undefined data', () => {
     mockUsePaymentProviders.mockReturnValue({
       data: undefined,
-      isSuccess: true,
     });
 
     const { result } = renderHook(() => usePaymentProvidersForm(), { wrapper: Wrapper });

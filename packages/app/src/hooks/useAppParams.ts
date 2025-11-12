@@ -1,4 +1,4 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions';
+import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings';
 import { useAuth } from 'react-oidc-context';
 import { useLocation, useRoute } from 'wouter';
 import { z } from 'zod';
@@ -25,6 +25,7 @@ const ParamsSchema = z.object({
     .string()
     .regex(/[a-z]{2}-[A-Z]{2}/)
     .optional(),
+  action: z.string().optional(),
 });
 
 export function useAppParams() {
@@ -33,7 +34,7 @@ export function useAppParams() {
   const [match, result] = useRoute('/:issuer/:type/:id');
   const session = useSessionStorage('payment.params');
 
-  const { customer_id, locale } = useQueryParams<any>();
+  const { customer_id, locale, action } = useQueryParams<any>();
 
   if (auth.isLoading) {
     return {};
@@ -51,6 +52,7 @@ export function useAppParams() {
       proposalId: result?.type === 'proposal' ? result?.id : undefined,
       customerId,
       locale: locale || navigator.language || 'fr-FR',
+      action,
     };
 
     if (values?.bookingId && !auth.isAuthenticated) {

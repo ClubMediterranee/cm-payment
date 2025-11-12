@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3326.1
+ * OpenAPI spec version: 0.3343.0
  */
 import { faker } from '@faker-js/faker';
 
@@ -202,6 +202,8 @@ export const SupportedAdditionalServiceTypes = {
   VISAS: 'VISAS',
   CONCIERGERIE: 'CONCIERGERIE',
   PARKING: 'PARKING',
+  HONEYMOON: 'HONEYMOON',
+  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
 } as const;
 
 export interface OnlinePriceVariationPricePerAttendeeModel {
@@ -524,8 +526,8 @@ export type ApiWebhookAllowedEventModel =
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ApiWebhookAllowedEventModel = {
   '*': '*',
-  intervention_status: 'intervention_status',
   data_updated: 'data_updated',
+  intervention_status: 'intervention_status',
   ping: 'ping',
   room_status: 'room_status',
 } as const;
@@ -2369,6 +2371,7 @@ export const PaymentProvider1CategoryPaymentMethod = {
   BankTransfer: 'BankTransfer',
   DirectDebit: 'DirectDebit',
   BuyNowPayLater: 'BuyNowPayLater',
+  Cheque: 'Cheque',
   Paypal: 'Paypal',
   '': '',
 } as const;
@@ -3478,6 +3481,7 @@ export const VendorTypeModel = {
   SHOP: 'SHOP',
   CORPORATE: 'CORPORATE',
   MICE: 'MICE',
+  CUSTOMER_ACCOUNT: 'CUSTOMER_ACCOUNT',
   OTHER: 'OTHER',
 } as const;
 
@@ -5468,8 +5472,7 @@ export const ProposalServiceTypes = {
   PORT_TAX: 'PORT_TAX',
   CONCIERGERIE: 'CONCIERGERIE',
   PARKING: 'PARKING',
-  HONEY_MOON: 'HONEY_MOON',
-  CLAN: 'CLAN',
+  HONEYMOON: 'HONEYMOON',
   MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
   OTHERS: 'OTHERS',
 } as const;
@@ -7229,101 +7232,559 @@ export type CruiseThematicsModel = CruiseThematicModel[];
 export type MediaListModel = string[];
 
 /**
- * temperature unit code
+ * Station's period status
  */
-export type Unit = (typeof Unit)[keyof typeof Unit];
+export type StationStatuses = (typeof StationStatuses)[keyof typeof StationStatuses];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Unit = {
-  CELSIUS: 'CELSIUS',
-  FAHRENHEIT: 'FAHRENHEIT',
+export const StationStatuses = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
 } as const;
 
 /**
- * day minimum temperature
+ * Stations opening date YYYYMMDD
  */
-export type ProductWeatherForecastTemperatureModelMin = number | null;
+export type PeriodModelStartDate = string | null;
 
 /**
- * day maximum temperature
+ * Stations closing date YYYYMMDD
  */
-export type ProductWeatherForecastTemperatureModelMax = number | null;
+export type PeriodModelEndDate = string | null;
 
-/**
- * morning temperature
- */
-export type ProductWeatherForecastTemperatureModelMorning = number | null;
-
-/**
- * afternoon temperature
- */
-export type ProductWeatherForecastTemperatureModelAfternoon = number | null;
-
-/**
- * evening temperature
- */
-export type ProductWeatherForecastTemperatureModelEvening = number | null;
-
-/**
- * night temperature
- */
-export type ProductWeatherForecastTemperatureModelNight = number | null;
-
-export interface ProductWeatherForecastTemperatureModel {
-  /** day minimum temperature */
-  min: ProductWeatherForecastTemperatureModelMin;
-  /** day maximum temperature */
-  max: ProductWeatherForecastTemperatureModelMax;
-  /** morning temperature */
-  morning: ProductWeatherForecastTemperatureModelMorning;
-  /** afternoon temperature */
-  afternoon: ProductWeatherForecastTemperatureModelAfternoon;
-  /** evening temperature */
-  evening: ProductWeatherForecastTemperatureModelEvening;
-  /** night temperature */
-  night: ProductWeatherForecastTemperatureModelNight;
+export interface PeriodModel {
+  status?: StationStatuses;
+  /** Stations opening date YYYYMMDD */
+  start_date: PeriodModelStartDate;
+  /** Stations closing date YYYYMMDD */
+  end_date: PeriodModelEndDate;
 }
 
+export type PeriodsModel = PeriodModel[];
+
+export interface SectorModel {
+  /** Sector id */
+  id: number;
+  /** Sector name */
+  name: string;
+}
+
+export type SectorsModel = SectorModel[];
+
 /**
- * code for the weather description. Can be used to display a weather icon
+ * Snow quality
  */
-export type Code = (typeof Code)[keyof typeof Code];
+export type SnowQuality = (typeof SnowQuality)[keyof typeof SnowQuality];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Code = {
-  RAIN: 'RAIN',
-  THUNDERSTORM: 'THUNDERSTORM',
-  SNOW: 'SNOW',
-  MIST: 'MIST',
-  CLEAR_SKY: 'CLEAR_SKY',
-  FEW_CLOUDS: 'FEW_CLOUDS',
-  SCATERRED_CLOUDS: 'SCATERRED_CLOUDS',
-  BROKEN_CLOUDS: 'BROKEN_CLOUDS',
-  SHOWER_RAIN: 'SHOWER_RAIN',
+export const SnowQuality = {
+  UNKNOWN: 'UNKNOWN',
+  FRESH: 'FRESH',
+  SWEET: 'SWEET',
+  TOUGH: 'TOUGH',
+  WET: 'WET',
+  SPRING_SNOW: 'SPRING_SNOW',
 } as const;
 
-export interface ProductWeatherForecastWeatherModel {
-  code: Code;
-  /** weather description */
-  description: string;
+export type ValueUnitModelAnyOf = {
+  /** Value */
+  value: number;
+  /** Unit */
+  unit: string;
+};
+
+export type ValueUnitModel = ValueUnitModelAnyOf | null;
+
+/**
+ * Avalanche risk level
+ */
+export type AvalancheRiskLevel = (typeof AvalancheRiskLevel)[keyof typeof AvalancheRiskLevel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AvalancheRiskLevel = {
+  UNKNOWN: 'UNKNOWN',
+  LOW: 'LOW',
+  LIMITED: 'LIMITED',
+  MARKED: 'MARKED',
+  HIGH: 'HIGH',
+  VERY_HIGH: 'VERY_HIGH',
+} as const;
+
+/**
+ * Thunderstorm risk level
+ */
+export type ThunderstormRiskLevel =
+  (typeof ThunderstormRiskLevel)[keyof typeof ThunderstormRiskLevel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ThunderstormRiskLevel = {
+  UNKNOWN: 'UNKNOWN',
+  NO_RISK: 'NO_RISK',
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+} as const;
+
+/**
+ * Morning sky type
+ */
+export type SkyType = (typeof SkyType)[keyof typeof SkyType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SkyType = {
+  SUN: 'SUN',
+  OVERCAST: 'OVERCAST',
+  FAIRLY_CLEAR_SKIES: 'FAIRLY_CLEAR_SKIES',
+  CLOUDY_SHORT_BRIGHT_PERIODS: 'CLOUDY_SHORT_BRIGHT_PERIODS',
+  CLOUDY: 'CLOUDY',
+  VARIABLE_SKY_LOW_RAINFALL: 'VARIABLE_SKY_LOW_RAINFALL',
+  CLOUDY_LOW_RAINFALL: 'CLOUDY_LOW_RAINFALL',
+  CLOUDY_STRONG_RAINFALL: 'CLOUDY_STRONG_RAINFALL',
+  VARIABLE_SKY_LIGHT_SNOWFALL: 'VARIABLE_SKY_LIGHT_SNOWFALL',
+  CLOUDY_LIGHT_SNOWFALL: 'CLOUDY_LIGHT_SNOWFALL',
+  CLOUDY_STRONG_SNOWFALL: 'CLOUDY_STRONG_SNOWFALL',
+  VARIABLE_SKY_ISOLATED_THUNDERSTORMS: 'VARIABLE_SKY_ISOLATED_THUNDERSTORMS',
+  THUNDERSTORMS: 'THUNDERSTORMS',
+  FOG: 'FOG',
+  UNKNOWN: 'UNKNOWN',
+} as const;
+
+export interface Morning {
+  sky_type?: SkyType;
+  temperature?: ValueUnitModel;
 }
 
 /**
- * forecast date
+ * Afternoon sky type
  */
-export type ProductWeatherForecastModelDate = string | null;
+export type ProductWinterSportInformationForeCastModel =
+  (typeof ProductWinterSportInformationForeCastModel)[keyof typeof ProductWinterSportInformationForeCastModel];
 
-export interface ProductWeatherForecastModel {
-  /** forecast id */
-  id: string;
-  /** forecast date */
-  date: ProductWeatherForecastModelDate;
-  unit: Unit;
-  temperature: ProductWeatherForecastTemperatureModel;
-  weather: ProductWeatherForecastWeatherModel;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProductWinterSportInformationForeCastModel = {
+  SUN: 'SUN',
+  OVERCAST: 'OVERCAST',
+  FAIRLY_CLEAR_SKIES: 'FAIRLY_CLEAR_SKIES',
+  CLOUDY_SHORT_BRIGHT_PERIODS: 'CLOUDY_SHORT_BRIGHT_PERIODS',
+  CLOUDY: 'CLOUDY',
+  VARIABLE_SKY_LOW_RAINFALL: 'VARIABLE_SKY_LOW_RAINFALL',
+  CLOUDY_LOW_RAINFALL: 'CLOUDY_LOW_RAINFALL',
+  CLOUDY_STRONG_RAINFALL: 'CLOUDY_STRONG_RAINFALL',
+  VARIABLE_SKY_LIGHT_SNOWFALL: 'VARIABLE_SKY_LIGHT_SNOWFALL',
+  CLOUDY_LIGHT_SNOWFALL: 'CLOUDY_LIGHT_SNOWFALL',
+  CLOUDY_STRONG_SNOWFALL: 'CLOUDY_STRONG_SNOWFALL',
+  VARIABLE_SKY_ISOLATED_THUNDERSTORMS: 'VARIABLE_SKY_ISOLATED_THUNDERSTORMS',
+  THUNDERSTORMS: 'THUNDERSTORMS',
+  FOG: 'FOG',
+  UNKNOWN: 'UNKNOWN',
+} as const;
+
+export interface Afternoon {
+  sky_type?: ProductWinterSportInformationForeCastModel;
+  temperature?: ValueUnitModel;
 }
 
-export type ProductWeatherForecastListModel = ProductWeatherForecastModel[];
+/**
+ * Wind's direction
+ */
+export type Direction =
+  | 'NORTH'
+  | 'WEST'
+  | 'EAST'
+  | 'SOUTH'
+  | 'NORTH_EAST'
+  | 'NORTH_WEST'
+  | 'SOUTH_EAST'
+  | 'SOUTH_WEST'
+  | null;
+
+export interface Wind {
+  strength?: ValueUnitModel;
+  direction?: Direction;
+}
+
+/**
+ * Forecast date YYYYMMDD
+ */
+export type ForecastModelDate = string | null;
+
+export interface ForecastModel {
+  /** Forecast date YYYYMMDD */
+  date: ForecastModelDate;
+  /** Observation area */
+  area: string;
+  snow_quality?: SnowQuality;
+  altitude?: ValueUnitModel;
+  avalanche_risk_level?: AvalancheRiskLevel;
+  thunderstorm_risk_level?: ThunderstormRiskLevel;
+  morning?: Morning;
+  afternoon?: Afternoon;
+  wind?: Wind;
+  snow_accumulation?: ValueUnitModel;
+  visibility?: ValueUnitModel;
+  /** Additional weather report */
+  report: string;
+}
+
+export type ForecastsModel = ForecastModel[];
+
+/**
+ * Track's sector
+ */
+export type SectorIds = number[];
+
+/**
+ * Period's status
+ */
+export type ProductWinterSportInformationStationStatePeriodsStatusModel =
+  (typeof ProductWinterSportInformationStationStatePeriodsStatusModel)[keyof typeof ProductWinterSportInformationStationStatePeriodsStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProductWinterSportInformationStationStatePeriodsStatusModel = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  OPENING_FORECAST: 'OPENING_FORECAST',
+  FLEXIBLE: 'FLEXIBLE',
+  OUT_OF_PERIOD: 'OUT_OF_PERIOD',
+} as const;
+
+export interface Periods {
+  status?: ProductWinterSportInformationStationStatePeriodsStatusModel;
+  /** Period's opening hour */
+  opening_hour: string;
+  /** Period's closing hour */
+  closing_hour: string;
+}
+
+/**
+ * Track's type
+ */
+export type TrackTypes = (typeof TrackTypes)[keyof typeof TrackTypes];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TrackTypes = {
+  UNKNOWN: 'UNKNOWN',
+  ALPINE_SKYITRY_SKIING: 'ALPINE_SKYITRY_SKIING',
+  CROSS_COUNTRY_SKIING: 'CROSS_COUNTRY_SKIING',
+  SNOW_PARK: 'SNOW_PARK',
+  SLEDGE: 'SLEDGE',
+  SNOWSHOEING: 'SNOWSHOEING',
+  PEDESTRIAN: 'PEDESTRIAN',
+  DOWNHILL_BIKE: 'DOWNHILL_BIKE',
+  CROSSCOUNTRY_BIKE: 'CROSSCOUNTRY_BIKE',
+  ENDURO_BIKE: 'ENDURO_BIKE',
+  LINE_SNOWPARK: 'LINE_SNOWPARK',
+  BOARDERCROSS: 'BOARDERCROSS',
+  FUN_ZONE: 'FUN_ZONE',
+  BIKE_PARK: 'BIKE_PARK',
+  SKI_TOURING: 'SKI_TOURING',
+  OFF_PIST: 'OFF_PIST',
+  CASH_DESK: 'CASH_DESK',
+  RESTAURANT: 'RESTAURANT',
+  TOILET: 'TOILET',
+} as const;
+
+/**
+ * Track's level
+ */
+export type Level = (typeof Level)[keyof typeof Level];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Level = {
+  UNKNOWN: 'UNKNOWN',
+  GREEN: 'GREEN',
+  BLUE: 'BLUE',
+  RED: 'RED',
+  BLACK: 'BLACK',
+  YELLOW: 'YELLOW',
+  GREEN_CIRCLE: 'GREEN_CIRCLE',
+  DOUBLE_GREEN_CIRCLE: 'DOUBLE_GREEN_CIRCLE',
+  GREEN_CIRCLE_IN_BLACK_DIAMOND: 'GREEN_CIRCLE_IN_BLACK_DIAMOND',
+  BLACK_DIAMOND_IN_GREEN_CIRCLE: 'BLACK_DIAMOND_IN_GREEN_CIRCLE',
+  GREEN_CIRCLE_IN_BLACK_SQUARE: 'GREEN_CIRCLE_IN_BLACK_SQUARE',
+  BLUE_SQUARE: 'BLUE_SQUARE',
+  DOUBLE_BLUE_SQUARE: 'DOUBLE_BLUE_SQUARE',
+  BLACK_DIAMOND_IN_BLUE_SQUARE: 'BLACK_DIAMOND_IN_BLUE_SQUARE',
+  BLUE_SQUARE_IN_BLACK_DIAMOND: 'BLUE_SQUARE_IN_BLACK_DIAMOND',
+  BLACK_DIAMOND: 'BLACK_DIAMOND',
+  DOUBLE_BLACK_DIAMOND: 'DOUBLE_BLACK_DIAMOND',
+  DOUBLE_BLACK_DIAMOND_EXTREM: 'DOUBLE_BLACK_DIAMOND_EXTREM',
+  TERRAIN_PARK: 'TERRAIN_PARK',
+  ADVENTURE_ZONE: 'ADVENTURE_ZONE',
+  RED_SQUARE: 'RED_SQUARE',
+} as const;
+
+/**
+ * Track's snow quality
+ */
+export type TrackSnowQualityTypes =
+  (typeof TrackSnowQualityTypes)[keyof typeof TrackSnowQualityTypes];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TrackSnowQualityTypes = {
+  UNKNOWN: 'UNKNOWN',
+  SWEET: 'SWEET',
+  TOUGH: 'TOUGH',
+  LOW_SNOW_COVER: 'LOW_SNOW_COVER',
+  CRUSTED: 'CRUSTED',
+  BLOWN: 'BLOWN',
+  SPRING_SNOW: 'SPRING_SNOW',
+  WET: 'WET',
+  DEGRADED: 'DEGRADED',
+  BUMPY: 'BUMPY',
+  POWDER: 'POWDER',
+  ARTIFICIAL: 'ARTIFICIAL',
+} as const;
+
+export interface TrackModel {
+  sector_ids?: SectorIds;
+  /** Track's name */
+  name: string;
+  periods?: Periods;
+  /** Track's message */
+  message: string;
+  type?: TrackTypes;
+  level?: Level;
+  snow_quality?: TrackSnowQualityTypes;
+  distance?: ValueUnitModel;
+  top_altitude?: ValueUnitModel;
+  bottom_altitude?: ValueUnitModel;
+  drop?: ValueUnitModel;
+}
+
+export type TracksModel = TrackModel[];
+
+/**
+ * Ski lift's type
+ */
+export type SkiLiftTypes = (typeof SkiLiftTypes)[keyof typeof SkiLiftTypes];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SkiLiftTypes = {
+  UNKNOWN: 'UNKNOWN',
+  ELEVATOR: 'ELEVATOR',
+  FUNICULAR: 'FUNICULAR',
+  FUNITEL: 'FUNITEL',
+  TREADMILL: 'TREADMILL',
+  CAGE_LIFT: 'CAGE_LIFT',
+  GONDOLA_LIFT: 'GONDOLA_LIFT',
+  TELECORD: 'TELECORD',
+  COMBINED_LIFT: 'COMBINED_LIFT',
+  CABLE_CAR: 'CABLE_CAR',
+  TRAIN: 'TRAIN',
+  CHAIRLIFT: 'CHAIRLIFT',
+  DETACHABLE_CHAIRLIFT: 'DETACHABLE_CHAIRLIFT',
+  BUBLE_DETACHABLE_CHAIRLIFT: 'BUBLE_DETACHABLE_CHAIRLIFT',
+  SKI_LIFT: 'SKI_LIFT',
+} as const;
+
+/**
+ * Value can be a string or a number
+ */
+export type SkiLiftCapacityAnyOfValue = string | number;
+
+export type SkiLiftCapacityAnyOf = {
+  /** Value can be a string or a number */
+  value: SkiLiftCapacityAnyOfValue;
+  /** Unit */
+  unit: string;
+};
+
+export type SkiLiftCapacity = SkiLiftCapacityAnyOf | null;
+
+export interface SkiLiftModel {
+  sector_ids?: SectorIds;
+  /** Track's name */
+  name: string;
+  periods?: Periods;
+  /** Track's message */
+  message: string;
+  type?: SkiLiftTypes;
+  distance?: ValueUnitModel;
+  top_altitude?: ValueUnitModel;
+  bottom_altitude?: ValueUnitModel;
+  drop?: ValueUnitModel;
+  estimated_standby_time?: ValueUnitModel;
+  capacity?: SkiLiftCapacity;
+}
+
+export type SkiLiftsModel = SkiLiftModel[];
+
+export interface ConnectionModel {
+  sector_ids?: SectorIds;
+  /** Track's name */
+  name: string;
+  periods?: Periods;
+  /** Track's message */
+  message: string;
+}
+
+export type ConnectionsModel = ConnectionModel[];
+
+/**
+ * Type
+ */
+export type WebcamTypes = (typeof WebcamTypes)[keyof typeof WebcamTypes];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WebcamTypes = {
+  IMAGE: 'IMAGE',
+  HTML5: 'HTML5',
+  LIVECAM_PREVIEW: 'LIVECAM_PREVIEW',
+  STREAMING: 'STREAMING',
+  VIDEO: 'VIDEO',
+} as const;
+
+/**
+ * Format
+ */
+export type Format = (typeof Format)[keyof typeof Format];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Format = {
+  UNKNOWN: 'UNKNOWN',
+  '360_DEG': '360_DEG',
+  '180_DEG': '180_DEG',
+  '4_3': '4_3',
+  '16_9': '16_9',
+} as const;
+
+/**
+ * Resolution
+ */
+export type Resolution = (typeof Resolution)[keyof typeof Resolution];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Resolution = {
+  UNKNOWN: 'UNKNOWN',
+  SD: 'SD',
+  MD: 'MD',
+  HD: 'HD',
+} as const;
+
+export interface WebcamUrlModel {
+  type?: WebcamTypes;
+  format?: Format;
+  resolution?: Resolution;
+  /** Url */
+  url: string;
+}
+
+export type WebcamUrlsModel = WebcamUrlModel[];
+
+export interface WebcamModel {
+  /** Webcam name */
+  name: string;
+  altitude?: ValueUnitModel;
+  urls: WebcamUrlsModel;
+}
+
+export type WebcamsModel = WebcamModel[];
+
+/**
+ * Lumiplan last update timestamp
+ */
+export type StationInformationModelUpdatedAt = string | null;
+
+export interface StationInformationModel {
+  /** Station's name */
+  name: string;
+  /** Domain map url */
+  map_url: string;
+  /** Lumiplan last update timestamp */
+  updated_at: StationInformationModelUpdatedAt;
+  /** Station's news */
+  breaking_news: string;
+  /** Weekly report */
+  weekly_report: string;
+  periods?: PeriodsModel;
+  sectors?: SectorsModel;
+  forecasts?: ForecastsModel;
+  tracks?: TracksModel;
+  ski_lifts?: SkiLiftsModel;
+  connections?: ConnectionsModel;
+  webcams?: WebcamsModel;
+}
+
+export type ProductWinterSportsInformationModel = StationInformationModel[];
+
+/**
+ * latitude of the preview scene
+ * @minimum -90
+ * @maximum 90
+ */
+export type PreviewParametersAnyOfLatitude = number | null;
+
+/**
+ * longitude of the preview scene
+ * @minimum -180
+ * @maximum 180
+ */
+export type PreviewParametersAnyOfLongitude = number | null;
+
+/**
+ * compass heading of the camera at the preview scene
+ * @minimum 0
+ * @maximum 360
+ */
+export type PreviewParametersAnyOfHeading = number | null;
+
+/**
+ * up or down angle of the camera at the preview scene
+ * @minimum -180
+ * @maximum 180
+ */
+export type PreviewParametersAnyOfPitch = number | null;
+
+/**
+ * horizontal field of view of the image at the preview scene
+ * @minimum 0
+ * @maximum 120
+ */
+export type PreviewParametersAnyOfFov = number | null;
+
+export type PreviewParametersAnyOf = {
+  /**
+   * latitude of the preview scene
+   * @minimum -90
+   * @maximum 90
+   */
+  latitude?: PreviewParametersAnyOfLatitude;
+  /**
+   * longitude of the preview scene
+   * @minimum -180
+   * @maximum 180
+   */
+  longitude?: PreviewParametersAnyOfLongitude;
+  /**
+   * compass heading of the camera at the preview scene
+   * @minimum 0
+   * @maximum 360
+   */
+  heading?: PreviewParametersAnyOfHeading;
+  /**
+   * up or down angle of the camera at the preview scene
+   * @minimum -180
+   * @maximum 180
+   */
+  pitch?: PreviewParametersAnyOfPitch;
+  /**
+   * horizontal field of view of the image at the preview scene
+   * @minimum 0
+   * @maximum 120
+   */
+  fov?: PreviewParametersAnyOfFov;
+};
+
+export type PreviewParameters = PreviewParametersAnyOf | null;
+
+export interface VirtualVisitModel {
+  /** google street view url */
+  url: string;
+  preview_parameters?: PreviewParameters;
+}
+
+export type VirtualVisitsModel = VirtualVisitModel[];
 
 export interface TourSpecificityBoardTypeModel {
   /** type of board id */
@@ -7419,6 +7880,11 @@ export type HotelsList = HotelModel[];
 export type AdditionalActivitiesList = string[];
 
 /**
+ * stopover images urls
+ */
+export type StopoverImages = string[];
+
+/**
  * stopover description
  */
 export type StopoverModelDescription = string | null;
@@ -7474,6 +7940,7 @@ export interface StopoverModel {
   nautical_base_availability: StopoverModelNauticalBaseAvailability;
   /** true if the water skiing is available during this stopover */
   water_skiing_availability: StopoverModelWaterSkiingAvailability;
+  images?: StopoverImages;
 }
 
 /**
@@ -8222,6 +8689,7 @@ export const ExternalServiceSubtype = {
   PHOTO_PACKAGE: 'PHOTO_PACKAGE',
   WIFI: 'WIFI',
   EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
+  RESORT_EARLY_ACCESS: 'RESORT_EARLY_ACCESS',
 } as const;
 
 export interface ExternalServiceModel {
@@ -9552,559 +10020,101 @@ export interface TripAdvisorExtendedModel {
 }
 
 /**
- * Station's period status
+ * temperature unit code
  */
-export type StationStatuses = (typeof StationStatuses)[keyof typeof StationStatuses];
+export type Unit = (typeof Unit)[keyof typeof Unit];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const StationStatuses = {
-  OPEN: 'OPEN',
-  CLOSED: 'CLOSED',
+export const Unit = {
+  CELSIUS: 'CELSIUS',
+  FAHRENHEIT: 'FAHRENHEIT',
 } as const;
 
 /**
- * Stations opening date YYYYMMDD
+ * day minimum temperature
  */
-export type PeriodModelStartDate = string | null;
+export type ProductWeatherForecastTemperatureModelMin = number | null;
 
 /**
- * Stations closing date YYYYMMDD
+ * day maximum temperature
  */
-export type PeriodModelEndDate = string | null;
-
-export interface PeriodModel {
-  status?: StationStatuses;
-  /** Stations opening date YYYYMMDD */
-  start_date: PeriodModelStartDate;
-  /** Stations closing date YYYYMMDD */
-  end_date: PeriodModelEndDate;
-}
-
-export type PeriodsModel = PeriodModel[];
-
-export interface SectorModel {
-  /** Sector id */
-  id: number;
-  /** Sector name */
-  name: string;
-}
-
-export type SectorsModel = SectorModel[];
+export type ProductWeatherForecastTemperatureModelMax = number | null;
 
 /**
- * Snow quality
+ * morning temperature
  */
-export type SnowQuality = (typeof SnowQuality)[keyof typeof SnowQuality];
+export type ProductWeatherForecastTemperatureModelMorning = number | null;
+
+/**
+ * afternoon temperature
+ */
+export type ProductWeatherForecastTemperatureModelAfternoon = number | null;
+
+/**
+ * evening temperature
+ */
+export type ProductWeatherForecastTemperatureModelEvening = number | null;
+
+/**
+ * night temperature
+ */
+export type ProductWeatherForecastTemperatureModelNight = number | null;
+
+export interface ProductWeatherForecastTemperatureModel {
+  /** day minimum temperature */
+  min: ProductWeatherForecastTemperatureModelMin;
+  /** day maximum temperature */
+  max: ProductWeatherForecastTemperatureModelMax;
+  /** morning temperature */
+  morning: ProductWeatherForecastTemperatureModelMorning;
+  /** afternoon temperature */
+  afternoon: ProductWeatherForecastTemperatureModelAfternoon;
+  /** evening temperature */
+  evening: ProductWeatherForecastTemperatureModelEvening;
+  /** night temperature */
+  night: ProductWeatherForecastTemperatureModelNight;
+}
+
+/**
+ * code for the weather description. Can be used to display a weather icon
+ */
+export type Code = (typeof Code)[keyof typeof Code];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const SnowQuality = {
-  UNKNOWN: 'UNKNOWN',
-  FRESH: 'FRESH',
-  SWEET: 'SWEET',
-  TOUGH: 'TOUGH',
-  WET: 'WET',
-  SPRING_SNOW: 'SPRING_SNOW',
+export const Code = {
+  RAIN: 'RAIN',
+  THUNDERSTORM: 'THUNDERSTORM',
+  SNOW: 'SNOW',
+  MIST: 'MIST',
+  CLEAR_SKY: 'CLEAR_SKY',
+  FEW_CLOUDS: 'FEW_CLOUDS',
+  SCATERRED_CLOUDS: 'SCATERRED_CLOUDS',
+  BROKEN_CLOUDS: 'BROKEN_CLOUDS',
+  SHOWER_RAIN: 'SHOWER_RAIN',
 } as const;
 
-export type ValueUnitModelAnyOf = {
-  /** Value */
-  value: number;
-  /** Unit */
-  unit: string;
-};
-
-export type ValueUnitModel = ValueUnitModelAnyOf | null;
-
-/**
- * Avalanche risk level
- */
-export type AvalancheRiskLevel = (typeof AvalancheRiskLevel)[keyof typeof AvalancheRiskLevel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AvalancheRiskLevel = {
-  UNKNOWN: 'UNKNOWN',
-  LOW: 'LOW',
-  LIMITED: 'LIMITED',
-  MARKED: 'MARKED',
-  HIGH: 'HIGH',
-  VERY_HIGH: 'VERY_HIGH',
-} as const;
-
-/**
- * Thunderstorm risk level
- */
-export type ThunderstormRiskLevel =
-  (typeof ThunderstormRiskLevel)[keyof typeof ThunderstormRiskLevel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ThunderstormRiskLevel = {
-  UNKNOWN: 'UNKNOWN',
-  NO_RISK: 'NO_RISK',
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-} as const;
-
-/**
- * Morning sky type
- */
-export type SkyType = (typeof SkyType)[keyof typeof SkyType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const SkyType = {
-  SUN: 'SUN',
-  OVERCAST: 'OVERCAST',
-  FAIRLY_CLEAR_SKIES: 'FAIRLY_CLEAR_SKIES',
-  CLOUDY_SHORT_BRIGHT_PERIODS: 'CLOUDY_SHORT_BRIGHT_PERIODS',
-  CLOUDY: 'CLOUDY',
-  VARIABLE_SKY_LOW_RAINFALL: 'VARIABLE_SKY_LOW_RAINFALL',
-  CLOUDY_LOW_RAINFALL: 'CLOUDY_LOW_RAINFALL',
-  CLOUDY_STRONG_RAINFALL: 'CLOUDY_STRONG_RAINFALL',
-  VARIABLE_SKY_LIGHT_SNOWFALL: 'VARIABLE_SKY_LIGHT_SNOWFALL',
-  CLOUDY_LIGHT_SNOWFALL: 'CLOUDY_LIGHT_SNOWFALL',
-  CLOUDY_STRONG_SNOWFALL: 'CLOUDY_STRONG_SNOWFALL',
-  VARIABLE_SKY_ISOLATED_THUNDERSTORMS: 'VARIABLE_SKY_ISOLATED_THUNDERSTORMS',
-  THUNDERSTORMS: 'THUNDERSTORMS',
-  FOG: 'FOG',
-  UNKNOWN: 'UNKNOWN',
-} as const;
-
-export interface Morning {
-  sky_type?: SkyType;
-  temperature?: ValueUnitModel;
+export interface ProductWeatherForecastWeatherModel {
+  code: Code;
+  /** weather description */
+  description: string;
 }
 
 /**
- * Afternoon sky type
+ * forecast date
  */
-export type ProductWinterSportInformationForeCastModel =
-  (typeof ProductWinterSportInformationForeCastModel)[keyof typeof ProductWinterSportInformationForeCastModel];
+export type ProductWeatherForecastModelDate = string | null;
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProductWinterSportInformationForeCastModel = {
-  SUN: 'SUN',
-  OVERCAST: 'OVERCAST',
-  FAIRLY_CLEAR_SKIES: 'FAIRLY_CLEAR_SKIES',
-  CLOUDY_SHORT_BRIGHT_PERIODS: 'CLOUDY_SHORT_BRIGHT_PERIODS',
-  CLOUDY: 'CLOUDY',
-  VARIABLE_SKY_LOW_RAINFALL: 'VARIABLE_SKY_LOW_RAINFALL',
-  CLOUDY_LOW_RAINFALL: 'CLOUDY_LOW_RAINFALL',
-  CLOUDY_STRONG_RAINFALL: 'CLOUDY_STRONG_RAINFALL',
-  VARIABLE_SKY_LIGHT_SNOWFALL: 'VARIABLE_SKY_LIGHT_SNOWFALL',
-  CLOUDY_LIGHT_SNOWFALL: 'CLOUDY_LIGHT_SNOWFALL',
-  CLOUDY_STRONG_SNOWFALL: 'CLOUDY_STRONG_SNOWFALL',
-  VARIABLE_SKY_ISOLATED_THUNDERSTORMS: 'VARIABLE_SKY_ISOLATED_THUNDERSTORMS',
-  THUNDERSTORMS: 'THUNDERSTORMS',
-  FOG: 'FOG',
-  UNKNOWN: 'UNKNOWN',
-} as const;
-
-export interface Afternoon {
-  sky_type?: ProductWinterSportInformationForeCastModel;
-  temperature?: ValueUnitModel;
+export interface ProductWeatherForecastModel {
+  /** forecast id */
+  id: string;
+  /** forecast date */
+  date: ProductWeatherForecastModelDate;
+  unit: Unit;
+  temperature: ProductWeatherForecastTemperatureModel;
+  weather: ProductWeatherForecastWeatherModel;
 }
 
-/**
- * Wind's direction
- */
-export type Direction =
-  | 'NORTH'
-  | 'WEST'
-  | 'EAST'
-  | 'SOUTH'
-  | 'NORTH_EAST'
-  | 'NORTH_WEST'
-  | 'SOUTH_EAST'
-  | 'SOUTH_WEST'
-  | null;
-
-export interface Wind {
-  strength?: ValueUnitModel;
-  direction?: Direction;
-}
-
-/**
- * Forecast date YYYYMMDD
- */
-export type ForecastModelDate = string | null;
-
-export interface ForecastModel {
-  /** Forecast date YYYYMMDD */
-  date: ForecastModelDate;
-  /** Observation area */
-  area: string;
-  snow_quality?: SnowQuality;
-  altitude?: ValueUnitModel;
-  avalanche_risk_level?: AvalancheRiskLevel;
-  thunderstorm_risk_level?: ThunderstormRiskLevel;
-  morning?: Morning;
-  afternoon?: Afternoon;
-  wind?: Wind;
-  snow_accumulation?: ValueUnitModel;
-  visibility?: ValueUnitModel;
-  /** Additional weather report */
-  report: string;
-}
-
-export type ForecastsModel = ForecastModel[];
-
-/**
- * Track's sector
- */
-export type SectorIds = number[];
-
-/**
- * Period's status
- */
-export type ProductWinterSportInformationStationStatePeriodsStatusModel =
-  (typeof ProductWinterSportInformationStationStatePeriodsStatusModel)[keyof typeof ProductWinterSportInformationStationStatePeriodsStatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProductWinterSportInformationStationStatePeriodsStatusModel = {
-  OPEN: 'OPEN',
-  CLOSED: 'CLOSED',
-  OPENING_FORECAST: 'OPENING_FORECAST',
-  FLEXIBLE: 'FLEXIBLE',
-  OUT_OF_PERIOD: 'OUT_OF_PERIOD',
-} as const;
-
-export interface Periods {
-  status?: ProductWinterSportInformationStationStatePeriodsStatusModel;
-  /** Period's opening hour */
-  opening_hour: string;
-  /** Period's closing hour */
-  closing_hour: string;
-}
-
-/**
- * Track's type
- */
-export type TrackTypes = (typeof TrackTypes)[keyof typeof TrackTypes];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TrackTypes = {
-  UNKNOWN: 'UNKNOWN',
-  ALPINE_SKYITRY_SKIING: 'ALPINE_SKYITRY_SKIING',
-  CROSS_COUNTRY_SKIING: 'CROSS_COUNTRY_SKIING',
-  SNOW_PARK: 'SNOW_PARK',
-  SLEDGE: 'SLEDGE',
-  SNOWSHOEING: 'SNOWSHOEING',
-  PEDESTRIAN: 'PEDESTRIAN',
-  DOWNHILL_BIKE: 'DOWNHILL_BIKE',
-  CROSSCOUNTRY_BIKE: 'CROSSCOUNTRY_BIKE',
-  ENDURO_BIKE: 'ENDURO_BIKE',
-  LINE_SNOWPARK: 'LINE_SNOWPARK',
-  BOARDERCROSS: 'BOARDERCROSS',
-  FUN_ZONE: 'FUN_ZONE',
-  BIKE_PARK: 'BIKE_PARK',
-  SKI_TOURING: 'SKI_TOURING',
-  OFF_PIST: 'OFF_PIST',
-  CASH_DESK: 'CASH_DESK',
-  RESTAURANT: 'RESTAURANT',
-  TOILET: 'TOILET',
-} as const;
-
-/**
- * Track's level
- */
-export type Level = (typeof Level)[keyof typeof Level];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Level = {
-  UNKNOWN: 'UNKNOWN',
-  GREEN: 'GREEN',
-  BLUE: 'BLUE',
-  RED: 'RED',
-  BLACK: 'BLACK',
-  YELLOW: 'YELLOW',
-  GREEN_CIRCLE: 'GREEN_CIRCLE',
-  DOUBLE_GREEN_CIRCLE: 'DOUBLE_GREEN_CIRCLE',
-  GREEN_CIRCLE_IN_BLACK_DIAMOND: 'GREEN_CIRCLE_IN_BLACK_DIAMOND',
-  BLACK_DIAMOND_IN_GREEN_CIRCLE: 'BLACK_DIAMOND_IN_GREEN_CIRCLE',
-  GREEN_CIRCLE_IN_BLACK_SQUARE: 'GREEN_CIRCLE_IN_BLACK_SQUARE',
-  BLUE_SQUARE: 'BLUE_SQUARE',
-  DOUBLE_BLUE_SQUARE: 'DOUBLE_BLUE_SQUARE',
-  BLACK_DIAMOND_IN_BLUE_SQUARE: 'BLACK_DIAMOND_IN_BLUE_SQUARE',
-  BLUE_SQUARE_IN_BLACK_DIAMOND: 'BLUE_SQUARE_IN_BLACK_DIAMOND',
-  BLACK_DIAMOND: 'BLACK_DIAMOND',
-  DOUBLE_BLACK_DIAMOND: 'DOUBLE_BLACK_DIAMOND',
-  DOUBLE_BLACK_DIAMOND_EXTREM: 'DOUBLE_BLACK_DIAMOND_EXTREM',
-  TERRAIN_PARK: 'TERRAIN_PARK',
-  ADVENTURE_ZONE: 'ADVENTURE_ZONE',
-  RED_SQUARE: 'RED_SQUARE',
-} as const;
-
-/**
- * Track's snow quality
- */
-export type TrackSnowQualityTypes =
-  (typeof TrackSnowQualityTypes)[keyof typeof TrackSnowQualityTypes];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TrackSnowQualityTypes = {
-  UNKNOWN: 'UNKNOWN',
-  SWEET: 'SWEET',
-  TOUGH: 'TOUGH',
-  LOW_SNOW_COVER: 'LOW_SNOW_COVER',
-  CRUSTED: 'CRUSTED',
-  BLOWN: 'BLOWN',
-  SPRING_SNOW: 'SPRING_SNOW',
-  WET: 'WET',
-  DEGRADED: 'DEGRADED',
-  BUMPY: 'BUMPY',
-  POWDER: 'POWDER',
-  ARTIFICIAL: 'ARTIFICIAL',
-} as const;
-
-export interface TrackModel {
-  sector_ids?: SectorIds;
-  /** Track's name */
-  name: string;
-  periods?: Periods;
-  /** Track's message */
-  message: string;
-  type?: TrackTypes;
-  level?: Level;
-  snow_quality?: TrackSnowQualityTypes;
-  distance?: ValueUnitModel;
-  top_altitude?: ValueUnitModel;
-  bottom_altitude?: ValueUnitModel;
-  drop?: ValueUnitModel;
-}
-
-export type TracksModel = TrackModel[];
-
-/**
- * Ski lift's type
- */
-export type SkiLiftTypes = (typeof SkiLiftTypes)[keyof typeof SkiLiftTypes];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const SkiLiftTypes = {
-  UNKNOWN: 'UNKNOWN',
-  ELEVATOR: 'ELEVATOR',
-  FUNICULAR: 'FUNICULAR',
-  FUNITEL: 'FUNITEL',
-  TREADMILL: 'TREADMILL',
-  CAGE_LIFT: 'CAGE_LIFT',
-  GONDOLA_LIFT: 'GONDOLA_LIFT',
-  TELECORD: 'TELECORD',
-  COMBINED_LIFT: 'COMBINED_LIFT',
-  CABLE_CAR: 'CABLE_CAR',
-  TRAIN: 'TRAIN',
-  CHAIRLIFT: 'CHAIRLIFT',
-  DETACHABLE_CHAIRLIFT: 'DETACHABLE_CHAIRLIFT',
-  BUBLE_DETACHABLE_CHAIRLIFT: 'BUBLE_DETACHABLE_CHAIRLIFT',
-  SKI_LIFT: 'SKI_LIFT',
-} as const;
-
-/**
- * Value can be a string or a number
- */
-export type SkiLiftCapacityAnyOfValue = string | number;
-
-export type SkiLiftCapacityAnyOf = {
-  /** Value can be a string or a number */
-  value: SkiLiftCapacityAnyOfValue;
-  /** Unit */
-  unit: string;
-};
-
-export type SkiLiftCapacity = SkiLiftCapacityAnyOf | null;
-
-export interface SkiLiftModel {
-  sector_ids?: SectorIds;
-  /** Track's name */
-  name: string;
-  periods?: Periods;
-  /** Track's message */
-  message: string;
-  type?: SkiLiftTypes;
-  distance?: ValueUnitModel;
-  top_altitude?: ValueUnitModel;
-  bottom_altitude?: ValueUnitModel;
-  drop?: ValueUnitModel;
-  estimated_standby_time?: ValueUnitModel;
-  capacity?: SkiLiftCapacity;
-}
-
-export type SkiLiftsModel = SkiLiftModel[];
-
-export interface ConnectionModel {
-  sector_ids?: SectorIds;
-  /** Track's name */
-  name: string;
-  periods?: Periods;
-  /** Track's message */
-  message: string;
-}
-
-export type ConnectionsModel = ConnectionModel[];
-
-/**
- * Type
- */
-export type WebcamTypes = (typeof WebcamTypes)[keyof typeof WebcamTypes];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const WebcamTypes = {
-  IMAGE: 'IMAGE',
-  HTML5: 'HTML5',
-  LIVECAM_PREVIEW: 'LIVECAM_PREVIEW',
-  STREAMING: 'STREAMING',
-  VIDEO: 'VIDEO',
-} as const;
-
-/**
- * Format
- */
-export type Format = (typeof Format)[keyof typeof Format];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Format = {
-  UNKNOWN: 'UNKNOWN',
-  '360_DEG': '360_DEG',
-  '180_DEG': '180_DEG',
-  '4_3': '4_3',
-  '16_9': '16_9',
-} as const;
-
-/**
- * Resolution
- */
-export type Resolution = (typeof Resolution)[keyof typeof Resolution];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Resolution = {
-  UNKNOWN: 'UNKNOWN',
-  SD: 'SD',
-  MD: 'MD',
-  HD: 'HD',
-} as const;
-
-export interface WebcamUrlModel {
-  type?: WebcamTypes;
-  format?: Format;
-  resolution?: Resolution;
-  /** Url */
-  url: string;
-}
-
-export type WebcamUrlsModel = WebcamUrlModel[];
-
-export interface WebcamModel {
-  /** Webcam name */
-  name: string;
-  altitude?: ValueUnitModel;
-  urls: WebcamUrlsModel;
-}
-
-export type WebcamsModel = WebcamModel[];
-
-/**
- * Lumiplan last update timestamp
- */
-export type StationInformationModelUpdatedAt = string | null;
-
-export interface StationInformationModel {
-  /** Station's name */
-  name: string;
-  /** Domain map url */
-  map_url: string;
-  /** Lumiplan last update timestamp */
-  updated_at: StationInformationModelUpdatedAt;
-  /** Station's news */
-  breaking_news: string;
-  /** Weekly report */
-  weekly_report: string;
-  periods?: PeriodsModel;
-  sectors?: SectorsModel;
-  forecasts?: ForecastsModel;
-  tracks?: TracksModel;
-  ski_lifts?: SkiLiftsModel;
-  connections?: ConnectionsModel;
-  webcams?: WebcamsModel;
-}
-
-export type ProductWinterSportsInformationModel = StationInformationModel[];
-
-/**
- * latitude of the preview scene
- * @minimum -90
- * @maximum 90
- */
-export type PreviewParametersAnyOfLatitude = number | null;
-
-/**
- * longitude of the preview scene
- * @minimum -180
- * @maximum 180
- */
-export type PreviewParametersAnyOfLongitude = number | null;
-
-/**
- * compass heading of the camera at the preview scene
- * @minimum 0
- * @maximum 360
- */
-export type PreviewParametersAnyOfHeading = number | null;
-
-/**
- * up or down angle of the camera at the preview scene
- * @minimum -180
- * @maximum 180
- */
-export type PreviewParametersAnyOfPitch = number | null;
-
-/**
- * horizontal field of view of the image at the preview scene
- * @minimum 0
- * @maximum 120
- */
-export type PreviewParametersAnyOfFov = number | null;
-
-export type PreviewParametersAnyOf = {
-  /**
-   * latitude of the preview scene
-   * @minimum -90
-   * @maximum 90
-   */
-  latitude?: PreviewParametersAnyOfLatitude;
-  /**
-   * longitude of the preview scene
-   * @minimum -180
-   * @maximum 180
-   */
-  longitude?: PreviewParametersAnyOfLongitude;
-  /**
-   * compass heading of the camera at the preview scene
-   * @minimum 0
-   * @maximum 360
-   */
-  heading?: PreviewParametersAnyOfHeading;
-  /**
-   * up or down angle of the camera at the preview scene
-   * @minimum -180
-   * @maximum 180
-   */
-  pitch?: PreviewParametersAnyOfPitch;
-  /**
-   * horizontal field of view of the image at the preview scene
-   * @minimum 0
-   * @maximum 120
-   */
-  fov?: PreviewParametersAnyOfFov;
-};
-
-export type PreviewParameters = PreviewParametersAnyOf | null;
-
-export interface VirtualVisitModel {
-  /** google street view url */
-  url: string;
-  preview_parameters?: PreviewParameters;
-}
-
-export type VirtualVisitsModel = VirtualVisitModel[];
+export type ProductWeatherForecastListModel = ProductWeatherForecastModel[];
 
 export interface Address {
   /** Spa's address's city */
@@ -10282,13 +10292,15 @@ export const AccommodationsArrangementAttendeeTypeModel = {
 export type AccommodationsArrangementAttendeeModelBirthdate = string | null;
 
 export interface AccommodationsArrangementAttendeeModel {
-  /** Attendee id in this booking */
+  /** Attendee id in this proposal */
   id: string;
   type: AccommodationsArrangementAttendeeTypeModel;
   /** Attendee birthdate (YYYYMMDD) */
   birthdate: AccommodationsArrangementAttendeeModelBirthdate;
   /** Customer id */
   customer_id?: string;
+  /** Actual room number */
+  room_id?: string;
 }
 
 export type AccommodationsArrangementAttendeesModel = AccommodationsArrangementAttendeeModel[];
@@ -10339,6 +10351,18 @@ export interface ProposalPackageModel {
 }
 
 export type ProposalPackagesModel = ProposalPackageModel[];
+
+export interface AvailableRoomModel {
+  /** Id of the room */
+  id: string;
+  /** Id of the accommodation  */
+  accommodation_id: string;
+  /** Number of occupants in the accommodation */
+  occupancy?: number;
+  _links?: LinksModel;
+}
+
+export type AvailableRoomsModel = AvailableRoomModel[];
 
 /**
  * Indicates the way of the journey (outbound / inbound)
@@ -10516,8 +10540,7 @@ export const ValidProposalServiceTypesModel = {
   PORT_TAX: 'PORT_TAX',
   CONCIERGERIE: 'CONCIERGERIE',
   PARKING: 'PARKING',
-  HONEY_MOON: 'HONEY_MOON',
-  CLAN: 'CLAN',
+  HONEYMOON: 'HONEYMOON',
   MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
   OTHERS: 'OTHERS',
 } as const;
@@ -10668,6 +10691,119 @@ export interface TravelerResponseModel {
 }
 
 export type TravelerListModel = TravelerResponseModel[];
+
+/**
+ * email
+ */
+export type ProfileModelV1Email = string | null;
+
+/**
+ * great member number (not editable)
+ */
+export type ProfileModelV1GmNumber = string | null;
+
+/**
+ * great member gender
+ */
+export type ProfileModelV1Gender = string | null;
+
+/**
+ * civility
+ */
+export type ProfileModelV1Civility = string | null;
+
+/**
+ * civility (unicode version)
+ */
+export type ProfileModelV1UnicodeCivility = string | null;
+
+/**
+ * first name
+ */
+export type ProfileModelV1FirstName = string | null;
+
+/**
+ * first name (unicode version)
+ */
+export type ProfileModelV1UnicodeFirstName = string | null;
+
+/**
+ * last name
+ */
+export type ProfileModelV1LastName = string | null;
+
+/**
+ * last name
+ */
+export type ProfileModelV1UnicodeLastName = string | null;
+
+/**
+ * Sanitary pass number
+ */
+export type ProfileModelV1HealthPassId = string | null;
+
+/**
+ * date of birth is DEPRECATED, use birthdate instead
+ */
+export type ProfileModelV1Birthday = string | null;
+
+/**
+ * date of birth
+ */
+export type ProfileModelV1Birthdate = string | null;
+
+/**
+ * ISO 2 country code
+ */
+export type ProfileModelV1BirthCountryCode = string | null;
+
+export interface ProfileModelV1 {
+  /** email */
+  email?: ProfileModelV1Email;
+  /** great member number (not editable) */
+  gm_number?: ProfileModelV1GmNumber;
+  /** great member gender */
+  gender?: ProfileModelV1Gender;
+  /** civility */
+  civility?: ProfileModelV1Civility;
+  /** civility (unicode version) */
+  unicode_civility?: ProfileModelV1UnicodeCivility;
+  /** first name */
+  first_name?: ProfileModelV1FirstName;
+  /** first name (unicode version) */
+  unicode_first_name?: ProfileModelV1UnicodeFirstName;
+  /** last name */
+  last_name?: ProfileModelV1LastName;
+  /** last name */
+  unicode_last_name?: ProfileModelV1UnicodeLastName;
+  /** Sanitary pass number */
+  health_pass_id?: ProfileModelV1HealthPassId;
+  /** Defines the status of the CLIENT in the database. CLIENT OR PROSPECT (not editable) */
+  customer_type?: string;
+  customer_status?: CustomerStatus;
+  /** date of birth is DEPRECATED, use birthdate instead */
+  birthday?: ProfileModelV1Birthday;
+  /** date of birth */
+  birthdate?: ProfileModelV1Birthdate;
+  /** ISO 2 country code */
+  birth_country_code?: ProfileModelV1BirthCountryCode;
+  /** customer language. ISO 2 code */
+  language_code?: string;
+  phones?: PhonesModel;
+  loyalty_program?: CustomerLoyaltyProgramStatus;
+  address?: ProfileAddressV1Model;
+  optins?: LegacyOptinsModel;
+  /** true if the customer allows the use of its personal data by Club Med */
+  personal_data_usage_allowed: boolean;
+  /** Indicates if a client is blacklisted or not */
+  blacklisted?: boolean;
+  /** Indicates the filiation number of a customer */
+  filiation_number?: string;
+  _links?: LinksModel;
+  identity: NationalIdentifierCodeModel;
+  /** Locale with ISO 639-1 language and ISO 3166-1 country */
+  locale?: string;
+}
 
 /**
  * customer profile first name. Cannot be modified. Use customers/{customer_id}/profile instead
@@ -11651,119 +11787,6 @@ export interface CustomerLoyaltyDetailsModel {
 }
 
 export type CustomerLoyaltyDetailsResponseModel = CustomerLoyaltyDetailsModel[];
-
-/**
- * email
- */
-export type ProfileModelV1Email = string | null;
-
-/**
- * great member number (not editable)
- */
-export type ProfileModelV1GmNumber = string | null;
-
-/**
- * great member gender
- */
-export type ProfileModelV1Gender = string | null;
-
-/**
- * civility
- */
-export type ProfileModelV1Civility = string | null;
-
-/**
- * civility (unicode version)
- */
-export type ProfileModelV1UnicodeCivility = string | null;
-
-/**
- * first name
- */
-export type ProfileModelV1FirstName = string | null;
-
-/**
- * first name (unicode version)
- */
-export type ProfileModelV1UnicodeFirstName = string | null;
-
-/**
- * last name
- */
-export type ProfileModelV1LastName = string | null;
-
-/**
- * last name
- */
-export type ProfileModelV1UnicodeLastName = string | null;
-
-/**
- * Sanitary pass number
- */
-export type ProfileModelV1HealthPassId = string | null;
-
-/**
- * date of birth is DEPRECATED, use birthdate instead
- */
-export type ProfileModelV1Birthday = string | null;
-
-/**
- * date of birth
- */
-export type ProfileModelV1Birthdate = string | null;
-
-/**
- * ISO 2 country code
- */
-export type ProfileModelV1BirthCountryCode = string | null;
-
-export interface ProfileModelV1 {
-  /** email */
-  email?: ProfileModelV1Email;
-  /** great member number (not editable) */
-  gm_number?: ProfileModelV1GmNumber;
-  /** great member gender */
-  gender?: ProfileModelV1Gender;
-  /** civility */
-  civility?: ProfileModelV1Civility;
-  /** civility (unicode version) */
-  unicode_civility?: ProfileModelV1UnicodeCivility;
-  /** first name */
-  first_name?: ProfileModelV1FirstName;
-  /** first name (unicode version) */
-  unicode_first_name?: ProfileModelV1UnicodeFirstName;
-  /** last name */
-  last_name?: ProfileModelV1LastName;
-  /** last name */
-  unicode_last_name?: ProfileModelV1UnicodeLastName;
-  /** Sanitary pass number */
-  health_pass_id?: ProfileModelV1HealthPassId;
-  /** Defines the status of the CLIENT in the database. CLIENT OR PROSPECT (not editable) */
-  customer_type?: string;
-  customer_status?: CustomerStatus;
-  /** date of birth is DEPRECATED, use birthdate instead */
-  birthday?: ProfileModelV1Birthday;
-  /** date of birth */
-  birthdate?: ProfileModelV1Birthdate;
-  /** ISO 2 country code */
-  birth_country_code?: ProfileModelV1BirthCountryCode;
-  /** customer language. ISO 2 code */
-  language_code?: string;
-  phones?: PhonesModel;
-  loyalty_program?: CustomerLoyaltyProgramStatus;
-  address?: ProfileAddressV1Model;
-  optins?: LegacyOptinsModel;
-  /** true if the customer allows the use of its personal data by Club Med */
-  personal_data_usage_allowed: boolean;
-  /** Indicates if a client is blacklisted or not */
-  blacklisted?: boolean;
-  /** Indicates the filiation number of a customer */
-  filiation_number?: string;
-  _links?: LinksModel;
-  identity: NationalIdentifierCodeModel;
-  /** Locale with ISO 639-1 language and ISO 3166-1 country */
-  locale?: string;
-}
 
 /**
  * type of the facility
@@ -13321,35 +13344,6 @@ export interface ProposalPriceDetailsPerHouseholdResponseModel {
   households?: ProposalPriceDetailsResponseHouseholdsModel;
 }
 
-export interface AccommodationsCategoryResponseWithLinksModel {
-  /** id of the category */
-  id: string;
-  /** label of the category */
-  label: string;
-  _links?: LinksModel;
-}
-
-export type AccommodationsCategoriesResponseWithLinksModel =
-  AccommodationsCategoryResponseWithLinksModel[];
-
-export interface AccommodationArrangementResponseModel {
-  /** id of the accommodation */
-  id: string;
-  /** label of the accommodation */
-  label: string;
-  /** if merge_accomodation is false then the number of occupants in the accommodation is displayed, otherwise we display the sum of all the occupants in the same accommodation category */
-  occupancy: number;
-  /** number of accommodations where the attendees will be allocated */
-  quantity: number;
-  /** Indicate if the room is sharable */
-  shared_room: boolean;
-  attendees: AccommodationsArrangementAttendeesModel;
-  accommodation_categories?: AccommodationsCategoriesResponseWithLinksModel;
-  _links?: LinksModel;
-}
-
-export type GetAccommodtionsArrangementResponseModel = AccommodationArrangementResponseModel[];
-
 /**
  * Remaining stock for this arrangement
  */
@@ -13411,6 +13405,35 @@ export interface BestAccommodationModel {
 }
 
 export type BestAccommodationsModel = BestAccommodationModel[];
+
+export interface AccommodationsCategoryResponseWithLinksModel {
+  /** id of the category */
+  id: string;
+  /** label of the category */
+  label: string;
+  _links?: LinksModel;
+}
+
+export type AccommodationsCategoriesResponseWithLinksModel =
+  AccommodationsCategoryResponseWithLinksModel[];
+
+export interface AccommodationArrangementResponseModel {
+  /** id of the accommodation */
+  id: string;
+  /** label of the accommodation */
+  label: string;
+  /** if merge_accomodation is false then the number of occupants in the accommodation is displayed, otherwise we display the sum of all the occupants in the same accommodation category */
+  occupancy: number;
+  /** number of accommodations where the attendees will be allocated */
+  quantity: number;
+  /** Indicate if the room is sharable */
+  shared_room: boolean;
+  attendees: AccommodationsArrangementAttendeesModel;
+  accommodation_categories?: AccommodationsCategoriesResponseWithLinksModel;
+  _links?: LinksModel;
+}
+
+export type GetAccommodtionsArrangementResponseModel = AccommodationArrangementResponseModel[];
 
 /**
  * direction of the transport, INBOUND or OUTBOUND
@@ -13818,6 +13841,187 @@ export interface BookingTransportDetailsV2Model {
 export type BookingTransportDetailsListV2Model = BookingTransportDetailsV2Model[];
 
 /**
+ * type of the commercial offer
+ */
+export type CommercialOfferModelType =
+  (typeof CommercialOfferModelType)[keyof typeof CommercialOfferModelType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CommercialOfferModelType = {
+  CREDIT_NOTE: 'CREDIT_NOTE',
+  REFUND: 'REFUND',
+  SPONSORSHIP: 'SPONSORSHIP',
+  TARGETED_OFFER: 'TARGETED_OFFER',
+} as const;
+
+/**
+ * unit
+ */
+export type CommercialOfferModelUnit =
+  (typeof CommercialOfferModelUnit)[keyof typeof CommercialOfferModelUnit];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CommercialOfferModelUnit = {
+  PERCENT: 'PERCENT',
+  FLAT: 'FLAT',
+} as const;
+
+/**
+ * status of the offer
+ */
+export type CommercialOfferStatusModel =
+  (typeof CommercialOfferStatusModel)[keyof typeof CommercialOfferStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CommercialOfferStatusModel = {
+  AVAILABLE: 'AVAILABLE',
+  UNAVAILABLE: 'UNAVAILABLE',
+} as const;
+
+/**
+ * last name of the godchild in unicode
+ */
+export type GodchildInformationModelAnyOfUnicodeLastName = string | null;
+
+/**
+ * first name of the godchild in unicode
+ */
+export type GodchildInformationModelAnyOfUnicodeFirstName = string | null;
+
+export type GodchildInformationModelAnyOf = {
+  /** last name of the godchild */
+  last_name?: string;
+  /** last name of the godchild in unicode */
+  unicode_last_name?: GodchildInformationModelAnyOfUnicodeLastName;
+  /** first name of the godchild */
+  first_name?: string;
+  /** first name of the godchild in unicode */
+  unicode_first_name?: GodchildInformationModelAnyOfUnicodeFirstName;
+};
+
+export type GodchildInformationModel = GodchildInformationModelAnyOf | null;
+
+/**
+ * Indicates the godfather's unicode last name
+ */
+export type GodfatherInformationModelAnyOfUnicodeLastName = string | null;
+
+/**
+ * Indicates the godfather's unicode first name
+ */
+export type GodfatherInformationModelAnyOfUnicodeFirstName = string | null;
+
+export type GodfatherInformationModelAnyOf = {
+  /** Indicates the godfather's last name */
+  last_name?: string;
+  /** Indicates the godfather's unicode last name */
+  unicode_last_name?: GodfatherInformationModelAnyOfUnicodeLastName;
+  /** Indicates the godfather's first name */
+  first_name?: string;
+  /** Indicates the godfather's unicode first name */
+  unicode_first_name?: GodfatherInformationModelAnyOfUnicodeFirstName;
+};
+
+export type GodfatherInformationModel = GodfatherInformationModelAnyOf | null;
+
+/**
+ * stay's start date
+ */
+export type CommercialOfferStayModelStartDate = string | null;
+
+/**
+ * stay's end date
+ */
+export type CommercialOfferStayModelEndDate = string | null;
+
+export interface CommercialOfferStayModel {
+  /** stay's start date */
+  start_date: CommercialOfferStayModelStartDate;
+  /** stay's end date */
+  end_date: CommercialOfferStayModelEndDate;
+  /** ClubMed Product identifier */
+  product_id: string;
+}
+
+export type OriginStaysModel = CommercialOfferStayModel[];
+
+export type OriginModelAnyOf = {
+  /** booking id who generated a credit note */
+  booking_id?: string;
+  stays?: OriginStaysModel;
+};
+
+export type OriginModel = OriginModelAnyOf | null;
+
+/**
+ * offer identifier
+ */
+export type CommercialOfferV2ModelOfferId = string | null;
+
+/**
+ * displays the advantage code
+ */
+export type CommercialOfferV2ModelCode = string | null;
+
+/**
+ * date when begins the offer 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
+ */
+export type CommercialOfferV2ModelValidityStartDate = string | null;
+
+/**
+ * cutoff date of the offer 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
+ */
+export type CommercialOfferV2ModelValidityEndDate = string | null;
+
+/**
+ * date at which the commercial offer has been used 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
+ */
+export type CommercialOfferV2ModelDateOfUse = string | null;
+
+/**
+ * id of the origin of the commercial offer
+ */
+export type CommercialOfferV2ModelOriginType = string | null;
+
+export interface CommercialOfferV2Model {
+  /** Indicates the unique code of a commercial offer */
+  id: number;
+  type: CommercialOfferModelType;
+  /** offer identifier */
+  offer_id?: CommercialOfferV2ModelOfferId;
+  /** Offer label. */
+  label: string;
+  /** displays the advantage code */
+  code?: CommercialOfferV2ModelCode;
+  /** value */
+  value: number;
+  unit: CommercialOfferModelUnit;
+  /** currency */
+  currency: string;
+  /** date when begins the offer 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  validity_start_date?: CommercialOfferV2ModelValidityStartDate;
+  /** cutoff date of the offer 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  validity_end_date?: CommercialOfferV2ModelValidityEndDate;
+  /** date at which the commercial offer has been used 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  date_of_use: CommercialOfferV2ModelDateOfUse;
+  /** id of the origin of the commercial offer */
+  origin_type: CommercialOfferV2ModelOriginType;
+  status: CommercialOfferStatusModel;
+  godchild_information: GodchildInformationModel;
+  godfather_information: GodfatherInformationModel;
+  origin?: OriginModel;
+  _links?: LinksModel;
+}
+
+export type CommercialOffersV2Model = CommercialOfferV2Model[];
+
+/**
  * Customer loyalty program status (not editable)
  */
 export type CustomerLoyaltyProgramStatusV2Model =
@@ -14190,187 +14394,6 @@ export interface ProfileModelV2 {
   locale?: ProfileModelV2Locale;
   _links?: NullableLinksModel;
 }
-
-/**
- * type of the commercial offer
- */
-export type CommercialOfferModelType =
-  (typeof CommercialOfferModelType)[keyof typeof CommercialOfferModelType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CommercialOfferModelType = {
-  CREDIT_NOTE: 'CREDIT_NOTE',
-  REFUND: 'REFUND',
-  SPONSORSHIP: 'SPONSORSHIP',
-  TARGETED_OFFER: 'TARGETED_OFFER',
-} as const;
-
-/**
- * unit
- */
-export type CommercialOfferModelUnit =
-  (typeof CommercialOfferModelUnit)[keyof typeof CommercialOfferModelUnit];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CommercialOfferModelUnit = {
-  PERCENT: 'PERCENT',
-  FLAT: 'FLAT',
-} as const;
-
-/**
- * status of the offer
- */
-export type CommercialOfferStatusModel =
-  (typeof CommercialOfferStatusModel)[keyof typeof CommercialOfferStatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CommercialOfferStatusModel = {
-  AVAILABLE: 'AVAILABLE',
-  UNAVAILABLE: 'UNAVAILABLE',
-} as const;
-
-/**
- * last name of the godchild in unicode
- */
-export type GodchildInformationModelAnyOfUnicodeLastName = string | null;
-
-/**
- * first name of the godchild in unicode
- */
-export type GodchildInformationModelAnyOfUnicodeFirstName = string | null;
-
-export type GodchildInformationModelAnyOf = {
-  /** last name of the godchild */
-  last_name?: string;
-  /** last name of the godchild in unicode */
-  unicode_last_name?: GodchildInformationModelAnyOfUnicodeLastName;
-  /** first name of the godchild */
-  first_name?: string;
-  /** first name of the godchild in unicode */
-  unicode_first_name?: GodchildInformationModelAnyOfUnicodeFirstName;
-};
-
-export type GodchildInformationModel = GodchildInformationModelAnyOf | null;
-
-/**
- * Indicates the godfather's unicode last name
- */
-export type GodfatherInformationModelAnyOfUnicodeLastName = string | null;
-
-/**
- * Indicates the godfather's unicode first name
- */
-export type GodfatherInformationModelAnyOfUnicodeFirstName = string | null;
-
-export type GodfatherInformationModelAnyOf = {
-  /** Indicates the godfather's last name */
-  last_name?: string;
-  /** Indicates the godfather's unicode last name */
-  unicode_last_name?: GodfatherInformationModelAnyOfUnicodeLastName;
-  /** Indicates the godfather's first name */
-  first_name?: string;
-  /** Indicates the godfather's unicode first name */
-  unicode_first_name?: GodfatherInformationModelAnyOfUnicodeFirstName;
-};
-
-export type GodfatherInformationModel = GodfatherInformationModelAnyOf | null;
-
-/**
- * stay's start date
- */
-export type CommercialOfferStayModelStartDate = string | null;
-
-/**
- * stay's end date
- */
-export type CommercialOfferStayModelEndDate = string | null;
-
-export interface CommercialOfferStayModel {
-  /** stay's start date */
-  start_date: CommercialOfferStayModelStartDate;
-  /** stay's end date */
-  end_date: CommercialOfferStayModelEndDate;
-  /** ClubMed Product identifier */
-  product_id: string;
-}
-
-export type OriginStaysModel = CommercialOfferStayModel[];
-
-export type OriginModelAnyOf = {
-  /** booking id who generated a credit note */
-  booking_id?: string;
-  stays?: OriginStaysModel;
-};
-
-export type OriginModel = OriginModelAnyOf | null;
-
-/**
- * offer identifier
- */
-export type CommercialOfferV2ModelOfferId = string | null;
-
-/**
- * displays the advantage code
- */
-export type CommercialOfferV2ModelCode = string | null;
-
-/**
- * date when begins the offer 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
- */
-export type CommercialOfferV2ModelValidityStartDate = string | null;
-
-/**
- * cutoff date of the offer 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
- */
-export type CommercialOfferV2ModelValidityEndDate = string | null;
-
-/**
- * date at which the commercial offer has been used 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
- */
-export type CommercialOfferV2ModelDateOfUse = string | null;
-
-/**
- * id of the origin of the commercial offer
- */
-export type CommercialOfferV2ModelOriginType = string | null;
-
-export interface CommercialOfferV2Model {
-  /** Indicates the unique code of a commercial offer */
-  id: number;
-  type: CommercialOfferModelType;
-  /** offer identifier */
-  offer_id?: CommercialOfferV2ModelOfferId;
-  /** Offer label. */
-  label: string;
-  /** displays the advantage code */
-  code?: CommercialOfferV2ModelCode;
-  /** value */
-  value: number;
-  unit: CommercialOfferModelUnit;
-  /** currency */
-  currency: string;
-  /** date when begins the offer 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  validity_start_date?: CommercialOfferV2ModelValidityStartDate;
-  /** cutoff date of the offer 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  validity_end_date?: CommercialOfferV2ModelValidityEndDate;
-  /** date at which the commercial offer has been used 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  date_of_use: CommercialOfferV2ModelDateOfUse;
-  /** id of the origin of the commercial offer */
-  origin_type: CommercialOfferV2ModelOriginType;
-  status: CommercialOfferStatusModel;
-  godchild_information: GodchildInformationModel;
-  godfather_information: GodfatherInformationModel;
-  origin?: OriginModel;
-  _links?: LinksModel;
-}
-
-export type CommercialOffersV2Model = CommercialOfferV2Model[];
 
 /**
  * Thematic's type
@@ -17004,9 +17027,8 @@ export const BookingServiceType = {
   DONATION: 'DONATION',
   ROOM_SELECTION: 'ROOM_SELECTION',
   OTHERS: 'OTHERS',
-  HONEY_MOON: 'HONEY_MOON',
+  HONEYMOON: 'HONEYMOON',
   MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
-  CLAN: 'CLAN',
 } as const;
 
 export interface PackageOption {
@@ -17210,9 +17232,8 @@ export const ServiceTypesV1Model = {
   ROOM_SELECTION: 'ROOM_SELECTION',
   MISCELLANEOUS_TOUR: 'MISCELLANEOUS_TOUR',
   MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
-  HONEY_MOON: 'HONEY_MOON',
+  HONEYMOON: 'HONEYMOON',
   HOUSEKEEPING: 'HOUSEKEEPING',
-  CLAN: 'CLAN',
   FOOD_AND_BEVERAGE: 'FOOD_AND_BEVERAGE',
   TAILORMED: 'TAILORMED',
   ALL_INCLUSIVE: 'ALL_INCLUSIVE',
@@ -17387,9 +17408,8 @@ export const ServiceTypesV2Model = {
   ROOM_SELECTION: 'ROOM_SELECTION',
   MISCELLANEOUS_TOUR: 'MISCELLANEOUS_TOUR',
   MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
-  HONEY_MOON: 'HONEY_MOON',
+  HONEYMOON: 'HONEYMOON',
   HOUSEKEEPING: 'HOUSEKEEPING',
-  CLAN: 'CLAN',
   FOOD_AND_BEVERAGE: 'FOOD_AND_BEVERAGE',
   TAILORMED: 'TAILORMED',
   ALL_INCLUSIVE: 'ALL_INCLUSIVE',
@@ -17657,9 +17677,8 @@ export const ServiceTypesModel = {
   ROOM_SELECTION: 'ROOM_SELECTION',
   MISCELLANEOUS_TOUR: 'MISCELLANEOUS_TOUR',
   MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
-  HONEY_MOON: 'HONEY_MOON',
+  HONEYMOON: 'HONEYMOON',
   HOUSEKEEPING: 'HOUSEKEEPING',
-  CLAN: 'CLAN',
   FOOD_AND_BEVERAGE: 'FOOD_AND_BEVERAGE',
   TAILORMED: 'TAILORMED',
   ALL_INCLUSIVE: 'ALL_INCLUSIVE',
@@ -19742,7 +19761,6 @@ export type Action = (typeof Action)[keyof typeof Action];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Action = {
-  BANK_CARD_TOKENIZATION_EASY_CHECKIN: 'BANK_CARD_TOKENIZATION_EASY_CHECKIN',
   PAYMENT_CART: 'PAYMENT_CART',
   PAYMENT_RESA: 'PAYMENT_RESA',
   PAYMENT_OPTION: 'PAYMENT_OPTION',
@@ -21876,6 +21894,43 @@ export interface AssignPartnerToProposalsSummaryModel {
   seller?: ProposalsSummarySeller;
 }
 
+export interface PostPaymentAliasResponse {
+  /**
+   * booking Id (file number)
+   * @pattern ^\d+$
+   */
+  booking_id: string;
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** Payment call back url */
+  callback_url: string;
+}
+
+/**
+ * payment redirect headers
+ */
+export type HeadersModelAnyOf = {
+  /** Content type */
+  'Content-type'?: string;
+};
+
+/**
+ * payment redirect headers
+ */
+export type HeadersModel = HeadersModelAnyOf | null;
+
+export interface PostPaymentAliasModel {
+  /** payment alias */
+  alias: string;
+  /** payment redirect url */
+  url: string;
+  /** payment redirect method */
+  method: string;
+  headers?: HeadersModel;
+  /** payment redirect body */
+  body?: string;
+}
+
 export interface PaymentAuthorizationInput {
   /** provider response */
   provider_response: string;
@@ -21914,43 +21969,6 @@ export interface PaymentAuthorizationResponse {
   errors?: PaymentAuthorizationResponseErrors;
 }
 
-export interface PostPaymentAliasResponse {
-  /**
-   * booking Id (file number)
-   * @pattern ^\d+$
-   */
-  booking_id: string;
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** Payment call back url */
-  callback_url: string;
-}
-
-/**
- * payment redirect headers
- */
-export type HeadersModelAnyOf = {
-  /** Content type */
-  'Content-type'?: string;
-};
-
-/**
- * payment redirect headers
- */
-export type HeadersModel = HeadersModelAnyOf | null;
-
-export interface PostPaymentAliasModel {
-  /** payment alias */
-  alias: string;
-  /** payment redirect url */
-  url: string;
-  /** payment redirect method */
-  method: string;
-  headers?: HeadersModel;
-  /** payment redirect body */
-  body?: string;
-}
-
 /**
  * ad-hoc registry of values, as needed by the provider (ask the payment team).
  */
@@ -21973,46 +21991,6 @@ export interface TokenHolderModel {
   format: string;
   /** The token returned by the provider, depending of the PSP, it may be a litteral value or a structure. */
   token: string;
-}
-
-/**
- * A Payment Provider dependant value to specify where the identification frame would be displayed
- */
-export type ProviderPaymentAuthorizationInputTarget = string | null;
-
-/**
- * Url to get back when approvement had been processed
- */
-export type ProviderPaymentAuthorizationInputCallbackUrl = string | null;
-
-export interface ProviderPaymentAuthorizationInput {
-  /** The user agent content-type capability */
-  http_accept?: string;
-  /** Customer User Agent */
-  http_user_agent?: string;
-  /** Response parameters from the Payment Provider */
-  provider_response: string;
-  /** A Payment Provider dependant value to specify where the identification frame would be displayed */
-  target?: ProviderPaymentAuthorizationInputTarget;
-  /** Url to get back when approvement had been processed */
-  callback_url?: ProviderPaymentAuthorizationInputCallbackUrl;
-}
-
-/**
- * Anwser from the provider to notify
- */
-export type ProviderPaymentAuthorizationResponseProviderResponse = string | null;
-
-/**
- * A Base64 encoded html to execute
- */
-export type ProviderPaymentAuthorizationResponseHtmlAnswer = string | null;
-
-export interface ProviderPaymentAuthorizationResponse {
-  /** Anwser from the provider to notify */
-  provider_response?: ProviderPaymentAuthorizationResponseProviderResponse;
-  /** A Base64 encoded html to execute */
-  html_answer?: ProviderPaymentAuthorizationResponseHtmlAnswer;
 }
 
 /**
@@ -22154,6 +22132,46 @@ export interface ProviderParametersModel {
   headers?: HeadersModel;
   /** payment redirect body */
   body?: string;
+}
+
+/**
+ * A Payment Provider dependant value to specify where the identification frame would be displayed
+ */
+export type ProviderPaymentAuthorizationInputTarget = string | null;
+
+/**
+ * Url to get back when approvement had been processed
+ */
+export type ProviderPaymentAuthorizationInputCallbackUrl = string | null;
+
+export interface ProviderPaymentAuthorizationInput {
+  /** The user agent content-type capability */
+  http_accept?: string;
+  /** Customer User Agent */
+  http_user_agent?: string;
+  /** Response parameters from the Payment Provider */
+  provider_response: string;
+  /** A Payment Provider dependant value to specify where the identification frame would be displayed */
+  target?: ProviderPaymentAuthorizationInputTarget;
+  /** Url to get back when approvement had been processed */
+  callback_url?: ProviderPaymentAuthorizationInputCallbackUrl;
+}
+
+/**
+ * Anwser from the provider to notify
+ */
+export type ProviderPaymentAuthorizationResponseProviderResponse = string | null;
+
+/**
+ * A Base64 encoded html to execute
+ */
+export type ProviderPaymentAuthorizationResponseHtmlAnswer = string | null;
+
+export interface ProviderPaymentAuthorizationResponse {
+  /** Anwser from the provider to notify */
+  provider_response?: ProviderPaymentAuthorizationResponseProviderResponse;
+  /** A Base64 encoded html to execute */
+  html_answer?: ProviderPaymentAuthorizationResponseHtmlAnswer;
 }
 
 /**
@@ -25286,58 +25304,49 @@ export type PostV3BookingsParams = {
   partner_type?: string;
 };
 
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
 /**
  * @summary Returns the list of payment providers for this locale (<em>accept-language</em>).
  */
-export const getV1PaymentProviders = (
-  options?: SecondParameter<typeof fetcher<PaymentProviderListModel2>>,
-) => {
-  return fetcher<PaymentProviderListModel2>(
-    { url: `/v1/payment_providers`, method: 'GET' },
-    options,
-  );
+export const getV1PaymentProviders = () => {
+  return fetcher<PaymentProviderListModel2>({ url: `/v1/payment_providers`, method: 'GET' });
 };
 
 /**
  * @summary Returns the proposal corresponding to the given proposal_id
  */
-export const getV2ProposalsProposalId = (
-  proposalId: string,
-  options?: SecondParameter<typeof fetcher<ProposalResponseModelV1>>,
-) => {
-  return fetcher<ProposalResponseModelV1>(
-    { url: `/v2/proposals/${proposalId}`, method: 'GET' },
-    options,
-  );
+export const getV2ProposalsProposalId = (proposalId: string) => {
+  return fetcher<ProposalResponseModelV1>({ url: `/v2/proposals/${proposalId}`, method: 'GET' });
 };
 
 /**
  * The response follow the model of an xmResponse with a finalisePaymentResponse.
  * @summary Retrieves the status of a payment
  */
-export const getV0PaymentsPaymentIdStatus = (
-  paymentId: string,
-  options?: SecondParameter<typeof fetcher<PaymentStatusModel>>,
-) => {
-  return fetcher<PaymentStatusModel>(
-    { url: `/v0/payments/${paymentId}/status`, method: 'GET' },
-    options,
-  );
+export const getV0PaymentsPaymentIdStatus = (paymentId: string) => {
+  return fetcher<PaymentStatusModel>({ url: `/v0/payments/${paymentId}/status`, method: 'GET' });
 };
 
 /**
  * @summary Payment schedule for a proposal
  */
-export const getV1ProposalsProposalIdPaymentSchedule = (
-  proposalId: string,
-  options?: SecondParameter<typeof fetcher<ProposalPaymentScheduleModelV1>>,
+export const getV1ProposalsProposalIdPaymentSchedule = (proposalId: string) => {
+  return fetcher<ProposalPaymentScheduleModelV1>({
+    url: `/v1/proposals/${proposalId}/payment_schedule`,
+    method: 'GET',
+  });
+};
+
+/**
+ * @summary details of one booking
+ */
+export const getV3CustomersCustomerIdBookingsBookingId = (
+  customerId: string,
+  bookingId: string,
 ) => {
-  return fetcher<ProposalPaymentScheduleModelV1>(
-    { url: `/v1/proposals/${proposalId}/payment_schedule`, method: 'GET' },
-    options,
-  );
+  return fetcher<CustomerBookingModelV3>({
+    url: `/v3/customers/${customerId}/bookings/${bookingId}`,
+    method: 'GET',
+  });
 };
 
 /**
@@ -25346,12 +25355,11 @@ export const getV1ProposalsProposalIdPaymentSchedule = (
 export const getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules = (
   customerId: string,
   bookingId: string,
-  options?: SecondParameter<typeof fetcher<CustomerBookingPaymentScheduleModel>>,
 ) => {
-  return fetcher<CustomerBookingPaymentScheduleModel>(
-    { url: `/v0/customers/${customerId}/bookings/${bookingId}/payment_schedules`, method: 'GET' },
-    options,
-  );
+  return fetcher<CustomerBookingPaymentScheduleModel>({
+    url: `/v0/customers/${customerId}/bookings/${bookingId}/payment_schedules`,
+    method: 'GET',
+  });
 };
 
 /**
@@ -25360,12 +25368,11 @@ export const getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules = (
 export const getV0CustomersCustomerIdBookingsBookingIdCartAccommodations = (
   customerId: string,
   bookingId: string,
-  options?: SecondParameter<typeof fetcher<CartUpgradeRoomModel>>,
 ) => {
-  return fetcher<CartUpgradeRoomModel>(
-    { url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`, method: 'GET' },
-    options,
-  );
+  return fetcher<CartUpgradeRoomModel>({
+    url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`,
+    method: 'GET',
+  });
 };
 
 /**
@@ -25374,33 +25381,23 @@ export const getV0CustomersCustomerIdBookingsBookingIdCartAccommodations = (
 export const getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule = (
   customerId: string,
   bookingId: string,
-  options?: SecondParameter<typeof fetcher<PaymentScheduleModel>>,
 ) => {
-  return fetcher<PaymentScheduleModel>(
-    {
-      url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/payment_schedule`,
-      method: 'GET',
-    },
-    options,
-  );
+  return fetcher<PaymentScheduleModel>({
+    url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/payment_schedule`,
+    method: 'GET',
+  });
 };
 
 /**
  * @summary Post the status of a payment
  */
-export const postV1Payments = (
-  paymentOrderModel: PaymentOrderModel,
-  options?: SecondParameter<typeof fetcher<PaymentIdModel>>,
-) => {
-  return fetcher<PaymentIdModel>(
-    {
-      url: `/v1/payments`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: paymentOrderModel,
-    },
-    options,
-  );
+export const postV1Payments = (paymentOrderModel: PaymentOrderModel) => {
+  return fetcher<PaymentIdModel>({
+    url: `/v1/payments`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: paymentOrderModel,
+  });
 };
 
 /**
@@ -25410,20 +25407,14 @@ export const postV1Payments = (
 export const postV3Bookings = (
   createDirectBookingRequestModel: CreateDirectBookingRequestModel,
   params?: PostV3BookingsParams,
-  options?: SecondParameter<
-    typeof fetcher<CreateBookingResponseModel | CreateBookingResponseModel>
-  >,
 ) => {
-  return fetcher<CreateBookingResponseModel | CreateBookingResponseModel>(
-    {
-      url: `/v3/bookings`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: createDirectBookingRequestModel,
-      params,
-    },
-    options,
-  );
+  return fetcher<CreateBookingResponseModel | CreateBookingResponseModel>({
+    url: `/v3/bookings`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: createDirectBookingRequestModel,
+    params,
+  });
 };
 
 /**
@@ -25438,17 +25429,13 @@ export const postV3Bookings = (
 export const postV0PaymentsPaymentIdRedirectRequest = (
   paymentId: string,
   paymentRedirectRequestModel: PaymentRedirectRequestModel,
-  options?: SecondParameter<typeof fetcher<ProviderParametersModel>>,
 ) => {
-  return fetcher<ProviderParametersModel>(
-    {
-      url: `/v0/payments/${paymentId}/redirect_request`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: paymentRedirectRequestModel,
-    },
-    options,
-  );
+  return fetcher<ProviderParametersModel>({
+    url: `/v0/payments/${paymentId}/redirect_request`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: paymentRedirectRequestModel,
+  });
 };
 
 /**
@@ -25457,17 +25444,13 @@ export const postV0PaymentsPaymentIdRedirectRequest = (
 export const postV1PaymentsPaymentIdNotify = (
   paymentId: string,
   paymentOrderNotificationModel: PaymentOrderNotificationModel,
-  options?: SecondParameter<typeof fetcher<NotifyPaymentOrderNotificationStatus>>,
 ) => {
-  return fetcher<NotifyPaymentOrderNotificationStatus>(
-    {
-      url: `/v1/payments/${paymentId}/notify`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: paymentOrderNotificationModel,
-    },
-    options,
-  );
+  return fetcher<NotifyPaymentOrderNotificationStatus>({
+    url: `/v1/payments/${paymentId}/notify`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: paymentOrderNotificationModel,
+  });
 };
 
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -25485,6 +25468,9 @@ export type GetV0PaymentsPaymentIdStatusResult = NonNullable<
 >;
 export type GetV1ProposalsProposalIdPaymentScheduleResult = NonNullable<
   Awaited<ReturnType<typeof getV1ProposalsProposalIdPaymentSchedule>>
+>;
+export type GetV3CustomersCustomerIdBookingsBookingIdResult = NonNullable<
+  Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingId>>
 >;
 export type GetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResult = NonNullable<
   Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules>>
@@ -25519,6 +25505,7 @@ export const getGetV1PaymentProvidersResponseMock = (): PaymentProviderListModel
       'BankTransfer',
       'DirectDebit',
       'BuyNowPayLater',
+      'Cheque',
       'Paypal',
       '',
     ] as const),
@@ -26124,6 +26111,350 @@ export const getGetV1ProposalsProposalIdPaymentScheduleResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
+  overrideResponse: Partial<CustomerBookingModelV3> = {},
+): CustomerBookingModelV3 => ({
+  id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  creation_date: faker.helpers.arrayElement([
+    faker.date.past().toISOString().split('T')[0],
+    undefined,
+  ]),
+  departure_date: faker.helpers.arrayElement([
+    faker.date.past().toISOString().split('T')[0],
+    undefined,
+  ]),
+  return_date: faker.helpers.arrayElement([
+    faker.date.past().toISOString().split('T')[0],
+    undefined,
+  ]),
+  multiple_sale_contracts: faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+  option_durability: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  booking_status: faker.helpers.arrayElement([
+    faker.helpers.arrayElement(Object.values(BookingStatus)),
+    undefined,
+  ]),
+  is_renewed_option: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+    undefined,
+  ]),
+  booking_renewal: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  payment_status: faker.helpers.arrayElement([
+    faker.helpers.arrayElement(Object.values(CustomerBookingPaymentStatusModel)),
+    undefined,
+  ]),
+  allowed_to_pay: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+    undefined,
+  ]),
+  total_price: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  locale: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  vendor: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  stays: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      id: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      product_id: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      label: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      product_type: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(ProductTypeModel)),
+        undefined,
+      ]),
+      resort_arrival_date: faker.helpers.arrayElement([
+        faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+        undefined,
+      ]),
+      resort_leaving_date: faker.helpers.arrayElement([
+        faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+        undefined,
+      ]),
+      duration: faker.helpers.arrayElement([
+        faker.number.int({ min: undefined, max: undefined }),
+        undefined,
+      ]),
+      attendees: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          adults_count: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([0] as const),
+            undefined,
+          ]),
+          children_count: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([0] as const),
+            undefined,
+          ]),
+          _links: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                rel: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                method: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                href: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+          start_date: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          end_date: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          attendee_ids: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      total_adults_count: faker.helpers.arrayElement([
+        faker.helpers.arrayElement([0] as const),
+        undefined,
+      ]),
+      total_children_count: faker.helpers.arrayElement([
+        faker.helpers.arrayElement([0] as const),
+        undefined,
+      ]),
+      outward_trip: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+      api_upsell_available: faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+      accommodations: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          start_date: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          end_date: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          quantity: faker.number.int({ min: undefined, max: undefined }),
+          baby_bed: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+            undefined,
+          ]),
+          shared_room: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+            undefined,
+          ]),
+          occupation: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([0] as const),
+            undefined,
+          ]),
+          accommodation_id: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          rooms: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                number: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                building: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                orientation: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                floor: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                status: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement(Object.values(Status)),
+                  undefined,
+                ]),
+                is_room_intervention_included: faker.helpers.arrayElement([
+                  faker.datatype.boolean(),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+          _links: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                rel: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                method: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                href: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      packages: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          label: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          attendee_ids: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+            ),
+            undefined,
+          ]),
+          _links: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                rel: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                method: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                href: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      _links: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          rel: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+          method: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          href: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          label: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  events: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+    () => ({
+      code: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      label: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      date: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        null,
+      ]),
+    }),
+  ),
+  _links: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      rel: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+      method: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      href: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      label: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock = (
   overrideResponse: Partial<CustomerBookingPaymentScheduleModel> = {},
 ): CustomerBookingPaymentScheduleModel => ({
@@ -26402,6 +26733,34 @@ export const getGetV1ProposalsProposalIdPaymentScheduleMockHandler = (
   );
 };
 
+export const getGetV3CustomersCustomerIdBookingsBookingIdMockHandler = (
+  overrideResponse?:
+    | CustomerBookingModelV3
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<CustomerBookingModelV3> | CustomerBookingModelV3),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    '*/v3/customers/:customerId/bookings/:bookingId',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV3CustomersCustomerIdBookingsBookingIdResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler = (
   overrideResponse?:
     | CustomerBookingPaymentScheduleModel
@@ -26606,6 +26965,7 @@ export const getClubMedAPIMock = () => [
   getGetV2ProposalsProposalIdMockHandler(),
   getGetV0PaymentsPaymentIdStatusMockHandler(),
   getGetV1ProposalsProposalIdPaymentScheduleMockHandler(),
+  getGetV3CustomersCustomerIdBookingsBookingIdMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler(),

@@ -22,7 +22,10 @@ describe('fetchFeatureFlips', () => {
 
     const result = await fetchFeatureFlips();
 
-    expect(result).toEqual(mockResponse);
+    expect(result).toEqual({
+      'featureFlipping.feature1': true,
+      'featureFlipping.feature2': false,
+    });
   });
 
   it('should throw error with error_description for 404 status', async () => {

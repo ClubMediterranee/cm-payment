@@ -12,7 +12,7 @@ type Props = {
   onError?: (error: Error) => void;
 };
 
-export function SDKForm({ children, onError, onLoad }: PropsWithChildren<Props>) {
+export function Form({ children, onError, onLoad }: PropsWithChildren<Props>) {
   const methods = useFormContext();
 
   const { mutate, isPending } = usePaymentRedirect({

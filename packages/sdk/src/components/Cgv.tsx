@@ -2,14 +2,14 @@ import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
 import clsx from 'clsx';
 
+import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../hooks/utils/useForm';
-import { useSDKPaymentContext } from '../hooks/utils/useSDKPaymentContext';
-import { SDKFormData } from '../types/FormData';
+import { CapsFormData } from '../types/FormData';
 import { ErrorMessage } from './ui/ErrorMessage';
 import { FormPanel } from './ui/FormPanel';
 
 export const Cgv = () => {
-  const { content } = useSDKPaymentContext();
+  const { content } = useCapsConfigContext();
   const {
     register,
     setValue,
@@ -27,8 +27,8 @@ export const Cgv = () => {
           })}
           aria-invalid={!!errors.cgv}
           onChange={(name, value) => {
-            setValue(name as keyof SDKFormData, value);
-            trigger(name as keyof SDKFormData);
+            setValue(name as keyof CapsFormData, value);
+            trigger(name as keyof CapsFormData);
           }}
         >
           <span className="text-b4 font-bold">{content.cgv.content}</span>

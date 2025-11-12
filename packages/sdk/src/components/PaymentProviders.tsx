@@ -1,13 +1,14 @@
-import { usePaymentProvidersForm } from '@clubmed/payment-sdk/hooks/usePaymentProvidersForm';
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Icon } from '@clubmed/trident-icons';
 import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import clsx from 'clsx';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../__generated__';
+import { usePaymentProviders } from '../hooks/data/usePaymentProviders';
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
-import { useSDKConfig } from '../providers/SDKConfigProvider';
+import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
+import { formatCurrency } from '../utils/formatCurrency';
 import { renderTemplate } from '../utils/renderTemplate';
 import { PaymentProviderRules } from './PaymentProviders/PaymentProviderRules';
 import { FormPanel } from './ui/FormPanel';
@@ -17,8 +18,10 @@ const PROVIDER_ICON = {
 };
 
 export const PaymentProviders = () => {
-  const { content } = useSDKConfig();
-  const { paymentProviders, register, setValue, watchedProviderId } = usePaymentProvidersForm();
+  const { content, locale } = useCapsConfigContext();
+  const { data: paymentProviders } = usePaymentProviders();
+  const { register, setValue, watch } = useFormContext();
+  const watchedProviderId = watch('provider_id');
   const {
     paymentSchedule: [{ currency }],
   } = usePaymentSchedule();
@@ -67,8 +70,11 @@ export const PaymentProviders = () => {
                       provider.category_payment_method as keyof typeof PROVIDER_LABEL
                     ] || content.paymentProviders.creditCard.label,
                     {
-                      amount: <span className="font-bold text-sienna">{watchedAmount}</span>,
-                      currency: <span className="font-bold text-sienna">{currency}</span>,
+                      amount: (
+                        <span className="font-bold text-sienna">
+                          {formatCurrency({ amount: Number(watchedAmount), currency, locale })}
+                        </span>
+                      ),
                     },
                   )}
                 </Radio>

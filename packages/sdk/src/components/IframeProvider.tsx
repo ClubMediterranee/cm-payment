@@ -1,4 +1,4 @@
-import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config';
+import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
 import { usePaymentRedirect } from '@clubmed/payment-sdk/hooks/data/usePaymentRedirect';
 import { PspProviders } from '@clubmed/payment-sdk/types/PspProviders';
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
@@ -30,7 +30,7 @@ export const IframeProvider = () => {
   const watchedForm = useWatch({ control });
 
   const displayProviderIframe =
-    isValid && GLOBAL_SDK_SETTINGS.iframeProviders.includes(watch('provider_id') as PspProviders);
+    isValid && GLOBAL_CAPS_SETTINGS.iframeProviders.includes(watch('provider_id') as PspProviders);
 
   useEffect(() => {
     if (displayProviderIframe) {
