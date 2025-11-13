@@ -304,6 +304,9 @@ export const DepositInteraction: Story = {
         key="deposit-interaction"
         action={Action.PAYMENT_RESA}
         proposalId="proposal-deposit"
+        defaultValues={{
+          amount: '2584',
+        }}
       >
         <PaymentSchedule {...args} />
       </MockedProvider>

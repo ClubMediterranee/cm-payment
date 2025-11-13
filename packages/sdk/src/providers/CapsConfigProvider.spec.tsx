@@ -2,7 +2,7 @@ import { render, renderHook } from '@testing-library/react';
 import type { PropsWithChildren } from 'react';
 
 import { defaultContent } from '../content/default';
-import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
+import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { CapsConfigProvider, getCapsConfig } from './CapsConfigProvider';
 
@@ -146,5 +146,41 @@ describe('CapsConfigProvider', () => {
 
     expect(result.current.type).toBe('booking');
     expect(result.current.id).toBe('booking-456');
+  });
+
+  it('should include customerId in config when provided', () => {
+    const { result } = renderHook(() => useCapsConfigContext(), {
+      wrapper: (props) => <Wrapper {...props} customerId="customer-789" />,
+    });
+
+    expect(result.current.customerId).toBe('customer-789');
+  });
+
+  it('should identify GO issuer as seller with useOidcContext', () => {
+    const { result } = renderHook(() => useOidcContext(), {
+      wrapper: (props) => (
+        <Wrapper {...props} oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: 'token' }} />
+      ),
+    });
+
+    expect(result.current.isSeller).toBe(true);
+  });
+
+  it('should identify PARTNERS issuer as seller with useOidcContext', () => {
+    const { result } = renderHook(() => useOidcContext(), {
+      wrapper: (props) => (
+        <Wrapper {...props} oidc={{ issuerType: OidcIssuerTypes.PARTNERS, accessToken: 'token' }} />
+      ),
+    });
+
+    expect(result.current.isSeller).toBe(true);
+  });
+
+  it('should identify GM issuer as not seller with useOidcContext', () => {
+    const { result } = renderHook(() => useOidcContext(), {
+      wrapper: (props) => <Wrapper {...props} />,
+    });
+
+    expect(result.current.isSeller).toBe(false);
   });
 });

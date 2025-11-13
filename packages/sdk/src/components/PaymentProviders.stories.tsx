@@ -311,6 +311,7 @@ export const RadioSelectionTest: Story = {
         customerId="123456789"
         defaultValues={{
           amount: '3000',
+          provider_id: 'PROVIDER_1',
         }}
       >
         <PaymentProviders {...args} />
