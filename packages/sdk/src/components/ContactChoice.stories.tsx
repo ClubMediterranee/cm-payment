@@ -1,32 +1,35 @@
-import { MockedFormProvider } from '@clubmed/payment-sdk/__fixtures__/MockedFormProvider.js';
-import { PspProviders } from '@clubmed/payment-sdk/types/PspProviders.js';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { http } from 'msw';
+import { initialize } from 'msw-storybook-addon';
 import { expect, fn, mocked, userEvent, waitFor, within } from 'storybook/test';
 
-import { useMockedForm } from '../__fixtures__/useMockedForm';
+import { MockedProvider } from '../__fixtures__/MockedProvider';
+import { OidcIssuerTypes } from '../types/CapsSettings';
 import { ContactChoice } from './ContactChoice';
 
-// Note: We cannot mock GLOBAL_SDK_SETTINGS in Storybook stories
+// Note: We cannot mock GLOBAL_CAPS_SETTINGS in Storybook stories
 // The component will use the real configuration from '@clubmed/payment-sdk/config'
 
 // Wrapper component to provide form context
-const ContactChoiceWithFormProvider = (args: any) => {
-  const methods = useMockedForm({
-    ...args,
-    defaultValues: {
-      template_id: '',
-      provider_id: [PspProviders.EIXOPAY], // Mock provider that matches withContactMethodProviders
-      billing_details: {
-        email: '',
-        mobile_phone: '',
-      },
-    },
-  });
 
+initialize();
+
+const handlers = [
+  http.get('*/v2/customers/456/profile', () => {
+    return Response.json({});
+  }),
+];
+
+const ContactChoiceWithFormProvider = (args: any) => {
   return (
-    <MockedFormProvider {...methods}>
+    <MockedProvider
+      bookingId="123"
+      customerId="456"
+      oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
+      defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
+    >
       <ContactChoice {...args} />
-    </MockedFormProvider>
+    </MockedProvider>
   );
 };
 
@@ -34,6 +37,9 @@ const meta: Meta<typeof ContactChoice> = {
   title: 'Components/ContactChoice',
   component: ContactChoice,
   parameters: {
+    msw: {
+      handlers,
+    },
     layout: 'fullscreen',
     docs: {
       description: {
@@ -93,14 +99,10 @@ export const WithInteractions: Story = {
 
     // Trouver les radio buttons
     const emailRadio = canvas.getByDisplayValue('6');
-    const phoneRadio = canvas.getByDisplayValue('8');
+    const phoneRadio = canvas.getByDisplayValue('1');
 
     expect(emailRadio).toBeInTheDocument();
     expect(phoneRadio).toBeInTheDocument();
-
-    // Vérifier qu'aucun radio n'est coché initialement
-    expect(emailRadio).not.toBeChecked();
-    expect(phoneRadio).not.toBeChecked();
 
     // Cliquer sur l'option Email
     await userEvent.click(emailRadio);
@@ -124,7 +126,6 @@ export const WithInteractions: Story = {
       template_id: '6',
     });
 
-    // Changer pour l'option téléphone
     await userEvent.click(phoneRadio);
     await expect(phoneRadio).toBeChecked();
     await expect(emailRadio).not.toBeChecked();
@@ -150,7 +151,7 @@ export const WithInteractions: Story = {
         mobile_phone: '+33123456789',
       },
       provider_id: ['EIXOPAY'],
-      template_id: '8',
+      template_id: '1',
     });
   },
 };
@@ -181,7 +182,7 @@ export const ValidationTest: Story = {
     expect(emailField).toHaveValue('invalid-email');
 
     // Changer pour téléphone
-    const phoneRadio = canvas.getByDisplayValue('8');
+    const phoneRadio = canvas.getByDisplayValue('4');
     await userEvent.click(phoneRadio);
 
     const phoneField = canvas.getByTestId('InputFor_mobile_phone');
@@ -208,7 +209,7 @@ export const AccessibilityTest: Story = {
 
     // Vérifier que les radios sont accessibles
     const radios = canvas.getAllByRole('radio');
-    expect(radios).toHaveLength(2);
+    expect(radios).toHaveLength(3);
 
     radios.forEach((radio) => {
       expect(radio).toBeInTheDocument();
@@ -231,7 +232,7 @@ export const AccessibilityTest: Story = {
     expect(emailField).toHaveFocus();
 
     // Navigation Tab ne fonctionne pas de façon fiable dans l'iframe Storybook
-    const phoneRadio = canvas.getByDisplayValue('8');
+    const phoneRadio = canvas.getByDisplayValue('4');
     phoneRadio.focus();
     expect(phoneRadio).toHaveFocus();
   },
@@ -250,7 +251,7 @@ export const InteractionBetweenOptions: Story = {
     const canvas = within(canvasElement);
 
     const emailRadio = canvas.getByDisplayValue('6');
-    const phoneRadio = canvas.getByDisplayValue('8');
+    const phoneRadio = canvas.getByDisplayValue('4');
 
     // Sélectionner email
     await userEvent.click(emailRadio);

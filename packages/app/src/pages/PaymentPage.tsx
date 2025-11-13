@@ -1,6 +1,7 @@
 import { Action } from '@clubmed/payment-sdk/__generated__/index.js';
 import { CardForm } from '@clubmed/payment-sdk/components/CardForm.js';
 import { Cgv } from '@clubmed/payment-sdk/components/Cgv';
+import { ContactChoice } from '@clubmed/payment-sdk/components/ContactChoice.js';
 import { IframeProvider } from '@clubmed/payment-sdk/components/IframeProvider.js';
 import { PaymentProviders } from '@clubmed/payment-sdk/components/PaymentProviders.js';
 import { PaymentSchedule } from '@clubmed/payment-sdk/components/PaymentSchedule';
@@ -17,7 +18,11 @@ import { LoadingPage } from './LoadingPage.js';
 
 export function PaymentPage() {
   const { isLoading, stay, status } = useStay();
-  const { action } = useQueryParams<{ action?: Action }>();
+  const { action, reference, uuid } = useQueryParams<{
+    action?: Action;
+    reference?: string;
+    uuid?: string;
+  }>();
   const { isOpen: isPaymentLoading, onOpen: onLoad, onClose: onLoadEnd } = useDisclosure();
 
   const ref = useRef<HTMLParagraphElement | null>(null);
@@ -77,6 +82,7 @@ export function PaymentPage() {
           </h2>
           <PaymentProviders />
         </div>
+        <ContactChoice reference={reference} uuid={uuid} />
         <Cgv />
         <IframeProvider />
         <CardForm />

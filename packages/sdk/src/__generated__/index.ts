@@ -8575,6 +8575,61 @@ export interface ActivitiesThematic {
 
 export type ActivitiesThematics = ActivitiesThematic[];
 
+export interface PspOfResortModel {
+  /**
+   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
+   * @pattern ^([EMS][0-9A-Z]+)$
+   */
+  id: string;
+}
+
+/**
+ * External service type
+ */
+export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExternalServiceType = {
+  CONCIERGERIE: 'CONCIERGERIE',
+  PARKING: 'PARKING',
+} as const;
+
+/**
+ * white label service subtype
+ */
+export type ExternalServiceSubtype =
+  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExternalServiceSubtype = {
+  BABYSITTING: 'BABYSITTING',
+  BABY_SKI_LESSON: 'BABY_SKI_LESSON',
+  BIRTHDAY_PARTY: 'BIRTHDAY_PARTY',
+  CELEBRATION: 'CELEBRATION',
+  CHAMPAGNE: 'CHAMPAGNE',
+  HONEYMOON: 'HONEYMOON',
+  PARKING: 'PARKING',
+  PHOTO_PACKAGE: 'PHOTO_PACKAGE',
+  WIFI: 'WIFI',
+  EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
+  RESORT_EARLY_ACCESS: 'RESORT_EARLY_ACCESS',
+} as const;
+
+export interface ExternalServiceModel {
+  /** External service code */
+  id?: string;
+  type?: ExternalServiceType;
+  subtype?: ExternalServiceSubtype;
+  /** External service title */
+  title?: string;
+  /** External service description */
+  description?: string;
+  /** white label service image */
+  image?: string;
+}
+
+export type ExternalServicesModel = ExternalServiceModel[];
+
 export type AccommodationCategoryModelRanking =
   (typeof AccommodationCategoryModelRanking)[keyof typeof AccommodationCategoryModelRanking];
 
@@ -8651,61 +8706,6 @@ export interface DescriptionAccommodationCategoriesList {
   description?: string;
   accommodation_categories?: AccommodationCategoriesList;
 }
-
-export interface PspOfResortModel {
-  /**
-   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
-   * @pattern ^([EMS][0-9A-Z]+)$
-   */
-  id: string;
-}
-
-/**
- * External service type
- */
-export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExternalServiceType = {
-  CONCIERGERIE: 'CONCIERGERIE',
-  PARKING: 'PARKING',
-} as const;
-
-/**
- * white label service subtype
- */
-export type ExternalServiceSubtype =
-  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExternalServiceSubtype = {
-  BABYSITTING: 'BABYSITTING',
-  BABY_SKI_LESSON: 'BABY_SKI_LESSON',
-  BIRTHDAY_PARTY: 'BIRTHDAY_PARTY',
-  CELEBRATION: 'CELEBRATION',
-  CHAMPAGNE: 'CHAMPAGNE',
-  HONEYMOON: 'HONEYMOON',
-  PARKING: 'PARKING',
-  PHOTO_PACKAGE: 'PHOTO_PACKAGE',
-  WIFI: 'WIFI',
-  EARLY_ARRIVAL_LUNCH: 'EARLY_ARRIVAL_LUNCH',
-  RESORT_EARLY_ACCESS: 'RESORT_EARLY_ACCESS',
-} as const;
-
-export interface ExternalServiceModel {
-  /** External service code */
-  id?: string;
-  type?: ExternalServiceType;
-  subtype?: ExternalServiceSubtype;
-  /** External service title */
-  title?: string;
-  /** External service description */
-  description?: string;
-  /** white label service image */
-  image?: string;
-}
-
-export type ExternalServicesModel = ExternalServiceModel[];
 
 export interface AccommodationCodeModel {
   /** Club Méditerranée accommodation code */
@@ -10693,119 +10693,6 @@ export interface TravelerResponseModel {
 export type TravelerListModel = TravelerResponseModel[];
 
 /**
- * email
- */
-export type ProfileModelV1Email = string | null;
-
-/**
- * great member number (not editable)
- */
-export type ProfileModelV1GmNumber = string | null;
-
-/**
- * great member gender
- */
-export type ProfileModelV1Gender = string | null;
-
-/**
- * civility
- */
-export type ProfileModelV1Civility = string | null;
-
-/**
- * civility (unicode version)
- */
-export type ProfileModelV1UnicodeCivility = string | null;
-
-/**
- * first name
- */
-export type ProfileModelV1FirstName = string | null;
-
-/**
- * first name (unicode version)
- */
-export type ProfileModelV1UnicodeFirstName = string | null;
-
-/**
- * last name
- */
-export type ProfileModelV1LastName = string | null;
-
-/**
- * last name
- */
-export type ProfileModelV1UnicodeLastName = string | null;
-
-/**
- * Sanitary pass number
- */
-export type ProfileModelV1HealthPassId = string | null;
-
-/**
- * date of birth is DEPRECATED, use birthdate instead
- */
-export type ProfileModelV1Birthday = string | null;
-
-/**
- * date of birth
- */
-export type ProfileModelV1Birthdate = string | null;
-
-/**
- * ISO 2 country code
- */
-export type ProfileModelV1BirthCountryCode = string | null;
-
-export interface ProfileModelV1 {
-  /** email */
-  email?: ProfileModelV1Email;
-  /** great member number (not editable) */
-  gm_number?: ProfileModelV1GmNumber;
-  /** great member gender */
-  gender?: ProfileModelV1Gender;
-  /** civility */
-  civility?: ProfileModelV1Civility;
-  /** civility (unicode version) */
-  unicode_civility?: ProfileModelV1UnicodeCivility;
-  /** first name */
-  first_name?: ProfileModelV1FirstName;
-  /** first name (unicode version) */
-  unicode_first_name?: ProfileModelV1UnicodeFirstName;
-  /** last name */
-  last_name?: ProfileModelV1LastName;
-  /** last name */
-  unicode_last_name?: ProfileModelV1UnicodeLastName;
-  /** Sanitary pass number */
-  health_pass_id?: ProfileModelV1HealthPassId;
-  /** Defines the status of the CLIENT in the database. CLIENT OR PROSPECT (not editable) */
-  customer_type?: string;
-  customer_status?: CustomerStatus;
-  /** date of birth is DEPRECATED, use birthdate instead */
-  birthday?: ProfileModelV1Birthday;
-  /** date of birth */
-  birthdate?: ProfileModelV1Birthdate;
-  /** ISO 2 country code */
-  birth_country_code?: ProfileModelV1BirthCountryCode;
-  /** customer language. ISO 2 code */
-  language_code?: string;
-  phones?: PhonesModel;
-  loyalty_program?: CustomerLoyaltyProgramStatus;
-  address?: ProfileAddressV1Model;
-  optins?: LegacyOptinsModel;
-  /** true if the customer allows the use of its personal data by Club Med */
-  personal_data_usage_allowed: boolean;
-  /** Indicates if a client is blacklisted or not */
-  blacklisted?: boolean;
-  /** Indicates the filiation number of a customer */
-  filiation_number?: string;
-  _links?: LinksModel;
-  identity: NationalIdentifierCodeModel;
-  /** Locale with ISO 639-1 language and ISO 3166-1 country */
-  locale?: string;
-}
-
-/**
  * customer profile first name. Cannot be modified. Use customers/{customer_id}/profile instead
  */
 export type PassportAnyOfFirstName = string | null;
@@ -11787,6 +11674,119 @@ export interface CustomerLoyaltyDetailsModel {
 }
 
 export type CustomerLoyaltyDetailsResponseModel = CustomerLoyaltyDetailsModel[];
+
+/**
+ * email
+ */
+export type ProfileModelV1Email = string | null;
+
+/**
+ * great member number (not editable)
+ */
+export type ProfileModelV1GmNumber = string | null;
+
+/**
+ * great member gender
+ */
+export type ProfileModelV1Gender = string | null;
+
+/**
+ * civility
+ */
+export type ProfileModelV1Civility = string | null;
+
+/**
+ * civility (unicode version)
+ */
+export type ProfileModelV1UnicodeCivility = string | null;
+
+/**
+ * first name
+ */
+export type ProfileModelV1FirstName = string | null;
+
+/**
+ * first name (unicode version)
+ */
+export type ProfileModelV1UnicodeFirstName = string | null;
+
+/**
+ * last name
+ */
+export type ProfileModelV1LastName = string | null;
+
+/**
+ * last name
+ */
+export type ProfileModelV1UnicodeLastName = string | null;
+
+/**
+ * Sanitary pass number
+ */
+export type ProfileModelV1HealthPassId = string | null;
+
+/**
+ * date of birth is DEPRECATED, use birthdate instead
+ */
+export type ProfileModelV1Birthday = string | null;
+
+/**
+ * date of birth
+ */
+export type ProfileModelV1Birthdate = string | null;
+
+/**
+ * ISO 2 country code
+ */
+export type ProfileModelV1BirthCountryCode = string | null;
+
+export interface ProfileModelV1 {
+  /** email */
+  email?: ProfileModelV1Email;
+  /** great member number (not editable) */
+  gm_number?: ProfileModelV1GmNumber;
+  /** great member gender */
+  gender?: ProfileModelV1Gender;
+  /** civility */
+  civility?: ProfileModelV1Civility;
+  /** civility (unicode version) */
+  unicode_civility?: ProfileModelV1UnicodeCivility;
+  /** first name */
+  first_name?: ProfileModelV1FirstName;
+  /** first name (unicode version) */
+  unicode_first_name?: ProfileModelV1UnicodeFirstName;
+  /** last name */
+  last_name?: ProfileModelV1LastName;
+  /** last name */
+  unicode_last_name?: ProfileModelV1UnicodeLastName;
+  /** Sanitary pass number */
+  health_pass_id?: ProfileModelV1HealthPassId;
+  /** Defines the status of the CLIENT in the database. CLIENT OR PROSPECT (not editable) */
+  customer_type?: string;
+  customer_status?: CustomerStatus;
+  /** date of birth is DEPRECATED, use birthdate instead */
+  birthday?: ProfileModelV1Birthday;
+  /** date of birth */
+  birthdate?: ProfileModelV1Birthdate;
+  /** ISO 2 country code */
+  birth_country_code?: ProfileModelV1BirthCountryCode;
+  /** customer language. ISO 2 code */
+  language_code?: string;
+  phones?: PhonesModel;
+  loyalty_program?: CustomerLoyaltyProgramStatus;
+  address?: ProfileAddressV1Model;
+  optins?: LegacyOptinsModel;
+  /** true if the customer allows the use of its personal data by Club Med */
+  personal_data_usage_allowed: boolean;
+  /** Indicates if a client is blacklisted or not */
+  blacklisted?: boolean;
+  /** Indicates the filiation number of a customer */
+  filiation_number?: string;
+  _links?: LinksModel;
+  identity: NationalIdentifierCodeModel;
+  /** Locale with ISO 639-1 language and ISO 3166-1 country */
+  locale?: string;
+}
 
 /**
  * type of the facility
@@ -13841,187 +13841,6 @@ export interface BookingTransportDetailsV2Model {
 export type BookingTransportDetailsListV2Model = BookingTransportDetailsV2Model[];
 
 /**
- * type of the commercial offer
- */
-export type CommercialOfferModelType =
-  (typeof CommercialOfferModelType)[keyof typeof CommercialOfferModelType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CommercialOfferModelType = {
-  CREDIT_NOTE: 'CREDIT_NOTE',
-  REFUND: 'REFUND',
-  SPONSORSHIP: 'SPONSORSHIP',
-  TARGETED_OFFER: 'TARGETED_OFFER',
-} as const;
-
-/**
- * unit
- */
-export type CommercialOfferModelUnit =
-  (typeof CommercialOfferModelUnit)[keyof typeof CommercialOfferModelUnit];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CommercialOfferModelUnit = {
-  PERCENT: 'PERCENT',
-  FLAT: 'FLAT',
-} as const;
-
-/**
- * status of the offer
- */
-export type CommercialOfferStatusModel =
-  (typeof CommercialOfferStatusModel)[keyof typeof CommercialOfferStatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CommercialOfferStatusModel = {
-  AVAILABLE: 'AVAILABLE',
-  UNAVAILABLE: 'UNAVAILABLE',
-} as const;
-
-/**
- * last name of the godchild in unicode
- */
-export type GodchildInformationModelAnyOfUnicodeLastName = string | null;
-
-/**
- * first name of the godchild in unicode
- */
-export type GodchildInformationModelAnyOfUnicodeFirstName = string | null;
-
-export type GodchildInformationModelAnyOf = {
-  /** last name of the godchild */
-  last_name?: string;
-  /** last name of the godchild in unicode */
-  unicode_last_name?: GodchildInformationModelAnyOfUnicodeLastName;
-  /** first name of the godchild */
-  first_name?: string;
-  /** first name of the godchild in unicode */
-  unicode_first_name?: GodchildInformationModelAnyOfUnicodeFirstName;
-};
-
-export type GodchildInformationModel = GodchildInformationModelAnyOf | null;
-
-/**
- * Indicates the godfather's unicode last name
- */
-export type GodfatherInformationModelAnyOfUnicodeLastName = string | null;
-
-/**
- * Indicates the godfather's unicode first name
- */
-export type GodfatherInformationModelAnyOfUnicodeFirstName = string | null;
-
-export type GodfatherInformationModelAnyOf = {
-  /** Indicates the godfather's last name */
-  last_name?: string;
-  /** Indicates the godfather's unicode last name */
-  unicode_last_name?: GodfatherInformationModelAnyOfUnicodeLastName;
-  /** Indicates the godfather's first name */
-  first_name?: string;
-  /** Indicates the godfather's unicode first name */
-  unicode_first_name?: GodfatherInformationModelAnyOfUnicodeFirstName;
-};
-
-export type GodfatherInformationModel = GodfatherInformationModelAnyOf | null;
-
-/**
- * stay's start date
- */
-export type CommercialOfferStayModelStartDate = string | null;
-
-/**
- * stay's end date
- */
-export type CommercialOfferStayModelEndDate = string | null;
-
-export interface CommercialOfferStayModel {
-  /** stay's start date */
-  start_date: CommercialOfferStayModelStartDate;
-  /** stay's end date */
-  end_date: CommercialOfferStayModelEndDate;
-  /** ClubMed Product identifier */
-  product_id: string;
-}
-
-export type OriginStaysModel = CommercialOfferStayModel[];
-
-export type OriginModelAnyOf = {
-  /** booking id who generated a credit note */
-  booking_id?: string;
-  stays?: OriginStaysModel;
-};
-
-export type OriginModel = OriginModelAnyOf | null;
-
-/**
- * offer identifier
- */
-export type CommercialOfferV2ModelOfferId = string | null;
-
-/**
- * displays the advantage code
- */
-export type CommercialOfferV2ModelCode = string | null;
-
-/**
- * date when begins the offer 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
- */
-export type CommercialOfferV2ModelValidityStartDate = string | null;
-
-/**
- * cutoff date of the offer 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
- */
-export type CommercialOfferV2ModelValidityEndDate = string | null;
-
-/**
- * date at which the commercial offer has been used 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
- */
-export type CommercialOfferV2ModelDateOfUse = string | null;
-
-/**
- * id of the origin of the commercial offer
- */
-export type CommercialOfferV2ModelOriginType = string | null;
-
-export interface CommercialOfferV2Model {
-  /** Indicates the unique code of a commercial offer */
-  id: number;
-  type: CommercialOfferModelType;
-  /** offer identifier */
-  offer_id?: CommercialOfferV2ModelOfferId;
-  /** Offer label. */
-  label: string;
-  /** displays the advantage code */
-  code?: CommercialOfferV2ModelCode;
-  /** value */
-  value: number;
-  unit: CommercialOfferModelUnit;
-  /** currency */
-  currency: string;
-  /** date when begins the offer 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  validity_start_date?: CommercialOfferV2ModelValidityStartDate;
-  /** cutoff date of the offer 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  validity_end_date?: CommercialOfferV2ModelValidityEndDate;
-  /** date at which the commercial offer has been used 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  date_of_use: CommercialOfferV2ModelDateOfUse;
-  /** id of the origin of the commercial offer */
-  origin_type: CommercialOfferV2ModelOriginType;
-  status: CommercialOfferStatusModel;
-  godchild_information: GodchildInformationModel;
-  godfather_information: GodfatherInformationModel;
-  origin?: OriginModel;
-  _links?: LinksModel;
-}
-
-export type CommercialOffersV2Model = CommercialOfferV2Model[];
-
-/**
  * Customer loyalty program status (not editable)
  */
 export type CustomerLoyaltyProgramStatusV2Model =
@@ -14394,6 +14213,187 @@ export interface ProfileModelV2 {
   locale?: ProfileModelV2Locale;
   _links?: NullableLinksModel;
 }
+
+/**
+ * type of the commercial offer
+ */
+export type CommercialOfferModelType =
+  (typeof CommercialOfferModelType)[keyof typeof CommercialOfferModelType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CommercialOfferModelType = {
+  CREDIT_NOTE: 'CREDIT_NOTE',
+  REFUND: 'REFUND',
+  SPONSORSHIP: 'SPONSORSHIP',
+  TARGETED_OFFER: 'TARGETED_OFFER',
+} as const;
+
+/**
+ * unit
+ */
+export type CommercialOfferModelUnit =
+  (typeof CommercialOfferModelUnit)[keyof typeof CommercialOfferModelUnit];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CommercialOfferModelUnit = {
+  PERCENT: 'PERCENT',
+  FLAT: 'FLAT',
+} as const;
+
+/**
+ * status of the offer
+ */
+export type CommercialOfferStatusModel =
+  (typeof CommercialOfferStatusModel)[keyof typeof CommercialOfferStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CommercialOfferStatusModel = {
+  AVAILABLE: 'AVAILABLE',
+  UNAVAILABLE: 'UNAVAILABLE',
+} as const;
+
+/**
+ * last name of the godchild in unicode
+ */
+export type GodchildInformationModelAnyOfUnicodeLastName = string | null;
+
+/**
+ * first name of the godchild in unicode
+ */
+export type GodchildInformationModelAnyOfUnicodeFirstName = string | null;
+
+export type GodchildInformationModelAnyOf = {
+  /** last name of the godchild */
+  last_name?: string;
+  /** last name of the godchild in unicode */
+  unicode_last_name?: GodchildInformationModelAnyOfUnicodeLastName;
+  /** first name of the godchild */
+  first_name?: string;
+  /** first name of the godchild in unicode */
+  unicode_first_name?: GodchildInformationModelAnyOfUnicodeFirstName;
+};
+
+export type GodchildInformationModel = GodchildInformationModelAnyOf | null;
+
+/**
+ * Indicates the godfather's unicode last name
+ */
+export type GodfatherInformationModelAnyOfUnicodeLastName = string | null;
+
+/**
+ * Indicates the godfather's unicode first name
+ */
+export type GodfatherInformationModelAnyOfUnicodeFirstName = string | null;
+
+export type GodfatherInformationModelAnyOf = {
+  /** Indicates the godfather's last name */
+  last_name?: string;
+  /** Indicates the godfather's unicode last name */
+  unicode_last_name?: GodfatherInformationModelAnyOfUnicodeLastName;
+  /** Indicates the godfather's first name */
+  first_name?: string;
+  /** Indicates the godfather's unicode first name */
+  unicode_first_name?: GodfatherInformationModelAnyOfUnicodeFirstName;
+};
+
+export type GodfatherInformationModel = GodfatherInformationModelAnyOf | null;
+
+/**
+ * stay's start date
+ */
+export type CommercialOfferStayModelStartDate = string | null;
+
+/**
+ * stay's end date
+ */
+export type CommercialOfferStayModelEndDate = string | null;
+
+export interface CommercialOfferStayModel {
+  /** stay's start date */
+  start_date: CommercialOfferStayModelStartDate;
+  /** stay's end date */
+  end_date: CommercialOfferStayModelEndDate;
+  /** ClubMed Product identifier */
+  product_id: string;
+}
+
+export type OriginStaysModel = CommercialOfferStayModel[];
+
+export type OriginModelAnyOf = {
+  /** booking id who generated a credit note */
+  booking_id?: string;
+  stays?: OriginStaysModel;
+};
+
+export type OriginModel = OriginModelAnyOf | null;
+
+/**
+ * offer identifier
+ */
+export type CommercialOfferV2ModelOfferId = string | null;
+
+/**
+ * displays the advantage code
+ */
+export type CommercialOfferV2ModelCode = string | null;
+
+/**
+ * date when begins the offer 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
+ */
+export type CommercialOfferV2ModelValidityStartDate = string | null;
+
+/**
+ * cutoff date of the offer 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
+ */
+export type CommercialOfferV2ModelValidityEndDate = string | null;
+
+/**
+ * date at which the commercial offer has been used 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
+ */
+export type CommercialOfferV2ModelDateOfUse = string | null;
+
+/**
+ * id of the origin of the commercial offer
+ */
+export type CommercialOfferV2ModelOriginType = string | null;
+
+export interface CommercialOfferV2Model {
+  /** Indicates the unique code of a commercial offer */
+  id: number;
+  type: CommercialOfferModelType;
+  /** offer identifier */
+  offer_id?: CommercialOfferV2ModelOfferId;
+  /** Offer label. */
+  label: string;
+  /** displays the advantage code */
+  code?: CommercialOfferV2ModelCode;
+  /** value */
+  value: number;
+  unit: CommercialOfferModelUnit;
+  /** currency */
+  currency: string;
+  /** date when begins the offer 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  validity_start_date?: CommercialOfferV2ModelValidityStartDate;
+  /** cutoff date of the offer 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  validity_end_date?: CommercialOfferV2ModelValidityEndDate;
+  /** date at which the commercial offer has been used 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  date_of_use: CommercialOfferV2ModelDateOfUse;
+  /** id of the origin of the commercial offer */
+  origin_type: CommercialOfferV2ModelOriginType;
+  status: CommercialOfferStatusModel;
+  godchild_information: GodchildInformationModel;
+  godfather_information: GodfatherInformationModel;
+  origin?: OriginModel;
+  _links?: LinksModel;
+}
+
+export type CommercialOffersV2Model = CommercialOfferV2Model[];
 
 /**
  * Thematic's type
@@ -25337,6 +25337,14 @@ export const getV1ProposalsProposalIdPaymentSchedule = (proposalId: string) => {
 };
 
 /**
+ * This resource lists detailed information about a given account.
+ * @summary Comprehensive information about a customer
+ */
+export const getV2CustomersCustomerIdProfile = (customerId: string) => {
+  return fetcher<ProfileModelV2>({ url: `/v2/customers/${customerId}/profile`, method: 'GET' });
+};
+
+/**
  * @summary details of one booking
  */
 export const getV3CustomersCustomerIdBookingsBookingId = (
@@ -25468,6 +25476,9 @@ export type GetV0PaymentsPaymentIdStatusResult = NonNullable<
 >;
 export type GetV1ProposalsProposalIdPaymentScheduleResult = NonNullable<
   Awaited<ReturnType<typeof getV1ProposalsProposalIdPaymentSchedule>>
+>;
+export type GetV2CustomersCustomerIdProfileResult = NonNullable<
+  Awaited<ReturnType<typeof getV2CustomersCustomerIdProfile>>
 >;
 export type GetV3CustomersCustomerIdBookingsBookingIdResult = NonNullable<
   Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingId>>
@@ -26111,6 +26122,142 @@ export const getGetV1ProposalsProposalIdPaymentScheduleResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetV2CustomersCustomerIdProfileResponseMock = (
+  overrideResponse: Partial<ProfileModelV2> = {},
+): ProfileModelV2 => ({
+  email: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  gm_number: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  gender: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  civility: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  unicode_civility: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  first_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  unicode_first_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  second_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  unicode_second_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  third_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  unicode_third_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  fourth_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  unicode_fourth_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  last_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  unicode_last_name: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  health_pass_id: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  customer_type: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  customer_status: faker.helpers.arrayElement([
+    faker.helpers.arrayElement(['NEW_CUSTOMER', 'UNAVAILABLE', 'PROSPECT', 'CLIENT'] as const),
+    undefined,
+  ]),
+  birthday: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  birthdate: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  birth_country_code: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  birth_city: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  language_code: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  phones: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      number: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      type: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(PhoneTypeModel)),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  loyalty_program: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  address: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  optins: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      channel: faker.helpers.arrayElement(Object.values(ValidOptinChanelModel)),
+      optin: faker.datatype.boolean(),
+      optin_partners: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+    })),
+    undefined,
+  ]),
+  personal_data_usage_allowed: faker.datatype.boolean(),
+  blacklisted: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+    undefined,
+  ]),
+  filiation_number: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  identity: faker.helpers.arrayElement([null]),
+  locale: faker.helpers.arrayElement([
+    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
+    undefined,
+  ]),
+  _links: faker.helpers.arrayElement([faker.helpers.arrayElement([[], null]), undefined]),
+  ...overrideResponse,
+});
+
 export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
   overrideResponse: Partial<CustomerBookingModelV3> = {},
 ): CustomerBookingModelV3 => ({
@@ -26733,6 +26880,34 @@ export const getGetV1ProposalsProposalIdPaymentScheduleMockHandler = (
   );
 };
 
+export const getGetV2CustomersCustomerIdProfileMockHandler = (
+  overrideResponse?:
+    | ProfileModelV2
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ProfileModelV2> | ProfileModelV2),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    '*/v2/customers/:customerId/profile',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV2CustomersCustomerIdProfileResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetV3CustomersCustomerIdBookingsBookingIdMockHandler = (
   overrideResponse?:
     | CustomerBookingModelV3
@@ -26965,6 +27140,7 @@ export const getClubMedAPIMock = () => [
   getGetV2ProposalsProposalIdMockHandler(),
   getGetV0PaymentsPaymentIdStatusMockHandler(),
   getGetV1ProposalsProposalIdPaymentScheduleMockHandler(),
+  getGetV2CustomersCustomerIdProfileMockHandler(),
   getGetV3CustomersCustomerIdBookingsBookingIdMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler(),
