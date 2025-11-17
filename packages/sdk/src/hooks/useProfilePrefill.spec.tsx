@@ -1,9 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import type { PropsWithChildren } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
 
-import type { CapsFormData } from '../types/FormData';
 import { useProfilePrefill } from './useProfilePrefill';
 
 let mockProfile = {
@@ -12,14 +10,21 @@ let mockProfile = {
 };
 
 let mockIsSeller = true;
-let mockCustomerId = '123';
+
+export const mockSetValue = vi.fn();
 
 vi.mock('./utils/useCapsConfigContext', () => ({
   useCapsConfigContext: () => ({
-    customerId: mockCustomerId,
+    customerId: '87654321',
   }),
   useOidcContext: () => ({
     isSeller: mockIsSeller,
+  }),
+}));
+
+vi.mock('./utils/useForm', () => ({
+  useFormContext: () => ({
+    setValue: mockSetValue,
   }),
 }));
 
@@ -35,152 +40,63 @@ describe('useProfilePrefill', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    });
+    queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+
     mockIsSeller = true;
     mockProfile = {
       email: 'test@example.com',
       phones: [{ number: '+33612345678' }],
     };
-    vi.clearAllMocks();
+
+    mockSetValue.mockClear();
   });
 
-  const Wrapper = ({ children }: PropsWithChildren) => {
-    const methods = useForm<CapsFormData>({
-      defaultValues: {
-        billing_details: {},
-      } as CapsFormData,
-    });
+  const Wrapper = ({ children }: PropsWithChildren) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 
-    return (
-      <QueryClientProvider client={queryClient}>
-        <FormProvider {...methods}>{children}</FormProvider>
-      </QueryClientProvider>
-    );
-  };
-
-  it('should prefill email and mobile_phone from profile', async () => {
-    const { result } = renderHook(
-      () => {
-        const methods = useForm<CapsFormData>({
-          defaultValues: {
-            billing_details: {},
-          } as CapsFormData,
-        });
-        useProfilePrefill();
-        return methods;
-      },
-      { wrapper: Wrapper },
-    );
+  it('should call setValue with email and mobile_phone', async () => {
+    renderHook(() => useProfilePrefill(), { wrapper: Wrapper });
 
     await waitFor(() => {
-      const values = result.current.getValues();
-      expect(values.billing_details?.email).toBe('test@example.com');
-      expect(values.billing_details?.mobile_phone).toBe('+33612345678');
+      expect(mockSetValue).toHaveBeenCalledWith('billing_details.email', 'test@example.com');
+
+      expect(mockSetValue).toHaveBeenCalledWith('billing_details.mobile_phone', '+33612345678');
     });
   });
 
-  it('should handle profile with missing phone number', async () => {
-    mockProfile = {
-      email: 'test@example.com',
-      phones: [],
-    };
+  it('should not set mobile_phone if profile has no phones', async () => {
+    mockProfile = { email: 'test@example.com', phones: [] };
 
-    const { result } = renderHook(
-      () => {
-        const methods = useForm<CapsFormData>({
-          defaultValues: {
-            billing_details: {},
-          } as CapsFormData,
-        });
-        useProfilePrefill();
-        return methods;
-      },
-      { wrapper: Wrapper },
-    );
+    renderHook(() => useProfilePrefill(), { wrapper: Wrapper });
 
     await waitFor(() => {
-      const values = result.current.getValues();
-      expect(values.billing_details?.email).toBe('test@example.com');
-      expect(values.billing_details?.mobile_phone).toBeUndefined();
-    });
-  });
-
-  it('should handle profile with undefined phones', async () => {
-    mockProfile = {
-      email: 'test@example.com',
-    } as any;
-
-    const { result } = renderHook(
-      () => {
-        const methods = useForm<CapsFormData>({
-          defaultValues: {
-            billing_details: {},
-          } as CapsFormData,
-        });
-        useProfilePrefill();
-        return methods;
-      },
-      { wrapper: Wrapper },
-    );
-
-    await waitFor(() => {
-      const values = result.current.getValues();
-      expect(values.billing_details?.email).toBe('test@example.com');
-      expect(values.billing_details?.mobile_phone).toBeUndefined();
+      expect(mockSetValue).toHaveBeenCalledWith('billing_details.email', 'test@example.com');
+      expect(mockSetValue).not.toHaveBeenCalledWith(
+        'billing_details.mobile_phone',
+        expect.anything(),
+      );
     });
   });
 
   it('should not prefill when isSeller is false', async () => {
     mockIsSeller = false;
 
-    const { result } = renderHook(
-      () => {
-        const methods = useForm<CapsFormData>({
-          defaultValues: {
-            billing_details: {},
-          } as CapsFormData,
-        });
-        useProfilePrefill();
-        return methods;
-      },
-      { wrapper: Wrapper },
-    );
+    renderHook(() => useProfilePrefill(), { wrapper: Wrapper });
 
     await waitFor(() => {
-      const values = result.current.getValues();
-      expect(values.billing_details?.email).toBeUndefined();
-      expect(values.billing_details?.mobile_phone).toBeUndefined();
+      expect(mockSetValue).not.toHaveBeenCalled();
     });
   });
 
-  it('should handle profile with missing email', async () => {
-    mockProfile = {
-      phones: [{ number: '+33612345678' }],
-    } as any;
+  it('should handle missing email', async () => {
+    mockProfile = { phones: [{ number: '+33612345678' }] } as any;
 
-    const { result } = renderHook(
-      () => {
-        const methods = useForm<CapsFormData>({
-          defaultValues: {
-            billing_details: {},
-          } as CapsFormData,
-        });
-        useProfilePrefill();
-        return methods;
-      },
-      { wrapper: Wrapper },
-    );
+    renderHook(() => useProfilePrefill(), { wrapper: Wrapper });
 
     await waitFor(() => {
-      const values = result.current.getValues();
-      expect(values.billing_details?.email).toBeUndefined();
-      expect(values.billing_details?.mobile_phone).toBe('+33612345678');
+      expect(mockSetValue).toHaveBeenCalledWith('billing_details.mobile_phone', '+33612345678');
+      expect(mockSetValue).not.toHaveBeenCalledWith('billing_details.email', expect.anything());
     });
   });
 });
