@@ -1,11 +1,12 @@
-import { getSDKPaymentOptions } from '../../providers/SDKConfigProvider.js';
+import { getCapsConfig } from '@clubmed/payment-sdk/providers/CapsConfigProvider';
 
 export function getRedirectPaymentCallbackUrl(paymentId: string, providerId: string): string {
   const {
     url,
     oidc: { issuerType },
-    proposalId,
-  } = getSDKPaymentOptions();
+    type,
+    id,
+  } = getCapsConfig();
 
   const redirectUrl = new URL(url);
   redirectUrl.pathname = `${issuerType.toLocaleLowerCase()}/redirect/${paymentId}`;
@@ -13,8 +14,8 @@ export function getRedirectPaymentCallbackUrl(paymentId: string, providerId: str
   if (providerId) {
     redirectUrl.searchParams.append('provider_id', providerId);
   }
-  if (proposalId) {
-    redirectUrl.searchParams.append('proposal_id', proposalId);
+  if (type === 'proposal') {
+    redirectUrl.searchParams.append('proposal_id', id);
   }
   return redirectUrl.toString();
 }

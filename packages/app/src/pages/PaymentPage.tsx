@@ -1,19 +1,22 @@
+import { Action } from '@clubmed/payment-sdk/__generated__/index.js';
 import { Cgv } from '@clubmed/payment-sdk/components/Cgv';
 import { IframeProvider } from '@clubmed/payment-sdk/components/IframeProvider.js';
 import { PaymentProviders } from '@clubmed/payment-sdk/components/PaymentProviders.js';
 import { PaymentSchedule } from '@clubmed/payment-sdk/components/PaymentSchedule';
 import { useDisclosure } from '@clubmed/payment-sdk/hooks/utils/useDisclosure';
-import { SDKFormProvider } from '@clubmed/payment-sdk/providers/SDKFormProvider.js';
+import { CapsForm } from '@clubmed/payment-sdk/providers/CapsForm.js';
 import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
 import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { Stay, StayPlaceholder } from '../components/Stay';
+import { useQueryParams } from '../hooks/useQueryParams';
 import { useStay } from '../hooks/useStay';
 import { LoadingPage } from './LoadingPage.js';
 
 export function PaymentPage() {
   const { isLoading, stay, status } = useStay();
+  const { action } = useQueryParams<{ action?: Action }>();
   const { isOpen: isPaymentLoading, onOpen: onLoad, onClose: onLoadEnd } = useDisclosure();
 
   const ref = useRef<HTMLParagraphElement | null>(null);
@@ -62,7 +65,7 @@ export function PaymentPage() {
         <Stay stay={stay!} />
       </Suspense>
 
-      <SDKFormProvider onError={onError} onLoad={onLoad} onLoadEnd={onLoadEnd}>
+      <CapsForm onError={onError} onLoad={onLoad} onLoadEnd={onLoadEnd} action={action}>
         <div className="w-full">
           <h2 className="text-h5 mb-16 font-serif">Choisissez l'échéancier de paiement</h2>
           <PaymentSchedule />
@@ -83,7 +86,7 @@ export function PaymentPage() {
         <Button type="submit" className="my-8">
           Payer
         </Button>
-      </SDKFormProvider>
+      </CapsForm>
     </div>
   );
 }

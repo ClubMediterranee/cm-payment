@@ -1,4 +1,4 @@
-import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config';
+import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
 import { useQuery } from '@tanstack/react-query';
 
 import { getV0PaymentsPaymentIdStatus } from '../../__generated__';
@@ -8,7 +8,7 @@ export const usePaymentStatus = ({ paymentId }: { paymentId: string }) => {
   const provider_id = new URLSearchParams(search).get('provider_id');
   const isEnabled =
     !!paymentId &&
-    GLOBAL_SDK_SETTINGS.serverValidationProviders.includes((provider_id as any) || '');
+    GLOBAL_CAPS_SETTINGS.serverValidationProviders.includes((provider_id as any) || '');
 
   return useQuery({
     queryKey: ['status'],

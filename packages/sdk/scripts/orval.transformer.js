@@ -1,4 +1,4 @@
-import { CategoryPaymentMethod } from './constants.js';
+import { CategoryPaymentMethod, UnsupportedAction } from './constants.js';
 
 export const ENDPOINTS = [
   'POST /v1/payments/{payment_id}/notify',
@@ -7,6 +7,7 @@ export const ENDPOINTS = [
   'GET /v0/customers/{customer_id}/bookings/{booking_id}/cart/payment_schedule',
   'GET /v0/customers/{customer_id}/bookings/{booking_id}/cart/accommodations',
   'GET /v1/proposals/{proposal_id}/payment_schedule',
+  'GET /v3/customers/{customer_id}/bookings/{booking_id}',
   'GET /v0/payments/{payment_id}/status',
   'GET /v2/proposals/{proposal_id}',
   'POST /v3/bookings',
@@ -38,6 +39,12 @@ export default function (schema) {
       ...schema.components,
       schemas: {
         ...schema.components.schemas,
+        action: {
+          ...schema.components.schemas.action,
+          enum: schema.components.schemas.action.enum.filter(
+            (action) => !UnsupportedAction.includes(action),
+          ),
+        },
         PaymentProvider1: {
           ...schema.components.schemas.PaymentProvider1,
           properties: {

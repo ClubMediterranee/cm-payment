@@ -1,27 +1,23 @@
-import { getSDKPaymentOptions } from '@clubmed/payment-sdk/providers/SDKConfigProvider.js';
+import { getCapsConfig } from '../providers/CapsConfigProvider';
 
-export const fetcher = async <T>(
-  {
-    url,
-    method,
-    params = {},
-    headers,
-    data,
-  }: {
-    url: string;
-    method: string;
-    headers?: Record<string, string>;
-    params?: Record<string, unknown>;
-    data?: unknown;
-  },
-  auth?: { withAuth: boolean },
-): Promise<T> => {
-  const withAuth = auth?.withAuth || false;
+export const fetcher = async <T>({
+  url,
+  method,
+  params = {},
+  headers,
+  data,
+}: {
+  url: string;
+  method: string;
+  headers?: Record<string, string>;
+  params?: Record<string, unknown>;
+  data?: unknown;
+}): Promise<T> => {
   const {
     locale,
     oidc: { accessToken },
     api: { url: apiUrl, apiKey },
-  } = getSDKPaymentOptions();
+  } = getCapsConfig();
 
   const queryParams = new URLSearchParams();
 
@@ -39,7 +35,7 @@ export const fetcher = async <T>(
       accept: 'application/json',
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
-      ...(withAuth && accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       'accept-language': locale,
       ...headers,
     },

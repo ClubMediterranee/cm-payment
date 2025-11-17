@@ -7,3 +7,5 @@ export const CategoryPaymentMethod = [
   'Paypal',
   '',
 ];
+
+export const UnsupportedAction = ['BANK_CARD_TOKENIZATION_EASY_CHECKIN'];

@@ -45,7 +45,10 @@ describe('useFeatureFlips', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockResponse);
+      expect(result.current.data).toEqual({
+        'featureFlipping.feature1': true,
+        'featureFlipping.feature2': false,
+      });
     });
   });
 
@@ -81,7 +84,7 @@ describe('useFeatureFlips', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockResponse);
+      expect(result.current.data).toEqual({});
     });
 
     expect(fetch).toHaveBeenCalledTimes(1);

@@ -1,3 +1,5 @@
+import { getCapsConfig } from '@clubmed/payment-sdk/providers/CapsConfigProvider';
+
 import {
   Action,
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
@@ -5,50 +7,32 @@ import {
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../../../__generated__';
-import { getSDKPaymentOptions } from '../../../providers/SDKConfigProvider.js';
-
-const isBookingAction = (
-  action: Action,
-): action is
-  | typeof Action.PAYMENT_OPTION
-  | typeof Action.PAYMENT_SOLDE
-  | typeof Action.PAYMENT_PARTIAL => {
-  return [Action.PAYMENT_OPTION, Action.PAYMENT_SOLDE, Action.PAYMENT_PARTIAL].includes(
-    action as any,
-  );
-};
+import { getResolvedAction } from '../useActionResolver';
 
 export const getPaymentSchedule = () => {
-  const { bookingId, proposalId, customerId, action } = getSDKPaymentOptions();
+  const { type, id, customerId } = getCapsConfig();
 
-  if (action === Action.PAYMENT_RESA) {
-    if (!proposalId) {
-      throw new Error('proposalId is required for PAYMENT_RESA action');
-    }
-    return getV1ProposalsProposalIdPaymentSchedule(proposalId);
+  if (type === 'proposal') {
+    return getV1ProposalsProposalIdPaymentSchedule(id);
   }
 
-  if (!bookingId) {
-    throw new Error('bookingId is required for this action');
+  if (!id) {
+    throw new Error('id is required for this action');
   }
 
-  if (isBookingAction(action)) {
-    return getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules(customerId, bookingId, {
-      withAuth: true,
-    });
-  }
+  switch (getResolvedAction()) {
+    case Action.PAYMENT_OPTION:
+    case Action.PAYMENT_SOLDE:
+    case Action.PAYMENT_PARTIAL:
+      return getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules(customerId!, id);
 
-  if (action === Action.PAYMENT_CART) {
-    return getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule(customerId, bookingId, {
-      withAuth: true,
-    });
-  }
+    case Action.PAYMENT_CART:
+      return getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule(customerId!, id);
 
-  if (action === Action.PAYMENT_UPGRADE_ROOM) {
-    return getV0CustomersCustomerIdBookingsBookingIdCartAccommodations(customerId, bookingId, {
-      withAuth: true,
-    });
-  }
+    case Action.PAYMENT_UPGRADE_ROOM:
+      return getV0CustomersCustomerIdBookingsBookingIdCartAccommodations(customerId!, id);
 
-  throw new Error('Invalid action');
+    default:
+      throw new Error('Invalid action');
+  }
 };

@@ -2,9 +2,9 @@ import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
 
-import { GLOBAL_SDK_SETTINGS } from '../config';
+import { GLOBAL_CAPS_SETTINGS } from '../config';
+import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../hooks/utils/useForm';
-import { useSDKConfig } from '../providers/SDKConfigProvider';
 import { renderTemplate } from '../utils/renderTemplate';
 import { FormPanel } from './ui/FormPanel';
 
@@ -19,10 +19,10 @@ type Props = {
 };
 
 export const ContactChoice = ({
-  contactMethodProviders = GLOBAL_SDK_SETTINGS.withContactMethodProviders,
-  choices = GLOBAL_SDK_SETTINGS.contactChoices,
+  contactMethodProviders = GLOBAL_CAPS_SETTINGS.withContactMethodProviders,
+  choices = GLOBAL_CAPS_SETTINGS.contactChoices,
 }: Props) => {
-  const { content } = useSDKConfig();
+  const { content } = useCapsConfigContext();
   const { register, setValue, watch } = useFormContext();
   const watchedTemplateId = watch('template_id');
   const watchedProviderId = watch('provider_id');

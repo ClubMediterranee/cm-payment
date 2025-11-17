@@ -1,4 +1,4 @@
-import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config';
+import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
 import { useQuery } from '@tanstack/react-query';
 
 import { postV1PaymentsPaymentIdNotify } from '../../__generated__';
@@ -13,7 +13,7 @@ export const usePaymentNotify = ({ paymentId }: { paymentId: string }) => {
       postV1PaymentsPaymentIdNotify(paymentId, { provider_response: search.toString() }),
     enabled:
       !!paymentId &&
-      !(GLOBAL_SDK_SETTINGS.serverValidationProviders as readonly string[]).includes(
+      !(GLOBAL_CAPS_SETTINGS.serverValidationProviders as readonly string[]).includes(
         provider_id || '',
       ),
     retry: false,

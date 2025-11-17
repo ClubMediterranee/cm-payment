@@ -1,8 +1,8 @@
-import { SDKFormData } from '@clubmed/payment-sdk/types/FormData';
+import { CapsFormData } from '@clubmed/payment-sdk/types/FormData';
 import { setCookie } from '@clubmed/payment-sdk/utils/storage/cookies';
 import { noop, useMutation } from '@tanstack/react-query';
 
-import { useOidcContext, useSDKPaymentContext } from '../utils/useSDKPaymentContext';
+import { useCapsConfigContext } from '../utils/useCapsConfigContext';
 import { getPaymentRedirectUrl } from './usePaymentRedirect/getPaymentRedirectUrl';
 
 type Props = {
@@ -16,16 +16,14 @@ export const usePaymentRedirect = ({
   onSuccess = noop,
   onLoadEnd = noop,
 }: Props = {}) => {
-  const { proposalId, bookingId, action, customerId, callbackUrl } = useSDKPaymentContext();
-
-  const { withAuth } = useOidcContext();
+  const { type, id, customerId, callbackUrl } = useCapsConfigContext();
 
   if (callbackUrl) {
     setCookie('callback_url', callbackUrl);
   }
 
-  const mutationFn = (formData: SDKFormData) =>
-    getPaymentRedirectUrl(formData, { withAuth, proposalId, bookingId, action, customerId });
+  const mutationFn = (formData: CapsFormData) =>
+    getPaymentRedirectUrl(formData, { type, id, customerId });
 
   return useMutation({
     mutationKey: ['paymentRedirect'],

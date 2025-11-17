@@ -1,9 +1,10 @@
 import { PspProviders } from '@clubmed/payment-sdk/types/PspProviders.js';
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens.js';
 import type { IconicNames } from '@clubmed/trident-icons';
 
-export const GLOBAL_SDK_SETTINGS = Object.freeze({
+import { OidcIssuerTypes } from './types/CapsSettings';
+
+export const GLOBAL_CAPS_SETTINGS = Object.freeze({
   iframeProviders: [PspProviders.EIXOPAY],
   serverValidationProviders: [PspProviders.EIXOPAY],
   withContactMethodProviders: [PspProviders.EIXOPAY],

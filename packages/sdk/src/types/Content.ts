@@ -1,22 +1,22 @@
-export type SDKContent = {
+export type Content = {
   paymentProviders: {
     validation: {
       required: string;
     };
     creditCard: {
-      label: `${string}{amount}${string}{currency}${string}`;
+      label: `${string}{amount}${string}`;
     };
     paypal: {
-      label: `${string}{amount}${string}{currency}${string}`;
+      label: `${string}{amount}${string}`;
     };
     bankTransfer: {
-      label: `${string}{amount}${string}{currency}${string}`;
+      label: `${string}{amount}${string}`;
       security: string;
       paymentCap: string;
     };
   };
   paymentSchedule: {
-    payAmount: `${string}{amount}${string}{currency}${string}`;
+    payAmount: `${string}{amount}${string}`;
     deadline: `${string}{deadline}${string}`;
   };
   cgv: {

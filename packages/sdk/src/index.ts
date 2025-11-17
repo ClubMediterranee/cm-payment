@@ -1,5 +1,5 @@
-export { SDKConfigProvider } from './providers/SDKConfigProvider';
-export { SDKFormProvider } from './providers/SDKFormProvider';
+export { CapsConfigProvider } from './providers/CapsConfigProvider';
+export { CapsForm } from './providers/CapsForm';
+export * from './types/CapsSettings';
 export * from './types/Content';
 export * from './types/PspProviders';
-export * from './types/SDKOptions';

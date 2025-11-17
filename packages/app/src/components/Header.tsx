@@ -1,10 +1,10 @@
-import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/utils/useSDKPaymentContext.js';
+import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
 import { Icon } from '@clubmed/trident-icons';
 import { Breadcrumb } from '@clubmed/trident-ui/molecules/Breadcrumb';
 import { useSearch } from 'wouter';
 
 export const Header = () => {
-  const context = useSDKPaymentContext();
+  const { id, oidc } = useCapsConfigContext();
   const search = useSearch();
   const backUrl = new URLSearchParams(search).get('back_url');
 
@@ -20,7 +20,7 @@ export const Header = () => {
         >
           <Icon name="ClubMed" width="120px" />
           <span className="flex justify-center items-center">
-            {context?.oidc?.issuerType?.toUpperCase()} {context?.bookingId || context?.proposalId}
+            {oidc?.issuerType?.toUpperCase()} {id}
           </span>
         </div>
       </header>

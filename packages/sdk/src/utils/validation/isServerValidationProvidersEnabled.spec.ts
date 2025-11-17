@@ -1,14 +1,14 @@
-import { GLOBAL_SDK_SETTINGS } from '../../config.js';
+import { GLOBAL_CAPS_SETTINGS } from '../../config.js';
 import { isServerValidationProvidersEnabled } from './isServerValidationProvidersEnabled.js';
 
 // Mock the config
 vi.mock('../../config.js', () => ({
-  GLOBAL_SDK_SETTINGS: {
+  GLOBAL_CAPS_SETTINGS: {
     serverValidationProviders: ['provider1', 'provider2', 'validProvider'],
   },
 }));
 
-const mockConfig = vi.mocked(GLOBAL_SDK_SETTINGS);
+const mockConfig = vi.mocked(GLOBAL_CAPS_SETTINGS);
 
 describe('isServerValidationProvidersEnabled', () => {
   beforeEach(() => {

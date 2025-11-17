@@ -1,4 +1,4 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions';
+import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings.js';
 import { getPaymentUrl } from '@clubmed/payment-sdk/utils/url/getPaymentUrl.js';
 import { Button } from '@clubmed/trident-ui/molecules/Buttons/v2/Button';
 import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
@@ -21,8 +21,8 @@ function useFormStarter() {
       return getPaymentUrl(AppSettings.paymentPageUrl, {
         issuerType: oidc as OidcIssuerTypes,
         locale,
-        proposalId: proposal_id || undefined,
-        bookingId: booking_id || undefined,
+        id: proposal_id || booking_id,
+        type: proposal_id ? 'proposal' : 'booking',
         customerId: customer_id,
         extraParams: {},
       });

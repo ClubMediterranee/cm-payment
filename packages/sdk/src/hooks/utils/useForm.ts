@@ -4,8 +4,9 @@ import {
   type UseFormProps,
 } from 'react-hook-form';
 
-import type { SDKFormData } from '../../types/FormData';
+import type { CapsFormData } from '../../types/FormData';
 
-export const useForm = (props?: UseFormProps<SDKFormData>) => useReactHookForm<SDKFormData>(props);
+export const useForm = (props?: UseFormProps<CapsFormData>) =>
+  useReactHookForm<CapsFormData>(props);
 
-export const useFormContext = () => useReactHookFormContext<SDKFormData>();
+export const useFormContext = () => useReactHookFormContext<CapsFormData>();

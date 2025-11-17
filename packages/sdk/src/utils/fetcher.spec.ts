@@ -1,8 +1,8 @@
-import { getSDKPaymentOptions } from '../providers/SDKConfigProvider';
+import { getCapsConfig } from '../providers/CapsConfigProvider';
 import { fetcher } from './fetcher';
 
-vi.mock('../providers/SDKConfigProvider', () => ({
-  getSDKPaymentOptions: vi.fn(),
+vi.mock('../providers/CapsConfigProvider', () => ({
+  getCapsConfig: vi.fn(),
 }));
 
 global.fetch = vi.fn();
@@ -21,7 +21,7 @@ describe('fetcher', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getSDKPaymentOptions).mockReturnValue(mockSDKOptions as any);
+    vi.mocked(getCapsConfig).mockReturnValue(mockSDKOptions as any);
   });
 
   it('should successfully fetch data', async () => {
@@ -40,7 +40,7 @@ describe('fetcher', () => {
     expect(result).toEqual(mockResponse);
   });
 
-  it('should include auth token when withAuth is true', async () => {
+  it('should include auth token when accessToken is present', async () => {
     const mockResponse = { data: 'test' };
 
     vi.mocked(fetch).mockResolvedValueOnce({
@@ -48,13 +48,10 @@ describe('fetcher', () => {
       json: async () => mockResponse,
     } as Response);
 
-    await fetcher(
-      {
-        url: '/test',
-        method: 'GET',
-      },
-      { withAuth: true },
-    );
+    await fetcher({
+      url: '/test',
+      method: 'GET',
+    });
 
     expect(fetch).toHaveBeenCalledWith(
       expect.any(String),
@@ -66,21 +63,23 @@ describe('fetcher', () => {
     );
   });
 
-  it('should not include auth token when withAuth is false', async () => {
+  it('should not include auth token when accessToken is empty', async () => {
     const mockResponse = { data: 'test' };
+
+    vi.mocked(getCapsConfig).mockReturnValue({
+      ...mockSDKOptions,
+      oidc: { accessToken: '' },
+    } as any);
 
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
       json: async () => mockResponse,
     } as Response);
 
-    await fetcher(
-      {
-        url: '/test',
-        method: 'GET',
-      },
-      { withAuth: false },
-    );
+    await fetcher({
+      url: '/test',
+      method: 'GET',
+    });
 
     const callArgs = vi.mocked(fetch).mock.calls[0];
     expect(callArgs[1]?.headers).not.toHaveProperty('Authorization');
