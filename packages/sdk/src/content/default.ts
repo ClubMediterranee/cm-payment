@@ -30,7 +30,6 @@ export const defaultContent: Content = {
       mustAccept: 'You must accept the T&C',
     },
   },
-
   contactChoice: {
     title: 'What type of channel?',
     choiceLabel: 'By {label}',
@@ -38,5 +37,12 @@ export const defaultContent: Content = {
       email: 'Email',
       phone: 'Phone',
     },
+  },
+  creditCardForm: {
+    title: 'Card details',
+    fullName: 'Cardholder name',
+    cardNumber: 'Card number',
+    expiryDate: 'Expiry date',
+    cvc: 'Security code',
   },
 };

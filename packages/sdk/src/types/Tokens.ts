@@ -4,4 +4,5 @@ export const TOKENS = {
   ContactChoice: Symbol('ContactChoice'),
   IframeProvider: Symbol('IframeProvider'),
   PaymentProviders: Symbol('PaymentProviders'),
+  CardForm: Symbol('CardForm'),
 } as const;
