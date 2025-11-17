@@ -16,7 +16,10 @@ const ParamsSchema = z.object({
     .string()
     .regex(/[0-9]+/)
     .optional(),
-  customerId: z.string().regex(/[0-9]+/),
+  customerId: z
+    .string()
+    .regex(/[0-9]+/)
+    .optional(),
   issuerType: z.enum([OidcIssuerTypes.GM, OidcIssuerTypes.GO, OidcIssuerTypes.PARTNERS]),
   locale: z
     .string()
@@ -61,8 +64,6 @@ export function useAppParams() {
       session.clear();
       setLocation('/400?error=invalid_parameters');
     }
-    // console.log('New Session', values);
-    // backup data in session storage to avoid loosing them on redirect
     session.set(values);
   }
 

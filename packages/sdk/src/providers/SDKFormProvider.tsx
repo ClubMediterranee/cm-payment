@@ -1,26 +1,49 @@
 import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/utils/useSDKPaymentContext';
 import { validateComponents } from '@clubmed/payment-sdk/utils/validation/validateComponents';
-import type { ComponentProps, PropsWithChildren } from 'react';
+import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
+import { Suspense } from 'react';
+import type { FallbackProps } from 'react-error-boundary';
+import { ErrorBoundary } from 'react-error-boundary';
 import { FormProvider as ReactHookFormProvider } from 'react-hook-form';
 
 import { SDKForm } from '../components/SDKForm';
+import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback';
+import { GlobalFormSpinner } from '../components/ui/fallbacks/GlobalFormSpinner';
 import { useForm } from '../hooks/utils/useForm';
+import { FeatureFlipsProvider } from './FeatureFlipsProvider';
+
+type SDKFormProviderProps = PropsWithChildren<ComponentProps<typeof SDKForm>> & {
+  fallback?: ReactNode;
+  errorFallback?: (props: FallbackProps) => ReactNode;
+};
 
 /**
  * Check the presence of required components based on the issuer type and provide form context
  */
 export function SDKFormProvider({
   children,
+  fallback = <GlobalFormSpinner />,
+  errorFallback = FormErrorFallback,
   ...props
-}: PropsWithChildren<ComponentProps<typeof SDKForm>>) {
+}: SDKFormProviderProps) {
   const methods = useForm();
-  const { oidc } = useSDKPaymentContext();
+  const { oidc, locale } = useSDKPaymentContext();
 
-  validateComponents(oidc.issuerType, children);
+  try {
+    validateComponents(oidc.issuerType, children);
+  } catch (error) {
+    return <FormErrorFallback error={error as Error} />;
+  }
 
   return (
-    <ReactHookFormProvider {...methods}>
-      <SDKForm {...props}>{children}</SDKForm>
-    </ReactHookFormProvider>
+    <ErrorBoundary FallbackComponent={errorFallback}>
+      <Suspense fallback={fallback}>
+        <FeatureFlipsProvider locale={locale}>
+          <ReactHookFormProvider {...methods}>
+            <SDKForm {...props}>{children}</SDKForm>
+          </ReactHookFormProvider>
+        </FeatureFlipsProvider>
+      </Suspense>
+    </ErrorBoundary>
   );
 }

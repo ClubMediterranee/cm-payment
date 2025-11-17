@@ -15,12 +15,151 @@ import { PaymentSchedule } from './PaymentSchedule';
 
 initialize();
 
+const handlers = [
+  http.get('*/v1/contents/feature-flip/locales/*/releases/*/value', () => {
+    return Response.json({
+      keys: [],
+    });
+  }),
+  http.get('*/v0/customers/*/bookings/booking-total/payment_schedules', () => {
+    return Response.json(
+      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+        currency: 'EUR',
+        total: 3079,
+        paid: 0,
+        payment_schedules: [
+          {
+            deadline: '20251006',
+            amount: 3079,
+          },
+        ],
+      }),
+    );
+  }),
+  http.get('*/v1/proposals/proposal-total/payment_schedule', () => {
+    return Response.json(
+      getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
+        currency: 'EUR',
+        commission_included: true,
+        households: [
+          {
+            attendees: [
+              {
+                id: 'A',
+                customer_id: '152773840',
+              },
+            ],
+            total: 2808,
+            deposit_repayment_schedule: [
+              {
+                expected_payment_amount: 2808,
+                deadline: '20251006',
+              },
+            ],
+          },
+        ],
+      }),
+    );
+  }),
+  http.get('*/v0/customers/*/bookings/booking-deposit/payment_schedules', () => {
+    return Response.json(
+      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+        currency: 'EUR',
+        total: 2000,
+        paid: 0,
+        payment_schedules: [
+          {
+            deadline: '20251006',
+            amount: 500,
+          },
+          {
+            deadline: '20251031',
+            amount: 1500,
+          },
+        ],
+      }),
+    );
+  }),
+  http.get('*/v1/proposals/proposal-deposit/payment_schedule', () => {
+    return Response.json(
+      getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
+        currency: 'EUR',
+        commission_included: true,
+        households: [
+          {
+            attendees: [
+              {
+                id: 'A',
+                customer_id: '152773842',
+              },
+            ],
+            total: 2584,
+            deposit_repayment_schedule: [
+              {
+                expected_payment_amount: 790,
+                deadline: '20251027',
+              },
+              {
+                expected_payment_amount: 1794,
+                deadline: '20251031',
+              },
+            ],
+          },
+        ],
+      }),
+    );
+  }),
+  http.get('*/v0/customers/*/bookings/booking-paid/payment_schedules', () => {
+    return Response.json(
+      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+        currency: 'EUR',
+        total: 2584,
+        paid: 790,
+        payment_schedules: [
+          {
+            deadline: '20251031',
+            amount: 1794,
+          },
+        ],
+      }),
+    );
+  }),
+  http.get('*/v0/customers/*/bookings/*/cart/payment_schedule', () => {
+    return Response.json(
+      getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock({
+        currency: 'EUR',
+        total: 1500,
+        paid: 0,
+        payment_schedules: [
+          {
+            deadline: '20251020',
+            amount: 1500,
+          },
+        ],
+      }),
+    );
+  }),
+  http.get('*/v0/customers/*/bookings/*/cart/accommodations', () => {
+    return Response.json(
+      getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock({
+        price: {
+          amount: 800,
+          currency: 'EUR',
+        },
+      }),
+    );
+  }),
+];
+
 const meta: Meta<typeof PaymentSchedule> = {
   title: 'Components/PaymentSchedule',
   component: PaymentSchedule,
   loaders: [mswLoader],
   parameters: {
     layout: 'fullscreen',
+    msw: {
+      handlers,
+    },
     docs: {
       description: {
         component: `Affiche les options de paiement (total ou acompte) selon l'action de paiement`,
@@ -33,152 +172,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const handlers = {
-  featureFlips: http.get('*/v1/contents/feature-flip/locales/*/releases/*/value', () => {
-    return Response.json({
-      keys: [],
-    });
-  }),
-  total: [
-    http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
-      return Response.json(
-        getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
-          currency: 'EUR',
-          total: 3079,
-          paid: 0,
-          payment_schedules: [
-            {
-              deadline: '20251006',
-              amount: 3079,
-            },
-          ],
-        }),
-      );
-    }),
-    http.get('*/v1/proposals/*/payment_schedule', () => {
-      return Response.json(
-        getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
-          currency: 'EUR',
-          commission_included: true,
-          households: [
-            {
-              attendees: [
-                {
-                  id: 'A',
-                  customer_id: '152773840',
-                },
-              ],
-              total: 2808,
-              deposit_repayment_schedule: [
-                {
-                  expected_payment_amount: 2808,
-                  deadline: '20251006',
-                },
-              ],
-            },
-          ],
-        }),
-      );
-    }),
-  ],
-  deposit: [
-    http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
-      return Response.json(
-        getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
-          currency: 'EUR',
-          total: 2000,
-          paid: 0,
-          payment_schedules: [
-            {
-              deadline: '20251006',
-              amount: 500,
-            },
-            {
-              deadline: '20251031',
-              amount: 1500,
-            },
-          ],
-        }),
-      );
-    }),
-    http.get('*/v1/proposals/*/payment_schedule', () => {
-      return Response.json(
-        getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
-          currency: 'EUR',
-          commission_included: true,
-          households: [
-            {
-              attendees: [
-                {
-                  id: 'A',
-                  customer_id: '152773842',
-                },
-              ],
-              total: 2584,
-              deposit_repayment_schedule: [
-                {
-                  expected_payment_amount: 790,
-                  deadline: '20251027',
-                },
-                {
-                  expected_payment_amount: 1794,
-                  deadline: '20251031',
-                },
-              ],
-            },
-          ],
-        }),
-      );
-    }),
-  ],
-  paid: [
-    http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
-      return Response.json(
-        getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
-          currency: 'EUR',
-          total: 2584,
-          paid: 790,
-          payment_schedules: [
-            {
-              deadline: '20251031',
-              amount: 1794,
-            },
-          ],
-        }),
-      );
-    }),
-  ],
-  cart: [
-    http.get('*/v0/customers/*/bookings/*/cart/payment_schedule', () => {
-      return Response.json(
-        getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock({
-          currency: 'EUR',
-          total: 1500,
-          paid: 0,
-          payment_schedules: [
-            {
-              deadline: '20251020',
-              amount: 1500,
-            },
-          ],
-        }),
-      );
-    }),
-  ],
-  upgradeRoom: [
-    http.get('*/v0/customers/*/bookings/*/cart/accommodations', () => {
-      return Response.json(
-        getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock({
-          price: {
-            amount: 800,
-            currency: 'EUR',
-          },
-        }),
-      );
-    }),
-  ],
-};
-
 export const Default: Story = {
   argTypes: {
     action: {
@@ -186,30 +179,23 @@ export const Default: Story = {
       options: Object.values(Action),
       description: 'Type de workflow à tester',
     },
-    proposalId: { control: 'text', description: 'ID de proposition (requis pour PAYMENT_RESA)' },
+    proposalId: {
+      control: 'select',
+      description: 'ID de proposition (requis pour PAYMENT_RESA)',
+      options: ['proposal-deposit', 'proposal-total'],
+    },
     bookingId: {
-      control: 'text',
+      control: 'select',
       description: 'ID de réservation (requis pour workflows booking)',
+      options: ['booking-deposit', 'booking-paid', 'booking-total'],
     },
     customerId: { control: 'text', description: 'ID client (requis pour workflows booking)' },
   },
   args: {
-    action: Action.PAYMENT_OPTION,
-    proposalId: '12345678',
-    bookingId: '87654321',
+    action: Action.PAYMENT_RESA,
+    proposalId: 'proposal-total',
+    bookingId: 'booking-total',
     customerId: '45678901',
-  },
-  parameters: {
-    msw: {
-      handlers: [
-        handlers.featureFlips,
-        ...handlers.deposit,
-        ...handlers.paid,
-        ...handlers.cart,
-        ...handlers.upgradeRoom,
-        ...handlers.total,
-      ],
-    },
   },
   render({ action, proposalId, bookingId, customerId }) {
     return (
@@ -227,17 +213,12 @@ export const Default: Story = {
 };
 
 export const SinglePayment: Story = {
-  parameters: {
-    msw: {
-      handlers: [handlers.featureFlips, ...handlers.total],
-    },
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios).toHaveLength(1);
-      expect(canvas.getByText(/3079.*EUR/)).toBeInTheDocument();
+      expect(canvas.getByText(/3079/)).toBeInTheDocument();
     });
   },
   render(args: any) {
@@ -245,8 +226,8 @@ export const SinglePayment: Story = {
       <MockedProvider
         key="single-payment"
         action={Action.PAYMENT_OPTION}
-        bookingId="booking-123"
-        customerId="customer-456"
+        bookingId="booking-total"
+        customerId="123456789"
       >
         <PaymentSchedule {...args} />
       </MockedProvider>
@@ -255,18 +236,13 @@ export const SinglePayment: Story = {
 };
 
 export const DepositChoice: Story = {
-  parameters: {
-    msw: {
-      handlers: [handlers.featureFlips, ...handlers.deposit],
-    },
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios).toHaveLength(2);
-      expect(canvas.getByText(/2000.*EUR/)).toBeInTheDocument();
-      expect(canvas.getByText(/500.*EUR/)).toBeInTheDocument();
+      expect(canvas.getByText(/2000/)).toBeInTheDocument();
+      expect(canvas.getByText(/500/)).toBeInTheDocument();
     });
   },
   render(args: any) {
@@ -274,7 +250,7 @@ export const DepositChoice: Story = {
       <MockedProvider
         key="deposit-choice"
         action={Action.PAYMENT_OPTION}
-        bookingId="booking-456"
+        bookingId="booking-deposit"
         customerId="customer-789"
       >
         <PaymentSchedule {...args} />
@@ -284,11 +260,6 @@ export const DepositChoice: Story = {
 };
 
 export const DepositInteraction: Story = {
-  parameters: {
-    msw: {
-      handlers: [handlers.featureFlips, ...handlers.deposit],
-    },
-  },
   play: async ({ canvasElement }) => {
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
@@ -299,26 +270,34 @@ export const DepositInteraction: Story = {
     const firstRadio = radios[0] as HTMLInputElement;
     const secondRadio = radios[1] as HTMLInputElement;
 
-    expect(firstRadio).toBeChecked();
+    await waitFor(() => {
+      expect(firstRadio).toBeChecked();
+    });
+
     expect(secondRadio).not.toBeChecked();
 
     await userEvent.click(secondRadio);
 
-    expect(secondRadio).toBeChecked();
+    await waitFor(() => {
+      expect(secondRadio).toBeChecked();
+    });
+
     expect(firstRadio).not.toBeChecked();
 
     await userEvent.click(firstRadio);
 
-    expect(firstRadio).toBeChecked();
+    await waitFor(() => {
+      expect(firstRadio).toBeChecked();
+    });
+
     expect(secondRadio).not.toBeChecked();
   },
   render(args: any) {
     return (
       <MockedProvider
         key="deposit-interaction"
-        action={Action.PAYMENT_OPTION}
-        bookingId="booking-789"
-        customerId="customer-111"
+        action={Action.PAYMENT_RESA}
+        proposalId="proposal-deposit"
       >
         <PaymentSchedule {...args} />
       </MockedProvider>

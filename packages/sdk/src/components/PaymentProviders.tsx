@@ -1,17 +1,40 @@
-import { usePaymentProvidersForm } from '@clubmed/payment-sdk/hooks/usePaymentProviders';
+import { usePaymentProvidersForm } from '@clubmed/payment-sdk/hooks/usePaymentProvidersForm';
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
+import { Icon } from '@clubmed/trident-icons';
 import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import clsx from 'clsx';
+import { useWatch } from 'react-hook-form';
 
+import { PaymentProvider1CategoryPaymentMethod } from '../__generated__';
+import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
+import { useSDKConfig } from '../providers/SDKConfigProvider';
+import { renderTemplate } from '../utils/renderTemplate';
+import { PaymentProviderRules } from './PaymentProviders/PaymentProviderRules';
 import { FormPanel } from './ui/FormPanel';
 
+const PROVIDER_ICON = {
+  [PaymentProvider1CategoryPaymentMethod.CreditCard]: 'CreditCard',
+};
+
 export const PaymentProviders = () => {
-  const { paymentProviders, register, setValue, trigger, watchedProviderId } =
-    usePaymentProvidersForm();
+  const { content } = useSDKConfig();
+  const { paymentProviders, register, setValue, watchedProviderId } = usePaymentProvidersForm();
+  const {
+    paymentSchedule: [{ currency }],
+  } = usePaymentSchedule();
+
+  const watchedAmount = useWatch({ name: 'amount' });
+
+  const PROVIDER_LABEL = {
+    [PaymentProvider1CategoryPaymentMethod.CreditCard]: content.paymentProviders.creditCard.label,
+    [PaymentProvider1CategoryPaymentMethod.BankTransfer]:
+      content.paymentProviders.bankTransfer.label,
+    [PaymentProvider1CategoryPaymentMethod.Paypal]: content.paymentProviders.paypal.label,
+  };
 
   return (
-    <FormPanel>
-      <RadioGroup className="flex flex-col" value={watchedProviderId}>
+    <FormPanel className="p-0">
+      <RadioGroup className="flex flex-col pt-12" value={watchedProviderId}>
         {paymentProviders.map((provider, index) => {
           const isLastProvider = index === paymentProviders.length - 1;
 
@@ -19,26 +42,44 @@ export const PaymentProviders = () => {
             <div
               key={provider.id}
               className={clsx(
-                'w-full py-24',
+                'w-full p-20 flex justify-between',
                 !isLastProvider && 'border-b-1 border-lightGrey',
-                index === 0 && 'pt-0',
               )}
             >
-              <p className="font-bold mb-32">
-                {provider.category_payment_method || provider.description || ''}
-              </p>
-              <Radio
-                {...register('provider_id', {
-                  required: 'Vous devez choisir un moyen de paiement',
-                })}
-                value={provider.id}
-                onChange={(_, value) => {
-                  setValue('provider_id', value || '');
-                  trigger('provider_id');
-                }}
-              >
-                {provider.description}
-              </Radio>
+              <div>
+                <p className="font-bold text-b3">{provider.description || ''}</p>
+                {provider.category_payment_method ===
+                  PaymentProvider1CategoryPaymentMethod.BankTransfer && (
+                  <PaymentProviderRules className="mt-12" />
+                )}
+                <Radio
+                  {...register('provider_id', {
+                    required: content.paymentProviders.validation.required,
+                  })}
+                  className="my-24"
+                  value={provider.id}
+                  onChange={(_, value) => {
+                    setValue('provider_id', value || '');
+                  }}
+                >
+                  {renderTemplate(
+                    PROVIDER_LABEL[
+                      provider.category_payment_method as keyof typeof PROVIDER_LABEL
+                    ] || content.paymentProviders.creditCard.label,
+                    {
+                      amount: <span className="font-bold text-sienna">{watchedAmount}</span>,
+                      currency: <span className="font-bold text-sienna">{currency}</span>,
+                    },
+                  )}
+                </Radio>
+              </div>
+              <Icon
+                name={
+                  PROVIDER_ICON[provider.category_payment_method as keyof typeof PROVIDER_ICON] ||
+                  ''
+                }
+                width="80px"
+              />
             </div>
           );
         })}

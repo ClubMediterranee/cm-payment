@@ -1,3 +1,4 @@
+import { hasFlip } from '@clubmed/payment-sdk/utils/featureFlips';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { getV1PaymentProviders } from '../../__generated__';
@@ -9,6 +10,8 @@ export const usePaymentProviders = () => {
   return useSuspenseQuery({
     queryKey: ['paymentProviders'],
     queryFn: () => getV1PaymentProviders({ withAuth }),
+    select: (providers) =>
+      providers.filter((provider) => hasFlip(`psp.${provider.id.toLowerCase()}`)),
     retry: false,
   });
 };

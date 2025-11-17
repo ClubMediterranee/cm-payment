@@ -34,7 +34,7 @@ export function validateComponents(issuer: OidcIssuerTypes, children: React.Reac
     throw new Error(`No components defined for issuer type: ${issuer}`);
   }
 
-  if (requiredSymbols.every((token) => symbols.includes(token))) {
+  if (!requiredSymbols.every((token) => symbols.includes(token))) {
     throw new Error(
       `Missing required components: ${requiredSymbols
         .filter((key) => !symbols.includes(key))

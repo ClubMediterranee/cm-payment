@@ -4,6 +4,8 @@ import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
 
 import { GLOBAL_SDK_SETTINGS } from '../config';
 import { useFormContext } from '../hooks/utils/useForm';
+import { useSDKConfig } from '../providers/SDKConfigProvider';
+import { renderTemplate } from '../utils/renderTemplate';
 import { FormPanel } from './ui/FormPanel';
 
 type Props = {
@@ -20,6 +22,7 @@ export const ContactChoice = ({
   contactMethodProviders = GLOBAL_SDK_SETTINGS.withContactMethodProviders,
   choices = GLOBAL_SDK_SETTINGS.contactChoices,
 }: Props) => {
+  const { content } = useSDKConfig();
   const { register, setValue, watch } = useFormContext();
   const watchedTemplateId = watch('template_id');
   const watchedProviderId = watch('provider_id');
@@ -31,12 +34,19 @@ export const ContactChoice = ({
     return null;
   }
 
+  const getContentLabel = (name: string, fallbackLabel: string) => {
+    if (name === 'email') return content.contactChoice.choices.email;
+    if (name === 'mobile_phone') return content.contactChoice.choices.phone;
+    return fallbackLabel;
+  };
+
   return (
     <div className="w-full flex flex-col gap-16">
-      <h2 className="text-h3 font-serif">Quel type de canal ?</h2>
+      <h2 className="text-h3 font-serif">{content.contactChoice.title}</h2>
 
       <RadioGroup className="flex flex-col gap-16" value={watchedTemplateId}>
         {choices.map(({ id, name, type, label }) => {
+          const contentLabel = getContentLabel(name, label);
           return (
             <FormPanel key={id}>
               <div className="flex flex-col space-y-16 w-full">
@@ -45,7 +55,9 @@ export const ContactChoice = ({
                   {...register('template_id')}
                   onChange={(_, value) => setValue('template_id', value || '')}
                 >
-                  <span data-textid="ContactChoicesLabel">Par {label}</span>
+                  <span data-textid="ContactChoicesLabel">
+                    {renderTemplate(content.contactChoice.choiceLabel, { label: contentLabel })}
+                  </span>
                 </Radio>
 
                 {id === watchedTemplateId && (
@@ -57,7 +69,7 @@ export const ContactChoice = ({
                     onChange={(name, value) =>
                       setValue(name as Parameters<typeof setValue>[0], value)
                     }
-                    label={label}
+                    label={contentLabel}
                   />
                 )}
               </div>

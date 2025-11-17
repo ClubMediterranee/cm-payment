@@ -1,6 +1,7 @@
 import { GLOBAL_SDK_SETTINGS } from '@clubmed/payment-sdk/config';
 import { usePaymentRedirect } from '@clubmed/payment-sdk/hooks/data/usePaymentRedirect';
 import { PspProviders } from '@clubmed/payment-sdk/types/PspProviders';
+import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
@@ -61,4 +62,4 @@ export const IframeProvider = () => {
   );
 };
 
-IframeProvider.COMPONENT_KEY = Symbol.for('IframeProvider');
+IframeProvider.COMPONENT_KEY = TOKENS.IframeProvider;

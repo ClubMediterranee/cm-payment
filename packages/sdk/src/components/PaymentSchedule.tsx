@@ -4,10 +4,13 @@ import { useEffect } from 'react';
 
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
 import { useFormContext } from '../hooks/utils/useForm';
+import { useSDKConfig } from '../providers/SDKConfigProvider';
+import { renderTemplate } from '../utils/renderTemplate';
 import { FormPanel } from './ui/FormPanel';
 
 export const PaymentSchedule = () => {
   const { paymentSchedule, isSuccess } = usePaymentSchedule();
+  const { content } = useSDKConfig();
   const { register, setValue, watch } = useFormContext();
   const watchedAmount = watch('amount');
 
@@ -29,11 +32,11 @@ export const PaymentSchedule = () => {
                 onChange={(_, value) => setValue('amount', value || '')}
                 value={amount?.toString()}
               >
-                Je paie le montant de{' '}
-                <span className="font-bold text-sienna mx-4">
-                  {amount} {currency}
-                </span>
-                {deadline ? ` avant le ${deadline}` : ''}
+                {renderTemplate(content.paymentSchedule.payAmount, {
+                  amount: <span className="font-bold text-sienna">{amount}</span>,
+                  currency: <span className="font-bold text-sienna">{currency}</span>,
+                })}
+                {deadline && renderTemplate(content.paymentSchedule.deadline, { deadline })}
               </Radio>
             </div>
           );
