@@ -35,4 +35,11 @@ export type Content = {
       phone: string;
     };
   };
+  creditCardForm: {
+    title: string;
+    fullName: string;
+    cardNumber: string;
+    expiryDate: string;
+    cvc: string;
+  };
 };

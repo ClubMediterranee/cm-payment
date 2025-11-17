@@ -1,4 +1,5 @@
 import { Action } from '@clubmed/payment-sdk/__generated__/index.js';
+import { CardForm } from '@clubmed/payment-sdk/components/CardForm.js';
 import { Cgv } from '@clubmed/payment-sdk/components/Cgv';
 import { IframeProvider } from '@clubmed/payment-sdk/components/IframeProvider.js';
 import { PaymentProviders } from '@clubmed/payment-sdk/components/PaymentProviders.js';
@@ -78,6 +79,7 @@ export function PaymentPage() {
         </div>
         <Cgv />
         <IframeProvider />
+        <CardForm />
         {error?.message && (
           <p ref={ref} className="text-red font-semibold my-4">
             {error?.message}
