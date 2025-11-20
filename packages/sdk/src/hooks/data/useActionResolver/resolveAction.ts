@@ -5,9 +5,14 @@ import {
   BookingStatus,
   getV3CustomersCustomerIdBookingsBookingId,
 } from '../../../__generated__';
-import { hasFlip } from '../../../utils/featureFlips';
 
-export const resolveAction = async (action?: Action): Promise<Action> => {
+export const resolveAction = async ({
+  action,
+  isFreeDepositEnabled,
+}: {
+  action?: Action;
+  isFreeDepositEnabled?: boolean;
+}): Promise<Action> => {
   const { type, id, customerId } = getCapsConfig();
 
   if (type === 'proposal') {
@@ -28,9 +33,8 @@ export const resolveAction = async (action?: Action): Promise<Action> => {
     }
 
     if (action === Action.PAYMENT_PARTIAL) {
-      const isEnabled = hasFlip('booking.banking.enableFreeDeposit');
       // TO DO EMERGENCY: Get free deposit deadline from api config who is actually in legacy cms
-      return isEnabled ? Action.PAYMENT_PARTIAL : Action.PAYMENT_SOLDE;
+      return isFreeDepositEnabled ? Action.PAYMENT_PARTIAL : Action.PAYMENT_SOLDE;
     }
 
     return action && Object.values(Action).includes(action) ? action : Action.PAYMENT_SOLDE;

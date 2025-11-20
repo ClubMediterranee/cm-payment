@@ -34,10 +34,14 @@ const commonMockedProviderProps = {
   action: Action.PAYMENT_OPTION,
   bookingId: 'booking-123',
   customerId: 'customer-456',
-  featureFlips: {
-    'featureFlipping.psp.provider_1': true,
-    'featureFlipping.psp.provider_2': true,
-    'featureFlipping.psp.provider_3': true,
+  paymentConfig: {
+    providers: {
+      PROVIDER_1: { is_active: true },
+      PROVIDER_2: { is_active: true },
+      PROVIDER_3: { is_active: true },
+    },
+    featureFlip: {},
+    settings: {},
   },
 };
 const handlers = {

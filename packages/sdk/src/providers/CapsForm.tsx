@@ -13,7 +13,7 @@ import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback'
 import { GlobalFormSpinner } from '../components/ui/fallbacks/GlobalFormSpinner';
 import { GLOBAL_CAPS_SETTINGS } from '../config';
 import { useActionResolver } from '../hooks/data/useActionResolver';
-import { useFeatureFlips } from '../hooks/data/useFeatureFlips';
+import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
 import { paymentProvidersQueryOptions } from '../hooks/data/usePaymentProviders';
 import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
 import { useForm } from '../hooks/utils/useForm';
@@ -29,10 +29,13 @@ function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
 
   validateComponents(oidc.issuerType, children);
 
-  useFeatureFlips();
+  const { data: paymentConfig } = usePaymentConfig();
   const resolvedAction = useActionResolver(action);
   const [{ data: paymentProviders }, { data: paymentSchedule }] = useSuspenseQueries({
-    queries: [paymentProvidersQueryOptions, paymentScheduleQueryOptions(id)],
+    queries: [
+      paymentProvidersQueryOptions(paymentConfig.providers),
+      paymentScheduleQueryOptions(id),
+    ],
   });
 
   const methods = useForm({

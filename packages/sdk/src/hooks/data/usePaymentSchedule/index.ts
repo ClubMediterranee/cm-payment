@@ -1,13 +1,12 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { useCapsConfigContext } from '../utils/useCapsConfigContext';
-import { getPaymentSchedule } from './usePaymentSchedule/getPaymentSchedule';
-import { selectPaymentSchedule } from './usePaymentSchedule/selectPaymentSchedule';
+import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
+import { getPaymentSchedule } from './getPaymentSchedule';
+import { selectPaymentSchedule } from './selectPaymentSchedule';
 
 export const paymentScheduleQueryOptions = (id: string) => ({
   queryKey: ['paymentSchedule', id],
   queryFn: getPaymentSchedule,
-  retry: false,
   select: selectPaymentSchedule,
 });
 

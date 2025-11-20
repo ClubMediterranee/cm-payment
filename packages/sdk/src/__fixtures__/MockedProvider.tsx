@@ -6,12 +6,13 @@ import React, { Suspense, useEffect } from 'react';
 
 import { Action } from '../__generated__';
 import { ACTION_RESOLVER_QUERY_KEY } from '../hooks/data/useActionResolver';
-import { FEATURE_FLIPS_QUERY_KEY } from '../hooks/data/useFeatureFlips';
+import { PAYMENT_CONFIG_QUERY_KEY } from '../hooks/data/usePaymentConfig';
 import { CapsConfigProvider } from '../providers/CapsConfigProvider';
 import { sdkQueryClient } from '../providers/QueryClientProvider';
 import { OidcIssuerTypes, OidcSettings } from '../types/CapsSettings';
 import { Content } from '../types/Content';
 import { CapsFormData } from '../types/FormData';
+import { PaymentConfig } from '../types/PaymentConfig';
 import { MockedFormProvider } from './MockedFormProvider';
 import { useMockedForm } from './useMockedForm';
 
@@ -24,7 +25,7 @@ interface MockedProviderProps {
   bookingId?: string;
   customerId?: string;
   content?: Content;
-  featureFlips?: Record<string, boolean>;
+  paymentConfig?: PaymentConfig;
 }
 
 export const MockedProvider = ({
@@ -36,7 +37,7 @@ export const MockedProvider = ({
   action,
   oidc,
   defaultValues,
-  featureFlips,
+  paymentConfig,
 }: MockedProviderProps) => {
   const methods = useMockedForm({
     defaultValues: {
@@ -58,10 +59,13 @@ export const MockedProvider = ({
   }, [proposalId, bookingId, customerId, action]);
 
   useEffect(() => {
-    if (featureFlips) {
-      sdkQueryClient.setQueryData(FEATURE_FLIPS_QUERY_KEY, featureFlips);
+    if (paymentConfig) {
+      sdkQueryClient.setQueryData(
+        PAYMENT_CONFIG_QUERY_KEY('fr-FR', oidc?.issuerType || OidcIssuerTypes.GM),
+        paymentConfig,
+      );
     }
-  }, [featureFlips]);
+  }, [paymentConfig]);
 
   return (
     <CapsConfigProvider
