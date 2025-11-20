@@ -4,7 +4,8 @@ import {
   PaymentConfig,
   PaymentProviderConfig,
 } from '../../../types/PaymentConfig';
-import { FEATURE_FLIPS_MAPPING } from './mapping';
+import { LegacyCmsResponse } from './LegacyCms';
+import { CMS_PREFIXES, FEATURE_FLIPS_MAPPING, PROVIDER_PSP_PREFIX } from './mapping';
 
 type ExtractParams = {
   legacyFlips: Record<string, boolean>;
@@ -36,11 +37,11 @@ const getFeatureFlipValue = ({
   locale: string;
 }) => {
   const isSeller = [OidcIssuerTypes.GO, OidcIssuerTypes.PARTNERS].includes(issuerType);
-  const sellerPrefix = isSeller ? 'seller.' : '';
+  const sellerPrefix = isSeller ? CMS_PREFIXES.SELLER : '';
 
   const candidates = [
-    `override.${locale}.featureFlipping.${sellerPrefix}${key}`,
-    `featureFlipping.${sellerPrefix}${key}`,
+    `${CMS_PREFIXES.OVERRIDE}${locale}.${CMS_PREFIXES.FEATURE_FLIPPING}${sellerPrefix}${key}`,
+    `${CMS_PREFIXES.FEATURE_FLIPPING}${sellerPrefix}${key}`,
   ];
 
   for (const candidate of candidates) {
@@ -49,32 +50,34 @@ const getFeatureFlipValue = ({
     }
   }
 
-  return undefined;
+  return false;
 };
 
-const extractProviders = ({
+const mapProvidersConfig = ({
   legacyFlips,
   issuerType,
   locale,
 }: ExtractParams): Record<string, PaymentProviderConfig> => {
-  const providers: Record<string, PaymentProviderConfig> = {};
+  const pattern = new RegExp(`${PROVIDER_PSP_PREFIX}([^.]+)$`);
 
-  Object.keys(legacyFlips).forEach((key) => {
-    const match = key.match(/\.psp\.(\w+)$/);
-    if (match) {
-      const providerId = match[1];
-      const pspKey = `psp.${providerId}`;
+  const providerNames = new Set(
+    Object.keys(legacyFlips)
+      .map((key) => key.match(pattern)?.[1])
+      .filter((provider) => provider !== undefined),
+  );
+
+  return Array.from(providerNames).reduce(
+    (acc, provider) => {
+      const pspKey = `${PROVIDER_PSP_PREFIX}${provider}`;
       const value = getFeatureFlipValue({ legacyFlips, key: pspKey, issuerType, locale });
-      if (value !== undefined) {
-        providers[providerId.toUpperCase()] = { is_active: value };
-      }
-    }
-  });
-
-  return providers;
+      acc[provider.toUpperCase()] = { is_active: value };
+      return acc;
+    },
+    {} as Record<string, PaymentProviderConfig>,
+  );
 };
 
-const extractFeatureFlips = ({
+const mapFeatureFlips = ({
   legacyFlips,
   issuerType,
   locale,
@@ -83,32 +86,27 @@ const extractFeatureFlips = ({
 
   Object.entries(FEATURE_FLIPS_MAPPING).forEach(([legacyKey, normalizedKey]) => {
     const value = getFeatureFlipValue({ legacyFlips, key: legacyKey, issuerType, locale });
-
-    if (value !== undefined) {
-      featureFlip[normalizedKey] = value;
-    }
+    featureFlip[normalizedKey] = value;
   });
 
   return featureFlip;
 };
 
-export interface MapPaymentConfigParams {
-  json: { keys: Array<{ key: string; value: boolean }> };
-  issuerType: OidcIssuerTypes;
-  locale: string;
-}
-
 export const mapPaymentConfig = ({
   json,
   issuerType,
   locale,
-}: MapPaymentConfigParams): PaymentConfig => {
+}: {
+  json: LegacyCmsResponse;
+  issuerType: OidcIssuerTypes;
+  locale: string;
+}): PaymentConfig => {
   const keys = json.keys ?? [];
   const legacyFlips = transformKeysToRecord(keys);
 
   return {
-    providers: extractProviders({ legacyFlips, issuerType, locale }),
-    featureFlip: extractFeatureFlips({ legacyFlips, issuerType, locale }),
+    providers: mapProvidersConfig({ legacyFlips, issuerType, locale }),
+    featureFlip: mapFeatureFlips({ legacyFlips, issuerType, locale }),
     settings: {},
   };
 };

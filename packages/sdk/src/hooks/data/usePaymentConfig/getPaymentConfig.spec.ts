@@ -1,7 +1,12 @@
 import { OidcIssuerTypes } from '../../../types/CapsSettings';
 import { getPaymentConfig } from './getPaymentConfig';
+import { LegacyCmsFeatureFlipKey, LegacyCmsResponse } from './LegacyCms';
 
 global.fetch = vi.fn();
+
+const createMockCmsResponse = (keys: LegacyCmsFeatureFlipKey[]): LegacyCmsResponse => ({
+  keys,
+});
 
 describe('getPaymentConfig', () => {
   beforeEach(() => {
@@ -12,19 +17,18 @@ describe('getPaymentConfig', () => {
     it('should transform psp feature flips to providers config', async () => {
       vi.mocked(global.fetch).mockResolvedValue({
         ok: true,
-        json: async () => ({
-          keys: [
+        json: async () =>
+          createMockCmsResponse([
             { key: 'featureFlipping.psp.evoxpay', value: true },
-            { key: 'featureFlipping.psp.eixopay', value: false },
-          ],
-        }),
+            { key: 'featureFlipping.psp.hipay', value: false },
+          ]),
       } as Response);
 
       const result = await getPaymentConfig({ issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
-        EIXOPAY: { is_active: false },
+        HIPAY: { is_active: false },
       });
     });
 
@@ -72,7 +76,7 @@ describe('getPaymentConfig', () => {
         json: async () => ({
           keys: [
             { key: 'featureFlipping.seller.psp.evoxpay', value: true },
-            { key: 'featureFlipping.seller.psp.hipay', value: false },
+            { key: 'featureFlipping.seller.psp.paypal', value: false },
           ],
         }),
       } as Response);
@@ -81,7 +85,7 @@ describe('getPaymentConfig', () => {
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
-        HIPAY: { is_active: false },
+        PAYPAL: { is_active: false },
       });
     });
 
@@ -106,7 +110,7 @@ describe('getPaymentConfig', () => {
       vi.mocked(global.fetch).mockResolvedValue({
         ok: true,
         json: async () => ({
-          keys: [{ key: 'featureFlipping.seller.psp.paypal', value: true }],
+          keys: [{ key: 'featureFlipping.seller.psp.stripe', value: true }],
         }),
       } as Response);
 
@@ -116,7 +120,7 @@ describe('getPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        PAYPAL: { is_active: true },
+        STRIPE: { is_active: true },
       });
     });
   });
@@ -135,15 +139,13 @@ describe('getPaymentConfig', () => {
 
       const result = await getPaymentConfig({ issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
-      expect(result).toEqual({
-        providers: {
-          EVOXPAY: { is_active: true },
-        },
-        featureFlip: {
-          isFreeDepositEnabled: true,
-        },
-        settings: {},
+      expect(result.providers).toEqual({
+        EVOXPAY: { is_active: true },
       });
+      expect(result.featureFlip).toEqual({
+        isFreeDepositEnabled: true,
+      });
+      expect(result.settings).toEqual({});
     });
   });
 

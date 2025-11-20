@@ -8,7 +8,6 @@ describe('mapPaymentConfig', () => {
         keys: [
           { key: 'featureFlipping.psp.evoxpay', value: true },
           { key: 'featureFlipping.psp.hipay', value: false },
-          { key: 'featureFlipping.psp.paypal', value: true },
         ],
       };
 
@@ -17,7 +16,6 @@ describe('mapPaymentConfig', () => {
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
         HIPAY: { is_active: false },
-        PAYPAL: { is_active: true },
       });
     });
 
@@ -25,7 +23,7 @@ describe('mapPaymentConfig', () => {
       const json = {
         keys: [
           { key: 'featureFlipping.seller.psp.evoxpay', value: true },
-          { key: 'featureFlipping.seller.psp.eixopay', value: false },
+          { key: 'featureFlipping.seller.psp.paypal', value: false },
         ],
       };
 
@@ -33,16 +31,13 @@ describe('mapPaymentConfig', () => {
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
-        EIXOPAY: { is_active: false },
+        PAYPAL: { is_active: false },
       });
     });
 
     it('should extract seller PSP providers for PARTNERS issuer', () => {
       const json = {
-        keys: [
-          { key: 'featureFlipping.seller.psp.paypal', value: true },
-          { key: 'featureFlipping.seller.psp.stripe', value: false },
-        ],
+        keys: [{ key: 'featureFlipping.seller.psp.stripe', value: true }],
       };
 
       const result = mapPaymentConfig({
@@ -52,8 +47,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        PAYPAL: { is_active: true },
-        STRIPE: { is_active: false },
+        STRIPE: { is_active: true },
       });
     });
 
@@ -63,6 +57,22 @@ describe('mapPaymentConfig', () => {
           { key: 'featureFlipping.psp.evoxpay', value: true },
           { key: 'featureFlipping.booking.banking.enableFreeDeposit', value: true },
           { key: 'featureFlipping.someOtherFeature', value: true },
+        ],
+      };
+
+      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+
+      expect(result.providers).toEqual({
+        EVOXPAY: { is_active: true },
+      });
+    });
+
+    it('should ignore psp.iframe.* and psp.*.iframe patterns', () => {
+      const json = {
+        keys: [
+          { key: 'featureFlipping.psp.evoxpay', value: true },
+          { key: 'featureFlipping.psp.iframe.hipay', value: true },
+          { key: 'featureFlipping.psp.paypal.iframe', value: true },
         ],
       };
 
@@ -125,7 +135,9 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
-      expect(result.featureFlip).toEqual({});
+      expect(result.featureFlip).toEqual({
+        isFreeDepositEnabled: false,
+      });
     });
   });
 
@@ -206,16 +218,14 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
-      expect(result).toEqual({
-        providers: {
-          EVOXPAY: { is_active: true },
-          HIPAY: { is_active: false },
-        },
-        featureFlip: {
-          isFreeDepositEnabled: true,
-        },
-        settings: {},
+      expect(result.providers).toEqual({
+        EVOXPAY: { is_active: true },
+        HIPAY: { is_active: false },
       });
+      expect(result.featureFlip).toEqual({
+        isFreeDepositEnabled: true,
+      });
+      expect(result.settings).toEqual({});
     });
 
     it('should handle empty keys array', () => {
@@ -223,11 +233,11 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
-      expect(result).toEqual({
-        providers: {},
-        featureFlip: {},
-        settings: {},
+      expect(result.providers).toEqual({});
+      expect(result.featureFlip).toEqual({
+        isFreeDepositEnabled: false,
       });
+      expect(result.settings).toEqual({});
     });
 
     it('should handle missing keys property', () => {
@@ -235,11 +245,11 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
-      expect(result).toEqual({
-        providers: {},
-        featureFlip: {},
-        settings: {},
+      expect(result.providers).toEqual({});
+      expect(result.featureFlip).toEqual({
+        isFreeDepositEnabled: false,
       });
+      expect(result.settings).toEqual({});
     });
   });
 });
