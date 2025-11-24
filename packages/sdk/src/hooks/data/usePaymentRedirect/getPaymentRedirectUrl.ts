@@ -40,7 +40,7 @@ export const getPaymentRedirectUrl = async (
     callback_url: callbackUrl || '',
     template_id: formData.template_id,
     billing_details: formData.billing_details,
-    token: formData.token,
+    token: formData.token?.value || '',
   });
 
   if (!url) {

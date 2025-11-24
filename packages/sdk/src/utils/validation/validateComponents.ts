@@ -43,4 +43,6 @@ export function validateComponents(issuer: OidcIssuerTypes, children: React.Reac
         .join(', ')}`,
     );
   }
+
+  return symbols;
 }

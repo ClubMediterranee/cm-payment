@@ -7,6 +7,7 @@ import { useFormContext } from '../hooks/utils/useForm';
 import { CapsFormData } from '../types/FormData';
 import { ErrorMessage } from './ui/ErrorMessage';
 import { FormPanel } from './ui/FormPanel';
+import { CheckboxSkeleton, TitleSkeleton } from './ui/skeletons';
 
 export const Cgv = () => {
   const { content } = useCapsConfigContext();
@@ -39,4 +40,14 @@ export const Cgv = () => {
   );
 };
 
+const CgvSkeleton = () => (
+  <div className="w-full">
+    <TitleSkeleton variant="h5" />
+    <FormPanel>
+      <CheckboxSkeleton />
+    </FormPanel>
+  </div>
+);
+
+Cgv.Skeleton = CgvSkeleton;
 Cgv.COMPONENT_KEY = TOKENS.Cgv;

@@ -62,4 +62,11 @@ export const IframeProvider = () => {
   );
 };
 
+const IframeProviderSkeleton = () => (
+  <div className="w-full flex justify-center flex-col items-center mt-24">
+    <div className="w-full h-[910px] rounded-16 animate-pulsation bg-lightGrey" />
+  </div>
+);
+
+IframeProvider.Skeleton = IframeProviderSkeleton;
 IframeProvider.COMPONENT_KEY = TOKENS.IframeProvider;

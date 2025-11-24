@@ -14,12 +14,13 @@ describe('getRedirectPaymentCallbackUrl', () => {
 
   it('should generate correct URL with all parameters for proposal type', () => {
     const mockOptions = {
-      url: 'https://example.com',
+      paymentGatewayUrl: 'https://example.com',
       oidc: {
         issuerType: 'OIDC',
       },
       type: 'proposal',
       id: 'proposal-123',
+      callbackUrl: 'https://callback.url',
     };
     mockGetCapsConfig.mockReturnValue(mockOptions);
 
@@ -29,19 +30,20 @@ describe('getRedirectPaymentCallbackUrl', () => {
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
     expect(result).toBe(
-      'https://example.com/oidc/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123',
+      'https://example.com/oidc/redirect/payment-456?callback_url=https%3A%2F%2Fcallback.url&provider_id=provider-789&proposal_id=proposal-123',
     );
     expect(mockGetCapsConfig).toHaveBeenCalledOnce();
   });
 
   it('should generate URL without provider_id when not provided', () => {
     const mockOptions = {
-      url: 'https://example.com',
+      paymentGatewayUrl: 'https://example.com',
       oidc: {
         issuerType: 'OIDC',
       },
       type: 'proposal',
       id: 'proposal-123',
+      callbackUrl: 'https://callback.url',
     };
     mockGetCapsConfig.mockReturnValue(mockOptions);
 
@@ -50,17 +52,20 @@ describe('getRedirectPaymentCallbackUrl', () => {
 
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
-    expect(result).toBe('https://example.com/oidc/redirect/payment-456?proposal_id=proposal-123');
+    expect(result).toBe(
+      'https://example.com/oidc/redirect/payment-456?callback_url=https%3A%2F%2Fcallback.url&proposal_id=proposal-123',
+    );
   });
 
   it('should generate URL without proposal_id when type is not proposal', () => {
     const mockOptions = {
-      url: 'https://example.com',
+      paymentGatewayUrl: 'https://example.com',
       oidc: {
         issuerType: 'OIDC',
       },
       type: 'booking',
       id: 'booking-123',
+      callbackUrl: 'https://callback.url',
     };
     mockGetCapsConfig.mockReturnValue(mockOptions);
 
@@ -69,17 +74,20 @@ describe('getRedirectPaymentCallbackUrl', () => {
 
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
-    expect(result).toBe('https://example.com/oidc/redirect/payment-456?provider_id=provider-789');
+    expect(result).toBe(
+      'https://example.com/oidc/redirect/payment-456?callback_url=https%3A%2F%2Fcallback.url&provider_id=provider-789',
+    );
   });
 
   it('should generate URL without query parameters when type is not proposal and no providerId', () => {
     const mockOptions = {
-      url: 'https://example.com',
+      paymentGatewayUrl: 'https://example.com',
       oidc: {
         issuerType: 'OIDC',
       },
       type: 'booking',
       id: 'booking-123',
+      callbackUrl: 'https://callback.url',
     };
     mockGetCapsConfig.mockReturnValue(mockOptions);
 
@@ -88,17 +96,20 @@ describe('getRedirectPaymentCallbackUrl', () => {
 
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
-    expect(result).toBe('https://example.com/oidc/redirect/payment-456');
+    expect(result).toBe(
+      'https://example.com/oidc/redirect/payment-456?callback_url=https%3A%2F%2Fcallback.url',
+    );
   });
 
   it('should handle different issuer types with correct case conversion', () => {
     const mockOptions = {
-      url: 'https://example.com',
+      paymentGatewayUrl: 'https://example.com',
       oidc: {
         issuerType: 'KEYCLOAK',
       },
       type: 'proposal',
       id: 'proposal-123',
+      callbackUrl: 'https://callback.url',
     };
     mockGetCapsConfig.mockReturnValue(mockOptions);
 
@@ -108,18 +119,19 @@ describe('getRedirectPaymentCallbackUrl', () => {
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
     expect(result).toBe(
-      'https://example.com/keycloak/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123',
+      'https://example.com/keycloak/redirect/payment-456?callback_url=https%3A%2F%2Fcallback.url&provider_id=provider-789&proposal_id=proposal-123',
     );
   });
 
   it('should handle URLs with ports', () => {
     const mockOptions = {
-      url: 'http://localhost:3000',
+      paymentGatewayUrl: 'http://localhost:3000',
       oidc: {
         issuerType: 'OIDC',
       },
       type: 'proposal',
       id: 'proposal-123',
+      callbackUrl: 'https://callback.url',
     };
     mockGetCapsConfig.mockReturnValue(mockOptions);
 
@@ -129,18 +141,19 @@ describe('getRedirectPaymentCallbackUrl', () => {
     const result = getRedirectPaymentCallbackUrl(paymentId, providerId);
 
     expect(result).toBe(
-      'http://localhost:3000/oidc/redirect/payment-456?provider_id=provider-789&proposal_id=proposal-123',
+      'http://localhost:3000/oidc/redirect/payment-456?callback_url=https%3A%2F%2Fcallback.url&provider_id=provider-789&proposal_id=proposal-123',
     );
   });
 
   it('should handle special characters in query parameters', () => {
     const mockOptions = {
-      url: 'https://example.com',
+      paymentGatewayUrl: 'https://example.com',
       oidc: {
         issuerType: 'OIDC',
       },
       type: 'proposal',
       id: 'proposal-123&test=value',
+      callbackUrl: 'https://callback.url',
     };
     mockGetCapsConfig.mockReturnValue(mockOptions);
 

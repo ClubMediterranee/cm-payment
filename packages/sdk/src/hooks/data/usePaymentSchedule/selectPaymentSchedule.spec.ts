@@ -48,7 +48,7 @@ describe('selectPaymentSchedule', () => {
     const result = selectPaymentSchedule(data);
     expect(result).toEqual([
       { amount: 1000, currency: 'EUR' },
-      { amount: 600, currency: 'EUR', deadline: '2024-01-15' },
+      { amount: 600, currency: 'EUR', deadline: '2024-02-15', balance: 400 },
     ]);
   });
 
@@ -69,7 +69,7 @@ describe('selectPaymentSchedule', () => {
     const result = selectPaymentSchedule(data);
     expect(result).toEqual([
       { amount: 1500, currency: 'EUR' },
-      { amount: 750, currency: 'EUR', deadline: '2024-01-15' },
+      { amount: 750, currency: 'EUR', deadline: '2024-02-15', balance: 750 },
     ]);
   });
 
@@ -97,7 +97,7 @@ describe('selectPaymentSchedule', () => {
     const result = selectPaymentSchedule(data);
     expect(result).toEqual([
       { amount: 1500, currency: 'EUR' },
-      { amount: 500, currency: 'EUR', deadline: '2024-01-15' },
+      { amount: 500, currency: 'EUR', deadline: '2024-02-15', balance: 500 },
     ]);
   });
 
@@ -142,7 +142,7 @@ describe('selectPaymentSchedule', () => {
     const result = selectPaymentSchedule(data);
     expect(result).toEqual([
       { amount: 1500, currency: 'EUR' },
-      { amount: 750, currency: 'EUR', deadline: undefined },
+      { amount: 750, currency: 'EUR', deadline: '2024-02-15', balance: 750 },
     ]);
   });
 });
