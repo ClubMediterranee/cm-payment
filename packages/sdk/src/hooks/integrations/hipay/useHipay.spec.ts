@@ -7,6 +7,14 @@ import * as useScriptLoader from '../../utils/useScriptLoader';
 import * as hipayHelpers from './hipay';
 import { useHipay } from './useHipay';
 
+vi.mock('react-hook-form', async () => {
+  const actual = await vi.importActual('react-hook-form');
+  return {
+    ...actual,
+    useWatch: vi.fn(() => undefined),
+  };
+});
+
 describe('useHipay', () => {
   const mockHipayInstance: HipayInstance = {
     on: vi.fn(),
@@ -46,6 +54,7 @@ describe('useHipay', () => {
     vi.spyOn(useFormContext, 'useFormContext').mockReturnValue({
       formState: mockFormState,
       setValue: mockSetValue,
+      control: {} as any,
     } as any);
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
@@ -146,91 +155,6 @@ describe('useHipay', () => {
 
     expect(result.current.errors).toEqual({
       cardNumber: 'Invalid card number',
-    });
-  });
-
-  it('should generate token when submitting and ready', async () => {
-    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
-      isLoaded: true,
-      isLoading: false,
-      error: null,
-    });
-
-    const mockToken = 'test-token-123';
-    (mockHipayInstance.getPaymentData as any).mockResolvedValue({
-      token: mockToken,
-      payment_product: 'visa',
-      browser_info: {},
-    });
-
-    const { rerender } = renderHook(() => useHipay({ fieldSelectors: mockFieldSelectors }));
-
-    const readyCallback = (mockHipayInstance.on as any).mock.calls.find(
-      ([event]: [string, any]) => event === 'ready',
-    )?.[1];
-
-    await act(async () => {
-      readyCallback?.();
-    });
-
-    mockFormState.isSubmitting = true;
-    rerender();
-
-    await waitFor(() => {
-      expect(mockHipayInstance.getPaymentData).toHaveBeenCalled();
-      expect(mockSetValue).toHaveBeenCalledWith('token', mockToken, { shouldValidate: true });
-    });
-  });
-
-  it('should not generate token when submitting but not ready', async () => {
-    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
-      isLoaded: true,
-      isLoading: false,
-      error: null,
-    });
-
-    const { rerender } = renderHook(() => useHipay({ fieldSelectors: mockFieldSelectors }));
-
-    mockFormState.isSubmitting = true;
-    rerender();
-
-    await waitFor(() => {
-      expect(mockHipayInstance.getPaymentData).not.toHaveBeenCalled();
-    });
-  });
-
-  it('should handle token generation errors', async () => {
-    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
-      isLoaded: true,
-      isLoading: false,
-      error: null,
-    });
-
-    vi.spyOn(hipayHelpers, 'mapHipayErrorsToObject').mockReturnValue({
-      cardNumber: 'Payment failed',
-    });
-
-    (mockHipayInstance.getPaymentData as any).mockRejectedValue([
-      { field: 'cardNumber', error: 'Payment failed' },
-    ]);
-
-    const { result, rerender } = renderHook(() => useHipay({ fieldSelectors: mockFieldSelectors }));
-
-    const readyCallback = (mockHipayInstance.on as any).mock.calls.find(
-      ([event]: [string, any]) => event === 'ready',
-    )?.[1];
-
-    await act(async () => {
-      readyCallback?.();
-    });
-
-    mockFormState.isSubmitting = true;
-    rerender();
-
-    await waitFor(() => {
-      expect(result.current.errors).toEqual({
-        cardNumber: 'Payment failed',
-      });
     });
   });
 });

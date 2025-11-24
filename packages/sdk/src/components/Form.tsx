@@ -1,38 +1,18 @@
-import { PropsWithChildren, useEffect } from 'react';
+import { PropsWithChildren } from 'react';
 
-import { usePaymentRedirect } from '../hooks/data/usePaymentRedirect';
-import { useFormContext } from '../hooks/utils/useForm';
+import { usePaymentSubmit, UsePaymentSubmitParams } from '../hooks/usePaymentSubmit';
 
-type Props = {
-  /**
-   * events
-   */
-  onLoad?: () => void;
-  onLoadEnd?: () => void;
-  onError?: (error: Error) => void;
-};
-
-export function Form({ children, onError, onLoad }: PropsWithChildren<Props>) {
-  const methods = useFormContext();
-
-  const { mutate, isPending } = usePaymentRedirect({
-    onError: (error) => {
-      onError?.(error);
-    },
-    onSuccess: (url) => {
-      window.location.href = url;
-    },
-  });
-
-  useEffect(() => {
-    if (isPending) {
-      onLoad?.();
-    }
-  }, [isPending, onLoad]);
+export function Form({
+  children,
+  onError,
+  onLoad,
+  onLoadEnd,
+}: PropsWithChildren<UsePaymentSubmitParams>) {
+  const { handleSubmit } = usePaymentSubmit({ onError, onLoad, onLoadEnd });
 
   return (
     <form
-      onSubmit={methods.handleSubmit((formData) => mutate(formData))}
+      onSubmit={handleSubmit}
       className="w-full flex flex-col justify-center items-center gap-24 text-b4"
     >
       {children}

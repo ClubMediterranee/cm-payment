@@ -168,7 +168,7 @@ describe('getPaymentConfig', () => {
       vi.mocked(global.fetch).mockResolvedValue({
         ok: false,
         json: async () => ({
-          errors: [{ error_description: 'Server error' }],
+          error_description: 'Server error',
         }),
       } as Response);
 

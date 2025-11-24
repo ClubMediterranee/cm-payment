@@ -9,7 +9,7 @@ import { defaultContent } from '../content/default';
 
 export const CapsConfigContext = createContext<CapsSettings>({
   type: '' as CapsSettings['type'],
-  url: '',
+  paymentGatewayUrl: '',
   id: '',
   locale: navigator.language || 'en-US',
   oidc: undefined as unknown as OidcSettings,

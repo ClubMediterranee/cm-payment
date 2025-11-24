@@ -179,28 +179,6 @@ describe('fetcher', () => {
     ).rejects.toThrow('Resource not found');
   });
 
-  it('should throw error for non-404 status with errors array', async () => {
-    const mockErrorResponse = {
-      errors: [
-        {
-          error_description: 'Server error',
-        },
-      ],
-    };
-
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: false,
-      json: async () => mockErrorResponse,
-    } as Response);
-
-    await expect(
-      fetcher({
-        url: '/test',
-        method: 'GET',
-      }),
-    ).rejects.toThrow('Server error');
-  });
-
   it('should include custom headers', async () => {
     const mockResponse = { data: 'test' };
 

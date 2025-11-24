@@ -16,14 +16,13 @@ export const HostedField = ({ error, label, id, isLoading }: Props) => {
       <span className="font-semibold px-20">{label}</span>
 
       <FormPanel
+        id={id}
         className={clsx(
-          'w-full rounded-pill h-48 relative overflow-hidden py-2 m-0',
+          'w-full rounded-pill h-48 relative overflow-hidden m-0 min-h-48 py-10',
           isLoading && 'animate-pulsation bg-lightGrey pointer-events-none',
           error && 'border-red',
         )}
-      >
-        <div id={id} className="inset-0" />
-      </FormPanel>
+      />
 
       <ErrorMessage message={error} />
     </div>

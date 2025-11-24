@@ -70,7 +70,7 @@ export const MockedProvider = ({
   return (
     <CapsConfigProvider
       content={content}
-      url="https://mock.clubmed.com"
+      paymentGatewayUrl="https://mock.clubmed.com"
       locale="fr-FR"
       callbackUrl="http://localhost:3000/callback"
       proposalId={proposalId}

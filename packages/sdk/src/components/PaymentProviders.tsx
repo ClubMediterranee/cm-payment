@@ -12,6 +12,7 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { renderTemplate } from '../utils/renderTemplate';
 import { PaymentProviderRules } from './PaymentProviders/PaymentProviderRules';
 import { FormPanel } from './ui/FormPanel';
+import { RadioSkeleton } from './ui/skeletons';
 
 const PROVIDER_ICON = {
   [PaymentProvider1CategoryPaymentMethod.CreditCard]: 'CreditCard',
@@ -94,4 +95,27 @@ export const PaymentProviders = () => {
   );
 };
 
+const PaymentProvidersSkeleton = () => (
+  <FormPanel className="p-0">
+    <div className="flex flex-col pt-12">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className={clsx(
+            'w-full p-20 flex justify-between gap-24',
+            i === 1 && 'border-b-1 border-lightGrey',
+          )}
+        >
+          <div className="flex-1">
+            <div className="h-16 w-1/2 rounded-8 animate-pulsation bg-lightGrey mb-12" />
+            <RadioSkeleton className="my-24" />
+          </div>
+          <div className="w-80 h-80 rounded-8 animate-pulsation bg-lightGrey" />
+        </div>
+      ))}
+    </div>
+  </FormPanel>
+);
+
+PaymentProviders.Skeleton = PaymentProvidersSkeleton;
 PaymentProviders.COMPONENT_KEY = TOKENS.PaymentProviders;

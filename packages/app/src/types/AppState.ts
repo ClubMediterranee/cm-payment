@@ -8,4 +8,5 @@ export interface AppState {
   customerId: string;
   locale: string;
   action?: Action;
+  callbackUrl: string;
 }

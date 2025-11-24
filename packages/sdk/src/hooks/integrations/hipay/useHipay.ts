@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useWatch } from 'react-hook-form';
 
 import type { HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
@@ -18,29 +19,46 @@ type UseHipayParams = {
 
 export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
   const { content } = useCapsConfigContext();
-  const {
-    formState: { isSubmitting },
-    setValue,
-  } = useFormContext();
+  const { formState, setValue } = useFormContext();
+  const { isSubmitting } = formState;
   const { isLoaded } = useScriptLoader(HIPAY_CONFIG.scriptUrl);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const watchedToken = useWatch({ name: 'token.value' });
+  const watchedTokenStatus = useWatch({ name: 'token.status' });
   const { isOpen: isHipayReady, onOpen: onHipayReady } = useDisclosure();
 
   const instance = useRef<HipayInstance | null>(null);
+  const generationIdRef = useRef(0);
 
   const generateToken = useCallback(() => {
-    if (!isHipayReady || !instance.current) return;
+    if (!instance.current) return;
 
+    const generationId = generationIdRef.current;
+
+    setValue('token.status', 'pending');
     instance.current
       .getPaymentData()
       .then(({ token }) => {
-        setValue('token', token, { shouldValidate: true });
+        if (generationId === generationIdRef.current) {
+          setValue('token', { value: token, status: 'success' });
+        }
       })
-      .catch((errors) => setErrors(mapHipayErrorsToObject(errors)));
-  }, [isHipayReady, setValue]);
+      .catch((errors) => {
+        if (generationId === generationIdRef.current) {
+          setErrors(mapHipayErrorsToObject(errors));
+          setValue('token', { value: '', status: 'error' });
+        }
+      })
+      .finally(() => {
+        if (generationId !== generationIdRef.current) {
+          setValue('token.status', 'idle');
+        }
+      });
+  }, [setValue]);
 
   const onHipayInputChange = (field: HipayInputChangeData) => {
+    generationIdRef.current++;
     setErrors((prev) => {
       return {
         ...prev,
@@ -72,6 +90,13 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
     instance.current?.on('ready', onHipayReady);
 
     instance.current?.on('inputChange', onHipayInputChange);
+
+    instance.current.on('change', ({ valid }) => {
+      if (valid) {
+        return generateToken();
+      }
+      setValue('token.value', '');
+    });
   };
 
   useEffect(() => {
@@ -80,10 +105,10 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
   }, [isLoaded]);
 
   useEffect(() => {
-    if (isSubmitting) {
+    if (isSubmitting && !watchedToken && watchedTokenStatus !== 'pending') {
       generateToken();
     }
-  }, [generateToken, isSubmitting]);
+  }, [formState, generateToken, isSubmitting, watchedToken, watchedTokenStatus]);
 
   return { errors, isReady: isHipayReady };
 };

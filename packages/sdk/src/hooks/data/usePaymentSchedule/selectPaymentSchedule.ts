@@ -63,7 +63,8 @@ const buildScheduleFromMergedData = (data: PaymentSchedule) => {
     schedule.push({
       amount: payments[0].amount,
       currency,
-      deadline: payments[0].deadline,
+      deadline: payments[1].deadline,
+      balance: payments[1].amount,
     });
   }
   return schedule;

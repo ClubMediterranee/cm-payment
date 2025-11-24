@@ -1,5 +1,5 @@
 import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 import {
   getV2ProposalsProposalId,
@@ -10,7 +10,8 @@ export type StayModel = {
   productId: string;
   resortArrivalDate?: string | null;
   resortDepartureDate: string | null;
-  nbAccommodations: number;
+  adultsCount: number;
+  childrenCount: number;
 };
 
 export const useStay = () => {
@@ -27,8 +28,9 @@ export const useStay = () => {
       return {
         resortDepartureDate: stay?.resort_leaving_date as string | null,
         resortArrivalDate: stay?.resort_arrival_date as string | null,
-        productId: data.stays?.[0]?.product_id || '',
-        nbAccommodations: stay?.accommodations?.length || 1,
+        productId: stay?.product_id || '',
+        adultsCount: stay?.attendees?.[0]?.adults_count || 0,
+        childrenCount: stay?.attendees?.[0]?.children_count || 0,
       };
     }
 
@@ -38,7 +40,8 @@ export const useStay = () => {
       productId: data.product_id,
       resortDepartureDate: data?.resort_departure_date,
       resortArrivalDate: data?.resort_arrival_date,
-      nbAccommodations: data?.accommodations?.length || 1,
+      adultsCount: data.households?.[0].attendees?.length || 0,
+      childrenCount: 0,
     };
   };
 
@@ -47,7 +50,7 @@ export const useStay = () => {
     data: stay,
     status,
     error,
-  } = useQuery({
+  } = useSuspenseQuery({
     queryKey: ['stay', id, type],
     queryFn: getStay,
     retry: false,
