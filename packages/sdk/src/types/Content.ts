@@ -35,9 +35,11 @@ export type Content = {
     choiceLabel: `${string}{label}${string}`;
     mobile_phone: {
       sendLink: string;
+      invalid: string;
     };
     email: {
       sendLink: string;
+      invalid: string;
     };
     call: {
       sendLink: string;

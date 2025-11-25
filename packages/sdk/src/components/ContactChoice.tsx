@@ -8,6 +8,7 @@ import { useProfilePrefill } from '../hooks/useProfilePrefill';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext, useWatch } from '../hooks/utils/useForm';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
+import { emailRegex, intlPhoneRegex } from '../utils/regex';
 import { ContactChoiceRadio } from './ContactChoiceRadio';
 import { FormPanel } from './ui/FormPanel';
 
@@ -55,23 +56,24 @@ export const ContactChoice = ({ reference, uuid }: Props) => {
 
   const contactChoices = [
     {
-      templateId: templateIds.email,
-      inputName: 'email',
-      inputType: 'email',
-      radioLabel: content.contactChoice.choices.email,
-      inputLabel: content.contactChoice.choices.email,
+      templateId: templateIds.mobilePhone,
+      input: {
+        label: content.contactChoice.choices.mobile_phone,
+        name: 'mobile_phone',
+        type: 'tel',
+      },
+      radio: { label: content.contactChoice.choices.mobile_phone },
+      pattern: { value: intlPhoneRegex, message: content.contactChoice.mobile_phone.invalid },
     },
     {
-      templateId: templateIds.mobilePhone,
-      inputName: 'mobile_phone',
-      inputType: 'phone',
-      radioLabel: content.contactChoice.choices.mobile_phone,
-      inputLabel: content.contactChoice.choices.mobile_phone,
+      templateId: templateIds.email,
+      radio: { label: content.contactChoice.choices.email },
+      input: { label: content.contactChoice.choices.email, name: 'email', type: 'email' },
+      pattern: { value: emailRegex, message: content.contactChoice.email.invalid },
     },
     {
       templateId: templateIds.call,
-      radioLabel: content.contactChoice.choices.call,
-      isRadioDisabled: isCallRadioDisabled,
+      radio: { label: content.contactChoice.choices.call, disabled: isCallRadioDisabled },
     },
   ].filter((choice) => isOnCall || choice.templateId !== templateIds.call);
 

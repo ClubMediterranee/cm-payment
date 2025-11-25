@@ -46,12 +46,14 @@ export const defaultContent: Content = {
         'To complete the payment, you will be prompted to request the client’s various payment information. You will be able to track your client’s payment progress in real time.',
     },
     email: {
+      invalid: 'Invalid email',
       sendLink:
-        'To complete the payment, we will immediately send your client an email with a payment link valid for 1 hour. You will need to track your client’s payment progress in real time.',
+        'To complete the payment, we will immediately send your client an email with a payment link. You will need to track your client’s payment progress in real time.',
     },
     mobile_phone: {
+      invalid: 'Invalid phone number',
       sendLink:
-        'To complete the payment, we will immediately send a payment link valid for 1 hour to your client’s phone number. You will need to track your client’s payment progress in real time.',
+        'To complete the payment, we will immediately send a payment link to your client’s phone number. You will need to track your client’s payment progress in real time.',
     },
   },
   creditCardForm: {
