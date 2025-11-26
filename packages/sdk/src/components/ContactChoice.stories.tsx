@@ -131,7 +131,7 @@ export const WithInteractions: Story = {
     const phoneField = canvas.getByTestId('InputFor_mobile_phone');
 
     await expect(phoneField).toBeInTheDocument();
-    await expect(phoneField).toHaveAttribute('type', 'phone');
+    await expect(phoneField).toHaveAttribute('type', 'tel');
   },
 };
 
@@ -186,7 +186,7 @@ export const WithAdditionalInteractions: Story = {
     const phoneField = canvas.getByTestId('InputFor_mobile_phone');
 
     await expect(phoneField).toBeInTheDocument();
-    await expect(phoneField).toHaveAttribute('type', 'phone');
+    await expect(phoneField).toHaveAttribute('type', 'tel');
 
     await userEvent.click(callRadio);
     await expect(callRadio).toBeChecked();
