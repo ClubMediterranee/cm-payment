@@ -38,8 +38,10 @@ const ContactChoiceWithFormProvider = (args: any) => {
       bookingId="123"
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
-      featureFlips={{
-        'featureFlipping.seller.psp.evoxpay': true,
+      paymentConfig={{
+        providers: { EVOXPAY: { is_active: true } },
+        featureFlip: {},
+        settings: {},
       }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
     >
@@ -184,8 +186,12 @@ export const WithAdditionalInteractions: Story = {
       bookingId="123"
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
-      featureFlips={{
-        'featureFlipping.seller.psp.evoxpay': true,
+      paymentConfig={{
+        providers: {
+          EVOXPAY: { is_active: true },
+        },
+        featureFlip: {},
+        settings: {},
       }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '1' }}
     >
@@ -354,8 +360,12 @@ export const AccessibilityTest: Story = {
       bookingId="123"
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.PARTNERS, accessToken: '' }}
-      featureFlips={{
-        'featureFlipping.seller.psp.evoxpay': true,
+      paymentConfig={{
+        providers: {
+          EVOXPAY: { is_active: true },
+        },
+        featureFlip: {},
+        settings: {},
       }}
       defaultValues={{ provider_id: 'EIXOPAY', template_id: '6' }}
     >
