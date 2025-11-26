@@ -39,7 +39,7 @@ Composant de formulaire Hipay qui affiche les champs hébergés pour la saisie d
     return (
       <MockedProvider
         defaultValues={{
-          token: '',
+          token: { value: '', status: 'idle' },
         }}
         proposalId="12345678"
       >
@@ -159,7 +159,7 @@ export const ErrorTest: Story = {
     return (
       <MockedProvider
         defaultValues={{
-          token: '',
+          token: { value: '', status: 'idle' },
         }}
         proposalId="12345678"
       >

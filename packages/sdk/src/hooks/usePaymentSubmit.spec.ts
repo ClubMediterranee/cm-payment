@@ -1,5 +1,7 @@
 import { renderHook } from '@testing-library/react';
+import type { UseFormReturn } from 'react-hook-form';
 
+import type { CapsFormData } from '../types/FormData';
 import * as usePaymentRedirectModule from './data/usePaymentRedirect';
 import { usePaymentSubmit } from './usePaymentSubmit';
 import * as useTokenRetryModule from './useTokenRetry';
@@ -19,10 +21,22 @@ describe('usePaymentSubmit', () => {
 
     mockMutate = vi.fn();
     mockGetValues = vi.fn(() => ({ amount: '100', currency: 'EUR' }));
-    mockHandleSubmit = vi.fn((onSuccess: any) => async (e: any) => {
-      const data = mockGetValues();
-      await onSuccess(data);
-    });
+    mockHandleSubmit = vi.fn(
+      (
+        onValid?: (data: CapsFormData) => void | Promise<void>,
+        onInvalid?: (errors: any) => void | Promise<void>,
+      ) =>
+        async (e?: React.BaseSyntheticEvent) => {
+          e?.preventDefault();
+          const data = mockGetValues();
+          if (onValid) {
+            await onValid(data);
+          }
+          if (onInvalid && mockHandleSubmit.mock.lastCall?.[1]) {
+            await onInvalid({ token: { value: 'Token is required' } });
+          }
+        },
+    );
     mockHandleTokenValidationError = vi.fn();
 
     onErrorMock = vi.fn();
@@ -32,7 +46,7 @@ describe('usePaymentSubmit', () => {
     vi.spyOn(useFormModule, 'useFormContext').mockReturnValue({
       handleSubmit: mockHandleSubmit,
       getValues: mockGetValues,
-    } as any);
+    } as Partial<UseFormReturn<CapsFormData>> as UseFormReturn<CapsFormData>);
 
     vi.spyOn(usePaymentRedirectModule, 'usePaymentRedirect').mockReturnValue({
       mutate: mockMutate,
@@ -111,9 +125,8 @@ describe('usePaymentSubmit', () => {
   });
 
   it('should redirect on success', () => {
-    const originalLocation = window.location;
     delete (window as any).location;
-    window.location = { ...originalLocation, href: '' } as any;
+    window.location = { href: '' } as any;
 
     renderHook(() =>
       usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
@@ -124,8 +137,6 @@ describe('usePaymentSubmit', () => {
     paymentRedirectCall.onSuccess?.('https://payment.gateway.com');
 
     expect(window.location.href).toBe('https://payment.gateway.com');
-
-    window.location = originalLocation;
   });
 
   it('should pass onLoadEnd to usePaymentRedirect', () => {
@@ -141,9 +152,18 @@ describe('usePaymentSubmit', () => {
   });
 
   it('should call handleTokenValidationError on form validation error', async () => {
-    mockHandleSubmit.mockImplementation((onSuccess, onError) => async (e: any) => {
-      await onError({ token: { value: 'Token is required' } });
-    });
+    mockHandleSubmit.mockImplementation(
+      (
+        _onValid?: (data: CapsFormData) => void | Promise<void>,
+        onInvalid?: (errors: any) => void | Promise<void>,
+      ) =>
+        async (e?: React.BaseSyntheticEvent) => {
+          e?.preventDefault();
+          if (onInvalid) {
+            await onInvalid({ token: { value: 'Token is required' } });
+          }
+        },
+    );
 
     const { result } = renderHook(() =>
       usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
