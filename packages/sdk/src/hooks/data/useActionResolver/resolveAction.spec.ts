@@ -4,14 +4,13 @@ import {
   getV3CustomersCustomerIdBookingsBookingId,
 } from '../../../__generated__';
 import { getCapsConfig } from '../../../providers/CapsConfigProvider';
-import { hasFlip } from '../../../utils/featureFlips';
 import { resolveAction } from './resolveAction';
 
 vi.mock('../../../providers/CapsConfigProvider', () => ({
   getCapsConfig: vi.fn(),
 }));
 
-vi.mock('../../../utils/featureFlips', () => ({
+vi.mock('../../../utils/paymentConfig', () => ({
   hasFlip: vi.fn(),
 }));
 
@@ -25,7 +24,6 @@ vi.mock('../../../__generated__', async () => {
 
 const mockGetCapsConfig = vi.mocked(getCapsConfig);
 const mockGetBooking = vi.mocked(getV3CustomersCustomerIdBookingsBookingId);
-const mockHasFlip = vi.mocked(hasFlip);
 
 describe('resolveAction', () => {
   beforeEach(() => {
@@ -39,7 +37,7 @@ describe('resolveAction', () => {
       customerId: 'customer-123',
     } as any);
 
-    const result = await resolveAction();
+    const result = await resolveAction({});
 
     expect(result).toBe(Action.PAYMENT_RESA);
     expect(mockGetBooking).not.toHaveBeenCalled();
@@ -55,7 +53,7 @@ describe('resolveAction', () => {
       booking_status: BookingStatus.OPTION,
     } as any);
 
-    const result = await resolveAction();
+    const result = await resolveAction({});
 
     expect(result).toBe(Action.PAYMENT_OPTION);
     expect(mockGetBooking).toHaveBeenCalledWith('customer-456', 'booking-123');
@@ -71,7 +69,7 @@ describe('resolveAction', () => {
       booking_status: BookingStatus.EXPIRED,
     } as any);
 
-    const result = await resolveAction();
+    const result = await resolveAction({ action: undefined });
 
     expect(result).toBe(Action.PAYMENT_OPTION);
   });
@@ -85,12 +83,13 @@ describe('resolveAction', () => {
     mockGetBooking.mockResolvedValue({
       booking_status: BookingStatus.VALIDATED,
     } as any);
-    mockHasFlip.mockReturnValue(true);
 
-    const result = await resolveAction(Action.PAYMENT_PARTIAL);
+    const result = await resolveAction({
+      action: Action.PAYMENT_PARTIAL,
+      isFreeDepositEnabled: true,
+    });
 
     expect(result).toBe(Action.PAYMENT_PARTIAL);
-    expect(mockHasFlip).toHaveBeenCalledWith('booking.banking.enableFreeDeposit');
   });
 
   it('should return PAYMENT_SOLDE when action is PAYMENT_PARTIAL but flip is disabled', async () => {
@@ -102,9 +101,11 @@ describe('resolveAction', () => {
     mockGetBooking.mockResolvedValue({
       booking_status: BookingStatus.VALIDATED,
     } as any);
-    mockHasFlip.mockReturnValue(false);
 
-    const result = await resolveAction(Action.PAYMENT_PARTIAL);
+    const result = await resolveAction({
+      action: Action.PAYMENT_PARTIAL,
+      isFreeDepositEnabled: false,
+    });
 
     expect(result).toBe(Action.PAYMENT_SOLDE);
   });
@@ -119,7 +120,7 @@ describe('resolveAction', () => {
       booking_status: BookingStatus.VALIDATED,
     } as any);
 
-    const result = await resolveAction(Action.PAYMENT_CART);
+    const result = await resolveAction({ action: Action.PAYMENT_CART });
 
     expect(result).toBe(Action.PAYMENT_CART);
   });
@@ -134,7 +135,7 @@ describe('resolveAction', () => {
       booking_status: BookingStatus.VALIDATED,
     } as any);
 
-    const result = await resolveAction();
+    const result = await resolveAction({});
 
     expect(result).toBe(Action.PAYMENT_SOLDE);
   });
@@ -151,7 +152,7 @@ describe('resolveAction', () => {
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await expect(resolveAction()).rejects.toThrow('API Error');
+    await expect(resolveAction({})).rejects.toThrow('API Error');
 
     expect(consoleSpy).toHaveBeenCalledWith('Failed to resolve booking action:', apiError);
 

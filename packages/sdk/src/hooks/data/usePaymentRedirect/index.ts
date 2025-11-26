@@ -2,8 +2,8 @@ import { CapsFormData } from '@clubmed/payment-sdk/types/FormData';
 import { setCookie } from '@clubmed/payment-sdk/utils/storage/cookies';
 import { noop, useMutation } from '@tanstack/react-query';
 
-import { useCapsConfigContext } from '../utils/useCapsConfigContext';
-import { getPaymentRedirectUrl } from './usePaymentRedirect/getPaymentRedirectUrl';
+import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
+import { getPaymentRedirectUrl } from './getPaymentRedirectUrl';
 
 type Props = {
   onError?: (error: Error) => void;
