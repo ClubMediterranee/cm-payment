@@ -21,4 +21,7 @@ export type CapsFormData = {
 
   // Action
   action: Action;
+
+  // Payment token for hosted card forms (HiPay, Cybersource, etc.)
+  token?: string;
 };
