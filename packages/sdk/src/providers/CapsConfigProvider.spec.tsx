@@ -8,7 +8,7 @@ import { CapsConfigProvider, getCapsConfig } from './CapsConfigProvider';
 
 describe('CapsConfigProvider', () => {
   const defaultProps = {
-    url: 'https://example.com',
+    paymentGatewayUrl: 'https://example.com',
     proposalId: 'prop-123',
     customerId: 'cust-456',
     locale: 'fr-FR',
@@ -34,7 +34,7 @@ describe('CapsConfigProvider', () => {
       wrapper: (props) => <Wrapper {...props} />,
     });
 
-    expect(result.current.url).toBe(defaultProps.url);
+    expect(result.current.paymentGatewayUrl).toBe(defaultProps.paymentGatewayUrl);
     expect(result.current.id).toBe(defaultProps.proposalId);
     expect(result.current.type).toBe('proposal');
     expect(result.current.locale).toBe(defaultProps.locale);
@@ -90,7 +90,7 @@ describe('CapsConfigProvider', () => {
 
     const config = getCapsConfig();
 
-    expect(config.url).toBe(defaultProps.url);
+    expect(config.paymentGatewayUrl).toBe(defaultProps.paymentGatewayUrl);
     expect(config.id).toBe('prop-123');
     expect(config.type).toBe('proposal');
   });
