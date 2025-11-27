@@ -1,4 +1,5 @@
 import type { Action, BillingDetailsModel } from '../__generated__';
+import { GLOBAL_CAPS_SETTINGS } from '../config';
 
 export type CapsFormData = {
   // Payment amount
@@ -11,8 +12,7 @@ export type CapsFormData = {
   provider_id: string;
 
   // Template/Contact method selection
-  template_id: string;
-
+  template_id: (typeof GLOBAL_CAPS_SETTINGS.templateIds)[keyof typeof GLOBAL_CAPS_SETTINGS.templateIds];
   // CGV acceptance
   cgv: boolean;
 

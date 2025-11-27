@@ -1,82 +1,95 @@
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
-import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
-import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
+import { RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
+import { useEffect } from 'react';
 
+import { PaymentProvider1CategoryPaymentMethod } from '../__generated__';
 import { GLOBAL_CAPS_SETTINGS } from '../config';
-import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
-import { useFormContext } from '../hooks/utils/useForm';
-import { renderTemplate } from '../utils/renderTemplate';
+import { useProfilePrefill } from '../hooks/useProfilePrefill';
+import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
+import { useFormContext, useWatch } from '../hooks/utils/useForm';
+import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
+import { emailRegex, intlPhoneRegex } from '../utils/regex';
+import { ContactChoiceRadio } from './ContactChoiceRadio';
 import { FormPanel } from './ui/FormPanel';
 
 type Props = {
-  contactMethodProviders?: string[];
-  choices?: {
-    id: string;
-    name: string;
-    label: string;
-    type: string;
-  }[];
+  reference?: string;
+  uuid?: string;
 };
 
-export const ContactChoice = ({
-  contactMethodProviders = GLOBAL_CAPS_SETTINGS.withContactMethodProviders,
-  choices = GLOBAL_CAPS_SETTINGS.contactChoices,
-}: Props) => {
+export const ContactChoice = ({ reference, uuid }: Props) => {
+  const { templateIds, withContactMethodProviders } = GLOBAL_CAPS_SETTINGS;
+
   const { content } = useCapsConfigContext();
-  const { register, setValue, watch } = useFormContext();
-  const watchedTemplateId = watch('template_id');
-  const watchedProviderId = watch('provider_id');
-  const displayContactChoice = contactMethodProviders.find((id) =>
-    Array.isArray(watchedProviderId) ? watchedProviderId.includes(id) : watchedProviderId === id,
-  );
+  const { setValue } = useFormContext();
+  const { isSeller } = useOidcContext();
+
+  const watchedTemplateId = useWatch('template_id');
+  const watchedPaymentProvider = useWatchedPaymentProvider();
+
+  useProfilePrefill();
+
+  const isCallRadioDisabled =
+    watchedPaymentProvider?.category_payment_method !==
+    PaymentProvider1CategoryPaymentMethod.CreditCard;
+
+  useEffect(() => {
+    if (watchedTemplateId === templateIds.call && isCallRadioDisabled) {
+      setValue('template_id', templateIds.email);
+    }
+  }, [isCallRadioDisabled, watchedTemplateId]);
+
+  const displayContactChoice =
+    isSeller && withContactMethodProviders.find((id) => watchedPaymentProvider?.id?.includes(id));
 
   if (!displayContactChoice) {
     return null;
   }
 
-  const getContentLabel = (name: string, fallbackLabel: string) => {
-    if (name === 'email') return content.contactChoice.choices.email;
-    if (name === 'mobile_phone') return content.contactChoice.choices.phone;
-    return fallbackLabel;
+  const isOnCall = reference || uuid;
+
+  const sendLinkTexts = {
+    [templateIds.email]: content.contactChoice.email.sendLink,
+    [templateIds.mobilePhone]: content.contactChoice.mobile_phone.sendLink,
+    [templateIds.call]: content.contactChoice.call.sendLink,
   };
 
+  const contactChoices = [
+    {
+      templateId: templateIds.mobilePhone,
+      input: {
+        label: content.contactChoice.choices.mobile_phone,
+        name: 'mobile_phone',
+        type: 'tel',
+      },
+      radio: { label: content.contactChoice.choices.mobile_phone },
+      pattern: { value: intlPhoneRegex, message: content.contactChoice.mobile_phone.invalid },
+    },
+    {
+      templateId: templateIds.email,
+      radio: { label: content.contactChoice.choices.email },
+      input: { label: content.contactChoice.choices.email, name: 'email', type: 'email' },
+      pattern: { value: emailRegex, message: content.contactChoice.email.invalid },
+    },
+    {
+      templateId: templateIds.call,
+      radio: { label: content.contactChoice.choices.call, disabled: isCallRadioDisabled },
+    },
+  ].filter((choice) => isOnCall || choice.templateId !== templateIds.call);
+
   return (
-    <div className="w-full flex flex-col gap-16">
-      <h2 className="text-h3 font-serif">{content.contactChoice.title}</h2>
-
-      <RadioGroup className="flex flex-col gap-16" value={watchedTemplateId}>
-        {choices.map(({ id, name, type, label }) => {
-          const contentLabel = getContentLabel(name, label);
-          return (
-            <FormPanel key={id}>
-              <div className="flex flex-col space-y-16 w-full">
-                <Radio
-                  value={id}
-                  {...register('template_id')}
-                  onChange={(_, value) => setValue('template_id', value || '')}
-                >
-                  <span data-textid="ContactChoicesLabel">
-                    {renderTemplate(content.contactChoice.choiceLabel, { label: contentLabel })}
-                  </span>
-                </Radio>
-
-                {id === watchedTemplateId && (
-                  <TextField
-                    type={type}
-                    {...register(`billing_details.${name}` as Parameters<typeof register>[0])}
-                    data-name={'InputFor_' + name}
-                    data-testid={'InputFor_' + name}
-                    onChange={(name, value) =>
-                      setValue(name as Parameters<typeof setValue>[0], value)
-                    }
-                    label={contentLabel}
-                  />
-                )}
-              </div>
-            </FormPanel>
-          );
-        })}
-      </RadioGroup>
+    <div className="w-full flex flex-col">
+      <h2 className="text-h5 font-serif">{content.contactChoice.title}</h2>
+      <FormPanel>
+        <span className="text-sienna text-b3 mb-20">
+          {sendLinkTexts[watchedTemplateId] ?? content.contactChoice.email.sendLink}
+        </span>
+        <RadioGroup className="flex flex-row gap-32" value={watchedTemplateId}>
+          {contactChoices.map((contactChoice) => (
+            <ContactChoiceRadio key={contactChoice.templateId} {...contactChoice} />
+          ))}
+        </RadioGroup>
+      </FormPanel>
     </div>
   );
 };

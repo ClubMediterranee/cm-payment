@@ -41,7 +41,7 @@ function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
   const methods = useForm({
     defaultValues: {
       action: resolvedAction,
-      template_id: GLOBAL_CAPS_SETTINGS.contactChoices[0].id,
+      template_id: GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone,
       provider_id: paymentProviders?.[0]?.id,
       amount: paymentSchedule?.[0]?.amount?.toString(),
       currency: paymentSchedule?.[0]?.currency,

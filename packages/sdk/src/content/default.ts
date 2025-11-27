@@ -33,9 +33,27 @@ export const defaultContent: Content = {
   contactChoice: {
     title: 'What type of channel?',
     choiceLabel: 'By {label}',
+    validation: {
+      required: 'Contact choice information is required',
+    },
     choices: {
       email: 'Email',
-      phone: 'Phone',
+      call: 'Phone',
+      mobile_phone: 'SMS',
+    },
+    call: {
+      sendLink:
+        'To complete the payment, you will be prompted to request the client’s various payment information. You will be able to track your client’s payment progress in real time.',
+    },
+    email: {
+      invalid: 'Invalid email',
+      sendLink:
+        'To complete the payment, we will immediately send your client an email with a payment link. You will need to track your client’s payment progress in real time.',
+    },
+    mobile_phone: {
+      invalid: 'Invalid phone number',
+      sendLink:
+        'To complete the payment, we will immediately send a payment link to your client’s phone number. You will need to track your client’s payment progress in real time.',
     },
   },
   creditCardForm: {

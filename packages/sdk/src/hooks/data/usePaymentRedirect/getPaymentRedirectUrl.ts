@@ -1,3 +1,4 @@
+import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
 import { CapsSettings } from '@clubmed/payment-sdk/types/CapsSettings';
 import { getRedirectPaymentCallbackUrl } from '@clubmed/payment-sdk/utils/url/getRedirectPaymentCallbackUrl';
 
@@ -8,6 +9,19 @@ import {
   postV3Bookings,
 } from '../../../__generated__';
 import type { CapsFormData } from '../../../types/FormData';
+
+const cleanBillingDetails = (
+  billingDetails: CapsFormData['billing_details'],
+  templateId: CapsFormData['template_id'],
+) => {
+  if (templateId === GLOBAL_CAPS_SETTINGS.templateIds.email) {
+    return { ...billingDetails, mobile_phone: undefined };
+  }
+  if (templateId === GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone) {
+    return { ...billingDetails, email: undefined };
+  }
+  return billingDetails;
+};
 
 export const getPaymentRedirectUrl = async (
   formData: CapsFormData,
@@ -39,7 +53,7 @@ export const getPaymentRedirectUrl = async (
   const { url, body } = await postV0PaymentsPaymentIdRedirectRequest(paymentId, {
     callback_url: callbackUrl || '',
     template_id: formData.template_id,
-    billing_details: formData.billing_details,
+    billing_details: cleanBillingDetails(formData.billing_details, formData.template_id),
     token: formData.token,
   });
 

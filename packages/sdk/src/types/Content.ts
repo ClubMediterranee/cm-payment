@@ -28,11 +28,26 @@ export type Content = {
     };
   };
   contactChoice: {
+    validation: {
+      required: string;
+    };
     title: string;
     choiceLabel: `${string}{label}${string}`;
+    mobile_phone: {
+      sendLink: string;
+      invalid: string;
+    };
+    email: {
+      sendLink: string;
+      invalid: string;
+    };
+    call: {
+      sendLink: string;
+    };
     choices: {
       email: string;
-      phone: string;
+      mobile_phone: string;
+      call: string;
     };
   };
   creditCardForm: {
