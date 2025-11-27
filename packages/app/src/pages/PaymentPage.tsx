@@ -14,10 +14,10 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { Stay, StayPlaceholder } from '../components/Stay';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useStay } from '../hooks/useStay';
-import { LoadingPage } from './LoadingPage.js';
+import { LoadingPage } from './LoadingPage';
 
 export function PaymentPage() {
-  const { isLoading, stay, status } = useStay();
+  const { stay, status } = useStay();
   const { action, reference, uuid } = useQueryParams<{
     action?: Action;
     reference?: string;
@@ -38,10 +38,6 @@ export function PaymentPage() {
       ref.current?.scrollIntoView();
     }
   }, [error]);
-
-  if (isLoading || isPaymentLoading) {
-    return <LoadingPage />;
-  }
 
   if (status === 'error') {
     return (
@@ -66,6 +62,7 @@ export function PaymentPage() {
         'flex flex-col gap-8 row-start-2 items-center mx-auto w-10/12 md:max-w-[49rem]',
       )}
     >
+      {isPaymentLoading && <LoadingPage />}
       <h1 className="text-h3 w-full mb-8">Payment</h1>
       <Suspense fallback={<StayPlaceholder />}>
         <Stay stay={stay!} />

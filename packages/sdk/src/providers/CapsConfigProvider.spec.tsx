@@ -120,16 +120,6 @@ describe('CapsConfigProvider', () => {
     expect(result.current.content).toEqual(defaultContent);
   });
 
-  it('should throw error when neither bookingId nor proposalId is provided', () => {
-    expect(() => {
-      render(
-        <CapsConfigProvider {...defaultProps} bookingId={undefined} proposalId={undefined}>
-          <div>Test</div>
-        </CapsConfigProvider>,
-      );
-    }).toThrow('Either bookingId or proposalId must be provided');
-  });
-
   it('should set type to proposal when only proposalId is provided', () => {
     const { result } = renderHook(() => useCapsConfigContext(), {
       wrapper: (props) => <Wrapper {...props} proposalId="prop-999" bookingId={undefined} />,

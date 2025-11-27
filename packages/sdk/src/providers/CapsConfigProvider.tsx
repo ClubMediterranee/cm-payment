@@ -28,10 +28,6 @@ export const CapsConfigProvider = ({
   proposalId,
   ...props
 }: CapsConfigProviderProps) => {
-  if (!bookingId && !proposalId) {
-    throw new Error('Either bookingId or proposalId must be provided');
-  }
-
   const activeContent = mergeFromPattern(defaultContent, props.content);
 
   ref.value = {
