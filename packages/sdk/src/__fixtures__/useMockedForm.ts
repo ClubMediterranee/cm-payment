@@ -16,7 +16,7 @@ export function useMockedForm({
   onError?: (errors: FieldErrors) => void;
   onChange?: (value: any) => void;
 } & Parameters<typeof useForm>[0]) {
-  const methods = useForm(props);
+  const methods = useForm({ ...props, mode: 'onChange' });
 
   useEffect(() => {
     const { unsubscribe } = methods.watch((value) => {

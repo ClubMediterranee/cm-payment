@@ -3,9 +3,15 @@ import {
   FeatureFlipsConfig,
   PaymentConfig,
   PaymentProviderConfig,
+  PaymentSettings,
 } from '../../../types/PaymentConfig';
-import { LegacyCmsResponse } from './LegacyCms';
-import { CMS_PREFIXES, FEATURE_FLIPS_MAPPING, PROVIDER_PSP_PREFIX } from './mapping';
+import { LegacyCmsFeatureFlipResponse } from './LegacyCms';
+import {
+  CMS_PREFIXES,
+  FEATURE_FLIPS_MAPPING,
+  PROVIDER_PSP_PREFIX,
+  SETTINGS_MAPPING,
+} from './mapping';
 
 type ExtractParams = {
   legacyFlips: Record<string, boolean>;
@@ -92,21 +98,50 @@ const mapFeatureFlips = ({
   return featureFlip;
 };
 
+const mapSettings = ({
+  settings,
+  issuerType,
+}: {
+  settings: Record<string, unknown>;
+  issuerType: OidcIssuerTypes;
+}): PaymentSettings => {
+  const isSeller = [OidcIssuerTypes.GO, OidcIssuerTypes.PARTNERS].includes(issuerType);
+  const userType = isSeller ? 'seller' : 'gm';
+
+  const mappedSettings = {} as PaymentSettings;
+
+  Object.entries(SETTINGS_MAPPING).forEach(([normalizedKey, legacyKeys]) => {
+    const legacyKey = legacyKeys[userType];
+    const value = legacyKey.split('.').reduce((obj, key) => obj?.[key], settings as any);
+
+    if (value !== undefined) {
+      mappedSettings[normalizedKey as keyof PaymentSettings] =
+        value in SETTINGS_MAPPING
+          ? SETTINGS_MAPPING[value as keyof typeof SETTINGS_MAPPING]
+          : value;
+    }
+  });
+
+  return mappedSettings;
+};
+
 export const mapPaymentConfig = ({
-  json,
+  featureFlip,
   issuerType,
   locale,
+  settings,
 }: {
-  json: LegacyCmsResponse;
+  featureFlip: LegacyCmsFeatureFlipResponse;
+  settings: Record<string, unknown>;
   issuerType: OidcIssuerTypes;
   locale: string;
 }): PaymentConfig => {
-  const keys = json.keys ?? [];
+  const keys = featureFlip.keys ?? [];
   const legacyFlips = transformKeysToRecord(keys);
 
   return {
     providers: mapProvidersConfig({ legacyFlips, issuerType, locale }),
     featureFlip: mapFeatureFlips({ legacyFlips, issuerType, locale }),
-    settings: {},
+    settings: mapSettings({ settings, issuerType }),
   };
 };

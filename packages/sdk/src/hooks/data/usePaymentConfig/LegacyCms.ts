@@ -3,7 +3,7 @@ export interface LegacyCmsFeatureFlipKey {
   value: boolean;
 }
 
-export interface LegacyCmsResponse {
+export interface LegacyCmsFeatureFlipResponse {
   keys: Array<LegacyCmsFeatureFlipKey>;
   status_code?: number;
   error_description?: string;

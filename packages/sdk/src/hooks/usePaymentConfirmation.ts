@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { GLOBAL_CAPS_SETTINGS } from '../config';
+import { redirectToCallbackUrl } from '../utils/url/redirectToCallbackUrl';
 import { usePaymentNotify } from './data/usePaymentNotify';
 import { usePaymentStatus } from './data/usePaymentStatus';
 
@@ -21,8 +22,7 @@ export const usePaymentConfirmation = ({ paymentId }: { paymentId: string }) => 
 
   useEffect(() => {
     if (paymentResponse && paymentResponse.payment_status !== 'PENDING') {
-      // TODO Jerome met ça dans une function comme pour le getRedirectPaymentCallbackUrl afin de faire les tests unitaires
-      window.location.href = `${callbackUrl}?${new URLSearchParams({ ...paymentResponse, ...(proposalId ? { proposal_id: proposalId } : {}) }).toString()}`;
+      redirectToCallbackUrl({ callbackUrl, paymentResponse, proposalId });
     }
   }, [callbackUrl, paymentResponse, proposalId]);
 };

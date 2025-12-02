@@ -82,11 +82,15 @@ describe('resolveAction', () => {
     } as any);
     mockGetBooking.mockResolvedValue({
       booking_status: BookingStatus.VALIDATED,
+      stays: [{ resort_arrival_date: '20261231' }],
     } as any);
 
     const result = await resolveAction({
       action: Action.PAYMENT_PARTIAL,
-      isFreeDepositEnabled: true,
+      freeDepositConfig: {
+        enabled: true,
+        daysBeforeTripToAllowFreeDeposit: 30,
+      },
     });
 
     expect(result).toBe(Action.PAYMENT_PARTIAL);
@@ -104,7 +108,10 @@ describe('resolveAction', () => {
 
     const result = await resolveAction({
       action: Action.PAYMENT_PARTIAL,
-      isFreeDepositEnabled: false,
+      freeDepositConfig: {
+        enabled: false,
+        daysBeforeTripToAllowFreeDeposit: null,
+      },
     });
 
     expect(result).toBe(Action.PAYMENT_SOLDE);

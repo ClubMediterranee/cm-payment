@@ -9,7 +9,7 @@ import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConf
 import { useFormContext, useWatch } from '../hooks/utils/useForm';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { emailRegex, intlPhoneRegex } from '../utils/regex';
-import { ContactChoiceRadio } from './ContactChoiceRadio';
+import { ContactChoiceRadio } from './ContactChoice/ContactChoiceRadio';
 import { FormPanel } from './ui/FormPanel';
 import { RadioSkeleton, TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
 

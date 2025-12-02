@@ -57,4 +57,16 @@ export type Content = {
     expiryDate: string;
     cvc: string;
   };
+  freeDeposit: {
+    title: string;
+    totalRemaining: string;
+    before: string;
+    payNowLabel: string;
+    placeholder: string;
+    validation: {
+      required: string;
+      positive: string;
+      maxExceeded: string;
+    };
+  };
 };

@@ -17,7 +17,7 @@ describe('selectPaymentSchedule', () => {
     };
 
     const result = selectPaymentSchedule(data);
-    expect(result).toEqual([{ amount: 800, currency: 'EUR' }]);
+    expect(result).toEqual([{ amount: 800, currency: 'EUR', deadline: '2024-01-15' }]);
   });
 
   it('should return first payment for proposal with 1 deposit payment', () => {
@@ -32,7 +32,7 @@ describe('selectPaymentSchedule', () => {
     };
 
     const result = selectPaymentSchedule(data);
-    expect(result).toEqual([{ amount: 1200, currency: 'EUR' }]);
+    expect(result).toEqual([{ amount: 1200, currency: 'EUR', deadline: '2024-01-15' }]);
   });
 
   it('should return total + first payment when exactly 2 payment schedules', () => {

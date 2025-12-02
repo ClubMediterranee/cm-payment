@@ -64,4 +64,16 @@ export const defaultContent: Content = {
     expiryDate: 'Expiry date',
     cvc: 'Security code',
   },
+  freeDeposit: {
+    title: 'Pay the amount of your choice without fees',
+    totalRemaining: 'Total remaining to pay',
+    before: 'before',
+    payNowLabel: 'I pay now',
+    placeholder: 'Please enter an amount',
+    validation: {
+      required: 'Please enter an amount',
+      positive: 'The amount must be greater than 0',
+      maxExceeded: 'The amount cannot exceed the remaining total',
+    },
+  },
 };
