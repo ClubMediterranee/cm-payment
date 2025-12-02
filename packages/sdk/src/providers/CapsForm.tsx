@@ -40,6 +40,10 @@ function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
     ],
   });
 
+  const sellerDefaultValues = {
+    template_id: GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone,
+  };
+
   const methods = useForm({
     defaultValues: {
       action: resolvedAction,
@@ -47,6 +51,7 @@ function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
       provider_id: paymentProviders?.[0]?.id,
       amount: paymentSchedule?.[0]?.amount?.toString(),
       currency: paymentSchedule?.[0]?.currency,
+      ...(isSeller && sellerDefaultValues),
     },
   });
 
