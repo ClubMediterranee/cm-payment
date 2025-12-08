@@ -1,9 +1,9 @@
-import { ACTION_RESOLVER_QUERY_KEY } from '.';
 import { Action } from '../../../__generated__';
 import { getCapsConfig } from '../../../providers/CapsConfigProvider';
 import { sdkQueryClient } from '../../../providers/QueryClientProvider';
 import { daysUntilToday, parseApiDate } from '../../../utils/formatDate';
 import { paymentScheduleQueryOptions } from '../usePaymentSchedule';
+import { ACTION_RESOLVER_QUERY_KEY } from './';
 import { checkFreeDepositAuthorization } from './checkFreeDepositAuthorization';
 
 vi.mock('../../../providers/CapsConfigProvider', () => ({

@@ -41,7 +41,6 @@ const commonMockedProviderProps = {
       PROVIDER_3: { is_active: true },
     },
     featureFlip: {},
-    settings: {},
   },
 };
 const handlers = {
