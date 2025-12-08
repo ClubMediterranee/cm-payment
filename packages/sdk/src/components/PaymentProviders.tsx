@@ -1,8 +1,8 @@
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Icon } from '@clubmed/trident-icons';
-import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
+import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import clsx from 'clsx';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../__generated__';
 import { usePaymentProviders } from '../hooks/data/usePaymentProviders';
@@ -22,13 +22,12 @@ const PROVIDER_ICON = {
 export const PaymentProviders = () => {
   const { content, locale } = useCapsConfigContext();
   const { data: paymentProviders } = usePaymentProviders();
-  const { register, setValue } = useFormContext();
+  const { control } = useFormContext();
 
   const {
     paymentSchedule: [{ currency }],
   } = usePaymentSchedule();
 
-  const watchedProviderId = useWatch('provider_id');
   const watchedAmount = useWatch('amount');
 
   const PROVIDER_LABEL = {
@@ -40,59 +39,63 @@ export const PaymentProviders = () => {
 
   return (
     <FormPanel className="p-0">
-      <RadioGroup className="flex flex-col pt-12" value={watchedProviderId}>
-        {paymentProviders.map((provider, index) => {
-          const isLastProvider = index === paymentProviders.length - 1;
+      <Controller
+        name="provider_id"
+        control={control}
+        render={({ field: { value, onChange, name } }) => (
+          <div className="flex flex-col pt-12">
+            {paymentProviders.map((provider, index) => {
+              const isLastProvider = index === paymentProviders.length - 1;
 
-          return (
-            <div
-              key={provider.id}
-              className={clsx(
-                'w-full p-20 flex justify-between',
-                !isLastProvider && 'border-b-1 border-lightGrey',
-              )}
-            >
-              <div>
-                <p className="font-bold text-b3">{provider.description || ''}</p>
-                {provider.category_payment_method ===
-                  PaymentProvider1CategoryPaymentMethod.BankTransfer && (
-                  <PaymentProviderRules className="mt-12" />
-                )}
-                <Radio
-                  {...register('provider_id', {
-                    required: content.paymentProviders.validation.required,
-                  })}
-                  className="my-24"
-                  value={provider.id}
-                  onChange={(_, value) => {
-                    setValue('provider_id', value || '');
-                  }}
-                >
-                  {renderTemplate(
-                    PROVIDER_LABEL[
-                      provider.category_payment_method as keyof typeof PROVIDER_LABEL
-                    ] || content.paymentProviders.creditCard.label,
-                    {
-                      amount: (
-                        <span className="font-bold text-sienna">
-                          {formatCurrency({ amount: Number(watchedAmount), currency, locale })}
-                        </span>
-                      ),
-                    },
+              return (
+                <div
+                  key={provider.id}
+                  className={clsx(
+                    'w-full p-20 flex justify-between',
+                    !isLastProvider && 'border-b-1 border-lightGrey',
                   )}
-                </Radio>
-              </div>
-              <Icon
-                name={
-                  PROVIDER_ICON[provider.category_payment_method as keyof typeof PROVIDER_ICON] ||
-                  ''
-                }
-                width="80px"
-              />
-            </div>
-          );
-        })}
-      </RadioGroup>
+                >
+                  <div>
+                    <p className="font-bold text-b3">{provider.description || ''}</p>
+                    {provider.category_payment_method ===
+                      PaymentProvider1CategoryPaymentMethod.BankTransfer && (
+                      <PaymentProviderRules className="mt-12" />
+                    )}
+                    <Radio
+                      className="my-24"
+                      name={name}
+                      value={provider.id}
+                      checked={value === provider.id}
+                      onChange={(_, providerId) => onChange(providerId)}
+                    >
+                      {renderTemplate(
+                        PROVIDER_LABEL[
+                          provider.category_payment_method as keyof typeof PROVIDER_LABEL
+                        ] || content.paymentProviders.creditCard.label,
+                        {
+                          amount: (
+                            <span className="font-bold text-sienna">
+                              {formatCurrency({ amount: Number(watchedAmount), currency, locale })}
+                            </span>
+                          ),
+                        },
+                      )}
+                    </Radio>
+                  </div>
+                  <Icon
+                    name={
+                      PROVIDER_ICON[
+                        provider.category_payment_method as keyof typeof PROVIDER_ICON
+                      ] || ''
+                    }
+                    width="80px"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
+      />
     </FormPanel>
   );
 };

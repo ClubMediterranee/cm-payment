@@ -201,13 +201,13 @@ export const WithAdditionalInteractions: Story = {
 
     await waitFor(
       async () => {
-        const emailRadio = canvas.queryByDisplayValue('6');
+        const mobilePhoneRadio = canvas.queryByDisplayValue('4');
         const callRadio = canvas.queryByDisplayValue('1');
 
-        expect(emailRadio).toBeInTheDocument();
+        expect(mobilePhoneRadio).toBeInTheDocument();
         expect(callRadio).toBeInTheDocument();
         expect(callRadio).toBeDisabled();
-        expect(emailRadio).toBeChecked();
+        expect(mobilePhoneRadio).toBeChecked();
       },
       { timeout: 10000 },
     );
@@ -291,9 +291,9 @@ export const ValidationTest: Story = {
     await userEvent.click(phoneField);
     await userEvent.type(phoneField, '+33123456789', { delay: 10 });
 
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-    await userEvent.clear(phoneField);
+    await userEvent.tripleClick(phoneField);
     await userEvent.type(phoneField, 'invalid-phone', { delay: 10 });
 
     phoneField.blur();
@@ -312,7 +312,10 @@ export const ValidationTest: Story = {
     });
 
     const emailField2 = canvas.getByLabelText('Email') as HTMLInputElement;
-    await userEvent.clear(emailField2);
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    await userEvent.tripleClick(emailField2);
     await userEvent.type(emailField2, 'invalid-email', { delay: 10 });
 
     emailField2.blur();
@@ -341,7 +344,7 @@ export const AccessibilityTest: Story = {
         http.get('*/v1/payment_providers', () => {
           return Response.json([
             {
-              id: 'EIXOPAY',
+              id: 'EVOXPAY',
               label: 'Carte bancaire',
               connection_type: 'REDIRECT',
               category_payment_method: 'CreditCard',
@@ -364,7 +367,7 @@ export const AccessibilityTest: Story = {
         },
         featureFlip: {},
       }}
-      defaultValues={{ provider_id: 'EIXOPAY', template_id: '6' }}
+      defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
     >
       <ContactChoice {...args} />
     </MockedProvider>
@@ -372,13 +375,52 @@ export const AccessibilityTest: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Attendre que les radios soient disponibles
+    await waitFor(
+      () => {
+        return canvas.getByDisplayValue('6');
+      },
+      { timeout: 10000 },
+    );
 
-    const heading = canvas.queryByRole('heading', { name: /What type of channel/ });
-    expect(heading).not.toBeInTheDocument();
+    // Vérifier que le titre est un heading
+    await waitFor(() => {
+      const heading = canvas.getByRole('heading', { name: /What type of channel/ });
+      expect(heading).toBeInTheDocument();
+    });
 
-    const radios = canvas.queryAllByRole('radio');
-    expect(radios.length).toBe(0);
+    // Vérifier que les radios sont accessibles
+    const radios = canvas.getAllByRole('radio');
+    expect(radios.length).toBe(2);
+
+    radios.forEach((radio) => {
+      expect(radio).toBeInTheDocument();
+    });
+
+    // Test navigation clavier
+    const emailRadio = canvas.getByDisplayValue('6');
+
+    // Simuler la navigation au clavier
+    emailRadio.focus();
+    expect(emailRadio).toHaveFocus();
+
+    // Simuler l'activation via la barre d'espace
+    await userEvent.keyboard(' ');
+    expect(emailRadio).toBeChecked();
+
+    // Vérifier que le champ apparaît et peut recevoir le focus
+    await waitFor(() => {
+      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+    });
+
+    const emailField = canvas.getByLabelText('Email');
+    emailField.focus();
+    expect(emailField).toHaveFocus();
+
+    // Navigation Tab ne fonctionne pas de façon fiable dans l'iframe Storybook
+    const phoneRadio = canvas.getByDisplayValue('4');
+    phoneRadio.focus();
+    expect(phoneRadio).toHaveFocus();
   },
 };
 

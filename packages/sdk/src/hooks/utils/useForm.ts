@@ -4,14 +4,16 @@ import {
   useFormContext as useReactHookFormContext,
   useWatch as useReactHookFormWatch,
   type UseFormProps,
+  type FieldValues,
 } from 'react-hook-form';
 
-import type { CapsFormData } from '../../types/FormData';
+import { type CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
 
-export const useForm = (props?: UseFormProps<CapsFormData>) =>
-  useReactHookForm<CapsFormData>(props);
+export const useForm = <TFieldValues extends FieldValues = FieldValues>(
+  props?: UseFormProps<TFieldValues>,
+) => useReactHookForm<TFieldValues>(props);
 
-export const useWatch = <T extends keyof CapsFormData>(name: T) =>
-  useReactHookFormWatch<CapsFormData>({ name }) as CapsFormData[T];
+export const useWatch = <T extends keyof CapsFormSchema>(name: T) =>
+  useReactHookFormWatch<CapsFormSchema>({ name }) as CapsFormSchema[T];
 
-export const useFormContext = () => useReactHookFormContext<CapsFormData>();
+export const useFormContext = () => useReactHookFormContext<CapsFormSchema>();

@@ -388,6 +388,7 @@ export const FreeDepositInteraction: Story = {
         action={Action.PAYMENT_PARTIAL}
         bookingId="booking-free-deposit"
         customerId="customer-validation"
+        maxAmount={500}
         defaultValues={{
           currency: 'EUR',
         }}

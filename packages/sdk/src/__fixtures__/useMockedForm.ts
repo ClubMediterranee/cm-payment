@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { type FieldErrors } from 'react-hook-form';
 
-import { useForm } from '../hooks/utils/useForm';
+import { useCapsForm, type UseCapsFormParams } from '../hooks/useCapsForm';
+import type { Content } from '../types/Content';
 
 export type TestArgs<T> = {
   onError?: (errors: FieldErrors) => void;
@@ -11,12 +12,26 @@ export type TestArgs<T> = {
 export function useMockedForm({
   onChange,
   onError,
-  ...props
+  content,
+  isSeller,
+  maxAmount,
+  defaultValues,
 }: {
   onError?: (errors: FieldErrors) => void;
   onChange?: (value: any) => void;
-} & Parameters<typeof useForm>[0]) {
-  const methods = useForm({ ...props, mode: 'onChange' });
+  content?: Content;
+  isSeller?: boolean;
+  maxAmount?: number;
+  defaultValues?: UseCapsFormParams['defaultValues'];
+}) {
+  const methods = useCapsForm({
+    config: {
+      content: content!,
+      isSeller: isSeller!,
+      maxAmount: maxAmount!,
+    },
+    defaultValues,
+  });
 
   useEffect(() => {
     const { unsubscribe } = methods.watch((value) => {

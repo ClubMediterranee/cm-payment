@@ -14,12 +14,11 @@ import { Action } from '../__generated__';
 import { Form } from '../components/Form';
 import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback';
 import { GlobalFormSkeleton } from '../components/ui/fallbacks/GlobalFormSkeleton';
-import { GLOBAL_CAPS_SETTINGS } from '../config';
 import { useActionResolver } from '../hooks/data/useActionResolver';
 import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
 import { paymentProvidersQueryOptions } from '../hooks/data/usePaymentProviders';
 import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
-import { useForm } from '../hooks/utils/useForm';
+import { useCapsForm } from '../hooks/useCapsForm';
 
 type CapsFormProps = PropsWithChildren<ComponentProps<typeof Form>> & {
   fallback?: ReactNode;
@@ -28,11 +27,13 @@ type CapsFormProps = PropsWithChildren<ComponentProps<typeof Form>> & {
 };
 
 function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
+  const { id, content } = useCapsConfigContext();
   const { isSeller } = useOidcContext();
-  const { id } = useCapsConfigContext();
 
   const { data: paymentConfig } = usePaymentConfig();
+
   const resolvedAction = useActionResolver(action);
+
   const [{ data: paymentProviders }, { data: paymentSchedule }] = useSuspenseQueries({
     queries: [
       paymentProvidersQueryOptions(paymentConfig.providers),
@@ -40,18 +41,15 @@ function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
     ],
   });
 
-  const sellerDefaultValues = {
-    template_id: GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone,
-  };
+  const maxAmount = paymentSchedule?.[0]?.amount || 0;
 
-  const methods = useForm({
+  const methods = useCapsForm({
+    config: { content, isSeller, maxAmount },
     defaultValues: {
       action: resolvedAction,
-      template_id: GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone,
       provider_id: paymentProviders?.[0]?.id,
       amount: paymentSchedule?.[0]?.amount?.toString(),
       currency: paymentSchedule?.[0]?.currency,
-      ...(isSeller && sellerDefaultValues),
     },
   });
 

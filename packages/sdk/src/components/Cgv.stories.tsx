@@ -1,23 +1,19 @@
-import { MockedFormProvider } from '@clubmed/payment-sdk/__fixtures__/MockedFormProvider.js';
-import { useMockedForm } from '@clubmed/payment-sdk/__fixtures__/useMockedForm.js';
+import { MockedProvider } from '@clubmed/payment-sdk/__fixtures__/MockedProvider.js';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
 import { Cgv } from './Cgv';
 
 // Wrapper component to provide form context
-const CgvWithFormProvider = (args: any) => {
-  const methods = useMockedForm({
-    ...args,
-    defaultValues: {
-      cgv: null,
-    },
-  });
-
+const CgvWithFormProvider = () => {
   return (
-    <MockedFormProvider {...methods}>
-      <Cgv {...args} />
-    </MockedFormProvider>
+    <MockedProvider
+      bookingId="test-booking"
+      customerId="test-customer"
+      defaultValues={{ cgv: false }}
+    >
+      <Cgv />
+    </MockedProvider>
   );
 };
 
@@ -33,12 +29,8 @@ const meta: Meta<typeof Cgv> = {
       },
     },
   },
-  args: {
-    onChange: fn(),
-    onError: fn(),
-  },
-  render(args: any) {
-    return <CgvWithFormProvider {...args} />;
+  render() {
+    return <CgvWithFormProvider />;
   },
 };
 
@@ -63,7 +55,7 @@ export const WithInteractions: Story = {
       },
     },
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // Vérifier que le composant est rendu
@@ -81,15 +73,9 @@ export const WithInteractions: Story = {
     await userEvent.click(checkbox);
     await expect(checkbox).toBeChecked();
 
-    // Vérifier que la valeur dans le state est mise à jour
-    await expect(args.onChange).toHaveBeenCalledWith({ cgv: true });
-
     // Décocher le checkbox
     await userEvent.click(checkbox);
     await expect(checkbox).not.toBeChecked();
-
-    // Vérifier que la valeur est remise à false
-    await expect(args.onChange).toHaveBeenCalledWith({ cgv: true });
   },
 };
 
@@ -107,18 +93,23 @@ export const ValidationTest: Story = {
     // Trouver le checkbox
     const checkbox = canvas.getByRole('checkbox');
 
-    // Simuler la soumission du formulaire sans cocher la case
-    // (Dans un vrai formulaire, cela déclencherait la validation)
-
-    // Vérifier que le checkbox est requis
-
-    // Cocher puis décocher rapidement pour tester le changement d'état
+    // Cocher puis décocher pour laisser le champ dans un état invalide
     await userEvent.click(checkbox);
     await userEvent.click(checkbox);
 
-    await expect(canvas.getByText('You must accept the T&C')).toBeInTheDocument();
-    // Vérifier que le formulaire reste cohérent
+    // Vérifier que le checkbox n'est pas coché
     expect(checkbox).not.toBeChecked();
+
+    // Soumettre le formulaire pour déclencher la validation
+    const form = document.getElementById('mocked-form');
+    if (form) {
+      fireEvent.submit(form);
+    }
+
+    // Attendre que le message d'erreur apparaisse
+    await waitFor(() => {
+      expect(canvas.getByText('You must accept the T&C')).toBeInTheDocument();
+    });
   },
 };
 

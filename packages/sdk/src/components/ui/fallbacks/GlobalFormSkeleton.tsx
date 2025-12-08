@@ -10,7 +10,7 @@ export const GlobalFormSkeleton = ({ symbols }: Props) => {
       {symbols.map((symbol, index) => {
         const SkeletonComponent = SKELETON_REGISTRY[symbol as keyof typeof SKELETON_REGISTRY];
         return SkeletonComponent ? (
-          <div className="w-full">
+          <div className="w-full" key={symbol.toString()}>
             <SkeletonComponent key={index} />
           </div>
         ) : null;

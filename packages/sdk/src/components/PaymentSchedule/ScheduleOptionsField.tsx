@@ -1,6 +1,6 @@
 import { usePaymentSchedule } from '@clubmed/payment-sdk/hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
-import { CapsFormData } from '@clubmed/payment-sdk/types/FormData';
+import { CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
 import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import type { ControllerRenderProps } from 'react-hook-form';
 
@@ -10,7 +10,7 @@ import { formatDate } from '../../utils/formatDate';
 import { renderTemplate } from '../../utils/renderTemplate';
 
 type ScheduleOptionsFieldProps = {
-  field: ControllerRenderProps<CapsFormData, 'amount'>;
+  field: ControllerRenderProps<CapsFormSchema, 'amount'>;
 };
 
 export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
