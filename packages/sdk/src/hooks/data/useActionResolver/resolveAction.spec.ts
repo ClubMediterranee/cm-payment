@@ -37,7 +37,7 @@ describe('resolveAction', () => {
       customerId: 'customer-123',
     } as any);
 
-    const result = await resolveAction({});
+    const result = await resolveAction({ freeDepositConfig: {} as any });
 
     expect(result).toBe(Action.PAYMENT_RESA);
     expect(mockGetBooking).not.toHaveBeenCalled();
@@ -53,7 +53,7 @@ describe('resolveAction', () => {
       booking_status: BookingStatus.OPTION,
     } as any);
 
-    const result = await resolveAction({});
+    const result = await resolveAction({ freeDepositConfig: {} as any });
 
     expect(result).toBe(Action.PAYMENT_OPTION);
     expect(mockGetBooking).toHaveBeenCalledWith('customer-456', 'booking-123');
@@ -69,7 +69,7 @@ describe('resolveAction', () => {
       booking_status: BookingStatus.EXPIRED,
     } as any);
 
-    const result = await resolveAction({ action: undefined });
+    const result = await resolveAction({ action: undefined, freeDepositConfig: {} as any });
 
     expect(result).toBe(Action.PAYMENT_OPTION);
   });
@@ -82,11 +82,15 @@ describe('resolveAction', () => {
     } as any);
     mockGetBooking.mockResolvedValue({
       booking_status: BookingStatus.VALIDATED,
+      stays: [{ resort_arrival_date: '20261231' }],
     } as any);
 
     const result = await resolveAction({
       action: Action.PAYMENT_PARTIAL,
-      isFreeDepositEnabled: true,
+      freeDepositConfig: {
+        enabled: true,
+        daysBeforeTripToAllowFreeDeposit: 30,
+      },
     });
 
     expect(result).toBe(Action.PAYMENT_PARTIAL);
@@ -104,7 +108,10 @@ describe('resolveAction', () => {
 
     const result = await resolveAction({
       action: Action.PAYMENT_PARTIAL,
-      isFreeDepositEnabled: false,
+      freeDepositConfig: {
+        enabled: false,
+        daysBeforeTripToAllowFreeDeposit: null,
+      },
     });
 
     expect(result).toBe(Action.PAYMENT_SOLDE);
@@ -120,7 +127,10 @@ describe('resolveAction', () => {
       booking_status: BookingStatus.VALIDATED,
     } as any);
 
-    const result = await resolveAction({ action: Action.PAYMENT_CART });
+    const result = await resolveAction({
+      action: Action.PAYMENT_CART,
+      freeDepositConfig: {} as any,
+    });
 
     expect(result).toBe(Action.PAYMENT_CART);
   });
@@ -135,7 +145,7 @@ describe('resolveAction', () => {
       booking_status: BookingStatus.VALIDATED,
     } as any);
 
-    const result = await resolveAction({});
+    const result = await resolveAction({ freeDepositConfig: {} as any });
 
     expect(result).toBe(Action.PAYMENT_SOLDE);
   });
@@ -152,7 +162,7 @@ describe('resolveAction', () => {
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await expect(resolveAction({})).rejects.toThrow('API Error');
+    await expect(resolveAction({ freeDepositConfig: {} as any })).rejects.toThrow('API Error');
 
     expect(consoleSpy).toHaveBeenCalledWith('Failed to resolve booking action:', apiError);
 

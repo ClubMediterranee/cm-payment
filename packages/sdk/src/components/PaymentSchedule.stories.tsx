@@ -31,6 +31,21 @@ const handlers = [
       }),
     );
   }),
+  http.get('*/v0/customers/*/bookings/booking-free-deposit/payment_schedules', () => {
+    return Response.json(
+      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+        currency: 'EUR',
+        total: 500,
+        paid: 0,
+        payment_schedules: [
+          {
+            deadline: '20251031',
+            amount: 500,
+          },
+        ],
+      }),
+    );
+  }),
   http.get('*/v1/proposals/proposal-total/payment_schedule', () => {
     return Response.json(
       getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
@@ -187,12 +202,19 @@ export const Default: Story = {
     bookingId: {
       control: 'select',
       description: 'ID de réservation (requis pour workflows booking)',
-      options: [undefined, 'booking-deposit', 'booking-paid', 'booking-total'],
+      options: [
+        undefined,
+        'booking-deposit',
+        'booking-paid',
+        'booking-total',
+        'booking-free-deposit',
+      ],
       mapping: {
         None: undefined,
         'Booking Deposit': 'booking-deposit',
         'Booking Paid': 'booking-paid',
         'Booking Total': 'booking-total',
+        'Booking Free Deposit': 'booking-free-deposit',
       },
     },
     customerId: { control: 'text', description: 'ID client (requis pour workflows booking)' },
@@ -208,6 +230,7 @@ export const Default: Story = {
       <MockedProvider
         key={`${action}-${proposalId}-${bookingId}-${customerId}`}
         action={action}
+        defaultValues={{ currency: 'EUR' }}
         proposalId={proposalId}
         bookingId={bookingId}
         customerId={customerId}
@@ -307,6 +330,66 @@ export const DepositInteraction: Story = {
         proposalId="proposal-deposit"
         defaultValues={{
           amount: '2584',
+        }}
+      >
+        <PaymentSchedule {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+export const FreeDepositInteraction: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(
+      () => {
+        const input = canvas.getByLabelText(/I pay now/i);
+        expect(input).toBeInTheDocument();
+      },
+      { timeout: 3000 },
+    );
+
+    const input = canvas.getByLabelText(/I pay now/i) as HTMLInputElement;
+
+    await userEvent.click(input);
+    await userEvent.type(input, '0');
+    await userEvent.tab();
+
+    await waitFor(() => {
+      expect(canvas.getByText(/The amount must be greater than 0/i)).toBeInTheDocument();
+    });
+
+    await userEvent.click(input);
+    await userEvent.clear(input);
+    await userEvent.type(input, '1000');
+    await userEvent.tab();
+
+    await waitFor(() => {
+      expect(canvas.getByText(/The amount cannot exceed the remaining total/i)).toBeInTheDocument();
+    });
+
+    await userEvent.click(input);
+    await userEvent.clear(input);
+    await userEvent.type(input, '250');
+    await userEvent.tab();
+
+    await waitFor(() => {
+      expect(canvas.queryByText(/The amount must be greater than 0/i)).not.toBeInTheDocument();
+      expect(
+        canvas.queryByText(/The amount cannot exceed the remaining total/i),
+      ).not.toBeInTheDocument();
+    });
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="free-deposit-validation"
+        action={Action.PAYMENT_PARTIAL}
+        bookingId="booking-free-deposit"
+        customerId="customer-validation"
+        defaultValues={{
+          currency: 'EUR',
         }}
       >
         <PaymentSchedule {...args} />

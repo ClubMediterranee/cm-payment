@@ -13,7 +13,7 @@ export interface FeatureFlipsConfig {
 }
 
 export interface PaymentSettings {
-  freeDepositDeadline?: number;
+  daysBeforeTripToAllowFreeDeposit: number;
 }
 
 export interface PaymentConfig {

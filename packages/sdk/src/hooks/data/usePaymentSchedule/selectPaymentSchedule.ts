@@ -39,7 +39,9 @@ const selectProposalSchedule = (data: ProposalPaymentScheduleModelV1): PaymentSc
   };
 };
 
-const buildScheduleFromMergedData = (data: PaymentSchedule) => {
+const buildScheduleFromMergedData = (
+  data: PaymentSchedule,
+): Array<{ amount?: number; currency: string; deadline?: string; balance?: number }> => {
   const schedule = [];
   const currency = data.currency || '';
   const payments = data.payment_schedules || [];
@@ -48,6 +50,7 @@ const buildScheduleFromMergedData = (data: PaymentSchedule) => {
     if (payments[0]?.amount !== undefined) {
       schedule.push({
         amount: payments[0].amount,
+        deadline: payments[0].deadline,
         currency,
       });
     }

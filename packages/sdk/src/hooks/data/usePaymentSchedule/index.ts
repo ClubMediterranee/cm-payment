@@ -4,8 +4,10 @@ import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { getPaymentSchedule } from './getPaymentSchedule';
 import { selectPaymentSchedule } from './selectPaymentSchedule';
 
+export const PAYMENT_SCHEDULE_QUERY_KEY = (id: string) => ['paymentSchedule', id];
+
 export const paymentScheduleQueryOptions = (id: string) => ({
-  queryKey: ['paymentSchedule', id],
+  queryKey: PAYMENT_SCHEDULE_QUERY_KEY(id),
   queryFn: getPaymentSchedule,
   select: selectPaymentSchedule,
 });

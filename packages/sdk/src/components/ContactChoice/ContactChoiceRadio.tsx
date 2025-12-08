@@ -1,11 +1,12 @@
 import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
 import { useEffect } from 'react';
-import { Controller, useFormContext, useWatch, ValidationRule } from 'react-hook-form';
+import { Controller, useFormContext, ValidationRule } from 'react-hook-form';
 
-import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
-import { renderTemplate } from '../utils/renderTemplate';
-import { ErrorMessage } from './ui/ErrorMessage';
+import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
+import { useWatch } from '../../hooks/utils/useForm';
+import { renderTemplate } from '../../utils/renderTemplate';
+import { ErrorMessage } from '../ui/ErrorMessage';
 
 type Props = {
   templateId: string;
@@ -24,7 +25,7 @@ type Props = {
 export const ContactChoiceRadio = ({ templateId, input, radio, pattern }: Props) => {
   const { content } = useCapsConfigContext();
   const { register, setValue, control, clearErrors } = useFormContext();
-  const watchedTemplateId = useWatch({ name: 'template_id' });
+  const watchedTemplateId = useWatch('template_id');
 
   const isCurrentTemplate = templateId === watchedTemplateId;
   const hasTextField = !!input;

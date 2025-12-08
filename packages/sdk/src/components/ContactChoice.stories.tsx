@@ -41,7 +41,6 @@ const ContactChoiceWithFormProvider = (args: any) => {
       paymentConfig={{
         providers: { EVOXPAY: { is_active: true } },
         featureFlip: {},
-        settings: {},
       }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
     >
@@ -191,7 +190,6 @@ export const WithAdditionalInteractions: Story = {
           EVOXPAY: { is_active: true },
         },
         featureFlip: {},
-        settings: {},
       }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '1' }}
     >
@@ -365,7 +363,6 @@ export const AccessibilityTest: Story = {
           EVOXPAY: { is_active: true },
         },
         featureFlip: {},
-        settings: {},
       }}
       defaultValues={{ provider_id: 'EIXOPAY', template_id: '6' }}
     >

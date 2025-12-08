@@ -1,10 +1,10 @@
 import { OidcIssuerTypes } from '../../../types/CapsSettings';
 import { getPaymentConfig } from './getPaymentConfig';
-import { LegacyCmsFeatureFlipKey, LegacyCmsResponse } from './LegacyCms';
+import { LegacyCmsFeatureFlipKey, LegacyCmsFeatureFlipResponse } from './LegacyCms';
 
 global.fetch = vi.fn();
 
-const createMockCmsResponse = (keys: LegacyCmsFeatureFlipKey[]): LegacyCmsResponse => ({
+const createMockCmsResponse = (keys: LegacyCmsFeatureFlipKey[]): LegacyCmsFeatureFlipResponse => ({
   keys,
 });
 

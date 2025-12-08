@@ -25,7 +25,7 @@ interface MockedProviderProps {
   bookingId?: string;
   customerId?: string;
   content?: Content;
-  paymentConfig?: PaymentConfig;
+  paymentConfig?: Partial<PaymentConfig>;
 }
 
 export const MockedProvider = ({
@@ -62,7 +62,10 @@ export const MockedProvider = ({
     if (paymentConfig) {
       sdkQueryClient.setQueryData(
         PAYMENT_CONFIG_QUERY_KEY('fr-FR', oidc?.issuerType || OidcIssuerTypes.GM),
-        paymentConfig,
+        {
+          ...paymentConfig,
+          settings: { daysBeforeTripToAllowFreeDeposit: 0, ...paymentConfig.settings },
+        },
       );
     }
   }, [paymentConfig]);

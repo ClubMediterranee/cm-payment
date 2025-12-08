@@ -4,14 +4,19 @@ import { mapPaymentConfig } from './mapPaymentConfig';
 describe('mapPaymentConfig', () => {
   describe('providers extraction', () => {
     it('should extract PSP providers for GM issuer', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.psp.evoxpay', value: true },
           { key: 'featureFlipping.psp.hipay', value: false },
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
@@ -20,14 +25,19 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should extract seller PSP providers for GO issuer', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.seller.psp.evoxpay', value: true },
           { key: 'featureFlipping.seller.psp.paypal', value: false },
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GO, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GO,
+        locale: 'fr-FR',
+      });
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
@@ -36,12 +46,13 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should extract seller PSP providers for PARTNERS issuer', () => {
-      const json = {
+      const featureFlip = {
         keys: [{ key: 'featureFlipping.seller.psp.stripe', value: true }],
       };
 
       const result = mapPaymentConfig({
-        json,
+        featureFlip,
+        settings: {},
         issuerType: OidcIssuerTypes.PARTNERS,
         locale: 'fr-FR',
       });
@@ -52,7 +63,7 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should ignore non-PSP keys when extracting providers', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.psp.evoxpay', value: true },
           { key: 'featureFlipping.booking.banking.enableFreeDeposit', value: true },
@@ -60,7 +71,12 @@ describe('mapPaymentConfig', () => {
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
@@ -68,7 +84,7 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should ignore psp.iframe.* and psp.*.iframe patterns', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.psp.evoxpay', value: true },
           { key: 'featureFlipping.psp.iframe.hipay', value: true },
@@ -76,7 +92,12 @@ describe('mapPaymentConfig', () => {
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
@@ -86,11 +107,16 @@ describe('mapPaymentConfig', () => {
 
   describe('feature flips extraction', () => {
     it('should extract isFreeDepositEnabled for GM issuer', () => {
-      const json = {
+      const featureFlip = {
         keys: [{ key: 'featureFlipping.booking.banking.enableFreeDeposit', value: true }],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
@@ -98,11 +124,16 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should extract isFreeDepositEnabled for GO issuer with seller prefix', () => {
-      const json = {
+      const featureFlip = {
         keys: [{ key: 'featureFlipping.seller.booking.banking.enableFreeDeposit', value: true }],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GO, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GO,
+        locale: 'fr-FR',
+      });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
@@ -110,12 +141,13 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should extract isFreeDepositEnabled for PARTNERS issuer with seller prefix', () => {
-      const json = {
+      const featureFlip = {
         keys: [{ key: 'featureFlipping.seller.booking.banking.enableFreeDeposit', value: false }],
       };
 
       const result = mapPaymentConfig({
-        json,
+        featureFlip,
+        settings: {},
         issuerType: OidcIssuerTypes.PARTNERS,
         locale: 'fr-FR',
       });
@@ -126,14 +158,19 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should return empty featureFlip when no mapped features exist', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.unmappedFeature', value: true },
           { key: 'featureFlipping.anotherUnmappedFeature', value: false },
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: false,
@@ -143,14 +180,19 @@ describe('mapPaymentConfig', () => {
 
   describe('override handling', () => {
     it('should apply locale override for GM issuer', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.booking.banking.enableFreeDeposit', value: false },
           { key: 'override.fr-FR.featureFlipping.booking.banking.enableFreeDeposit', value: true },
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
@@ -158,7 +200,7 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should apply locale override for GO issuer', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.seller.booking.banking.enableFreeDeposit', value: false },
           {
@@ -168,7 +210,12 @@ describe('mapPaymentConfig', () => {
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GO, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GO,
+        locale: 'fr-FR',
+      });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
@@ -176,14 +223,19 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should not apply override for different locale', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.booking.banking.enableFreeDeposit', value: false },
           { key: 'override.en-US.featureFlipping.booking.banking.enableFreeDeposit', value: true },
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: false,
@@ -191,14 +243,19 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should apply override to PSP providers', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.psp.evoxpay', value: false },
           { key: 'override.fr-FR.featureFlipping.psp.evoxpay', value: true },
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
@@ -208,7 +265,7 @@ describe('mapPaymentConfig', () => {
 
   describe('complete payload transformation', () => {
     it('should transform complete payload with providers, feature flips, and settings', () => {
-      const json = {
+      const featureFlip = {
         keys: [
           { key: 'featureFlipping.psp.evoxpay', value: true },
           { key: 'featureFlipping.psp.hipay', value: false },
@@ -216,7 +273,12 @@ describe('mapPaymentConfig', () => {
         ],
       };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.providers).toEqual({
         EVOXPAY: { is_active: true },
@@ -229,9 +291,14 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should handle empty keys array', () => {
-      const json = { keys: [] };
+      const featureFlip = { keys: [] };
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.providers).toEqual({});
       expect(result.featureFlip).toEqual({
@@ -241,9 +308,14 @@ describe('mapPaymentConfig', () => {
     });
 
     it('should handle missing keys property', () => {
-      const json = {} as any;
+      const featureFlip = {} as any;
 
-      const result = mapPaymentConfig({ json, issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
+      const result = mapPaymentConfig({
+        featureFlip,
+        settings: {},
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
 
       expect(result.providers).toEqual({});
       expect(result.featureFlip).toEqual({

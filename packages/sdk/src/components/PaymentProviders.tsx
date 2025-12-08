@@ -2,12 +2,13 @@ import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Icon } from '@clubmed/trident-icons';
 import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import clsx from 'clsx';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../__generated__';
 import { usePaymentProviders } from '../hooks/data/usePaymentProviders';
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
+import { useWatch } from '../hooks/utils/useForm';
 import { formatCurrency } from '../utils/formatCurrency';
 import { renderTemplate } from '../utils/renderTemplate';
 import { PaymentProviderRules } from './PaymentProviders/PaymentProviderRules';
@@ -21,13 +22,14 @@ const PROVIDER_ICON = {
 export const PaymentProviders = () => {
   const { content, locale } = useCapsConfigContext();
   const { data: paymentProviders } = usePaymentProviders();
-  const { register, setValue, watch } = useFormContext();
-  const watchedProviderId = watch('provider_id');
+  const { register, setValue } = useFormContext();
+
   const {
     paymentSchedule: [{ currency }],
   } = usePaymentSchedule();
 
-  const watchedAmount = useWatch({ name: 'amount' });
+  const watchedProviderId = useWatch('provider_id');
+  const watchedAmount = useWatch('amount');
 
   const PROVIDER_LABEL = {
     [PaymentProvider1CategoryPaymentMethod.CreditCard]: content.paymentProviders.creditCard.label,
