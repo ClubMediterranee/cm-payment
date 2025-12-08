@@ -11,6 +11,7 @@ import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvi
 import { emailRegex, intlPhoneRegex } from '../utils/regex';
 import { ContactChoiceRadio } from './ContactChoiceRadio';
 import { FormPanel } from './ui/FormPanel';
+import { RadioSkeleton, TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
 
 type Props = {
   reference?: string;
@@ -94,4 +95,21 @@ export const ContactChoice = ({ reference, uuid }: Props) => {
   );
 };
 
+const ContactChoiceSkeleton = () => (
+  <div className="w-full flex flex-col gap-16">
+    <TitleSkeleton variant="h3" />
+    <div className="flex flex-col gap-16">
+      {[1, 2].map((i) => (
+        <FormPanel key={i}>
+          <div className="flex flex-col space-y-16 w-full">
+            <RadioSkeleton />
+            <TextFieldSkeleton />
+          </div>
+        </FormPanel>
+      ))}
+    </div>
+  </div>
+);
+
+ContactChoice.Skeleton = ContactChoiceSkeleton;
 ContactChoice.COMPONENT_KEY = TOKENS.ContactChoice;

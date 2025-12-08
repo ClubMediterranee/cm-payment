@@ -1,19 +1,18 @@
-import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
 import { useQuery } from '@tanstack/react-query';
 
 import { getV0PaymentsPaymentIdStatus } from '../../__generated__';
 
-export const usePaymentStatus = ({ paymentId }: { paymentId: string }) => {
-  const search = new URLSearchParams(document.location.search);
-  const provider_id = new URLSearchParams(search).get('provider_id');
-  const isEnabled =
-    !!paymentId &&
-    GLOBAL_CAPS_SETTINGS.serverValidationProviders.includes((provider_id as any) || '');
-
+export const usePaymentStatus = ({
+  paymentId,
+  enabled,
+}: {
+  paymentId: string;
+  enabled?: boolean;
+}) => {
   return useQuery({
-    queryKey: ['status'],
+    queryKey: ['status', paymentId],
     queryFn: () => getV0PaymentsPaymentIdStatus(paymentId),
-    enabled: isEnabled,
+    enabled,
     retry: false,
     refetchInterval: ({ state: { dataUpdateCount, data } }) => {
       const paymentStatus = data?.finalisePaymentResponse.paiement.statutPaiement;

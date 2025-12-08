@@ -16,8 +16,8 @@ export type Content = {
     };
   };
   paymentSchedule: {
-    payAmount: `${string}{amount}${string}`;
-    deadline: `${string}{deadline}${string}`;
+    payFullAmount: `${string}{amount}${string}`;
+    payDeposit: `${string}{amount}${string}{deadline}${string}{balance}${string}`;
   };
   cgv: {
     title: string;

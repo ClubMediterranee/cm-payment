@@ -5,6 +5,8 @@ import { useFormContext } from '../hooks/utils/useForm';
 import { PspProviders } from '../types/PspProviders';
 import { TOKENS } from '../types/Tokens';
 import { HipayForm } from './CardForm/HipayForm';
+import { FormPanel } from './ui/FormPanel';
+import { TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
 
 export const CardForm = () => {
   const { setValue, register } = useFormContext();
@@ -13,11 +15,11 @@ export const CardForm = () => {
   const isIntegratedProvider = providerId === PspProviders.HIPAY;
 
   useEffect(() => {
-    register('token', {
+    register('token.value', {
       required: isIntegratedProvider,
     });
     if (!isIntegratedProvider) {
-      setValue('token', '');
+      setValue('token.value', '');
     }
   }, [isIntegratedProvider, providerId, register, setValue]);
 
@@ -28,4 +30,21 @@ export const CardForm = () => {
   return <HipayForm />;
 };
 
+const CardFormSkeleton = () => (
+  <div className="w-full">
+    <TitleSkeleton variant="h5" />
+    <FormPanel>
+      <div className="flex flex-wrap gap-28">
+        <TextFieldSkeleton />
+        <TextFieldSkeleton />
+        <div className="w-full flex flex-col md:flex-row gap-28">
+          <TextFieldSkeleton />
+          <TextFieldSkeleton />
+        </div>
+      </div>
+    </FormPanel>
+  </div>
+);
+
+CardForm.Skeleton = CardFormSkeleton;
 CardForm.COMPONENT_KEY = TOKENS.CardForm;

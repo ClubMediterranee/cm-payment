@@ -1,5 +1,4 @@
 import { CapsFormData } from '@clubmed/payment-sdk/types/FormData';
-import { setCookie } from '@clubmed/payment-sdk/utils/storage/cookies';
 import { noop, useMutation } from '@tanstack/react-query';
 
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
@@ -16,11 +15,7 @@ export const usePaymentRedirect = ({
   onSuccess = noop,
   onLoadEnd = noop,
 }: Props = {}) => {
-  const { type, id, customerId, callbackUrl } = useCapsConfigContext();
-
-  if (callbackUrl) {
-    setCookie('callback_url', callbackUrl);
-  }
+  const { type, id, customerId } = useCapsConfigContext();
 
   const mutationFn = (formData: CapsFormData) =>
     getPaymentRedirectUrl(formData, { type, id, customerId });

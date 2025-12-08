@@ -1,65 +1,50 @@
 import './App.css';
 
-import { useEffect, useState } from 'react';
-import { hasAuthParams, useAuth } from 'react-oidc-context';
-// import {Header} from "./components/Header";
-// import {PaymentPage} from "./pages/PaymentPage";
 import { Route, Switch, useRoute } from 'wouter';
 
-import { Header } from './components/Header.js';
-import { PaymentPage } from './pages/PaymentPage.js';
-import { SigninRedirectPage } from './pages/SigninRedirectPage.js';
-import { AppProvider } from './providers/AppProvider.js';
-// import {AppProvider} from "./providers/AppProvider";
-// import {RedirectPage} from "./pages/RedirectPage";
+import { Header } from './components/Header';
+import { useAutoSignin } from './hooks/useAutoSignin';
+import { ConfirmationPage } from './pages/ConfirmationPage';
+import { PaymentPage } from './pages/PaymentPage';
+import { RedirectPage } from './pages/RedirectPage';
+import { SigninRedirectPage } from './pages/SigninRedirectPage';
+import { AppProvider } from './providers/AppProvider';
+
+const NotFound = () => (
+  <div className="min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
+    <div className="flex justify-center font-semibold">404 not found</div>
+  </div>
+);
 
 export const Router = () => {
-  const [isAuthRequired] = useRoute('/*/booking/*');
-  const auth = useAuth();
-  // const search = useSearch();
-  // const customerId = new URLSearchParams(search).get("customer_id") || "";
-  const [hasInitSignin, setHasInitSignin] = useState(false);
+  const [isRedirectRoute] = useRoute('/*/redirect/*');
+  const { isSigningIn } = useAutoSignin();
 
-  useEffect(() => {
-    if (
-      isAuthRequired &&
-      !hasAuthParams() &&
-      !auth.isAuthenticated &&
-      !auth.activeNavigator &&
-      !auth.isLoading &&
-      !hasInitSignin
-    ) {
-      auth.signinRedirect({
-        state: { return_url: window.location.href },
-      });
-      setHasInitSignin(true);
-    }
-  }, [isAuthRequired, auth, hasInitSignin]);
+  if (isSigningIn) return null;
 
   return (
     <AppProvider>
-      <Header />
-      <main className="flex flex-col gap-8 row-start-2">
+      {!isRedirectRoute && <Header />}
+      <main className="flex flex-col gap-8 row-start-2 relative">
         <Switch>
-          <Route path="/:issuer/:type/:id">
-            <PaymentPage />
+          <Route path="/:issuer/redirect/:paymentId/:locale?">
+            <RedirectPage />
           </Route>
 
-          <Route path="/:issuer/redirect/:paymentId/:locale?">{/* <RedirectPage/> */}</Route>
-
           <Route path="/confirmation">
-            <div>confirmation</div>
+            <ConfirmationPage />
           </Route>
 
           <Route path="/:issuer/signin_redirect">
             <SigninRedirectPage />
           </Route>
 
+          <Route path="/:issuer/:type/:id">
+            <PaymentPage />
+          </Route>
+
           <Route>
-            <div className="min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
-              {/* <Header/> */}
-              <div className="flex justify-center font-semibold">404 not found</div>
-            </div>
+            <NotFound />
           </Route>
         </Switch>
       </main>

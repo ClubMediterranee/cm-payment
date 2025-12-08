@@ -248,7 +248,8 @@ export const DepositChoice: Story = {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios).toHaveLength(2);
       expect(canvas.getByText(/2\s?000.*€/)).toBeInTheDocument();
-      expect(canvas.getByText(/500.*€/)).toBeInTheDocument();
+      expect(canvas.getByText(/^500,00\s?€$/)).toBeInTheDocument();
+      expect(canvas.getByText(/1\s?500.*€/)).toBeInTheDocument();
     });
   },
   render(args: any) {

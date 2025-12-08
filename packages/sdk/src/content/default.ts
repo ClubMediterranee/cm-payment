@@ -18,8 +18,9 @@ export const defaultContent: Content = {
     },
   },
   paymentSchedule: {
-    payAmount: 'I pay the amount of {amount}',
-    deadline: 'before {deadline}',
+    payFullAmount: 'I pay today the full amount of {amount}',
+    payDeposit:
+      'I pay today, at no charge, a deposit of {amount} and at the latest on {deadline} the balance of {balance}',
   },
   cgv: {
     title: 'Terms and Conditions',

@@ -17,11 +17,7 @@ export const getPaymentConfig = async ({
 
   const json: LegacyCmsResponse = await response.json();
   if (!response.ok) {
-    if (json.status_code === 404) {
-      throw new Error(json.error_description!);
-    }
-
-    throw new Error(json.errors![0].error_description);
+    throw new Error(json.error_description!);
   }
 
   return mapPaymentConfig({ json, issuerType, locale });

@@ -23,11 +23,11 @@ export type ClubMedApiSettings = {
 };
 
 export type CapsSettings = {
-  url: string;
+  paymentGatewayUrl: string;
   locale: string;
   id: string;
   customerId?: string;
-  callbackUrl?: string;
+  callbackUrl: string;
   api: ClubMedApiSettings;
   oidc: OidcSettings;
   content: Content;

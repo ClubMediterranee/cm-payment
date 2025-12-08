@@ -26,6 +26,7 @@ const ParamsSchema = z.object({
     .regex(/[a-z]{2}-[A-Z]{2}/)
     .optional(),
   action: z.string().optional(),
+  callbackUrl: z.string().url(),
 });
 
 export function useAppParams() {
@@ -34,7 +35,7 @@ export function useAppParams() {
   const [match, result] = useRoute('/:issuer/:type/:id');
   const session = useSessionStorage('payment.params');
 
-  const { customer_id, locale, action } = useQueryParams<any>();
+  const { customer_id, locale, action, callback_url: callbackUrl } = useQueryParams<any>();
 
   if (auth.isLoading) {
     return {};
@@ -53,6 +54,7 @@ export function useAppParams() {
       customerId,
       locale: locale || navigator.language || 'fr-FR',
       action,
+      callbackUrl,
     };
 
     if (values?.bookingId && !auth.isAuthenticated) {
@@ -72,17 +74,15 @@ export function useAppParams() {
   const values = session.get();
 
   if (values) {
-    const url = import.meta.env.VITE_DOMAIN || window.location.origin;
-
     return {
-      url,
+      paymentGatewayUrl: import.meta.env.VITE_PAYMENT_GATEWAY_URL,
       values,
       api: AppSettings.api[values?.issuerType as OidcIssuerTypes],
       oidc: {
         issuerType: values?.issuerType as OidcIssuerTypes,
         accessToken: auth?.user?.access_token || '',
       },
-      callbackUrl: `${url}/confirmation`,
+      callbackUrl: values.callbackUrl,
       isIframe: window.self !== window.top,
     };
   }
