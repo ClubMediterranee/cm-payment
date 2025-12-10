@@ -31,7 +31,7 @@ export const Router = () => {
             <RedirectPage />
           </Route>
 
-          <Route path="/confirmation">
+          <Route path="/:issuer/confirmation">
             <ConfirmationPage />
           </Route>
 

@@ -18,8 +18,10 @@ vi.mock('../../../__generated__', async () => {
   };
 });
 
-vi.mock('../../../utils/url/getRedirectPaymentCallbackUrl', () => ({
-  getRedirectPaymentCallbackUrl: vi.fn(() => 'https://callback.url/payment'),
+vi.mock('../../../utils/url/getRedirectPaymentCallbackUrls', () => ({
+  getRedirectPaymentCallbackUrls: vi.fn(() => ({
+    callback_url: 'https://callback.url/payment',
+  })),
 }));
 
 const mockGetV2ProposalsProposalId = vi.mocked(getV2ProposalsProposalId);
@@ -201,10 +203,10 @@ describe('getPaymentRedirectUrl', () => {
   });
 
   it('should handle null callback url', async () => {
-    const { getRedirectPaymentCallbackUrl } = await import(
-      '../../../utils/url/getRedirectPaymentCallbackUrl'
+    const { getRedirectPaymentCallbackUrls } = await import(
+      '../../../utils/url/getRedirectPaymentCallbackUrls'
     );
-    vi.mocked(getRedirectPaymentCallbackUrl).mockReturnValueOnce(null as any);
+    vi.mocked(getRedirectPaymentCallbackUrls).mockReturnValueOnce({ callback_url: '' } as any);
 
     mockPostV1Payments.mockResolvedValue({
       id: 'payment-555',
@@ -230,5 +232,41 @@ describe('getPaymentRedirectUrl', () => {
       token: undefined,
     });
     expect(result).toBe('https://final.url?final=body');
+  });
+
+  it('should handle callback_url_seller for GO/PARTNERS', async () => {
+    const { getRedirectPaymentCallbackUrls } = await import(
+      '../../../utils/url/getRedirectPaymentCallbackUrls'
+    );
+    vi.mocked(getRedirectPaymentCallbackUrls).mockReturnValueOnce({
+      callback_url: 'https://callback.url/client',
+      callback_url_seller: 'https://callback.url/seller',
+    } as any);
+
+    mockPostV1Payments.mockResolvedValue({
+      id: 'payment-999',
+    } as any);
+
+    mockPostV0PaymentsPaymentIdRedirectRequest.mockResolvedValue({
+      url: 'https://redirect.url',
+      body: 'data=test',
+    } as any);
+
+    const result = await getPaymentRedirectUrl(mockFormData as any, {
+      type: 'booking',
+      id: 'booking-555',
+      customerId: 'customer-444',
+    });
+
+    expect(mockPostV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith('payment-999', {
+      callback_url: 'https://callback.url/client',
+      callback_url_seller: 'https://callback.url/seller',
+      template_id: 'template-456',
+      billing_details: {
+        email: 'test@example.com',
+      },
+      token: undefined,
+    });
+    expect(result).toBe('https://redirect.url?data=test');
   });
 });

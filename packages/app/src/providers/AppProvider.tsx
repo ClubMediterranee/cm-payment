@@ -5,7 +5,7 @@ import { useAppParams } from '../hooks/useAppParams.js';
 import { LoadingPage } from '../pages/LoadingPage.js';
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
-  const { paymentGatewayUrl, values, api, oidc, callbackUrl } = useAppParams();
+  const { paymentGatewayUrl, values, api, oidc } = useAppParams();
 
   if (!values) {
     return <LoadingPage />;
@@ -20,7 +20,8 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
       customerId={values.customerId}
       api={api}
       oidc={oidc}
-      callbackUrl={callbackUrl}
+      callbackUrl={values.callbackUrl}
+      callbackUrlSeller={values.callbackUrlSeller}
     >
       {children}
     </CapsConfigProvider>

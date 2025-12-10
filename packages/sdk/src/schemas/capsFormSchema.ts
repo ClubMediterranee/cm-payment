@@ -37,11 +37,13 @@ export const capsFormSchema = ({ isSeller, content, maxAmount }: CapsFormConfig)
           message: content.freeDeposit.validation.maxExceeded,
         }),
       currency: z.string(),
-      template_id: z.enum([
-        GLOBAL_CAPS_SETTINGS.templateIds.email,
-        GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone,
-        GLOBAL_CAPS_SETTINGS.templateIds.call,
-      ]),
+      template_id: z
+        .enum([
+          GLOBAL_CAPS_SETTINGS.templateIds.email,
+          GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone,
+          GLOBAL_CAPS_SETTINGS.templateIds.call,
+        ])
+        .optional(),
       cgv: z.boolean().refine((val) => val === true, {
         message: content.cgv.validation.mustAccept,
       }),
@@ -65,6 +67,7 @@ export const capsFormSchema = ({ isSeller, content, maxAmount }: CapsFormConfig)
       const validations = [validateToken, validateEmail, validateMobilePhone];
       validations.forEach((validate) => {
         const error = validate(data, config);
+
         if (error) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,

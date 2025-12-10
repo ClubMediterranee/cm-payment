@@ -1,7 +1,7 @@
 import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
 import { CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
 import { CapsSettings } from '@clubmed/payment-sdk/types/CapsSettings';
-import { getRedirectPaymentCallbackUrl } from '@clubmed/payment-sdk/utils/url/getRedirectPaymentCallbackUrl';
+import { getRedirectPaymentCallbackUrls } from '@clubmed/payment-sdk/utils/url/getRedirectPaymentCallbackUrls';
 
 import {
   getV2ProposalsProposalId,
@@ -48,10 +48,10 @@ export const getPaymentRedirectUrl = async (
     provider_id: formData.provider_id,
   });
 
-  const callbackUrl = getRedirectPaymentCallbackUrl(paymentId, formData.provider_id);
+  const callbacks = getRedirectPaymentCallbackUrls(paymentId, formData.provider_id);
 
   const { url, body } = await postV0PaymentsPaymentIdRedirectRequest(paymentId, {
-    callback_url: callbackUrl || '',
+    ...callbacks,
     template_id: formData.template_id,
     billing_details: cleanBillingDetails(formData.billing_details, formData.template_id),
     token: formData.token?.value,
