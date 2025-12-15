@@ -1,9 +1,7 @@
 import { getCapsConfig } from '@clubmed/payment-sdk/providers/CapsConfigProvider';
 import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings';
 
-type CallbackUrls =
-  | { callback_url: string }
-  | { callback_url: string; callback_url_seller: string };
+type CallbackUrls = { callback_url: string; callback_url_seller?: string };
 
 export function getRedirectPaymentCallbackUrls(
   paymentId: string,
