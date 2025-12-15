@@ -40,7 +40,7 @@ export const Stay = ({ stay }: StayProps) => {
           src={product.media?.immersive_image || ''}
           alt={product.destination?.countries?.[0].label}
           className="rounded-16"
-          style={{ height: 200 }}
+          style={{ height: 185 }}
         />
         <div className="w-full md:max-w-1/2 flex flex-col justify-between">
           <div>

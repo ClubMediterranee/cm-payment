@@ -16,6 +16,8 @@ const NotFound = () => (
   </div>
 );
 
+const Footer = () => <footer className="bg-lightSand mt-48 h-100" />;
+
 export const Router = () => {
   const [isRedirectRoute] = useRoute('/*/redirect/*');
   const { isSigningIn } = useAutoSignin();
@@ -31,7 +33,7 @@ export const Router = () => {
             <RedirectPage />
           </Route>
 
-          <Route path="/confirmation">
+          <Route path="/:issuer/confirmation">
             <ConfirmationPage />
           </Route>
 
@@ -48,6 +50,7 @@ export const Router = () => {
           </Route>
         </Switch>
       </main>
+      {!isRedirectRoute && <Footer />}
     </AppProvider>
   );
 };

@@ -9,4 +9,5 @@ export interface AppState {
   locale: string;
   action?: Action;
   callbackUrl: string;
+  callbackUrlSeller?: string;
 }

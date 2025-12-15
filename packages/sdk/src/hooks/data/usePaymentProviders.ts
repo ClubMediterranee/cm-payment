@@ -1,3 +1,4 @@
+import { PaymentProvider1CategoryPaymentMethod } from '@clubmed/payment-sdk/types';
 import { PaymentConfig } from '@clubmed/payment-sdk/types/PaymentConfig';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
@@ -8,7 +9,25 @@ export const paymentProvidersQueryOptions = (providerConfig: PaymentConfig['prov
   queryKey: ['paymentProviders'],
   queryFn: getV1PaymentProviders,
   select: (providers: Awaited<ReturnType<typeof getV1PaymentProviders>>) => {
-    return providers.filter((provider) => providerConfig[provider.id]?.is_active);
+    return providers
+      .filter((provider) => providerConfig[provider.id]?.is_active)
+      .reduce(
+        (acc, provider) => {
+          if (
+            provider.category_payment_method ===
+            PaymentProvider1CategoryPaymentMethod.BuyNowPayLater
+          ) {
+            acc.buyNowPayLaterProviders.push(provider);
+          } else {
+            acc.paymentProviders.push(provider);
+          }
+          return acc;
+        },
+        {
+          paymentProviders: [] as typeof providers,
+          buyNowPayLaterProviders: [] as typeof providers,
+        },
+      );
   },
 });
 

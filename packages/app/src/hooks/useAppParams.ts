@@ -27,15 +27,23 @@ const ParamsSchema = z.object({
     .optional(),
   action: z.string().optional(),
   callbackUrl: z.string().url(),
+  callbackUrlSeller: z.string().url().optional(),
 });
 
 export function useAppParams() {
   const auth = useAuth();
+
   const [, setLocation] = useLocation();
   const [match, result] = useRoute('/:issuer/:type/:id');
   const session = useSessionStorage('payment.params');
 
-  const { customer_id, locale, action, callback_url: callbackUrl } = useQueryParams<any>();
+  const {
+    customer_id,
+    locale,
+    action,
+    callback_url: callbackUrl,
+    callback_url_seller: callbackUrlSeller,
+  } = useQueryParams<any>();
 
   if (auth.isLoading) {
     return {};
@@ -55,6 +63,7 @@ export function useAppParams() {
       locale: locale || navigator.language || 'fr-FR',
       action,
       callbackUrl,
+      callbackUrlSeller,
     };
 
     if (values?.bookingId && !auth.isAuthenticated) {
@@ -82,7 +91,6 @@ export function useAppParams() {
         issuerType: values?.issuerType as OidcIssuerTypes,
         accessToken: auth?.user?.access_token || '',
       },
-      callbackUrl: values.callbackUrl,
       isIframe: window.self !== window.top,
     };
   }

@@ -28,6 +28,7 @@ export type CapsSettings = {
   id: string;
   customerId?: string;
   callbackUrl: string;
+  callbackUrlSeller?: string;
   api: ClubMedApiSettings;
   oidc: OidcSettings;
   content: Content;

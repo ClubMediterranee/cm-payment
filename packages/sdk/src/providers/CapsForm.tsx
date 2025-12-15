@@ -34,7 +34,12 @@ function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
 
   const resolvedAction = useActionResolver(action);
 
-  const [{ data: paymentProviders }, { data: paymentSchedule }] = useSuspenseQueries({
+  const [
+    {
+      data: { paymentProviders },
+    },
+    { data: paymentSchedule },
+  ] = useSuspenseQueries({
     queries: [
       paymentProvidersQueryOptions(paymentConfig.providers),
       paymentScheduleQueryOptions(id),

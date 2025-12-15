@@ -1,6 +1,7 @@
 import { FormPanel as Panel } from '@clubmed/payment-sdk/components/ui/FormPanel';
 import { formatCurrency } from '@clubmed/payment-sdk/utils/formatCurrency';
 import { Icon } from '@clubmed/trident-icons';
+import { useParams } from 'wouter';
 
 import { useQueryParams } from '../hooks/useQueryParams';
 
@@ -31,6 +32,7 @@ const getStatusConfig = (status: string) => {
 };
 
 export const ConfirmationPage = () => {
+  const { issuer } = useParams<{ issuer: string }>();
   const params = useQueryParams<ConfirmationParams>();
 
   const { payment_status, booking_id, payment_amount, payment_currency } = params;
@@ -44,7 +46,9 @@ export const ConfirmationPage = () => {
 
   return (
     <div className="flex flex-col gap-20 mx-auto w-10/12 md:max-w-[49rem] py-40">
-      <h1 className="text-h3 font-serif text-center">Confirmation de paiement</h1>
+      <h1 className="text-h3 font-serif text-center">
+        Confirmation de paiement - {issuer?.toUpperCase()}
+      </h1>
 
       <Panel className="bg-white w-full p-0">
         <div className="flex flex-col font-bold">

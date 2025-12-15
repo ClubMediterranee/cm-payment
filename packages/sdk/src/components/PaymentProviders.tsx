@@ -21,7 +21,9 @@ const PROVIDER_ICON = {
 
 export const PaymentProviders = () => {
   const { content, locale } = useCapsConfigContext();
-  const { data: paymentProviders } = usePaymentProviders();
+  const {
+    data: { paymentProviders },
+  } = usePaymentProviders();
   const { control } = useFormContext();
 
   const {
