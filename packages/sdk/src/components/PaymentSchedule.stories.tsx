@@ -1,19 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http } from 'msw';
-import { initialize, mswLoader } from 'msw-storybook-addon';
+import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import {
-  Action,
   getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock,
   getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock,
   getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock,
   getGetV1ProposalsProposalIdPaymentScheduleResponseMock,
-} from '../__generated__';
+} from '../__generated__/index.msw';
+import { Action } from '../__generated__/index.schemas';
 import { PaymentSchedule } from './PaymentSchedule';
-
-initialize();
 
 const handlers = [
   http.get('*/v0/customers/*/bookings/booking-total/payment_schedules', () => {
@@ -388,6 +386,7 @@ export const FreeDepositInteraction: Story = {
         action={Action.PAYMENT_PARTIAL}
         bookingId="booking-free-deposit"
         customerId="customer-validation"
+        maxAmount={500}
         defaultValues={{
           currency: 'EUR',
         }}

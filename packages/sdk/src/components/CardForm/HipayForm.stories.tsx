@@ -2,23 +2,16 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../../__fixtures__/MockedProvider';
-import { useFormContext } from '../../hooks/utils/useForm';
 import { HipayForm } from './HipayForm';
 
 const HipayFormWithSubmit = () => {
-  const { handleSubmit } = useFormContext();
-
-  const onSubmit = (data: any) => {
-    console.log('Form submitted:', data);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <>
       <HipayForm />
       <button type="submit" data-testid="hidden-submit-button" style={{ display: 'none' }}>
         Submit
       </button>
-    </form>
+    </>
   );
 };
 

@@ -1,10 +1,10 @@
 import {
-  Action,
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
   getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule,
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../../../__generated__';
+import { Action } from '../../../__generated__/index.schemas';
 import { getCapsConfig } from '../../../providers/CapsConfigProvider';
 import { getResolvedAction } from '../useActionResolver';
 import { getPaymentSchedule } from './getPaymentSchedule';

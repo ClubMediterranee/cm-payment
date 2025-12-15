@@ -1,10 +1,10 @@
 import {
-  Action,
   getV2ProposalsProposalId,
   postV0PaymentsPaymentIdRedirectRequest,
   postV1Payments,
   postV3Bookings,
 } from '../../../__generated__';
+import { Action } from '../../../__generated__/index.schemas';
 import { getPaymentRedirectUrl } from './getPaymentRedirectUrl';
 
 vi.mock('../../../__generated__', async () => {
@@ -39,6 +39,7 @@ describe('getPaymentRedirectUrl', () => {
     billing_details: {
       email: 'test@example.com',
     },
+    token: undefined,
   };
 
   beforeEach(() => {
@@ -93,7 +94,7 @@ describe('getPaymentRedirectUrl', () => {
       billing_details: {
         email: 'test@example.com',
       },
-      token: '',
+      token: undefined,
     });
     expect(result).toBe('https://payment.gateway.com?param1=value1&param2=value2');
   });
@@ -226,7 +227,7 @@ describe('getPaymentRedirectUrl', () => {
       billing_details: {
         email: 'test@example.com',
       },
-      token: '',
+      token: undefined,
     });
     expect(result).toBe('https://final.url?final=body');
   });

@@ -1,4 +1,3 @@
-import { Action } from '@clubmed/payment-sdk/__generated__/index.js';
 import { CardForm } from '@clubmed/payment-sdk/components/CardForm.js';
 import { Cgv } from '@clubmed/payment-sdk/components/Cgv';
 import { ContactChoice } from '@clubmed/payment-sdk/components/ContactChoice.js';
@@ -7,6 +6,7 @@ import { PaymentProviders } from '@clubmed/payment-sdk/components/PaymentProvide
 import { PaymentSchedule } from '@clubmed/payment-sdk/components/PaymentSchedule';
 import { useDisclosure } from '@clubmed/payment-sdk/hooks/utils/useDisclosure';
 import { CapsForm } from '@clubmed/payment-sdk/providers/CapsForm.js';
+import { Action } from '@clubmed/payment-sdk/types';
 import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
 import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';

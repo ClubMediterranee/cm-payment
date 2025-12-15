@@ -3,7 +3,7 @@ import type {
   CustomerBookingPaymentScheduleModel,
   PaymentScheduleModel,
   ProposalPaymentScheduleModelV1,
-} from '../../../__generated__';
+} from '../../../__generated__/index.schemas';
 
 type PaymentSchedule = {
   currency: string;

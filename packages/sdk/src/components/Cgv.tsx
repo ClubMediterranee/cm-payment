@@ -1,41 +1,43 @@
 import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
-import clsx from 'clsx';
+import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
+import { Controller } from 'react-hook-form';
 
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../hooks/utils/useForm';
-import { CapsFormData } from '../types/FormData';
-import { ErrorMessage } from './ui/ErrorMessage';
 import { FormPanel } from './ui/FormPanel';
 import { CheckboxSkeleton, TitleSkeleton } from './ui/skeletons';
 
 export const Cgv = () => {
   const { content } = useCapsConfigContext();
-  const {
-    register,
-    setValue,
-    trigger,
-    formState: { errors },
-  } = useFormContext();
+  const { control } = useFormContext();
 
   return (
     <div className="w-full">
       <h2 className="text-h5 mb-16 font-serif">{content.cgv.title}</h2>
-      <FormPanel className={clsx(errors.cgv && 'mb-0')}>
-        <Checkbox
-          {...register('cgv', {
-            required: { value: true, message: content.cgv.validation.mustAccept },
-          })}
-          aria-invalid={!!errors.cgv}
-          onChange={(name, value) => {
-            setValue(name as keyof CapsFormData, value);
-            trigger(name as keyof CapsFormData);
-          }}
-        >
-          <span className="text-b4 font-bold">{content.cgv.content}</span>
-        </Checkbox>
-      </FormPanel>
-      <ErrorMessage message={errors.cgv?.message} />
+
+      <Controller
+        name="cgv"
+        control={control}
+        render={({ field: { onChange }, fieldState: { error, isTouched } }) => {
+          const validationStatus = isTouched && !error ? 'success' : error ? 'error' : 'default';
+          return (
+            <FormControl errorMessage={error?.message} validationStatus={validationStatus}>
+              <FormPanel>
+                <Checkbox
+                  validationStatus={validationStatus}
+                  aria-invalid={!!error}
+                  onChange={(_, newValue) => {
+                    onChange(newValue ?? false);
+                  }}
+                >
+                  <span className="text-b4 font-bold">{content.cgv.content}</span>
+                </Checkbox>
+              </FormPanel>
+            </FormControl>
+          );
+        }}
+      />
     </div>
   );
 };

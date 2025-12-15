@@ -4,7 +4,7 @@ import { TOKENS } from '@clubmed/payment-sdk/types/Tokens.js';
 
 export const GLOBAL_CAPS_SETTINGS = Object.freeze({
   iframeProviders: [PspProviders.EIXOPAY],
-  serverValidationProviders: [PspProviders.EIXOPAY],
+  serverValidationProviders: [PspProviders.EVOXPAY],
   withContactMethodProviders: [PspProviders.EVOXPAY],
   templateIds: {
     email: '6',

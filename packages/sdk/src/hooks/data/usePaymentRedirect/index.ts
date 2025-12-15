@@ -1,4 +1,4 @@
-import { CapsFormData } from '@clubmed/payment-sdk/types/FormData';
+import { CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
 import { noop, useMutation } from '@tanstack/react-query';
 
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
@@ -17,7 +17,7 @@ export const usePaymentRedirect = ({
 }: Props = {}) => {
   const { type, id, customerId } = useCapsConfigContext();
 
-  const mutationFn = (formData: CapsFormData) =>
+  const mutationFn = (formData: CapsFormSchema) =>
     getPaymentRedirectUrl(formData, { type, id, customerId });
 
   return useMutation({

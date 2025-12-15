@@ -58,7 +58,7 @@ describe('usePaymentConfirmation', () => {
 
   it('should enable correct hook based on provider in serverValidationProviders', () => {
     mockSearchParams = {
-      provider_id: PspProviders.EIXOPAY,
+      provider_id: PspProviders.EVOXPAY,
       callback_url: 'https://example.com/callback',
     };
 
@@ -82,7 +82,7 @@ describe('usePaymentConfirmation', () => {
 
   it('should enable usePaymentNotify for providers not in serverValidationProviders', () => {
     mockSearchParams = {
-      provider_id: PspProviders.EVOXPAY,
+      provider_id: PspProviders.HIPAY,
       callback_url: 'https://example.com/callback',
     };
 

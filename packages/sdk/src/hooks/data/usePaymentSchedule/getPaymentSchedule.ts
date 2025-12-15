@@ -1,12 +1,12 @@
 import { getCapsConfig } from '@clubmed/payment-sdk/providers/CapsConfigProvider';
 
 import {
-  Action,
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
   getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule,
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../../../__generated__';
+import { Action } from '../../../__generated__/index.schemas';
 import { getResolvedAction } from '../useActionResolver';
 
 export const getPaymentSchedule = () => {

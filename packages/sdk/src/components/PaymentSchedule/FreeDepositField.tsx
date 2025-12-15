@@ -1,6 +1,6 @@
 import { usePaymentSchedule } from '@clubmed/payment-sdk/hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
-import { CapsFormData } from '@clubmed/payment-sdk/types/FormData';
+import { CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
 import { useEffect } from 'react';
 import { type ControllerRenderProps, type FieldError } from 'react-hook-form';
@@ -10,7 +10,7 @@ import { formatCurrency } from '../../utils/formatCurrency';
 import { formatDate } from '../../utils/formatDate';
 
 type FreeDepositFieldProps = {
-  field: ControllerRenderProps<CapsFormData, 'amount'>;
+  field: ControllerRenderProps<CapsFormSchema, 'amount'>;
   error?: FieldError;
   isValid?: boolean;
 };

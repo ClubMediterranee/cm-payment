@@ -15,7 +15,7 @@ export default defineConfig({
     },
     output: {
       target: join(root, 'src/__generated__/index.ts'),
-      mode: 'single',
+      mode: 'split',
       prettier: true,
       mock: true,
       override: {

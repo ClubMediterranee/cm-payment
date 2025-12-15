@@ -4,21 +4,23 @@ import Brand from '@clubmed/trident-ui/atoms/Icons/svg/Brand';
 import Utilities from '@clubmed/trident-ui/atoms/Icons/svg/Utilities';
 import React, { Suspense, useEffect } from 'react';
 
-import { Action } from '../__generated__';
+import { Action } from '../__generated__/index.schemas';
+import { defaultContent } from '../content/default';
 import { ACTION_RESOLVER_QUERY_KEY } from '../hooks/data/useActionResolver';
 import { PAYMENT_CONFIG_QUERY_KEY } from '../hooks/data/usePaymentConfig';
 import { CapsConfigProvider } from '../providers/CapsConfigProvider';
 import { sdkQueryClient } from '../providers/QueryClientProvider';
+import { CapsFormSchema } from '../schemas/capsFormSchema';
 import { OidcIssuerTypes, OidcSettings } from '../types/CapsSettings';
 import { Content } from '../types/Content';
-import { CapsFormData } from '../types/FormData';
 import { PaymentConfig } from '../types/PaymentConfig';
+import { mergeFromPattern } from '../utils/mergeFromPattern';
 import { MockedFormProvider } from './MockedFormProvider';
 import { useMockedForm } from './useMockedForm';
 
 interface MockedProviderProps {
   children: React.ReactNode;
-  defaultValues?: Partial<CapsFormData>;
+  defaultValues?: Partial<CapsFormSchema>;
   action?: Action;
   proposalId?: string;
   oidc?: OidcSettings;
@@ -26,6 +28,7 @@ interface MockedProviderProps {
   customerId?: string;
   content?: Content;
   paymentConfig?: Partial<PaymentConfig>;
+  maxAmount?: number;
 }
 
 export const MockedProvider = ({
@@ -38,12 +41,20 @@ export const MockedProvider = ({
   oidc,
   defaultValues,
   paymentConfig,
+  maxAmount = 10000,
 }: MockedProviderProps) => {
+  const isSeller = [OidcIssuerTypes.PARTNERS, OidcIssuerTypes.GO].includes(
+    oidc?.issuerType as OidcIssuerTypes,
+  );
+
   const methods = useMockedForm({
     defaultValues: {
       ...defaultValues,
       action,
     },
+    content: mergeFromPattern(defaultContent, content),
+    isSeller,
+    maxAmount,
   });
 
   useEffect(() => {

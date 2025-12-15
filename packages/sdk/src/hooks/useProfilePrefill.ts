@@ -1,7 +1,7 @@
-import type { ProfileModelV2 } from '@clubmed/payment-sdk/__generated__';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
+import { ProfileModelV2 } from '../__generated__/index.schemas';
 import { profileQueryOptions } from './data/useProfile';
 import { useCapsConfigContext, useOidcContext } from './utils/useCapsConfigContext';
 import { useFormContext } from './utils/useForm';

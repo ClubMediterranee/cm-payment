@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { useWatch } from 'react-hook-form';
 
-import { useFormContext } from '../hooks/utils/useForm';
+import { useFormContext, useWatch } from '../hooks/utils/useForm';
 import { PspProviders } from '../types/PspProviders';
 import { TOKENS } from '../types/Tokens';
 import { HipayForm } from './CardForm/HipayForm';
@@ -11,15 +10,12 @@ import { TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
 export const CardForm = () => {
   const { setValue, register } = useFormContext();
 
-  const providerId = useWatch({ name: 'provider_id' });
+  const providerId = useWatch('provider_id');
   const isIntegratedProvider = providerId === PspProviders.HIPAY;
 
   useEffect(() => {
-    register('token.value', {
-      required: isIntegratedProvider,
-    });
     if (!isIntegratedProvider) {
-      setValue('token.value', '');
+      setValue('token.value', undefined);
     }
   }, [isIntegratedProvider, providerId, register, setValue]);
 

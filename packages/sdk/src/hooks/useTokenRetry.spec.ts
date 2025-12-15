@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 
 import { useTokenRetry } from './useTokenRetry';
 
@@ -34,12 +34,16 @@ describe('useTokenRetry', () => {
 
     const { result, rerender } = renderHook(() => useTokenRetry({ onRetry: onRetryMock }));
 
-    result.current.handleTokenValidationError({
-      token: { value: 'Token is required' },
+    act(() => {
+      result.current.handleTokenValidationError({
+        token: { value: 'Token is required' },
+      });
     });
 
-    mockUseWatch.mockReturnValue('success');
-    rerender();
+    act(() => {
+      mockUseWatch.mockReturnValue('success');
+      rerender();
+    });
 
     expect(onRetryMock).toHaveBeenCalledTimes(1);
   });
@@ -86,12 +90,16 @@ describe('useTokenRetry', () => {
 
     const { result, rerender } = renderHook(() => useTokenRetry({ onRetry: onRetryMock }));
 
-    result.current.handleTokenValidationError({
-      token: { value: 'Token is required' },
+    act(() => {
+      result.current.handleTokenValidationError({
+        token: { value: 'Token is required' },
+      });
     });
 
-    mockUseWatch.mockReturnValue('success');
-    rerender();
+    act(() => {
+      mockUseWatch.mockReturnValue('success');
+      rerender();
+    });
 
     expect(onRetryMock).toHaveBeenCalledTimes(1);
   });
@@ -101,12 +109,16 @@ describe('useTokenRetry', () => {
 
     const { result, rerender } = renderHook(() => useTokenRetry({ onRetry: onRetryMock }));
 
-    result.current.handleTokenValidationError({
-      token: { value: 'Token is required' },
+    act(() => {
+      result.current.handleTokenValidationError({
+        token: { value: 'Token is required' },
+      });
     });
 
-    mockUseWatch.mockReturnValue('error');
-    rerender();
+    act(() => {
+      mockUseWatch.mockReturnValue('error');
+      rerender();
+    });
 
     expect(onRetryMock).not.toHaveBeenCalled();
   });
@@ -116,15 +128,21 @@ describe('useTokenRetry', () => {
 
     const { result, rerender } = renderHook(() => useTokenRetry({ onRetry: onRetryMock }));
 
-    result.current.handleTokenValidationError({
-      token: { value: 'Token is required' },
+    act(() => {
+      result.current.handleTokenValidationError({
+        token: { value: 'Token is required' },
+      });
     });
 
-    mockUseWatch.mockReturnValue('idle');
-    rerender();
+    act(() => {
+      mockUseWatch.mockReturnValue('idle');
+      rerender();
+    });
 
-    mockUseWatch.mockReturnValue('success');
-    rerender();
+    act(() => {
+      mockUseWatch.mockReturnValue('success');
+      rerender();
+    });
 
     expect(onRetryMock).not.toHaveBeenCalled();
   });
