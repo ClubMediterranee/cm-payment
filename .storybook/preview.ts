@@ -1,11 +1,20 @@
 import './style.css';
 
 import type { Preview } from '@storybook/react-vite';
+import { initialize, mswLoader } from 'msw-storybook-addon';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 
 import { iconsDecorator } from './icons.js';
 
+initialize({
+  onUnhandledRequest: 'bypass',
+  serviceWorker: {
+    url: '/mockServiceWorker.js',
+  },
+});
+
 const preview: Preview = {
+  loaders: [mswLoader],
   parameters: {
     a11y: {
       test: 'todo',

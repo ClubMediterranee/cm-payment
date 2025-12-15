@@ -4,7 +4,7 @@ import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import clsx from 'clsx';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { PaymentProvider1CategoryPaymentMethod } from '../__generated__';
+import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import { usePaymentProviders } from '../hooks/data/usePaymentProviders';
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';

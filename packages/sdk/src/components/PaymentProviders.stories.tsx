@@ -1,16 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http } from 'msw';
-import { initialize, mswLoader } from 'msw-storybook-addon';
+import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
-import {
-  Action,
-  getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock,
-} from '../__generated__';
+import { getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock } from '../__generated__/index.msw';
+import { Action } from '../__generated__/index.schemas';
 import { PaymentProviders } from './PaymentProviders';
-
-initialize();
 
 const commonHandlers = [
   http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {

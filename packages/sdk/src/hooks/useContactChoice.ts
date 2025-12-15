@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { PaymentProvider1CategoryPaymentMethod } from '../__generated__';
+import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import { GLOBAL_CAPS_SETTINGS } from '../config';
 import { useCapsConfigContext, useOidcContext } from './utils/useCapsConfigContext';
 import { useFormContext, useWatch } from './utils/useForm';

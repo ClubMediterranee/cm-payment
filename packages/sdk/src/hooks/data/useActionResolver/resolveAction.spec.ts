@@ -1,8 +1,5 @@
-import {
-  Action,
-  BookingStatus,
-  getV3CustomersCustomerIdBookingsBookingId,
-} from '../../../__generated__';
+import { getV3CustomersCustomerIdBookingsBookingId } from '../../../__generated__';
+import { Action, BookingStatus } from '../../../__generated__/index.schemas';
 import { getCapsConfig } from '../../../providers/CapsConfigProvider';
 import { resolveAction } from './resolveAction';
 

@@ -1,10 +1,10 @@
 import {
-  Action,
   getV2ProposalsProposalId,
   postV0PaymentsPaymentIdRedirectRequest,
   postV1Payments,
   postV3Bookings,
 } from '../../../__generated__';
+import { Action } from '../../../__generated__/index.schemas';
 import { getPaymentRedirectUrl } from './getPaymentRedirectUrl';
 
 vi.mock('../../../__generated__', async () => {

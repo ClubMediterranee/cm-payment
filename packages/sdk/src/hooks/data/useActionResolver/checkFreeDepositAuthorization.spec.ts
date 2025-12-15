@@ -1,4 +1,4 @@
-import { Action } from '../../../__generated__';
+import { Action } from '../../../__generated__/index.schemas';
 import { getCapsConfig } from '../../../providers/CapsConfigProvider';
 import { sdkQueryClient } from '../../../providers/QueryClientProvider';
 import { daysUntilToday, parseApiDate } from '../../../utils/formatDate';

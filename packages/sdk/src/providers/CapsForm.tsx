@@ -10,7 +10,7 @@ import type { FallbackProps } from 'react-error-boundary';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormProvider as ReactHookFormProvider } from 'react-hook-form';
 
-import { Action } from '../__generated__';
+import { Action } from '../__generated__/index.schemas';
 import { Form } from '../components/Form';
 import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback';
 import { GlobalFormSkeleton } from '../components/ui/fallbacks/GlobalFormSkeleton';

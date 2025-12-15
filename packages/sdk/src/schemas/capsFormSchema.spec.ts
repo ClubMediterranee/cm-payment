@@ -1,4 +1,4 @@
-import { Action } from '../__generated__';
+import { Action } from '../__generated__/index.schemas';
 import { defaultContent } from '../content/default';
 import type { CapsFormConfig } from '../types/CapsFormConfig';
 import { capsFormSchema } from './capsFormSchema';

@@ -1,7 +1,7 @@
 import {
   getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock,
   getGetV1ProposalsProposalIdPaymentScheduleResponseMock,
-} from '../../../__generated__';
+} from '../../../__generated__/index.msw';
 import { selectPaymentSchedule } from './selectPaymentSchedule';
 
 vi.mock('../../../utils/fetcher', () => ({

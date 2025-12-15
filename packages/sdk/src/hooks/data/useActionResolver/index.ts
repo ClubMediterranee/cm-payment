@@ -2,7 +2,7 @@ import { getCapsConfig } from '@clubmed/payment-sdk/providers/CapsConfigProvider
 import { sdkQueryClient } from '@clubmed/payment-sdk/providers/QueryClientProvider';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { Action } from '../../../__generated__';
+import { Action } from '../../../__generated__/index.schemas';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { usePaymentConfig } from '../usePaymentConfig';
 import { CheckFreeDepositAuthorizationArgs } from './checkFreeDepositAuthorization';

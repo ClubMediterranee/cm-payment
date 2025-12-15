@@ -1,18 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http } from 'msw';
-import { initialize, mswLoader } from 'msw-storybook-addon';
+import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { ContactChoice } from './ContactChoice';
-
-// Note: We cannot mock GLOBAL_CAPS_SETTINGS in Storybook stories
-// The component will use the real configuration from '@clubmed/payment-sdk/config'
-
-// Wrapper component to provide form context
-
-initialize();
 
 const handlers = [
   http.get('*/v2/customers/456/profile', () => {

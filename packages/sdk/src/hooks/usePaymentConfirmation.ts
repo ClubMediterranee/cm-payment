@@ -11,8 +11,8 @@ export const usePaymentConfirmation = ({ paymentId }: { paymentId: string }) => 
   const proposalId = search.get('proposal_id');
   const callbackUrl = search.get('callback_url');
   const providerId = search.get('provider_id');
-  const shouldPollStatus = GLOBAL_CAPS_SETTINGS.serverValidationProviders.includes(
-    providerId as any,
+  const shouldPollStatus = GLOBAL_CAPS_SETTINGS.serverValidationProviders.some((provider) =>
+    providerId?.startsWith(provider),
   );
 
   const { data: paymentStatus } = usePaymentStatus({ paymentId, enabled: shouldPollStatus });

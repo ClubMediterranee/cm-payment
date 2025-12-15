@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import type { UseFormReturn } from 'react-hook-form';
 
-import type { CapsFormData } from '../types/FormData';
+import { CapsFormSchema } from '../schemas/capsFormSchema';
 import * as usePaymentRedirectModule from './data/usePaymentRedirect';
 import { usePaymentSubmit } from './usePaymentSubmit';
 import * as useTokenRetryModule from './useTokenRetry';
@@ -23,7 +23,7 @@ describe('usePaymentSubmit', () => {
     mockGetValues = vi.fn(() => ({ amount: '100', currency: 'EUR' }));
     mockHandleSubmit = vi.fn(
       (
-        onValid?: (data: CapsFormData) => void | Promise<void>,
+        onValid?: (data: CapsFormSchema) => void | Promise<void>,
         onInvalid?: (errors: any) => void | Promise<void>,
       ) =>
         async (e?: React.BaseSyntheticEvent) => {
@@ -46,7 +46,7 @@ describe('usePaymentSubmit', () => {
     vi.spyOn(useFormModule, 'useFormContext').mockReturnValue({
       handleSubmit: mockHandleSubmit,
       getValues: mockGetValues,
-    } as Partial<UseFormReturn<CapsFormData>> as UseFormReturn<CapsFormData>);
+    } as Partial<UseFormReturn<CapsFormSchema>> as UseFormReturn<CapsFormSchema>);
 
     vi.spyOn(usePaymentRedirectModule, 'usePaymentRedirect').mockReturnValue({
       mutate: mockMutate,
@@ -154,7 +154,7 @@ describe('usePaymentSubmit', () => {
   it('should call handleTokenValidationError on form validation error', async () => {
     mockHandleSubmit.mockImplementation(
       (
-        _onValid?: (data: CapsFormData) => void | Promise<void>,
+        _onValid?: (data: CapsFormSchema) => void | Promise<void>,
         onInvalid?: (errors: any) => void | Promise<void>,
       ) =>
         async (e?: React.BaseSyntheticEvent) => {
