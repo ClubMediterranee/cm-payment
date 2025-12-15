@@ -7,10 +7,7 @@ const Loader = lazy(async () => ({
 export function SigninRedirectPage() {
   return (
     <Suspense fallback={null}>
-      <Loader
-        isVisible
-        label="This is like elevator music but for your eyes. Please wait while we load your content."
-      />
+      <Loader isVisible />
     </Suspense>
   );
 }
