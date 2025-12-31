@@ -1,4 +1,4 @@
-import { fetcher as fetchSdk } from '@clubmed/payment-sdk/utils/fetcher.js';
+import { fetcher as fetchSdk } from '@clubmed/caps/utils/fetcher.js';
 
 export const fetcher = async <T>(opts: {
   url: string;

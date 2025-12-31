@@ -1,5 +1,5 @@
-import { FormPanel as Panel } from '@clubmed/payment-sdk/components/ui/FormPanel';
-import { formatCurrency } from '@clubmed/payment-sdk/utils/formatCurrency';
+import { FormPanel as Panel } from '@clubmed/caps/components/ui/FormPanel';
+import { formatCurrency } from '@clubmed/caps/utils/formatCurrency';
 import { Icon } from '@clubmed/trident-icons';
 import { useParams } from 'wouter';
 

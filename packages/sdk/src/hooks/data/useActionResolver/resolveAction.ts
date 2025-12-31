@@ -1,4 +1,4 @@
-import { getCapsConfig } from '@clubmed/payment-sdk/providers/CapsConfigProvider';
+import { getPaymentConfig } from '@clubmed/payment-sdk/providers/PaymentConfigProvider';
 
 import { getV3CustomersCustomerIdBookingsBookingId } from '../../../__generated__';
 import { Action, BookingStatus } from '../../../__generated__/index.schemas';
@@ -14,7 +14,7 @@ export const resolveAction = async ({
   action?: Action;
   freeDepositConfig: CheckFreeDepositAuthorizationArgs['freeDepositConfig'];
 }): Promise<Action> => {
-  const { type, id, customerId } = getCapsConfig();
+  const { type, id, customerId } = getPaymentConfig();
 
   if (type === 'proposal') {
     return Action.PAYMENT_RESA;

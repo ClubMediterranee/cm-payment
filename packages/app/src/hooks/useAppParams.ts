@@ -1,4 +1,4 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings';
+import { OidcIssuerTypes } from '@clubmed/caps/types/CapsSettings';
 import { useAuth } from 'react-oidc-context';
 import { useLocation, useRoute } from 'wouter';
 import { z } from 'zod';

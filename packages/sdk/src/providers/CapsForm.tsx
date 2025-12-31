@@ -88,3 +88,5 @@ export function CapsForm({
     </ErrorBoundary>
   );
 }
+
+export { CapsForm as Form };

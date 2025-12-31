@@ -1,10 +1,10 @@
 import { getV3CustomersCustomerIdBookingsBookingId } from '../../../__generated__';
 import { Action, BookingStatus } from '../../../__generated__/index.schemas';
-import { getCapsConfig } from '../../../providers/CapsConfigProvider';
+import { getPaymentConfig } from '../../../providers/PaymentConfigProvider';
 import { resolveAction } from './resolveAction';
 
-vi.mock('../../../providers/CapsConfigProvider', () => ({
-  getCapsConfig: vi.fn(),
+vi.mock('../../../providers/PaymentConfigProvider', () => ({
+  getPaymentConfig: vi.fn(),
 }));
 
 vi.mock('../../../utils/paymentConfig', () => ({
@@ -19,7 +19,7 @@ vi.mock('../../../__generated__', async () => {
   };
 });
 
-const mockGetCapsConfig = vi.mocked(getCapsConfig);
+const mockGetCapsConfig = vi.mocked(getPaymentConfig);
 const mockGetBooking = vi.mocked(getV3CustomersCustomerIdBookingsBookingId);
 
 describe('resolveAction', () => {

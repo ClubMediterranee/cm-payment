@@ -18,7 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "dev:storybook": "storybook dev -p 6006",
-    "dev:sdk": "pnpm --filter @clubmed/payment-sdk run dev",
+    "dev:sdk": "pnpm --filter @clubmed/caps run dev",
     "dev:app": "pnpm --filter @clubmed/app run dev",
     "dev:starter": "pnpm --filter @clubmed/starter run dev",
     "generate:types": "pnpm -r run generate:types",

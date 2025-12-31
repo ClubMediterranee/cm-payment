@@ -1,4 +1,4 @@
-import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
+import { useCapsConfigContext } from '@clubmed/caps/hooks/utils/useCapsConfigContext';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import {

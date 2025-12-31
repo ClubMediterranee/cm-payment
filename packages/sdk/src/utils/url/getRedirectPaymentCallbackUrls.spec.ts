@@ -1,12 +1,12 @@
 import { OidcIssuerTypes } from '../../types/CapsSettings';
 import { getRedirectPaymentCallbackUrls } from './getRedirectPaymentCallbackUrls';
 
-vi.mock('../../providers/CapsConfigProvider', () => ({
-  getCapsConfig: vi.fn(),
+vi.mock('../../providers/PaymentConfigProvider', () => ({
+  getPaymentConfig: vi.fn(),
 }));
 
-const { getCapsConfig } = await import('../../providers/CapsConfigProvider');
-const mockGetCapsConfig = vi.mocked(getCapsConfig);
+const { getPaymentConfig } = await import('../../providers/PaymentConfigProvider');
+const mockGetCapsConfig = vi.mocked(getPaymentConfig);
 
 describe('getRedirectPaymentCallbackUrls', () => {
   beforeEach(() => {

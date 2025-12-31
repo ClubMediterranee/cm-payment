@@ -1,4 +1,4 @@
-import { CapsConfigProvider } from '@clubmed/payment-sdk/providers/CapsConfigProvider.js';
+import { PaymentConfigProvider } from '@clubmed/caps/providers/PaymentConfigProvider.js';
 import { PropsWithChildren } from 'react';
 
 import { useAppParams } from '../hooks/useAppParams.js';
@@ -12,7 +12,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <CapsConfigProvider
+    <PaymentConfigProvider
       paymentGatewayUrl={paymentGatewayUrl}
       locale={values.locale}
       proposalId={values.proposalId}
@@ -24,6 +24,6 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
       callbackUrlSeller={values.callbackUrlSeller}
     >
       {children}
-    </CapsConfigProvider>
+    </PaymentConfigProvider>
   );
 };

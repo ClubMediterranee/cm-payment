@@ -4,9 +4,9 @@ import type { PropsWithChildren } from 'react';
 import { defaultContent } from '../content/default';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
 import { OidcIssuerTypes } from '../types/CapsSettings';
-import { CapsConfigProvider, getCapsConfig } from './CapsConfigProvider';
+import { PaymentConfigProvider, getPaymentConfig } from './PaymentConfigProvider';
 
-describe('CapsConfigProvider', () => {
+describe('PaymentConfigProvider', () => {
   const defaultProps = {
     paymentGatewayUrl: 'https://example.com',
     proposalId: 'prop-123',
@@ -24,9 +24,9 @@ describe('CapsConfigProvider', () => {
   };
 
   const Wrapper = ({ children, ...props }: PropsWithChildren<any>) => (
-    <CapsConfigProvider {...defaultProps} {...props}>
+    <PaymentConfigProvider {...defaultProps} {...props}>
       {children}
-    </CapsConfigProvider>
+    </PaymentConfigProvider>
   );
 
   it('should provide config context with proposal type', () => {
@@ -81,14 +81,14 @@ describe('CapsConfigProvider', () => {
     expect(result.current.content).toEqual(defaultContent);
   });
 
-  it('should expose config via getCapsConfig', () => {
+  it('should expose config via getPaymentConfig', () => {
     render(
-      <CapsConfigProvider {...defaultProps} proposalId="prop-123">
+      <PaymentConfigProvider {...defaultProps} proposalId="prop-123">
         <div>Test</div>
-      </CapsConfigProvider>,
+      </PaymentConfigProvider>,
     );
 
-    const config = getCapsConfig();
+    const config = getPaymentConfig();
 
     expect(config.paymentGatewayUrl).toBe(defaultProps.paymentGatewayUrl);
     expect(config.id).toBe('prop-123');
@@ -102,12 +102,12 @@ describe('CapsConfigProvider', () => {
     };
 
     render(
-      <CapsConfigProvider {...testProps}>
+      <PaymentConfigProvider {...testProps}>
         <div>Test</div>
-      </CapsConfigProvider>,
+      </PaymentConfigProvider>,
     );
 
-    const config = getCapsConfig();
+    const config = getPaymentConfig();
     expect(config.id).toBe('new-proposal-123');
     expect(config.type).toBe('proposal');
   });

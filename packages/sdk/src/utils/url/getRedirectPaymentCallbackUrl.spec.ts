@@ -1,11 +1,11 @@
-import { getCapsConfig } from '../../providers/CapsConfigProvider.js';
+import { getPaymentConfig } from '../../providers/PaymentConfigProvider.js';
 import { getRedirectPaymentCallbackUrl } from './getRedirectPaymentCallbackUrl.js';
 
-vi.mock('../../providers/CapsConfigProvider.js', () => ({
-  getCapsConfig: vi.fn(),
+vi.mock('../../providers/PaymentConfigProvider.js', () => ({
+  getPaymentConfig: vi.fn(),
 }));
 
-const mockGetCapsConfig = vi.mocked(getCapsConfig);
+const mockGetCapsConfig = vi.mocked(getPaymentConfig);
 
 describe('getRedirectPaymentCallbackUrl', () => {
   beforeEach(() => {

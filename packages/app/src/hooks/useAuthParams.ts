@@ -1,4 +1,4 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings';
+import { OidcIssuerTypes } from '@clubmed/caps/types/CapsSettings';
 import { User } from 'oidc-client-ts';
 import { useRoute } from 'wouter';
 import { z } from 'zod';

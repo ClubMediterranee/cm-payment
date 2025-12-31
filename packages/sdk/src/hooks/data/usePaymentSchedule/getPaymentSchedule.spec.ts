@@ -5,12 +5,12 @@ import {
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../../../__generated__';
 import { Action } from '../../../__generated__/index.schemas';
-import { getCapsConfig } from '../../../providers/CapsConfigProvider';
+import { getPaymentConfig } from '../../../providers/PaymentConfigProvider';
 import { getResolvedAction } from '../useActionResolver';
 import { getPaymentSchedule } from './getPaymentSchedule';
 
-vi.mock('../../../providers/CapsConfigProvider', () => ({
-  getCapsConfig: vi.fn(),
+vi.mock('../../../providers/PaymentConfigProvider', () => ({
+  getPaymentConfig: vi.fn(),
 }));
 
 vi.mock('../useActionResolver', () => ({
@@ -36,7 +36,7 @@ const mockGetCartPaymentSchedule = vi.mocked(
 const mockGetCartAccommodations = vi.mocked(
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
 );
-const mockGetCapsConfig = vi.mocked(getCapsConfig);
+const mockGetCapsConfig = vi.mocked(getPaymentConfig);
 const mockGetResolvedAction = vi.mocked(getResolvedAction);
 
 describe('getPaymentSchedule', () => {

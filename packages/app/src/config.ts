@@ -1,4 +1,4 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings.js';
+import { OidcIssuerTypes } from '@clubmed/caps/types/CapsSettings.js';
 
 const commonConfig = {
   scope: 'openid profile email clubmed',

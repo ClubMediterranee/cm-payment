@@ -1,6 +1,6 @@
-import { FormPanel as Panel } from '@clubmed/payment-sdk/components/ui/FormPanel.js';
-import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext.js';
-import { formatDate } from '@clubmed/payment-sdk/utils/formatDate.js';
+import { FormPanel as Panel } from '@clubmed/caps/components/ui/FormPanel.js';
+import { useCapsConfigContext } from '@clubmed/caps/hooks/utils/useCapsConfigContext.js';
+import { formatDate } from '@clubmed/caps/utils/formatDate.js';
 import { Image } from '@clubmed/trident-ui/atoms/Image/Image';
 import { Card } from '@clubmed/trident-ui/molecules/Card';
 import { Tag } from '@clubmed/trident-ui/molecules/Tag';

@@ -6,7 +6,7 @@ import { CapsConfigContext } from '../contexts/CapsConfigContext';
 import { mergeFromPattern } from '../utils/mergeFromPattern';
 import { QueryClientProvider } from './QueryClientProvider';
 
-export type CapsConfigProviderProps = PropsWithChildren<
+export type PaymentConfigProviderProps = PropsWithChildren<
   Omit<CapsSettings, 'content' | 'id' | 'type'> & {
     content?: Partial<CapsSettings['content']>;
     bookingId?: string;
@@ -18,16 +18,16 @@ const ref: { value: CapsSettings } = {
   value: {} as CapsSettings,
 };
 
-export function getCapsConfig() {
+export function getPaymentConfig() {
   return ref.value;
 }
 
-export const CapsConfigProvider = ({
+export const PaymentConfigProvider = ({
   children,
   bookingId,
   proposalId,
   ...props
-}: CapsConfigProviderProps) => {
+}: PaymentConfigProviderProps) => {
   const activeContent = mergeFromPattern(defaultContent, props.content);
 
   ref.value = {
