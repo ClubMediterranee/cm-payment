@@ -9,7 +9,7 @@ import { iconsDecorator } from './icons.js';
 initialize({
   onUnhandledRequest: 'bypass',
   serviceWorker: {
-    url: '/mockServiceWorker.js',
+    url: './mockServiceWorker.js',
   },
 });
 
