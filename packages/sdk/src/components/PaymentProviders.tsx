@@ -1,4 +1,3 @@
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Icon } from '@clubmed/trident-icons';
 import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import clsx from 'clsx';
@@ -9,6 +8,7 @@ import { usePaymentProviders } from '../hooks/data/usePaymentProviders';
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useWatch } from '../hooks/utils/useForm';
+import { TOKENS } from '../types/Tokens';
 import { formatCurrency } from '../utils/formatCurrency';
 import { renderTemplate } from '../utils/renderTemplate';
 import { PaymentProviderRules } from './PaymentProviders/PaymentProviderRules';

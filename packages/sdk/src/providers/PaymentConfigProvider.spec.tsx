@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react';
 import { defaultContent } from '../content/default';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
 import { OidcIssuerTypes } from '../types/CapsSettings';
-import { PaymentConfigProvider, getPaymentConfig } from './PaymentConfigProvider';
+import { getPaymentConfig, PaymentConfigProvider } from './PaymentConfigProvider';
 
 describe('PaymentConfigProvider', () => {
   const defaultProps = {

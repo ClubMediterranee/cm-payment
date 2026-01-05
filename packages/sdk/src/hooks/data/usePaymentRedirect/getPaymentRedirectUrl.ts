@@ -1,14 +1,13 @@
-import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
-import { CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
-import { CapsSettings } from '@clubmed/payment-sdk/types/CapsSettings';
-import { getRedirectPaymentCallbackUrls } from '@clubmed/payment-sdk/utils/url/getRedirectPaymentCallbackUrls';
-
 import {
   getV2ProposalsProposalId,
   postV0PaymentsPaymentIdRedirectRequest,
   postV1Payments,
   postV3Bookings,
 } from '../../../__generated__';
+import { GLOBAL_CAPS_SETTINGS } from '../../../config';
+import { CapsFormSchema } from '../../../schemas/capsFormSchema';
+import { CapsSettings } from '../../../types/CapsSettings';
+import { getRedirectPaymentCallbackUrls } from '../../../utils/url/getRedirectPaymentCallbackUrls';
 
 const cleanBillingDetails = (
   billingDetails: CapsFormSchema['billing_details'],

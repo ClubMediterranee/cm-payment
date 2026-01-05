@@ -1,8 +1,8 @@
-import { PaymentProvider1CategoryPaymentMethod } from '@clubmed/payment-sdk/types';
-import { PaymentConfig } from '@clubmed/payment-sdk/types/PaymentConfig';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { getV1PaymentProviders } from '../../__generated__';
+import { PaymentProvider1CategoryPaymentMethod } from '../../__generated__/index.schemas';
+import { PaymentConfig } from '../../types/PaymentConfig';
 import { usePaymentConfig } from './usePaymentConfig';
 
 export const paymentProvidersQueryOptions = (providerConfig: PaymentConfig['providers']) => ({

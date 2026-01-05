@@ -1,5 +1,3 @@
-import { getPaymentConfig } from '@clubmed/payment-sdk/providers/PaymentConfigProvider';
-
 import {
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
   getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule,
@@ -7,6 +5,7 @@ import {
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../../../__generated__';
 import { Action } from '../../../__generated__/index.schemas';
+import { getPaymentConfig } from '../../../providers/PaymentConfigProvider';
 import { getResolvedAction } from '../useActionResolver';
 
 export const getPaymentSchedule = () => {

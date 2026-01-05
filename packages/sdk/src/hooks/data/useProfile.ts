@@ -1,6 +1,6 @@
-import { getV2CustomersCustomerIdProfile } from '@clubmed/payment-sdk/__generated__';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
+import { getV2CustomersCustomerIdProfile } from '../../__generated__';
 import { useCapsConfigContext } from '../utils/useCapsConfigContext';
 
 export const profileQueryOptions = (customerId: string) => ({

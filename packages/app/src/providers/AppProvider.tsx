@@ -1,4 +1,4 @@
-import { PaymentConfigProvider } from '@clubmed/caps/providers/PaymentConfigProvider.js';
+import { PaymentConfigProvider } from '@clubmed/caps';
 import { PropsWithChildren } from 'react';
 
 import { useAppParams } from '../hooks/useAppParams.js';

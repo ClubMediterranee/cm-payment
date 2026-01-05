@@ -1,4 +1,4 @@
-import { usePaymentConfirmation } from '@clubmed/caps/hooks/usePaymentConfirmation.js';
+import { usePaymentConfirmation } from '@clubmed/caps';
 import { lazy, Suspense } from 'react';
 import { useParams } from 'wouter';
 

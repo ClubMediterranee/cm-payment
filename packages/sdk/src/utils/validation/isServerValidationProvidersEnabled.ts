@@ -1,4 +1,4 @@
-import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config.js';
+import { GLOBAL_CAPS_SETTINGS } from '../../config';
 
 export function isServerValidationProvidersEnabled(paymentId?: string, provider_id?: string) {
   return (

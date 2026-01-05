@@ -1,4 +1,4 @@
-import { CapsSettings, OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings.js';
+import { CapsSettings, OidcIssuerTypes } from '../../types/CapsSettings';
 
 type Options = Pick<CapsSettings, 'type' | 'id' | 'customerId'> & {
   locale?: string;

@@ -1,11 +1,7 @@
-import type {
-  CapsSettings,
-  ClubMedApiSettings,
-  OidcSettings,
-} from '@clubmed/payment-sdk/types/CapsSettings';
 import { createContext } from 'react';
 
 import { defaultContent } from '../content/default';
+import { CapsSettings, ClubMedApiSettings, OidcSettings } from '../types/CapsSettings';
 
 export const CapsConfigContext = createContext<CapsSettings>({
   type: '' as CapsSettings['type'],

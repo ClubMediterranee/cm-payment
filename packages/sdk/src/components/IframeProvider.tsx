@@ -1,13 +1,13 @@
-import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
-import { usePaymentRedirect } from '@clubmed/payment-sdk/hooks/data/usePaymentRedirect';
-import { PspProviders } from '@clubmed/payment-sdk/types/PspProviders';
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import { useWatch } from 'react-hook-form';
 
+import { GLOBAL_CAPS_SETTINGS } from '../config';
+import { usePaymentRedirect } from '../hooks/data/usePaymentRedirect';
 import { useFormContext } from '../hooks/utils/useForm';
+import { PspProviders } from '../types/PspProviders';
+import { TOKENS } from '../types/Tokens';
 
 // Rename by SdkIframePayment ?
 export const IframeProvider = () => {

@@ -1,8 +1,8 @@
-import type { CapsSettings } from '@clubmed/payment-sdk/types/CapsSettings';
 import type { PropsWithChildren } from 'react';
 
 import { defaultContent } from '../content/default';
 import { CapsConfigContext } from '../contexts/CapsConfigContext';
+import { CapsSettings } from '../types/CapsSettings';
 import { mergeFromPattern } from '../utils/mergeFromPattern';
 import { QueryClientProvider } from './QueryClientProvider';
 

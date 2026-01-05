@@ -1,5 +1,4 @@
-import { FormPanel as Panel } from '@clubmed/caps/components/ui/FormPanel';
-import { formatCurrency } from '@clubmed/caps/utils/formatCurrency';
+import { formatCurrency, FormPanel as Panel } from '@clubmed/caps';
 import { Icon } from '@clubmed/trident-icons';
 import { useParams } from 'wouter';
 

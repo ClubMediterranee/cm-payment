@@ -1,10 +1,10 @@
-import { usePaymentSchedule } from '@clubmed/payment-sdk/hooks/data/usePaymentSchedule';
-import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
-import { CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
 import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import type { ControllerRenderProps } from 'react-hook-form';
 
+import { usePaymentSchedule } from '../../hooks/data/usePaymentSchedule';
+import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 import { useWatch } from '../../hooks/utils/useForm';
+import type { CapsFormSchema } from '../../schemas/capsFormSchema';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatDate } from '../../utils/formatDate';
 import { renderTemplate } from '../../utils/renderTemplate';

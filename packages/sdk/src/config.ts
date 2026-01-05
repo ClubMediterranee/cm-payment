@@ -1,6 +1,6 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings.js';
-import { PspProviders } from '@clubmed/payment-sdk/types/PspProviders.js';
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens.js';
+import { OidcIssuerTypes } from './types/CapsSettings';
+import { PspProviders } from './types/PspProviders';
+import { TOKENS } from './types/Tokens';
 
 export const GLOBAL_CAPS_SETTINGS = Object.freeze({
   iframeProviders: [PspProviders.EIXOPAY],

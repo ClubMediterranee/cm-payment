@@ -1,5 +1,4 @@
-import { Action } from '@clubmed/caps/types';
-import type { OidcIssuerTypes } from '@clubmed/caps/types/CapsSettings.js';
+import { Action, OidcIssuerTypes } from '@clubmed/caps';
 
 export interface AppState {
   issuerType: OidcIssuerTypes;

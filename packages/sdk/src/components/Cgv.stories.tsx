@@ -1,7 +1,7 @@
-import { MockedProvider } from '@clubmed/payment-sdk/__fixtures__/MockedProvider.js';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
+import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { Cgv } from './Cgv';
 
 // Wrapper component to provide form context

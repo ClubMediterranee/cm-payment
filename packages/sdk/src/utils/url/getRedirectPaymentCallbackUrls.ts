@@ -1,5 +1,5 @@
-import { getPaymentConfig } from '@clubmed/payment-sdk/providers/PaymentConfigProvider';
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings';
+import { getPaymentConfig } from '../../providers/PaymentConfigProvider';
+import { OidcIssuerTypes } from '../../types/CapsSettings';
 
 type CallbackUrls = { callback_url: string; callback_url_seller?: string };
 

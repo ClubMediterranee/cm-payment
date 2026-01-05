@@ -1,6 +1,5 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings';
-
 import { getPaymentConfig as getProviderConfig } from '../../../providers/PaymentConfigProvider';
+import { OidcIssuerTypes } from '../../../types/CapsSettings';
 import { PaymentConfig } from '../../../types/PaymentConfig';
 import { LegacyCmsFeatureFlipResponse } from './LegacyCms';
 import { mapPaymentConfig } from './mapPaymentConfig';

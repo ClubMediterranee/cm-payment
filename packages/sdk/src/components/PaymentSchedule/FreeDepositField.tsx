@@ -1,11 +1,11 @@
-import { usePaymentSchedule } from '@clubmed/payment-sdk/hooks/data/usePaymentSchedule';
-import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
-import { CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
 import { useEffect } from 'react';
 import { type ControllerRenderProps, type FieldError } from 'react-hook-form';
 
+import { usePaymentSchedule } from '../../hooks/data/usePaymentSchedule';
+import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 import { useFormContext, useWatch } from '../../hooks/utils/useForm';
+import { CapsFormSchema } from '../../schemas/capsFormSchema';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatDate } from '../../utils/formatDate';
 

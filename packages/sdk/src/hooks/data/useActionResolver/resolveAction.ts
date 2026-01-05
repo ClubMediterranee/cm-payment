@@ -1,7 +1,6 @@
-import { getPaymentConfig } from '@clubmed/payment-sdk/providers/PaymentConfigProvider';
-
 import { getV3CustomersCustomerIdBookingsBookingId } from '../../../__generated__';
 import { Action, BookingStatus } from '../../../__generated__/index.schemas';
+import { getPaymentConfig } from '../../../providers/PaymentConfigProvider';
 import {
   checkFreeDepositAuthorization,
   CheckFreeDepositAuthorizationArgs,

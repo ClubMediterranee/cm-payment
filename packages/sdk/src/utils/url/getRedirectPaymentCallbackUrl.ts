@@ -1,4 +1,4 @@
-import { getPaymentConfig } from '@clubmed/payment-sdk/providers/PaymentConfigProvider';
+import { getPaymentConfig } from '../../providers/PaymentConfigProvider';
 
 export function getRedirectPaymentCallbackUrl(paymentId: string, providerId: string): string {
   const {

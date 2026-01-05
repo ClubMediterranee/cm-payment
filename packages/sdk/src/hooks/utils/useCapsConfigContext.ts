@@ -1,6 +1,7 @@
-import { CapsConfigContext } from '@clubmed/payment-sdk/contexts/CapsConfigContext';
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings';
 import { useContext } from 'react';
+
+import { CapsConfigContext } from '../../contexts/CapsConfigContext';
+import { OidcIssuerTypes } from '../../types/CapsSettings';
 
 export const useCapsConfigContext = () => {
   return useContext(CapsConfigContext);

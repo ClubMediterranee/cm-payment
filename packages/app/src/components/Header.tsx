@@ -1,4 +1,4 @@
-import { useCapsConfigContext } from '@clubmed/caps/hooks/utils/useCapsConfigContext';
+import { useCapsConfigContext } from '@clubmed/caps';
 import { Icon } from '@clubmed/trident-icons';
 
 import { ImmersiveBreadcrumb } from './ImmersiveBreadcrumb';

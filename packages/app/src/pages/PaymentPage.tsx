@@ -1,12 +1,14 @@
-import { CardForm } from '@clubmed/caps/components/CardForm.js';
-import { Cgv } from '@clubmed/caps/components/Cgv';
-import { ContactChoice } from '@clubmed/caps/components/ContactChoice.js';
-import { IframeProvider } from '@clubmed/caps/components/IframeProvider.js';
-import { PaymentProviders } from '@clubmed/caps/components/PaymentProviders.js';
-import { PaymentSchedule } from '@clubmed/caps/components/PaymentSchedule';
-import { useDisclosure } from '@clubmed/caps/hooks/utils/useDisclosure';
-import { Form } from '@clubmed/caps/providers/CapsForm.js';
-import { Action } from '@clubmed/caps/types';
+import {
+  Action,
+  CardForm,
+  Cgv,
+  ContactChoice,
+  Form,
+  IframeProvider,
+  PaymentProviders,
+  PaymentSchedule,
+  useDisclosure,
+} from '@clubmed/caps';
 import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
 import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';

@@ -1,6 +1,6 @@
-import { CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
 import { noop, useMutation } from '@tanstack/react-query';
 
+import type { CapsFormSchema } from '../../../schemas/capsFormSchema';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { getPaymentRedirectUrl } from './getPaymentRedirectUrl';
 
