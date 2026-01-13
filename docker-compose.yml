@@ -24,6 +24,7 @@ services:
       - "app.app.path=/"
       - "app.starter.path=/starter"
       - "app.storybook.path=/storybook"
+      - "app.docs.path=/docs"
 
 networks:
   default:
