@@ -6,7 +6,11 @@ type ExtractPlaceholders<S extends string> = S extends `${string}{${infer Param}
 
 type TemplateValues<T extends string> = Record<ExtractPlaceholders<T>, React.ReactNode>;
 
-export const renderTemplate = <T extends string>(template: T, values: TemplateValues<T>) => {
+export const renderTemplate = <T extends string>(
+  template: T,
+  values: TemplateValues<T>,
+  options?: { asFragment?: boolean },
+) => {
   if (!template) {
     return null;
   }
@@ -18,19 +22,17 @@ export const renderTemplate = <T extends string>(template: T, values: TemplateVa
     }
   });
 
-  return (
-    <span className="text-left">
-      {template
-        .split(/({\w+})/g)
-        .map((part, i) =>
-          /^{(\w+)}$/.test(part) ? (
-            <React.Fragment key={i}>
-              {values[part.slice(1, -1) as ExtractPlaceholders<T>]}
-            </React.Fragment>
-          ) : (
-            part
-          ),
-        )}
-    </span>
-  );
+  const content = template
+    .split(/({\w+})/g)
+    .map((part, i) =>
+      /^{(\w+)}$/.test(part) ? (
+        <React.Fragment key={i}>
+          {values[part.slice(1, -1) as ExtractPlaceholders<T>]}
+        </React.Fragment>
+      ) : (
+        part
+      ),
+    );
+
+  return options?.asFragment ? content : <span className="text-left">{content}</span>;
 };

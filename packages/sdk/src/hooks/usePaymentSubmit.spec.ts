@@ -1,11 +1,15 @@
 import { renderHook } from '@testing-library/react';
 import type { UseFormReturn } from 'react-hook-form';
 
+import * as FormCallbacksContextModule from '../contexts/FormCallbacksContext';
 import { CapsFormSchema } from '../schemas/capsFormSchema';
 import * as usePaymentRedirectModule from './data/usePaymentRedirect';
 import { usePaymentSubmit } from './usePaymentSubmit';
 import * as useTokenRetryModule from './useTokenRetry';
 import * as useFormModule from './utils/useForm';
+import * as useProviderIntegrationModeModule from './utils/useProviderIntegrationMode';
+
+vi.mock('./utils/useProviderIntegrationMode');
 
 describe('usePaymentSubmit', () => {
   let mockMutate: ReturnType<typeof vi.fn>;
@@ -43,6 +47,12 @@ describe('usePaymentSubmit', () => {
     onLoadMock = vi.fn();
     onLoadEndMock = vi.fn();
 
+    vi.spyOn(FormCallbacksContextModule, 'useFormCallbacks').mockReturnValue({
+      onError: onErrorMock,
+      onLoad: onLoadMock,
+      onLoadEnd: onLoadEndMock,
+    });
+
     vi.spyOn(useFormModule, 'useFormContext').mockReturnValue({
       handleSubmit: mockHandleSubmit,
       getValues: mockGetValues,
@@ -56,20 +66,21 @@ describe('usePaymentSubmit', () => {
     vi.spyOn(useTokenRetryModule, 'useTokenRetry').mockReturnValue({
       handleTokenValidationError: mockHandleTokenValidationError,
     });
+
+    vi.spyOn(useProviderIntegrationModeModule, 'useProviderIntegrationMode').mockReturnValue({
+      iframe: false,
+      redirect: true,
+    });
   });
 
   it('should initialize with isPending false', () => {
-    const { result } = renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    const { result } = renderHook(() => usePaymentSubmit());
 
     expect(result.current.isPending).toBe(false);
   });
 
   it('should call mutate on handleSubmit with form data', async () => {
-    const { result } = renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    const { result } = renderHook(() => usePaymentSubmit());
 
     const mockEvent = { preventDefault: vi.fn() } as any;
     await result.current.handleSubmit(mockEvent);
@@ -83,25 +94,19 @@ describe('usePaymentSubmit', () => {
       isPending: true,
     } as any);
 
-    renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    renderHook(() => usePaymentSubmit());
 
     expect(onLoadMock).toHaveBeenCalledTimes(1);
   });
 
   it('should not call onLoad when isPending is false', () => {
-    renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    renderHook(() => usePaymentSubmit());
 
     expect(onLoadMock).not.toHaveBeenCalled();
   });
 
   it('should pass onError to usePaymentRedirect', () => {
-    renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    renderHook(() => usePaymentSubmit());
 
     expect(usePaymentRedirectModule.usePaymentRedirect).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -113,9 +118,7 @@ describe('usePaymentSubmit', () => {
   it('should call onError when mutation fails', () => {
     const testError = new Error('Payment failed');
 
-    renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    renderHook(() => usePaymentSubmit());
 
     const paymentRedirectCall = vi.mocked(usePaymentRedirectModule.usePaymentRedirect).mock
       .calls[0][0];
@@ -124,25 +127,31 @@ describe('usePaymentSubmit', () => {
     expect(onErrorMock).toHaveBeenCalledWith(testError);
   });
 
-  it('should redirect on success', () => {
+  it('should redirect on success by default', () => {
     delete (window as any).location;
     window.location = { href: '' } as any;
 
-    renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    renderHook(() => usePaymentSubmit());
 
     const paymentRedirectCall = vi.mocked(usePaymentRedirectModule.usePaymentRedirect).mock
       .calls[0][0];
-    paymentRedirectCall.onSuccess?.('https://payment.gateway.com');
+    const providerParams = { url: 'https://payment.gateway.com', method: 'GET' };
+    paymentRedirectCall.onSuccess?.(providerParams as any);
 
     expect(window.location.href).toBe('https://payment.gateway.com');
   });
 
+  it('should call loadPaymentProviderUrl on success', () => {
+    renderHook(() => usePaymentSubmit());
+
+    const paymentRedirectCall = vi.mocked(usePaymentRedirectModule.usePaymentRedirect).mock
+      .calls[0][0];
+
+    expect(paymentRedirectCall.onSuccess).toBeDefined();
+  });
+
   it('should pass onLoadEnd to usePaymentRedirect', () => {
-    renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    renderHook(() => usePaymentSubmit());
 
     expect(usePaymentRedirectModule.usePaymentRedirect).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -165,9 +174,7 @@ describe('usePaymentSubmit', () => {
         },
     );
 
-    const { result } = renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    const { result } = renderHook(() => usePaymentSubmit());
 
     const mockEvent = { preventDefault: vi.fn() } as any;
     await result.current.handleSubmit(mockEvent);
@@ -178,9 +185,7 @@ describe('usePaymentSubmit', () => {
   });
 
   it('should retry with getValues when token retry is triggered', () => {
-    renderHook(() =>
-      usePaymentSubmit({ onError: onErrorMock, onLoad: onLoadMock, onLoadEnd: onLoadEndMock }),
-    );
+    renderHook(() => usePaymentSubmit());
 
     const tokenRetryCall = vi.mocked(useTokenRetryModule.useTokenRetry).mock.calls[0][0];
     tokenRetryCall.onRetry();

@@ -1,41 +1,47 @@
+import type { RefObject } from 'react';
 import { useEffect } from 'react';
 
+import { useFormCallbacks } from '../contexts/FormCallbacksContext';
+import { loadPaymentProviderUrl } from '../utils/loadPaymentProviderUrl';
 import { usePaymentRedirect } from './data/usePaymentRedirect';
 import { useTokenRetry } from './useTokenRetry';
 import { useFormContext } from './utils/useForm';
+import { useProviderIntegrationMode } from './utils/useProviderIntegrationMode';
 
 export type UsePaymentSubmitParams = {
-  onError?: (error: Error) => void;
-  onLoad?: () => void;
-  onLoadEnd?: () => void;
+  targetIframe?: RefObject<HTMLIFrameElement>;
 };
 
-export const usePaymentSubmit = ({ onError, onLoad, onLoadEnd }: UsePaymentSubmitParams) => {
+export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) => {
+  const { onError, onLoad, onLoadEnd } = useFormCallbacks();
   const methods = useFormContext();
+  const { iframe } = useProviderIntegrationMode();
 
-  const { mutate, isPending } = usePaymentRedirect({
+  const { mutate, ...mutationProps } = usePaymentRedirect({
     onError: (error) => {
       onError?.(error);
     },
-    onSuccess: (url) => {
-      window.location.href = url;
+    onSuccess: (params) => {
+      loadPaymentProviderUrl(params, targetIframe);
     },
     onLoadEnd,
   });
+
+  const { isPending } = mutationProps;
 
   const { handleTokenValidationError } = useTokenRetry({
     onRetry: () => mutate(methods.getValues()),
   });
 
   useEffect(() => {
-    if (isPending) {
+    if (isPending && !iframe) {
       onLoad?.();
     }
-  }, [isPending, onLoad]);
+  }, [iframe, isPending, onLoad]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    await methods.handleSubmit((data) => mutate(data), handleTokenValidationError)(e);
+  const handleSubmit = async (e?: React.FormEvent) => {
+    await methods.handleSubmit((data) => mutate(data), handleTokenValidationError)(e).catch;
   };
 
-  return { handleSubmit, isPending };
+  return { handleSubmit, ...mutationProps };
 };

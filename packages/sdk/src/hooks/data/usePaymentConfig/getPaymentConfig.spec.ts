@@ -20,15 +20,15 @@ describe('getPaymentConfig', () => {
         json: async () =>
           createMockCmsResponse([
             { key: 'featureFlipping.psp.evoxpay', value: true },
-            { key: 'featureFlipping.psp.hipay', value: false },
+            { key: 'featureFlipping.psp.mhipay', value: false },
           ]),
       } as Response);
 
       const result = await getPaymentConfig({ issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
-        HIPAY: { is_active: false },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
+        MHIPAY: { is_active: false, display_type: 'hosted_field' },
       });
     });
 
@@ -84,8 +84,8 @@ describe('getPaymentConfig', () => {
       const result = await getPaymentConfig({ issuerType: OidcIssuerTypes.GO, locale: 'fr-FR' });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
-        PAYPAL: { is_active: false },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
+        PAYPAL: { is_active: false, display_type: 'redirect' },
       });
     });
 
@@ -120,7 +120,7 @@ describe('getPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        STRIPE: { is_active: true },
+        STRIPE: { is_active: true, display_type: 'redirect' },
       });
     });
   });
@@ -140,7 +140,7 @@ describe('getPaymentConfig', () => {
       const result = await getPaymentConfig({ issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
       });
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,

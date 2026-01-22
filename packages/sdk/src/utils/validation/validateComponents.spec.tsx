@@ -14,14 +14,16 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
 
       const children = (
         <>
           <MockPaymentSchedule />
           <MockCgv />
           <MockPaymentProviders />
-          <MockIframeProvider />
+          <MockPaymentWidget />
+          <MockSubmitButton />
         </>
       );
 
@@ -32,7 +34,8 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
 
       const children = (
         <div>
@@ -42,7 +45,8 @@ describe('validateComponents', () => {
           </div>
           <div>
             <MockPaymentProviders />
-            <MockIframeProvider />
+            <MockPaymentWidget />
+            <MockSubmitButton />
           </div>
         </div>
       );
@@ -54,7 +58,8 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
 
       const children = (
         <div>
@@ -67,7 +72,8 @@ describe('validateComponents', () => {
           <div>
             <MockPaymentProviders />
             <div>
-              <MockIframeProvider />
+              <MockPaymentWidget />
+              <MockSubmitButton />
             </div>
           </div>
         </div>
@@ -80,7 +86,8 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
       const RegularComponent = () => <div>Regular</div>;
 
       const children = (
@@ -89,7 +96,8 @@ describe('validateComponents', () => {
           <RegularComponent />
           <MockCgv />
           <MockPaymentProviders />
-          <MockIframeProvider />
+          <MockPaymentWidget />
+          <MockSubmitButton />
         </>
       );
 
@@ -100,7 +108,8 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
 
       const children = (
         <div>
@@ -109,7 +118,8 @@ describe('validateComponents', () => {
           More text
           <MockCgv />
           <MockPaymentProviders />
-          <MockIframeProvider />
+          <MockPaymentWidget />
+          <MockSubmitButton />
         </div>
       );
 
@@ -130,14 +140,16 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
 
       const children = (
         <>
           <MockPaymentSchedule />
           <MockCgv />
           <MockPaymentProviders />
-          <MockIframeProvider />
+          <MockPaymentWidget />
+          <MockSubmitButton />
         </>
       );
 
@@ -147,13 +159,13 @@ describe('validateComponents', () => {
     it('should throw when PaymentSchedule is missing', () => {
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
 
       const children = (
         <>
           <MockCgv />
           <MockPaymentProviders />
-          <MockIframeProvider />
+          <MockPaymentWidget />
         </>
       );
 
@@ -165,13 +177,13 @@ describe('validateComponents', () => {
     it('should throw when Cgv is missing', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
 
       const children = (
         <>
           <MockPaymentSchedule />
           <MockPaymentProviders />
-          <MockIframeProvider />
+          <MockPaymentWidget />
         </>
       );
 
@@ -183,13 +195,13 @@ describe('validateComponents', () => {
     it('should throw when PaymentProviders is missing', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
 
       const children = (
         <>
           <MockPaymentSchedule />
           <MockCgv />
-          <MockIframeProvider />
+          <MockPaymentWidget />
         </>
       );
 
@@ -246,14 +258,14 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
 
       const children = (
         <>
           <MockPaymentSchedule />
           <MockCgv />
           <MockPaymentProviders />
-          <MockIframeProvider />
+          <MockPaymentWidget />
         </>
       );
 
@@ -288,7 +300,8 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
 
       const children = (
         <>
@@ -296,7 +309,8 @@ describe('validateComponents', () => {
           <MockPaymentSchedule />
           <MockCgv />
           <MockPaymentProviders />
-          <MockIframeProvider />
+          <MockPaymentWidget />
+          <MockSubmitButton />
         </>
       );
 
@@ -307,13 +321,15 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
 
       const children = [
         <MockPaymentSchedule key="1" />,
         <MockCgv key="2" />,
         <MockPaymentProviders key="3" />,
-        <MockIframeProvider key="4" />,
+        <MockPaymentWidget key="4" />,
+        <MockSubmitButton key="5" />,
       ];
 
       expect(() => validateComponents(OidcIssuerTypes.GM, children)).not.toThrow();
@@ -323,7 +339,8 @@ describe('validateComponents', () => {
       const MockPaymentSchedule = createMockComponent(TOKENS.PaymentSchedule);
       const MockCgv = createMockComponent(TOKENS.Cgv);
       const MockPaymentProviders = createMockComponent(TOKENS.PaymentProviders);
-      const MockIframeProvider = createMockComponent(TOKENS.IframeProvider);
+      const MockPaymentWidget = createMockComponent(TOKENS.PaymentWidget);
+      const MockSubmitButton = createMockComponent(TOKENS.SubmitButton);
 
       const children = (
         <>
@@ -333,7 +350,8 @@ describe('validateComponents', () => {
           </>
           <>
             <MockPaymentProviders />
-            <MockIframeProvider />
+            <MockPaymentWidget />
+            <MockSubmitButton />
           </>
         </>
       );

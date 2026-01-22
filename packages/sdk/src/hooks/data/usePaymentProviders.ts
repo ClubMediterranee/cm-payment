@@ -1,33 +1,27 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { getV1PaymentProviders } from '../../__generated__';
-import { PaymentProvider1CategoryPaymentMethod } from '../../__generated__/index.schemas';
 import { PaymentConfig } from '../../types/PaymentConfig';
+import {
+  enrichWithPaymentConditions,
+  sortTimePaymentConditions,
+  splitByCategory,
+} from '../../utils/paymentProviders';
 import { usePaymentConfig } from './usePaymentConfig';
 
 export const paymentProvidersQueryOptions = (providerConfig: PaymentConfig['providers']) => ({
   queryKey: ['paymentProviders'],
   queryFn: getV1PaymentProviders,
   select: (providers: Awaited<ReturnType<typeof getV1PaymentProviders>>) => {
-    return providers
+    const mappedProviders = providers
       .filter((provider) => providerConfig[provider.id]?.is_active)
-      .reduce(
-        (acc, provider) => {
-          if (
-            provider.category_payment_method ===
-            PaymentProvider1CategoryPaymentMethod.BuyNowPayLater
-          ) {
-            acc.buyNowPayLaterProviders.push(provider);
-          } else {
-            acc.paymentProviders.push(provider);
-          }
-          return acc;
-        },
-        {
-          paymentProviders: [] as typeof providers,
-          buyNowPayLaterProviders: [] as typeof providers,
-        },
-      );
+      .map(sortTimePaymentConditions)
+      .map(enrichWithPaymentConditions);
+
+    return mappedProviders.reduce(splitByCategory<(typeof mappedProviders)[number]>, {
+      paymentProviders: [],
+      buyNowPayLaterProviders: [],
+    });
   },
 });
 

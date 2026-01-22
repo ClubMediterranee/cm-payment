@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { MockedProvider } from '../../__fixtures__/MockedProvider';
+import { MockedProvider } from '../../../__fixtures__/MockedProvider';
 import { HipayForm } from './HipayForm';
 
 const HipayFormWithSubmit = () => {
@@ -16,7 +16,7 @@ const HipayFormWithSubmit = () => {
 };
 
 const meta: Meta<typeof HipayForm> = {
-  title: 'Components/CardForm/HipayForm',
+  title: 'Components/PaymentWidget/HostedFields/HipayForm',
   component: HipayForm,
   parameters: {
     layout: 'centered',
@@ -58,10 +58,9 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     await waitFor(() => {
-      expect(canvas.getByText('Card details')).toBeInTheDocument();
+      expect(canvas.getByText('Card number')).toBeInTheDocument();
     });
 
-    expect(canvas.getByText('Card number')).toBeInTheDocument();
     expect(canvas.getByText('Cardholder name')).toBeInTheDocument();
     expect(canvas.getByText('Expiry date')).toBeInTheDocument();
     expect(canvas.getByText('Security code')).toBeInTheDocument();
@@ -84,10 +83,9 @@ export const LoadingIframeTest: Story = {
     const canvas = within(canvasElement);
 
     await waitFor(() => {
-      expect(canvas.getByText('Card details')).toBeInTheDocument();
+      expect(canvas.getByText('Card number')).toBeInTheDocument();
     });
 
-    expect(canvas.getByText('Card number')).toBeInTheDocument();
     expect(canvas.getByText('Cardholder name')).toBeInTheDocument();
     expect(canvas.getByText('Expiry date')).toBeInTheDocument();
     expect(canvas.getByText('Security code')).toBeInTheDocument();

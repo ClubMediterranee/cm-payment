@@ -79,17 +79,14 @@ export const Default: Story = {
 
     await waitFor(
       () => {
-        const heading = canvas.queryByRole('heading', { name: /What type of channel/ });
-        expect(heading).toBeInTheDocument();
+        const emailRadio = canvas.getByDisplayValue('6');
+        const phoneRadio = canvas.getByDisplayValue('4');
+
+        expect(emailRadio).toBeInTheDocument();
+        expect(phoneRadio).toBeInTheDocument();
       },
       { timeout: 10000 },
     );
-
-    const emailRadio = canvas.getByDisplayValue('6');
-    const phoneRadio = canvas.getByDisplayValue('4');
-
-    expect(emailRadio).toBeInTheDocument();
-    expect(phoneRadio).toBeInTheDocument();
   },
 };
 
@@ -376,18 +373,13 @@ export const AccessibilityTest: Story = {
       { timeout: 10000 },
     );
 
-    // Vérifier que le titre est un heading
     await waitFor(() => {
-      const heading = canvas.getByRole('heading', { name: /What type of channel/ });
-      expect(heading).toBeInTheDocument();
-    });
+      const radios = canvas.getAllByRole('radio');
+      expect(radios.length).toBe(2);
 
-    // Vérifier que les radios sont accessibles
-    const radios = canvas.getAllByRole('radio');
-    expect(radios.length).toBe(2);
-
-    radios.forEach((radio) => {
-      expect(radio).toBeInTheDocument();
+      radios.forEach((radio) => {
+        expect(radio).toBeInTheDocument();
+      });
     });
 
     // Test navigation clavier

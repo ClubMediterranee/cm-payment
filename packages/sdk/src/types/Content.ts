@@ -69,4 +69,14 @@ export type Content = {
       maxExceeded: string;
     };
   };
+  cardInstallments: {
+    title: string;
+    selectCardType: string;
+    selectInstallments: string;
+    installmentLabel: `${string}{count}${string}{amount}${string}`;
+    validation: {
+      methodRequired: string;
+      conditionRequired: string;
+    };
+  };
 };
