@@ -90,6 +90,7 @@ describe('useHipay', () => {
         cvc: {
           placeholder: mockContent.creditCardForm.cvc,
           selector: mockFieldSelectors.cvc,
+          helpButton: true,
         },
         expiryDate: {
           placeholder: mockContent.creditCardForm.expiryDate,

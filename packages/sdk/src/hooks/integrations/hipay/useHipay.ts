@@ -79,6 +79,7 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
       cvc: {
         placeholder: content.creditCardForm.cvc,
         selector: fieldSelectors.cvc,
+        helpButton: true,
       },
       expiryDate: {
         placeholder: content.creditCardForm.expiryDate,
