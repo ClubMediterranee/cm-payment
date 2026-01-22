@@ -10,6 +10,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/app/package.json ./packages/app/
 COPY packages/starter/package.json ./packages/starter/
 COPY packages/sdk/package.json ./packages/sdk/
+COPY packages/docs/package.json ./packages/docs/
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -24,6 +25,7 @@ COPY . .
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/starter/ pnpm --filter @clubmed/starter run build
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
+RUN NODE_ENV=${NODE_ENV} pnpm --filter docs run build
 
 # Production stage with nginx
 FROM nginx:alpine
@@ -38,6 +40,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /app/packages/app/dist /usr/share/nginx/html
 COPY --from=builder /app/packages/starter/dist /usr/share/nginx/html/starter
 COPY --from=builder /app/storybook-static /usr/share/nginx/html/storybook
+COPY --from=builder /app/packages/docs/build /usr/share/nginx/html/docs
 
 # Expose port 8080 (non-privileged). Actual port can be overridden via $PORT at runtime
 EXPOSE 8080
