@@ -14,7 +14,7 @@ export type ValidationError = {
 
 export type Validate = (
   data: CapsFormSchema,
-  config: Pick<CapsFormConfig, 'isSeller' | 'content'>,
+  config: Pick<CapsFormConfig, 'isSeller' | 'content' | 'providersConfig'>,
 ) => ValidationError | undefined;
 
 export const capsFormSchema = ({ isSeller, content, maxAmount, providersConfig }: CapsFormConfig) =>
