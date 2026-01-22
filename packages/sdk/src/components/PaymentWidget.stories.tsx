@@ -144,3 +144,16 @@ export const Default: Story = {
     },
   },
 };
+
+export const HostedField: Story = {
+  args: {
+    integrationMode: 'hosted_field',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'PaymentWidget en mode hosted_field avec Hipay.',
+      },
+    },
+  },
+};

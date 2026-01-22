@@ -1,6 +1,7 @@
 export * from './components/CardInstallments';
 export * from './components/Cgv';
 export * from './components/ContactChoice';
+export * from './components/PaymentProviders';
 export * from './components/PaymentSchedule';
 export * from './components/PaymentWidget';
 export * from './components/SubmitButton';
