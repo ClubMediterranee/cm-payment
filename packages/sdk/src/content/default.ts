@@ -76,4 +76,14 @@ export const defaultContent: Content = {
       maxExceeded: 'The amount cannot exceed the remaining total',
     },
   },
+  cardInstallments: {
+    title: 'Payment method',
+    selectCardType: 'Select your card type',
+    selectInstallments: 'Select the number of installments',
+    installmentLabel: '{count} X of {amount}',
+    validation: {
+      methodRequired: 'Please select a payment method',
+      conditionRequired: 'Please select the number of installments',
+    },
+  },
 };

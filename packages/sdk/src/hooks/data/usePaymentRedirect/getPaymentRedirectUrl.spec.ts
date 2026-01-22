@@ -98,7 +98,10 @@ describe('getPaymentRedirectUrl', () => {
       },
       token: undefined,
     });
-    expect(result).toBe('https://payment.gateway.com?param1=value1&param2=value2');
+    expect(result).toEqual({
+      url: 'https://payment.gateway.com',
+      body: 'param1=value1&param2=value2',
+    });
   });
 
   it('should handle booking type directly without creating booking', async () => {
@@ -127,7 +130,10 @@ describe('getPaymentRedirectUrl', () => {
       amount: 1000,
       provider_id: 'provider-123',
     });
-    expect(result).toBe('https://redirect.url?data=test');
+    expect(result).toEqual({
+      url: 'https://redirect.url',
+      body: 'data=test',
+    });
   });
 
   it('should throw error when redirect URL is empty', async () => {
@@ -231,7 +237,10 @@ describe('getPaymentRedirectUrl', () => {
       },
       token: undefined,
     });
-    expect(result).toBe('https://final.url?final=body');
+    expect(result).toEqual({
+      url: 'https://final.url',
+      body: 'final=body',
+    });
   });
 
   it('should handle callback_url_seller for GO/PARTNERS', async () => {
@@ -267,6 +276,9 @@ describe('getPaymentRedirectUrl', () => {
       },
       token: undefined,
     });
-    expect(result).toBe('https://redirect.url?data=test');
+    expect(result).toEqual({
+      url: 'https://redirect.url',
+      body: 'data=test',
+    });
   });
 });

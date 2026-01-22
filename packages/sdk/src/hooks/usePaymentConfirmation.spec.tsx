@@ -19,8 +19,8 @@ vi.mock('./data/usePaymentNotify', () => ({
   usePaymentNotify: (params: any) => mockPaymentNotify(params),
 }));
 
-vi.mock('../utils/url/redirectToCallbackUrl', () => ({
-  redirectToCallbackUrl: (params: any) => mockRedirectToCallback(params),
+vi.mock('../utils/url/navigateToCallbackUrl', () => ({
+  navigateToCallbackUrl: (params: any) => mockRedirectToCallback(params),
 }));
 
 const OriginalURLSearchParams = global.URLSearchParams;

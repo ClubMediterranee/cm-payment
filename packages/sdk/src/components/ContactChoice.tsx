@@ -31,69 +31,66 @@ export const ContactChoice = ({ reference, uuid }: Props) => {
   }
 
   return (
-    <div className="w-full flex flex-col">
-      <h2 className="text-h5 font-serif">{content.contactChoice.title}</h2>
-      <FormPanel>
-        <span className="text-sienna text-b3 mb-20">{sendLinkText}</span>
-        <Controller
-          name="template_id"
-          control={control}
-          render={({ field: { value, onChange, name } }) => (
-            <div className="flex flex-row gap-32">
-              {contactChoices.map((choice) => {
-                const isCurrentTemplate = choice.templateId === value;
-                const hasTextField = !!choice.input;
+    <FormPanel className="w-full flex flex-col">
+      <span className="text-sienna text-b3 mb-20">{sendLinkText}</span>
+      <Controller
+        name="template_id"
+        control={control}
+        render={({ field: { value, onChange, name } }) => (
+          <div className="flex flex-row gap-32">
+            {contactChoices.map((choice) => {
+              const isCurrentTemplate = choice.templateId === value;
+              const hasTextField = !!choice.input;
 
-                return (
-                  <div key={choice.templateId} className="flex flex-col space-y-16 w-full">
-                    <Radio
-                      key={`${isCurrentTemplate}`}
-                      name={name}
-                      value={choice.templateId}
-                      checked={isCurrentTemplate}
-                      disabled={!!choice.radio.disabled}
-                      onChange={(_, newValue) => onChange(newValue || '')}
-                    >
-                      <span data-textid="ContactChoicesLabel">
-                        {renderTemplate(content.contactChoice.choiceLabel, {
-                          label: choice.radio.label,
-                        })}
-                      </span>
-                    </Radio>
-                    {hasTextField && (
-                      <Controller
-                        name={`billing_details.${choice.input.name}` as any}
-                        control={control}
-                        render={({
-                          field: { value, onChange, ...rest },
-                          fieldState: { error, isTouched },
-                        }) => (
-                          <TextField
-                            {...rest}
-                            type={choice.input.type}
-                            value={value}
-                            onChange={(_, value) => onChange(value)}
-                            disabled={!isCurrentTemplate}
-                            data-name={'InputFor_' + choice.input.name}
-                            data-testid={'InputFor_' + choice.input.name}
-                            label={choice.input.label}
-                            aria-describedby={choice.input.label}
-                            errorMessage={error?.message}
-                            validationStatus={
-                              isTouched && !error ? 'success' : error ? 'error' : 'default'
-                            }
-                          />
-                        )}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        />
-      </FormPanel>
-    </div>
+              return (
+                <div key={choice.templateId} className="flex flex-col space-y-16 w-full">
+                  <Radio
+                    key={`${isCurrentTemplate}`}
+                    name={name}
+                    value={choice.templateId}
+                    checked={isCurrentTemplate}
+                    disabled={!!choice.radio.disabled}
+                    onChange={(_, newValue) => onChange(newValue || '')}
+                  >
+                    <span data-textid="ContactChoicesLabel">
+                      {renderTemplate(content.contactChoice.choiceLabel, {
+                        label: choice.radio.label,
+                      })}
+                    </span>
+                  </Radio>
+                  {hasTextField && (
+                    <Controller
+                      name={`billing_details.${choice.input.name}` as any}
+                      control={control}
+                      render={({
+                        field: { value, onChange, ...rest },
+                        fieldState: { error, isTouched },
+                      }) => (
+                        <TextField
+                          {...rest}
+                          type={choice.input.type}
+                          value={value}
+                          onChange={(_, value) => onChange(value)}
+                          disabled={!isCurrentTemplate}
+                          data-name={'InputFor_' + choice.input.name}
+                          data-testid={'InputFor_' + choice.input.name}
+                          label={choice.input.label}
+                          aria-describedby={choice.input.label}
+                          errorMessage={error?.message}
+                          validationStatus={
+                            isTouched && !error ? 'success' : error ? 'error' : 'default'
+                          }
+                        />
+                      )}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      />
+    </FormPanel>
   );
 };
 

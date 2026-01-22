@@ -9,11 +9,11 @@ const Loader = lazy(async () => ({
 export const RedirectPage = () => {
   const { paymentId = '' } = useParams<{ paymentId?: string }>();
 
-  usePaymentConfirmation({ paymentId });
+  const { showLoader } = usePaymentConfirmation({ paymentId });
 
   return (
     <Suspense fallback={null}>
-      <Loader isVisible />
+      <Loader isVisible={showLoader} />
     </Suspense>
   );
 };

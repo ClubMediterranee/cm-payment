@@ -55,6 +55,7 @@ export const MockedProvider = ({
     content: mergeFromPattern(defaultContent, content),
     isSeller,
     maxAmount,
+    providersConfig: paymentConfig?.providers || {},
   });
 
   useEffect(() => {

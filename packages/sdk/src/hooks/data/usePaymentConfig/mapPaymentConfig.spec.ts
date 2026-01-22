@@ -7,7 +7,7 @@ describe('mapPaymentConfig', () => {
       const featureFlip = {
         keys: [
           { key: 'featureFlipping.psp.evoxpay', value: true },
-          { key: 'featureFlipping.psp.hipay', value: false },
+          { key: 'featureFlipping.psp.mhipay', value: false },
         ],
       };
 
@@ -19,8 +19,8 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
-        HIPAY: { is_active: false },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
+        MHIPAY: { is_active: false, display_type: 'hosted_field' },
       });
     });
 
@@ -40,8 +40,8 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
-        PAYPAL: { is_active: false },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
+        PAYPAL: { is_active: false, display_type: 'redirect' },
       });
     });
 
@@ -58,7 +58,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        STRIPE: { is_active: true },
+        STRIPE: { is_active: true, display_type: 'redirect' },
       });
     });
 
@@ -79,7 +79,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
       });
     });
 
@@ -100,7 +100,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
       });
     });
   });
@@ -258,7 +258,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
       });
     });
   });
@@ -268,7 +268,7 @@ describe('mapPaymentConfig', () => {
       const featureFlip = {
         keys: [
           { key: 'featureFlipping.psp.evoxpay', value: true },
-          { key: 'featureFlipping.psp.hipay', value: false },
+          { key: 'featureFlipping.psp.mhipay', value: false },
           { key: 'featureFlipping.booking.banking.enableFreeDeposit', value: true },
         ],
       };
@@ -281,8 +281,8 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true },
-        HIPAY: { is_active: false },
+        EVOXPAY: { is_active: true, display_type: 'redirect' },
+        MHIPAY: { is_active: false, display_type: 'hosted_field' },
       });
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,

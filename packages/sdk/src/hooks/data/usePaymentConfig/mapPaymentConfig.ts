@@ -1,3 +1,4 @@
+import { GLOBAL_CAPS_SETTINGS } from '../../../config';
 import { OidcIssuerTypes } from '../../../types/CapsSettings';
 import {
   FeatureFlipsConfig,
@@ -76,7 +77,15 @@ const mapProvidersConfig = ({
     (acc, provider) => {
       const pspKey = `${PROVIDER_PSP_PREFIX}${provider}`;
       const value = getFeatureFlipValue({ legacyFlips, key: pspKey, issuerType, locale });
-      acc[provider.toUpperCase()] = { is_active: value };
+      const providerUpper = provider.toUpperCase();
+      acc[providerUpper] = {
+        is_active: value,
+        display_type:
+          GLOBAL_CAPS_SETTINGS.providersDisplayMode[
+            providerUpper as keyof typeof GLOBAL_CAPS_SETTINGS.providersDisplayMode
+          ] || 'redirect',
+      };
+
       return acc;
     },
     {} as Record<string, PaymentProviderConfig>,

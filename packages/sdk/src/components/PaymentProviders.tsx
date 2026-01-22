@@ -10,6 +10,7 @@ import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useWatch } from '../hooks/utils/useForm';
 import { TOKENS } from '../types/Tokens';
 import { formatCurrency } from '../utils/formatCurrency';
+import { getDefaultPaymentConditionId } from '../utils/paymentProviders';
 import { renderTemplate } from '../utils/renderTemplate';
 import { PaymentProviderRules } from './PaymentProviders/PaymentProviderRules';
 import { FormPanel } from './ui/FormPanel';
@@ -24,7 +25,7 @@ export const PaymentProviders = () => {
   const {
     data: { paymentProviders },
   } = usePaymentProviders();
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   const {
     paymentSchedule: [{ currency }],
@@ -68,7 +69,11 @@ export const PaymentProviders = () => {
                       name={name}
                       value={provider.id}
                       checked={value === provider.id}
-                      onChange={(_, providerId) => onChange(providerId)}
+                      onChange={(_, providerId) => {
+                        onChange(providerId);
+                        const provider = paymentProviders.find(({ id }) => id === providerId);
+                        setValue('payment_condition_id', getDefaultPaymentConditionId(provider));
+                      }}
                     >
                       {renderTemplate(
                         PROVIDER_LABEL[

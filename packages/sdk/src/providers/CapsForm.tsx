@@ -1,5 +1,5 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
-import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 import { Suspense } from 'react';
 import type { FallbackProps } from 'react-error-boundary';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -9,21 +9,32 @@ import { Action } from '../__generated__/index.schemas';
 import { Form } from '../components/Form';
 import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback';
 import { GlobalFormSkeleton } from '../components/ui/fallbacks/GlobalFormSkeleton';
+import { FormCallbacks, FormCallbacksContext } from '../contexts/FormCallbacksContext';
 import { useActionResolver } from '../hooks/data/useActionResolver';
 import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
 import { paymentProvidersQueryOptions } from '../hooks/data/usePaymentProviders';
 import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
 import { useCapsForm } from '../hooks/useCapsForm';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
+import { getDefaultPaymentConditionId } from '../utils/paymentProviders';
 import { validateComponents } from '../utils/validation/validateComponents';
 
-type CapsFormProps = PropsWithChildren<ComponentProps<typeof Form>> & {
-  fallback?: ReactNode;
-  action?: Action;
-  errorFallback?: (props: FallbackProps) => ReactNode;
-};
+type CapsFormProps = PropsWithChildren<
+  FormCallbacks & {
+    fallback?: ReactNode;
+    action?: Action;
+    errorFallback?: (props: FallbackProps) => ReactNode;
+  }
+>;
 
-function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
+function CapsFormProvider({
+  children,
+  action,
+  onLoad,
+  onError,
+  onLoadEnd,
+  ...props
+}: CapsFormProps) {
   const { id, content } = useCapsConfigContext();
   const { isSeller } = useOidcContext();
 
@@ -46,19 +57,24 @@ function CapsFormProvider({ children, action, ...props }: CapsFormProps) {
   const maxAmount = paymentSchedule?.[0]?.amount || 0;
 
   const methods = useCapsForm({
-    config: { content, isSeller, maxAmount },
+    config: { content, isSeller, maxAmount, providersConfig: paymentConfig.providers },
     defaultValues: {
       action: resolvedAction,
       provider_id: paymentProviders?.[0]?.id,
       amount: paymentSchedule?.[0]?.amount?.toString(),
       currency: paymentSchedule?.[0]?.currency,
+      payment_condition_id: getDefaultPaymentConditionId(paymentProviders?.[0]),
     },
   });
 
+  const callbacks: FormCallbacks = { onLoad, onError, onLoadEnd };
+
   return (
-    <ReactHookFormProvider {...methods}>
-      <Form {...props}>{children}</Form>
-    </ReactHookFormProvider>
+    <FormCallbacksContext.Provider value={callbacks}>
+      <ReactHookFormProvider {...methods}>
+        <Form {...props}>{children}</Form>
+      </ReactHookFormProvider>
+    </FormCallbacksContext.Provider>
   );
 }
 

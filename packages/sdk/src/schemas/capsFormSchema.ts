@@ -17,7 +17,7 @@ export type Validate = (
   config: Pick<CapsFormConfig, 'isSeller' | 'content'>,
 ) => ValidationError | undefined;
 
-export const capsFormSchema = ({ isSeller, content, maxAmount }: CapsFormConfig) =>
+export const capsFormSchema = ({ isSeller, content, maxAmount, providersConfig }: CapsFormConfig) =>
   z
     .object({
       action: z.nativeEnum(Action),
@@ -47,6 +47,7 @@ export const capsFormSchema = ({ isSeller, content, maxAmount }: CapsFormConfig)
       cgv: z.boolean().refine((val) => val === true, {
         message: content.cgv.validation.mustAccept,
       }),
+      payment_condition_id: z.string().optional(),
       billing_details: z
         .object({
           email: z.string().nullable().optional(),
@@ -62,7 +63,7 @@ export const capsFormSchema = ({ isSeller, content, maxAmount }: CapsFormConfig)
         .optional(),
     })
     .superRefine((data, ctx) => {
-      const config = { isSeller, content };
+      const config = { isSeller, content, providersConfig };
 
       const validations = [validateToken, validateEmail, validateMobilePhone];
       validations.forEach((validate) => {

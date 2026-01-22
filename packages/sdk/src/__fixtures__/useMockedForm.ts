@@ -3,6 +3,7 @@ import { type FieldErrors } from 'react-hook-form';
 
 import { useCapsForm, type UseCapsFormParams } from '../hooks/useCapsForm';
 import type { Content } from '../types/Content';
+import type { PaymentConfig } from '../types/PaymentConfig';
 
 export type TestArgs<T> = {
   onError?: (errors: FieldErrors) => void;
@@ -16,6 +17,7 @@ export function useMockedForm({
   isSeller,
   maxAmount,
   defaultValues,
+  providersConfig = {},
 }: {
   onError?: (errors: FieldErrors) => void;
   onChange?: (value: any) => void;
@@ -23,12 +25,14 @@ export function useMockedForm({
   isSeller?: boolean;
   maxAmount?: number;
   defaultValues?: UseCapsFormParams['defaultValues'];
+  providersConfig?: PaymentConfig['providers'];
 }) {
   const methods = useCapsForm({
     config: {
       content: content!,
       isSeller: isSeller!,
       maxAmount: maxAmount!,
+      providersConfig,
     },
     defaultValues,
   });

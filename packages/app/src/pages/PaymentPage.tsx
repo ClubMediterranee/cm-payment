@@ -1,15 +1,15 @@
 import {
   Action,
-  CardForm,
+  CardInstallments,
   Cgv,
   ContactChoice,
   Form,
-  IframeProvider,
   PaymentProviders,
   PaymentSchedule,
+  PaymentWidget,
+  SubmitButton,
   useDisclosure,
 } from '@clubmed/caps';
-import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
 import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
@@ -81,18 +81,16 @@ export function PaymentPage() {
           </h2>
           <PaymentProviders />
         </div>
+        <CardInstallments />
         <ContactChoice reference={reference} uuid={uuid} />
         <Cgv />
-        <IframeProvider />
-        <CardForm />
+        <PaymentWidget />
         {error?.message && (
           <p ref={ref} className="text-red font-semibold my-4">
             {error?.message}
           </p>
         )}
-        <Button type="submit" className="my-8">
-          Payer
-        </Button>
+        <SubmitButton className="my-8">Payer</SubmitButton>
       </Form>
     </div>
   );
