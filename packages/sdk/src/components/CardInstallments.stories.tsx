@@ -196,6 +196,27 @@ export const WithInteractions: Story = {
   render() {
     return <CardInstallmentsWithProvider />;
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(
+      () => {
+        expect(canvas.getByLabelText(/Select your card type/i)).toBeInTheDocument();
+      },
+      { timeout: 3000 },
+    );
+
+    const cardTypeSelect = canvas.getByLabelText(/Select your card type/i) as HTMLSelectElement;
+
+    expect(cardTypeSelect.value).toBe('Visa');
+
+    cardTypeSelect.value = 'Mastercard';
+    cardTypeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+    await waitFor(() => {
+      expect(cardTypeSelect.value).toBe('Mastercard');
+    });
+  },
 };
 
 export const WithoutInstallments: Story = {
