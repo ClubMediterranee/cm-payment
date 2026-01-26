@@ -51,7 +51,7 @@ export const IframeView = () => {
     if (isValid) {
       handleSubmit();
     }
-  }, [isValid]);
+  }, [isValid, watchedForm]);
 
   useEffect(() => {
     trigger();
@@ -72,7 +72,7 @@ export const IframeView = () => {
         title="payment-iframe"
         ref={iframeRef}
         style={{
-          height: getIframeHeight(watchedForm.provider_id),
+          height: isPending || isError ? 0 : getIframeHeight(watchedForm.provider_id),
           visibility: isPending || isError ? 'hidden' : 'visible',
         }}
         className="w-full overflow-hidden"
