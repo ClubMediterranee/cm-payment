@@ -33,6 +33,7 @@ export default defineConfig({
       include: ['packages/*/src/**/*.{tsx,ts}'],
       exclude: [
         '**/packages/starter/**',
+        '**/packages/docs/**',
         '**/lib/atoms/icons',
         '**/*.spec.{ts,tsx}',
         '**/*.stories.{ts,tsx}',
@@ -55,10 +56,10 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        statements: 82.71,
-        branches: 85.32,
-        functions: 76.63,
-        lines: 82.71,
+        statements: 85.11,
+        branches: 89.56,
+        functions: 86.39,
+        lines: 85.11,
       },
     },
     projects: [
