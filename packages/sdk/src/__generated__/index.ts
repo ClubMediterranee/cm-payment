@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3358.0
+ * OpenAPI spec version: 0.3375.1
  */
 import type {
   CartUpgradeRoomModel,
@@ -24,6 +24,8 @@ import type {
   ProposalPaymentScheduleModelV1,
   ProposalResponseModelV1,
   ProviderParametersModel,
+  TokenHolderModel,
+  TokenRequestModel,
 } from './index.schemas';
 
 import { fetcher } from '../utils/fetcher';
@@ -150,6 +152,22 @@ export const postV3Bookings = (
 };
 
 /**
+ * <p><strong>Should be called after :</strong></p><ul><li><code>GET /v0/payment_providers</code> &rArr; list of available <em>{provider_id}</em></li></ul>
+ * @summary <em>RPC</em> &ndash; Obtains a token from a payment providers.
+ */
+export const postV0PaymentProvidersProviderIdRequestToken = (
+  providerId: string,
+  tokenRequestModel: TokenRequestModel,
+) => {
+  return fetcher<TokenHolderModel>({
+    url: `/v0/payment_providers/${providerId}/request_token`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: tokenRequestModel,
+  });
+};
+
+/**
  * The only required parameters is the return url, to which the payment service provider will redirect to after
               the payment is processed. Other parameters are to be provided on case by case basis, for a given provider, payment methods,
               and use case flow.
@@ -218,6 +236,9 @@ export type GetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResult =
 >;
 export type PostV1PaymentsResult = NonNullable<Awaited<ReturnType<typeof postV1Payments>>>;
 export type PostV3BookingsResult = NonNullable<Awaited<ReturnType<typeof postV3Bookings>>>;
+export type PostV0PaymentProvidersProviderIdRequestTokenResult = NonNullable<
+  Awaited<ReturnType<typeof postV0PaymentProvidersProviderIdRequestToken>>
+>;
 export type PostV0PaymentsPaymentIdRedirectRequestResult = NonNullable<
   Awaited<ReturnType<typeof postV0PaymentsPaymentIdRedirectRequest>>
 >;

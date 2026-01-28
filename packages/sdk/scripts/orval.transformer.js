@@ -1,4 +1,9 @@
-import { CategoryPaymentMethod, UnsupportedAction } from './constants.js';
+import {
+  CategoryPaymentMethod,
+  CybersourceTokenRequestParams,
+  TokenRequestModelSchema,
+  UnsupportedAction,
+} from './constants.js';
 
 export const ENDPOINTS = [
   'POST /v1/payments/{payment_id}/notify',
@@ -14,6 +19,7 @@ export const ENDPOINTS = [
   'POST /v3/bookings',
   'POST /v1/payments',
   'POST /v0/payments/{payment_id}/redirect_request',
+  'POST /v0/payment_providers/{provider_id}/request_token',
 ];
 
 export default function (schema) {
@@ -56,6 +62,8 @@ export default function (schema) {
             },
           },
         },
+        CybersourceTokenRequestParams,
+        TokenRequestModel: TokenRequestModelSchema,
       },
     },
     paths,

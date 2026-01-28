@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useWatch } from 'react-hook-form';
 
 import type { HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useDisclosure } from '../../utils/useDisclosure';
-import { useFormContext } from '../../utils/useForm';
+import { useFormContext, useWatch } from '../../utils/useForm';
 import { useScriptLoader } from '../../utils/useScriptLoader';
 import { createHipayHostedFields, HIPAY_CONFIG, mapHipayErrorsToObject } from './hipay';
 
@@ -24,8 +23,8 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
   const { isLoaded } = useScriptLoader(HIPAY_CONFIG.scriptUrl);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const watchedToken = useWatch({ name: 'token.value' });
-  const watchedTokenStatus = useWatch({ name: 'token.status' });
+  const watchedToken = useWatch('token.value');
+  const watchedTokenStatus = useWatch('token.status');
   const { isOpen: isHipayReady, onOpen: onHipayReady } = useDisclosure();
 
   const instance = useRef<HipayInstance | null>(null);
