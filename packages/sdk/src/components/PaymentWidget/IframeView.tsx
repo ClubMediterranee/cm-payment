@@ -1,11 +1,10 @@
 import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
-import { useWatch } from 'react-hook-form';
 
 import { useFormCallbacks } from '../../contexts/FormCallbacksContext';
 import { usePaymentSubmit } from '../../hooks/usePaymentSubmit';
-import { useFormContext } from '../../hooks/utils/useForm';
+import { useFormContext, useWatch } from '../../hooks/utils/useForm';
 import { IframeMessageType } from '../../utils/iframe/constants';
 import { getIframeHeight } from '../../utils/iframe/getIframeHeight';
 import { useIframeMessageBridge } from '../../utils/iframe/useIframeMessageBridge';
@@ -20,11 +19,11 @@ export const IframeView = () => {
   const {
     formState: { isValid },
     trigger,
-    control,
     setValue,
   } = useFormContext();
 
-  const watchedForm = useWatch({ control });
+  const watchedPaymentConditionId = useWatch('payment_condition_id');
+  const watchedProviderId = useWatch('provider_id');
 
   const { onLoad, onLoadEnd } = useFormCallbacks();
 
@@ -51,7 +50,7 @@ export const IframeView = () => {
     if (isValid) {
       handleSubmit();
     }
-  }, [isValid, watchedForm]);
+  }, [isValid, watchedPaymentConditionId]);
 
   useEffect(() => {
     trigger();
@@ -72,7 +71,7 @@ export const IframeView = () => {
         title="payment-iframe"
         ref={iframeRef}
         style={{
-          height: isPending || isError ? 0 : getIframeHeight(watchedForm.provider_id),
+          height: isPending || isError ? 0 : getIframeHeight(watchedProviderId),
           visibility: isPending || isError ? 'hidden' : 'visible',
         }}
         className="w-full overflow-hidden"

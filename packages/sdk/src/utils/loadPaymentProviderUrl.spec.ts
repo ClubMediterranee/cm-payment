@@ -1,5 +1,4 @@
 import type { RefObject } from 'react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import type { ProviderParametersModel } from '../__generated__/index.schemas';
 import { loadPaymentProviderUrl } from './loadPaymentProviderUrl';
@@ -15,7 +14,7 @@ describe('loadPaymentProviderUrl', () => {
   });
 
   afterEach(() => {
-    window.location = originalLocation;
+    (window as any).location = originalLocation;
     document.body.innerHTML = '';
   });
 
