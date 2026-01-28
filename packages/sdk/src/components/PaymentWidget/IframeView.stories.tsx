@@ -141,10 +141,11 @@ export const Default: Story = {
     expect(iframe).toBeInTheDocument();
     expect(iframe.tagName).toBe('IFRAME');
 
-    const computedStyle = window.getComputedStyle(iframe);
-    const height = computedStyle.height;
-    expect(height).toBeTruthy();
-    expect(parseInt(height)).toBeGreaterThan(0);
+    await waitFor(() => {
+      const computedStyle = window.getComputedStyle(iframe);
+      const height = computedStyle.height;
+      expect(parseInt(height)).toBeGreaterThan(0);
+    });
 
     await waitFor(
       () => {
