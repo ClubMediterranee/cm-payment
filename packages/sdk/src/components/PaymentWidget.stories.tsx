@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { delay, http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
-import { expect, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { Action } from '../__generated__/index.schemas';
