@@ -1,5 +1,4 @@
-import { Action } from '@clubmed/payment-sdk/types';
-import type { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings.js';
+import { Action, OidcIssuerTypes } from '@clubmed/caps';
 
 export interface AppState {
   issuerType: OidcIssuerTypes;

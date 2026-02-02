@@ -1,4 +1,3 @@
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
 import { Controller } from 'react-hook-form';
@@ -7,6 +6,7 @@ import { useContactChoice } from '../hooks/useContactChoice';
 import { useProfilePrefill } from '../hooks/useProfilePrefill';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../hooks/utils/useForm';
+import { TOKENS } from '../types/Tokens';
 import { renderTemplate } from '../utils/renderTemplate';
 import { FormPanel } from './ui/FormPanel';
 import { RadioSkeleton, TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';

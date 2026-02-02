@@ -1,10 +1,10 @@
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
 import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
 import { Controller } from 'react-hook-form';
 
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../hooks/utils/useForm';
+import { TOKENS } from '../types/Tokens';
 import { FormPanel } from './ui/FormPanel';
 import { CheckboxSkeleton, TitleSkeleton } from './ui/skeletons';
 

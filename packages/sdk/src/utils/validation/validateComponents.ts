@@ -1,6 +1,7 @@
-import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config.js';
-import type { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings.js';
 import React, { isValidElement } from 'react';
+
+import { GLOBAL_CAPS_SETTINGS } from '../../config';
+import { OidcIssuerTypes } from '../../types/CapsSettings';
 
 function getAvailableComponent(children: React.ReactNode): symbol[] {
   function flattenChildren(children: React.ReactNode): React.ReactNode[] {

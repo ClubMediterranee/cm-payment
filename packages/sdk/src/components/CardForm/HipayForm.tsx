@@ -1,5 +1,4 @@
-import { useHipay } from '@clubmed/payment-sdk/hooks/integrations/hipay/useHipay';
-
+import { useHipay } from '../../hooks/integrations/hipay/useHipay';
 import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 import { FormPanel } from '../ui/FormPanel';
 import { HostedField } from '../ui/HostedField';

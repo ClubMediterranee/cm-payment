@@ -1,6 +1,7 @@
-import { useCapsConfigContext } from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
 import { Icon } from '@clubmed/trident-icons';
 import clsx from 'clsx';
+
+import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 
 export const PaymentProviderRules = ({ className }: { className?: string }) => {
   const { content } = useCapsConfigContext();

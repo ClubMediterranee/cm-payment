@@ -1,4 +1,4 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings.js';
+import { OidcIssuerTypes } from '@clubmed/caps';
 
 export const AppSettings = {
   paymentPageUrl:

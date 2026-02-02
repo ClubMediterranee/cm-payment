@@ -1,5 +1,5 @@
 import { Action } from '../../../__generated__/index.schemas';
-import { getCapsConfig } from '../../../providers/CapsConfigProvider';
+import { getPaymentConfig } from '../../../providers/PaymentConfigProvider';
 import { sdkQueryClient } from '../../../providers/QueryClientProvider';
 import { daysUntilToday, parseApiDate } from '../../../utils/formatDate';
 import { paymentScheduleQueryOptions } from '../usePaymentSchedule';
@@ -17,7 +17,7 @@ export const checkFreeDepositAuthorization = async ({
   resortArrivalDate,
   freeDepositConfig,
 }: CheckFreeDepositAuthorizationArgs) => {
-  const { id, type } = getCapsConfig();
+  const { id, type } = getPaymentConfig();
   const { enabled, daysBeforeTripToAllowFreeDeposit } = freeDepositConfig;
   if (!enabled) {
     return false;

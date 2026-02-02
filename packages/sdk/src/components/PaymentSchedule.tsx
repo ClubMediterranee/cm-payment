@@ -1,8 +1,8 @@
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
 import { Controller } from 'react-hook-form';
 
 import { Action } from '../__generated__/index.schemas';
 import { useFormContext } from '../hooks/utils/useForm';
+import { TOKENS } from '../types/Tokens';
 import { FreeDepositField } from './PaymentSchedule/FreeDepositField';
 import { ScheduleOptionsField } from './PaymentSchedule/ScheduleOptionsField';
 import { FormPanel } from './ui/FormPanel';

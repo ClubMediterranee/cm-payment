@@ -1,12 +1,14 @@
-import { CardForm } from '@clubmed/payment-sdk/components/CardForm.js';
-import { Cgv } from '@clubmed/payment-sdk/components/Cgv';
-import { ContactChoice } from '@clubmed/payment-sdk/components/ContactChoice.js';
-import { IframeProvider } from '@clubmed/payment-sdk/components/IframeProvider.js';
-import { PaymentProviders } from '@clubmed/payment-sdk/components/PaymentProviders.js';
-import { PaymentSchedule } from '@clubmed/payment-sdk/components/PaymentSchedule';
-import { useDisclosure } from '@clubmed/payment-sdk/hooks/utils/useDisclosure';
-import { CapsForm } from '@clubmed/payment-sdk/providers/CapsForm.js';
-import { Action } from '@clubmed/payment-sdk/types';
+import {
+  Action,
+  CardForm,
+  Cgv,
+  ContactChoice,
+  Form,
+  IframeProvider,
+  PaymentProviders,
+  PaymentSchedule,
+  useDisclosure,
+} from '@clubmed/caps';
 import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
 import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';
@@ -68,7 +70,7 @@ export function PaymentPage() {
         <Stay stay={stay!} />
       </Suspense>
 
-      <CapsForm onError={onError} onLoad={onLoad} onLoadEnd={onLoadEnd} action={action}>
+      <Form onError={onError} onLoad={onLoad} onLoadEnd={onLoadEnd} action={action}>
         <div className="w-full">
           <h2 className="text-h5 mb-16 font-serif">Choisissez l'échéancier de paiement</h2>
           <PaymentSchedule />
@@ -91,7 +93,7 @@ export function PaymentPage() {
         <Button type="submit" className="my-8">
           Payer
         </Button>
-      </CapsForm>
+      </Form>
     </div>
   );
 }

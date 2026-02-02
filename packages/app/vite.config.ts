@@ -31,6 +31,11 @@ export default defineConfig({
     }),
     process.env.NODE_ENV !== 'test' ? (basicSsl as any)() : undefined,
   ] as PluginOption[],
+  resolve: {
+    alias: {
+      '@clubmed/caps': join(root, '../sdk/src/index.ts'),
+    },
+  },
   server: {
     host: process.env.HOST,
     proxy: {

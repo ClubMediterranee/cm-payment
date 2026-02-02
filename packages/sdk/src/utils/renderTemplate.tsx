@@ -19,7 +19,7 @@ export const renderTemplate = <T extends string>(template: T, values: TemplateVa
   });
 
   return (
-    <span>
+    <span className="text-left">
       {template
         .split(/({\w+})/g)
         .map((part, i) =>

@@ -20,9 +20,10 @@ export default defineConfig({
       projects: [join(root, '../../tsconfig.app.json')],
     }),
     dts({
-      aliasesExclude: [/@clubmed\/payment-sdk.*/],
-      include: ['src'],
+      entryRoot: 'src',
+      include: ['src/**/*.{ts,tsx}'],
       exclude: ['**/*.spec.{ts,tsx}', '**/*.stories.{ts,tsx}', '**/__mocks__/**'],
+      tsconfigPath: './tsconfig.build.json',
     }),
     viteStaticCopy({
       targets: [

@@ -1,7 +1,7 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/CapsSettings';
-import { PaymentConfig } from '@clubmed/payment-sdk/types/PaymentConfig';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
+import type { OidcIssuerTypes } from '../../../types/CapsSettings';
+import type { PaymentConfig } from '../../../types/PaymentConfig';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { getPaymentConfig } from './getPaymentConfig';
 

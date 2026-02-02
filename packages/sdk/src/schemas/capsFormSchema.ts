@@ -1,8 +1,8 @@
-import { Action } from '@clubmed/payment-sdk/__generated__/index.schemas';
-import { GLOBAL_CAPS_SETTINGS } from '@clubmed/payment-sdk/config';
-import type { CapsFormConfig } from '@clubmed/payment-sdk/types/CapsFormConfig';
 import * as z from 'zod';
 
+import { GLOBAL_CAPS_SETTINGS } from '../config';
+import { Action } from '../types';
+import { CapsFormConfig } from '../types/CapsFormConfig';
 import { validateEmail } from './validations/validateEmail';
 import { validateMobilePhone } from './validations/validateMobilePhone';
 import { validateToken } from './validations/validateToken';

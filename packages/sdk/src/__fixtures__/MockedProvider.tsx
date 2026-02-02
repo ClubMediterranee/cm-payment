@@ -8,7 +8,7 @@ import { Action } from '../__generated__/index.schemas';
 import { defaultContent } from '../content/default';
 import { ACTION_RESOLVER_QUERY_KEY } from '../hooks/data/useActionResolver';
 import { PAYMENT_CONFIG_QUERY_KEY } from '../hooks/data/usePaymentConfig';
-import { CapsConfigProvider } from '../providers/CapsConfigProvider';
+import { PaymentConfigProvider } from '../providers/PaymentConfigProvider';
 import { sdkQueryClient } from '../providers/QueryClientProvider';
 import { CapsFormSchema } from '../schemas/capsFormSchema';
 import { OidcIssuerTypes, OidcSettings } from '../types/CapsSettings';
@@ -82,7 +82,7 @@ export const MockedProvider = ({
   }, [paymentConfig]);
 
   return (
-    <CapsConfigProvider
+    <PaymentConfigProvider
       content={content}
       paymentGatewayUrl="https://mock.clubmed.com"
       locale="fr-FR"
@@ -105,6 +105,6 @@ export const MockedProvider = ({
           <MockedFormProvider {...methods}>{children}</MockedFormProvider>
         </IconsProvider>
       </Suspense>
-    </CapsConfigProvider>
+    </PaymentConfigProvider>
   );
 };

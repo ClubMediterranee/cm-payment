@@ -1,13 +1,13 @@
 import { Action } from '../../../__generated__/index.schemas';
-import { getCapsConfig } from '../../../providers/CapsConfigProvider';
+import { getPaymentConfig } from '../../../providers/PaymentConfigProvider';
 import { sdkQueryClient } from '../../../providers/QueryClientProvider';
 import { daysUntilToday, parseApiDate } from '../../../utils/formatDate';
 import { paymentScheduleQueryOptions } from '../usePaymentSchedule';
 import { ACTION_RESOLVER_QUERY_KEY } from './';
 import { checkFreeDepositAuthorization } from './checkFreeDepositAuthorization';
 
-vi.mock('../../../providers/CapsConfigProvider', () => ({
-  getCapsConfig: vi.fn(),
+vi.mock('../../../providers/PaymentConfigProvider', () => ({
+  getPaymentConfig: vi.fn(),
 }));
 
 vi.mock('../../../providers/QueryClientProvider', () => ({
@@ -26,7 +26,7 @@ vi.mock('../usePaymentSchedule', () => ({
   paymentScheduleQueryOptions: vi.fn(),
 }));
 
-const mockGetCapsConfig = vi.mocked(getCapsConfig);
+const mockGetCapsConfig = vi.mocked(getPaymentConfig);
 const mockSetQueryData = vi.mocked(sdkQueryClient.setQueryData);
 const mockFetchQuery = vi.mocked(sdkQueryClient.fetchQuery);
 const mockParseApiDate = vi.mocked(parseApiDate);

@@ -1,8 +1,8 @@
-import { getCapsConfig } from '../providers/CapsConfigProvider';
+import { getPaymentConfig } from '../providers/PaymentConfigProvider';
 import { fetcher } from './fetcher';
 
-vi.mock('../providers/CapsConfigProvider', () => ({
-  getCapsConfig: vi.fn(),
+vi.mock('../providers/PaymentConfigProvider', () => ({
+  getPaymentConfig: vi.fn(),
 }));
 
 global.fetch = vi.fn();
@@ -21,7 +21,7 @@ describe('fetcher', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getCapsConfig).mockReturnValue(mockSDKOptions as any);
+    vi.mocked(getPaymentConfig).mockReturnValue(mockSDKOptions as any);
   });
 
   it('should successfully fetch data', async () => {
@@ -66,7 +66,7 @@ describe('fetcher', () => {
   it('should not include auth token when accessToken is empty', async () => {
     const mockResponse = { data: 'test' };
 
-    vi.mocked(getCapsConfig).mockReturnValue({
+    vi.mocked(getPaymentConfig).mockReturnValue({
       ...mockSDKOptions,
       oidc: { accessToken: '' },
     } as any);

@@ -7,7 +7,7 @@ import {
   type FieldValues,
 } from 'react-hook-form';
 
-import { type CapsFormSchema } from '@clubmed/payment-sdk/schemas/capsFormSchema';
+import { type CapsFormSchema } from '../../schemas/capsFormSchema';
 
 export const useForm = <TFieldValues extends FieldValues = FieldValues>(
   props?: UseFormProps<TFieldValues>,

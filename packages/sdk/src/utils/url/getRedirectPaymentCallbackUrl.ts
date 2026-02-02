@@ -1,4 +1,4 @@
-import { getCapsConfig } from '@clubmed/payment-sdk/providers/CapsConfigProvider';
+import { getPaymentConfig } from '../../providers/PaymentConfigProvider';
 
 export function getRedirectPaymentCallbackUrl(paymentId: string, providerId: string): string {
   const {
@@ -7,7 +7,7 @@ export function getRedirectPaymentCallbackUrl(paymentId: string, providerId: str
     type,
     id,
     callbackUrl,
-  } = getCapsConfig();
+  } = getPaymentConfig();
 
   const redirectUrl = new URL(paymentGatewayUrl);
   redirectUrl.pathname = `${issuerType.toLocaleLowerCase()}/redirect/${paymentId}`;

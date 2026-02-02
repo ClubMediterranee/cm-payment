@@ -1,4 +1,4 @@
-import { getCapsConfig } from '../providers/CapsConfigProvider';
+import { getPaymentConfig } from '../providers/PaymentConfigProvider';
 
 export const fetcher = async <T>({
   url,
@@ -17,7 +17,7 @@ export const fetcher = async <T>({
     locale,
     oidc: { accessToken },
     api: { url: apiUrl, apiKey },
-  } = getCapsConfig();
+  } = getPaymentConfig();
 
   const queryParams = new URLSearchParams();
 

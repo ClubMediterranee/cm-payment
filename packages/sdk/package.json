@@ -1,5 +1,5 @@
 {
-  "name": "@clubmed/payment-sdk",
+  "name": "@clubmed/caps",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -7,34 +7,10 @@
   "license": "BSD-3-Clause",
   "main": "index.js",
   "exports": {
-    ".": "./dist/index.js",
-    "./components/*": {
-      "source": "./src/components/*",
-      "types": "./dist/components/*.d.ts",
-      "import": "./dist/components/*.js",
-      "default": "./dist/components/*.js"
-    },
-    "./contexts/*": {
-      "source": "./src/contexts/*",
-      "types": "./contexts/*.d.ts",
-      "import": "./contexts/*.js",
-      "default": "./contexts/*.js"
-    },
-    "./providers/*": {
-      "source": "./src/providers/*",
-      "types": "./providers/*.d.ts",
-      "import": "./providers/*.js",
-      "default": "./providers/*.js"
-    },
-    "./hooks/*": {
-      "types": "./dist/hooks/*.d.ts",
-      "import": "./dist/hooks/*.js",
-      "default": "./dist/hooks/*.js"
-    },
-    "./types/*": {
-      "types": "./dist/types/*.d.ts",
-      "import": "./dist/types/*.js",
-      "default": "./dist/types/*.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {

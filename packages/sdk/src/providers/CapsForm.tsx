@@ -1,8 +1,3 @@
-import {
-  useCapsConfigContext,
-  useOidcContext,
-} from '@clubmed/payment-sdk/hooks/utils/useCapsConfigContext';
-import { validateComponents } from '@clubmed/payment-sdk/utils/validation/validateComponents';
 import { useSuspenseQueries } from '@tanstack/react-query';
 import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
 import { Suspense } from 'react';
@@ -19,6 +14,8 @@ import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
 import { paymentProvidersQueryOptions } from '../hooks/data/usePaymentProviders';
 import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
 import { useCapsForm } from '../hooks/useCapsForm';
+import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
+import { validateComponents } from '../utils/validation/validateComponents';
 
 type CapsFormProps = PropsWithChildren<ComponentProps<typeof Form>> & {
   fallback?: ReactNode;
@@ -88,3 +85,5 @@ export function CapsForm({
     </ErrorBoundary>
   );
 }
+
+export { CapsForm as Form };
