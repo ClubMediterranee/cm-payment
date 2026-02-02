@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {},
+  "private": true,
+  "type": "module",
+  "author": "Club Med",
+  "license": "BSD-3-Clause",
+  "main": "index.js",
+  "peerDependencies": {},
+  "tsed": {
+    "convention": "conv_default",
+    "architecture": "arc_default",
+    "packageManager": "pnpm",
+    "runtime": "node",
+    "platform": "express"
+  }
+}
