@@ -58,7 +58,7 @@ importers:
         version: 9.1.9(storybook@9.1.12(@testing-library/dom@10.4.1)(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(prettier@3.6.2)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1)))
       "@storybook/addon-vitest":
         specifier: 9.1.9
-        version: 9.1.9(@vitest/browser@3.2.4(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(playwright@1.56.1)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))(vitest@3.2.4))(@vitest/runner@3.2.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@9.1.12(@testing-library/dom@10.4.1)(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(prettier@3.6.2)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1)))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@25.2.0)(@vitest/browser@3.2.4)(jiti@1.21.7)(jsdom@27.0.1(postcss@8.5.6))(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))
+        version: 9.1.9(@vitest/browser@3.2.4)(@vitest/runner@3.2.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@9.1.12(@testing-library/dom@10.4.1)(msw@2.11.6(@types/node@24.9.1)(typescript@5.9.2))(prettier@3.6.2)(vite@7.1.7(@types/node@24.9.1)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1)))(vitest@3.2.4)
       "@storybook/react-vite":
         specifier: 9.1.9
         version: 9.1.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rollup@4.52.5)(storybook@9.1.12(@testing-library/dom@10.4.1)(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(prettier@3.6.2)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1)))(typescript@5.9.2)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))
@@ -91,7 +91,7 @@ importers:
         version: 3.2.4(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(playwright@1.56.1)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))(vitest@3.2.4)
       "@vitest/coverage-v8":
         specifier: ^3.2.4
-        version: 3.2.4(@vitest/browser@3.2.4(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(playwright@1.56.1)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))(vitest@3.2.4))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@25.2.0)(@vitest/browser@3.2.4)(jiti@1.21.7)(jsdom@27.0.1(postcss@8.5.6))(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))
+        version: 3.2.4(@vitest/browser@3.2.4)(vitest@3.2.4)
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.21(postcss@8.5.6)
@@ -133,7 +133,7 @@ importers:
         version: 7.13.3(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.2)
       eslint-plugin-vitest:
         specifier: ^0.5.4
-        version: 0.5.4(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.2)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@25.2.0)(@vitest/browser@3.2.4)(jiti@1.21.7)(jsdom@27.0.1(postcss@8.5.6))(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))
+        version: 0.5.4(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.2)(vitest@3.2.4)
       globals:
         specifier: ^15.9.0
         version: 15.15.0
@@ -361,6 +361,15 @@ importers:
       msw:
         specifier: ^2.11.3
         version: 2.11.6(@types/node@25.2.0)(typescript@5.9.3)
+
+  packages/server:
+    devDependencies:
+      "@tsed/cli-plugin-eslint":
+        specifier: 7.0.0-beta.15
+        version: 7.0.0-beta.15
+      "@tsed/cli-plugin-vitest":
+        specifier: 7.0.0-beta.15
+        version: 7.0.0-beta.15
 
   packages/starter:
     dependencies:
@@ -5069,6 +5078,18 @@ packages:
         integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==,
       }
     engines: { node: ">=10.13.0" }
+
+  "@tsed/cli-plugin-eslint@7.0.0-beta.15":
+    resolution:
+      {
+        integrity: sha512-8HDBUx+Xx4hEBovKvaCXI3oxs00mFDiB9Ea+RB8pGZxjGFAWmuynv62qJb64fcanyPYHAoo4DVQxu7c+3hy4Jg==,
+      }
+
+  "@tsed/cli-plugin-vitest@7.0.0-beta.15":
+    resolution:
+      {
+        integrity: sha512-sxZBMWFG6v+wnq7xLXZ67uL9HKbskIVzm04j1yVzM0dd+R+lz69d4yHML6hjFBZv1gVq6Sil9/tuMPFBya/+3A==,
+      }
 
   "@types/argparse@1.0.38":
     resolution:
@@ -16449,6 +16470,12 @@ packages:
         integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==,
       }
 
+  tslib@2.7.0:
+    resolution:
+      {
+        integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==,
+      }
+
   tslib@2.8.1:
     resolution:
       {
@@ -21400,7 +21427,7 @@ snapshots:
       storybook: 9.1.12(@testing-library/dom@10.4.1)(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(prettier@3.6.2)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))
       ts-dedent: 2.2.0
 
-  "@storybook/addon-vitest@9.1.9(@vitest/browser@3.2.4(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(playwright@1.56.1)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))(vitest@3.2.4))(@vitest/runner@3.2.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@9.1.12(@testing-library/dom@10.4.1)(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(prettier@3.6.2)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1)))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@25.2.0)(@vitest/browser@3.2.4)(jiti@1.21.7)(jsdom@27.0.1(postcss@8.5.6))(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))":
+  "@storybook/addon-vitest@9.1.9(@vitest/browser@3.2.4)(@vitest/runner@3.2.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@9.1.12(@testing-library/dom@10.4.1)(msw@2.11.6(@types/node@24.9.1)(typescript@5.9.2))(prettier@3.6.2)(vite@7.1.7(@types/node@24.9.1)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1)))(vitest@3.2.4)":
     dependencies:
       "@storybook/global": 5.0.0
       "@storybook/icons": 1.6.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -21707,6 +21734,14 @@ snapshots:
       "@testing-library/dom": 10.4.1
 
   "@trysound/sax@0.2.0": {}
+
+  "@tsed/cli-plugin-eslint@7.0.0-beta.15":
+    dependencies:
+      tslib: 2.7.0
+
+  "@tsed/cli-plugin-vitest@7.0.0-beta.15":
+    dependencies:
+      tslib: 2.7.0
 
   "@types/argparse@1.0.38": {}
 
@@ -22136,7 +22171,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  "@vitest/coverage-v8@3.2.4(@vitest/browser@3.2.4(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(playwright@1.56.1)(vite@7.1.7(@types/node@25.2.0)(jiti@1.21.7)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))(vitest@3.2.4))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@25.2.0)(@vitest/browser@3.2.4)(jiti@1.21.7)(jsdom@27.0.1(postcss@8.5.6))(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))":
+  "@vitest/coverage-v8@3.2.4(@vitest/browser@3.2.4)(vitest@3.2.4)":
     dependencies:
       "@ampproject/remapping": 2.3.0
       "@bcoe/v8-coverage": 1.0.2
@@ -24123,7 +24158,7 @@ snapshots:
       - supports-color
       - typescript
 
-  eslint-plugin-vitest@0.5.4(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.2)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@25.2.0)(@vitest/browser@3.2.4)(jiti@1.21.7)(jsdom@27.0.1(postcss@8.5.6))(msw@2.11.6(@types/node@25.2.0)(typescript@5.9.2))(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1)):
+  eslint-plugin-vitest@0.5.4(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.2)(vitest@3.2.4):
     dependencies:
       "@typescript-eslint/utils": 7.18.0(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.2)
       eslint: 9.38.0(jiti@1.21.7)
@@ -29502,6 +29537,8 @@ snapshots:
       strip-bom: 3.0.0
 
   tslib@1.14.1: {}
+
+  tslib@2.7.0: {}
 
   tslib@2.8.1: {}
 
