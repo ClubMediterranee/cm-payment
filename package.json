@@ -12,6 +12,7 @@
     "url": "https://scm.clubmed.com/clubmed/ui/cm-payment.git"
   },
   "scripts": {
+    "postinstall": "pnpm --filter esbuild-cjs-shim-plugin run build:lib",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "pretest": "pnpm exec playwright install",
@@ -27,6 +28,7 @@
     "build-storybook": "storybook build",
     "build:sdk": "pnpm --filter sdk run build",
     "build:app": "pnpm --filter app run build",
+    "build:server": "pnpm --filter server run build",
     "prepare": "husky",
     "chromatic": "chromatic",
     "release:dry:run": "cmrelease --dry-run",

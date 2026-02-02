@@ -45,6 +45,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      '/rest': {
+        target: process.env.REST_TARGET,
+        secure: false,
+        changeOrigin: true,
+      },
     },
   },
 });

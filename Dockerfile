@@ -11,6 +11,7 @@ COPY packages/app/package.json ./packages/app/
 COPY packages/starter/package.json ./packages/starter/
 COPY packages/sdk/package.json ./packages/sdk/
 COPY packages/docs/package.json ./packages/docs/
+COPY packages/server/package.json ./packages/server/
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -25,6 +26,7 @@ COPY . .
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/starter/ pnpm --filter @clubmed/starter run build
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
+RUN NODE_ENV=${NODE_ENV} pnpm build:server
 RUN NODE_ENV=${NODE_ENV} pnpm --filter docs run build
 
 # Production stage with nginx
@@ -45,5 +47,5 @@ COPY --from=builder /app/packages/docs/build /usr/share/nginx/html/docs
 # Expose port 8080 (non-privileged). Actual port can be overridden via $PORT at runtime
 EXPOSE 8080
 
-# Start nginx with environment substitution for API_TARGET and PORT
-CMD ["/bin/sh", "-c", "API_TARGET=${API_TARGET:-https://api.integ.clubmed.com}; PORT=${PORT:-8080}; export API_TARGET PORT; envsubst '$API_TARGET $PORT' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.rendered && exec nginx -g 'daemon off;' -c /etc/nginx/nginx.conf.rendered"]
+# Start nginx with environment substitution for API_TARGET, REST_TARGET and PORT
+CMD ["/bin/sh", "-c", "API_TARGET=${API_TARGET:-https://api.integ.clubmed.com}; REST_TARGET=${REST_TARGET:-http://127.0.0.1:8083}; PORT=${PORT:-8080}; export API_TARGET REST_TARGET PORT; envsubst '$API_TARGET $REST_TARGET $PORT' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.rendered && exec nginx -g 'daemon off;' -c /etc/nginx/nginx.conf.rendered"]
