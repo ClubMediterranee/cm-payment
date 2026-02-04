@@ -12,11 +12,12 @@ services:
 
     environment:
       - PORT=8080
+      - SERVER_PORT=8083
 
       - NGINX_HOST=localhost
       - NGINX_PORT=8080
       - API_TARGET=${API_TARGET:-https://api.integ.clubmed.com}
-      - REST_TARGET=${REST_TARGET:-http://host.docker.internal:8083}
+      - REST_TARGET=${REST_TARGET:-http://127.0.0.1:8083}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.payment-apps.rule=Host(`localhost`)"

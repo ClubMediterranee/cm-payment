@@ -1,18 +1,18 @@
 import { PlatformTest } from '@tsed/platform-http/testing';
 import { join } from 'path';
 
-import { VersionCtrl } from './VersionCtrl.js';
+import { VersionController } from './VersionController.js';
 
-describe('VersionCtrl', () => {
+describe('VersionController', () => {
   beforeEach(() =>
     PlatformTest.create({
-      rootDir: join(__dirname, '..', '..', '..'),
+      rootDir: join(__dirname, '..', '..', '..', '..'),
       version: '1.0.0',
     }),
   );
   afterEach(() => PlatformTest.reset());
   it('should return version', async () => {
-    const controller = PlatformTest.get<VersionCtrl>(VersionCtrl);
+    const controller = PlatformTest.get<VersionController>(VersionController);
 
     expect(await controller.get()).toEqual({
       branch: 'master',

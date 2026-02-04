@@ -3,49 +3,50 @@ import '@tsed/platform-log-request';
 import '@tsed/platform-fastify';
 import '@tsed/swagger';
 
-import { join } from 'node:path';
-
-import { Configuration } from '@tsed/di';
-import { application } from '@tsed/platform-http';
+import { Configuration, configuration, constant, logger } from '@tsed/di';
+import { application, type PlatformStaticsOptions } from '@tsed/platform-http';
 
 import { config } from './config/config.js';
-// import * as pages from './controllers/pages/index.js';
-import * as rest from './controllers/rest/index.js';
 
-@Configuration({
-  ...config,
-  acceptMimes: ['application/json'],
-  httpPort: 8083,
-  httpsPort: false, // CHANGE
-  mount: {
-    '/rest': [...Object.values(rest)],
-    // '/': [...Object.values(pages)],
-  },
-  views: {
-    root: join(process.cwd(), '../views'),
-    extensions: {
-      ejs: 'ejs',
-    },
-  },
-  swagger: [
-    {
-      path: '/doc',
-      specVersion: '3.1.0',
-    },
-  ],
-  plugins: [
-    '@fastify/accepts',
-    '@fastify/cookie',
-    {
-      use: 'fastify-raw-body',
-      options: {
-        global: false,
-        runFirst: true,
-      },
-    },
-    '@fastify/formbody',
-  ],
-})
+@Configuration(config)
 export class Server {
   protected app = application();
+
+  protected disableRoutesSummary = constant<boolean>('logger.disableRoutesSummary');
+
+  $onStaticsMounted(mountPath: string, options: PlatformStaticsOptions) {
+    if (options.isApp) {
+      const fallbackRoute = toSpaFallbackRoute(mountPath);
+
+      async function handler(_: any, reply: any) {
+        reply.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        return reply.sendFile('index.html', { root: options.root });
+      }
+
+      this.app.getApp().get(fallbackRoute, handler);
+    }
+  }
+
+  $onReady() {
+    const host = configuration().getBestHost();
+
+    if (host && !this.disableRoutesSummary) {
+      const url = host.toString();
+      const statics = constant<PlatformStaticsOptions>('statics')!;
+
+      Object.entries(statics).forEach(([mountPath, config]) => {
+        logger().info(`Statics files are available on ${url}${mountPath} => ${config.root}`);
+      });
+    }
+  }
 }
+
+const toSpaFallbackRoute = (mountPath: string) => {
+  if (mountPath === '/') {
+    return '/*';
+  }
+
+  const normalized = mountPath.endsWith('/') ? mountPath.slice(0, -1) : mountPath;
+
+  return `${normalized}/*`;
+};
