@@ -5,7 +5,6 @@ import { DILoggerOptions } from '@tsed/di';
 import { $log } from '@tsed/logger';
 
 import { isProduction } from '../utils/index.js';
-
 console.log('Logger mode:', isProduction ? 'Production' : 'Development');
 if (isProduction) {
   $log.appenders.set('stdout', {

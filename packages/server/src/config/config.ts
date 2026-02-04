@@ -12,7 +12,6 @@ import loggerConfig from './logger/index.js';
 
 const pkg = JSON.parse(readFileSync('./package.json', { encoding: 'utf8' }));
 const rootDir = process.cwd();
-
 /**
  * This is the shared configuration for the application
  */
