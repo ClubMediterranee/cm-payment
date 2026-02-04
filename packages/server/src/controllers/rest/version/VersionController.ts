@@ -1,10 +1,11 @@
+import { join } from 'node:path';
+
 import { Constant, Controller } from '@tsed/di';
 import { Get, object, Returns, string } from '@tsed/schema';
 import fs from 'fs-extra';
-import { join } from 'path';
 
 @Controller('/version')
-export class VersionCtrl {
+export class VersionController {
   @Constant('version')
   private version: string;
 

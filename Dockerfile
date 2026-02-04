@@ -29,23 +29,26 @@ RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
 RUN NODE_ENV=${NODE_ENV} pnpm build:server
 RUN NODE_ENV=${NODE_ENV} pnpm --filter docs run build
 
-# Production stage with nginx
-FROM nginx:alpine
+# Production stage with Node + nginx runtime
+FROM node:20-alpine
 
-# Remove default nginx config
-RUN rm /etc/nginx/conf.d/default.conf
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+WORKDIR /app
+
+# Copy server metadata, build artifacts, and runtime dependencies from the builder
+COPY packages/server/package.json ./packages/server/package.json
+#COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages/server/dist ./packages/server/dist
+COPY --from=builder /app/packages/server/views ./packages/server/viewsdoc
 
 # Copy built applications to nginx html directory
-COPY --from=builder /app/packages/app/dist /usr/share/nginx/html
-COPY --from=builder /app/packages/starter/dist /usr/share/nginx/html/starter
-COPY --from=builder /app/storybook-static /usr/share/nginx/html/storybook
-COPY --from=builder /app/packages/docs/build /usr/share/nginx/html/docs
+COPY --from=builder /app/packages/app/dist /app/packages/app/dist
+COPY --from=builder /app/packages/starter/dist /app/packages/starter/dist
+COPY --from=builder /app/storybook-static /app/storybook-static
+COPY --from=builder /app/packages/docs/build /app/packages/docs/build
 
-# Expose port 8080 (non-privileged). Actual port can be overridden via $PORT at runtime
-EXPOSE 8080
+EXPOSE 8083
 
-# Start nginx with environment substitution for API_TARGET, REST_TARGET and PORT
-CMD ["/bin/sh", "-c", "API_TARGET=${API_TARGET:-https://api.integ.clubmed.com}; REST_TARGET=${REST_TARGET:-http://127.0.0.1:8083}; PORT=${PORT:-8080}; export API_TARGET REST_TARGET PORT; envsubst '$API_TARGET $REST_TARGET $PORT' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.rendered && exec nginx -g 'daemon off;' -c /etc/nginx/nginx.conf.rendered"]
+CMD "pnpm --filter @clubmed/server start:prod"
