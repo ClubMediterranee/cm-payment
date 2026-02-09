@@ -12,6 +12,7 @@ import loggerConfig from './logger/index.js';
 
 const pkg = JSON.parse(readFileSync('./package.json', { encoding: 'utf8' }));
 const rootDir = process.cwd();
+
 /**
  * This is the shared configuration for the application
  */
@@ -92,8 +93,10 @@ export const config: Partial<TsED.Configuration> = {
       wildcard: false,
     },
     '/': {
+      isApp: true,
       root: join(rootDir, '..', 'app', 'dist'),
       maxAge: '1d',
+      wildcard: false,
     },
   },
 };

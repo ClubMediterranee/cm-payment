@@ -14,7 +14,7 @@ export class Server {
 
   protected disableRoutesSummary = constant<boolean>('logger.disableRoutesSummary');
 
-  $onStaticsMounted(mountPath: string, options: PlatformStaticsOptions) {
+  $staticsMounted(mountPath: string, options: PlatformStaticsOptions) {
     if (options.isApp) {
       const fallbackRoute = toSpaFallbackRoute(mountPath);
 

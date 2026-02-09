@@ -40,8 +40,7 @@ export class HttpLogClient {
   }
 
   protected formatLog(options: HttpRequestConfig | HttpRequestErrorConfig, verbose: boolean) {
-    const { startTime, url, method } = options;
-    const { callee } = this;
+    const { startTime, url, method, callee = this.callee } = options;
     const full = this.level === 'debug' || verbose;
     const { status, headers, data } = options.response || {};
     const xRequestId = this.getXRequestId(options);
