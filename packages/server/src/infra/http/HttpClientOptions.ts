@@ -6,6 +6,7 @@ export interface HttpClientOptions<Data = unknown> extends Omit<AxiosRequestConf
   pathParams?: Record<string, unknown>;
   disableLog?: boolean;
   bulkData?: Array<Record<string, any> | string>;
+  callee?: string;
 }
 
 export interface HttpRequestConfig<Data = unknown> extends HttpClientOptions<Data> {

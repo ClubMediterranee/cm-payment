@@ -1,3 +1,4 @@
+import { Injectable } from '@tsed/di';
 import { Exception } from '@tsed/exceptions';
 import axios, {
   AxiosError,
@@ -80,7 +81,7 @@ export class HttpClient<
     });
   }
 
-  async fetch(options: AxiosRequestConfig) {
+  async fetch(options: AxiosRequestConfig & { callee?: string }) {
     const reqOptions = await this.getOptions(
       options.method || ('GET' as any),
       options.url!,
@@ -91,7 +92,7 @@ export class HttpClient<
     return this.mapResponse(result, options);
   }
 
-  async send(options: AxiosRequestConfig) {
+  async send(options: AxiosRequestConfig & { callee?: string }) {
     const startTime = new Date().getTime();
 
     try {
