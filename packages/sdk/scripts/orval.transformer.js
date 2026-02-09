@@ -20,6 +20,8 @@ export const ENDPOINTS = [
   'POST /v1/payments',
   'POST /v0/payments/{payment_id}/redirect_request',
   'POST /v0/payment_providers/{provider_id}/request_token',
+  'GET /v3/schemas/{resource}/{localeOrCountry}',
+  'GET /v0/countries',
 ];
 
 export default function (schema) {

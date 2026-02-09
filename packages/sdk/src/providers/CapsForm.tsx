@@ -16,6 +16,7 @@ import { paymentProvidersQueryOptions } from '../hooks/data/usePaymentProviders'
 import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
 import { useCapsForm } from '../hooks/useCapsForm';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
+import { LocaleOrCountry } from '../types/LocaleOrCountry';
 import { getDefaultPaymentConditionId } from '../utils/paymentProviders';
 import { validateComponents } from '../utils/validation/validateComponents';
 
@@ -35,7 +36,7 @@ function CapsFormProvider({
   onLoadEnd,
   ...props
 }: CapsFormProps) {
-  const { id, content } = useCapsConfigContext();
+  const { id, content, locale } = useCapsConfigContext();
   const { isSeller } = useOidcContext();
 
   const { data: paymentConfig } = usePaymentConfig();
@@ -56,6 +57,8 @@ function CapsFormProvider({
 
   const maxAmount = paymentSchedule?.[0]?.amount || 0;
 
+  const countryCode = locale.split('-')[1] || locale.toUpperCase();
+
   const methods = useCapsForm({
     config: { content, isSeller, maxAmount, providersConfig: paymentConfig.providers },
     defaultValues: {
@@ -64,6 +67,11 @@ function CapsFormProvider({
       amount: paymentSchedule?.[0]?.amount?.toString(),
       currency: paymentSchedule?.[0]?.currency,
       payment_condition_id: getDefaultPaymentConditionId(paymentProviders?.[0]),
+      billing_details: {
+        address: {
+          country_code: countryCode as LocaleOrCountry,
+        },
+      },
     },
   });
 

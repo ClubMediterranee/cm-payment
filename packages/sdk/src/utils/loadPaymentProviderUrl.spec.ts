@@ -40,6 +40,40 @@ describe('loadPaymentProviderUrl', () => {
 
       expect(window.location.href).toBe('https://example.com/payment');
     });
+
+    it('should append body as query params with ? for GET method', () => {
+      const params: ProviderParametersModel = {
+        url: 'https://example.com/payment',
+        method: 'GET',
+        body: 'amount=100&currency=EUR&merchant_id=123',
+      };
+
+      loadPaymentProviderUrl(params);
+
+      expect(window.location.href).toBe(
+        'https://example.com/payment?amount=100&currency=EUR&merchant_id=123',
+      );
+    });
+
+    it('should handle GET with body in iframe', () => {
+      const iframe = document.createElement('iframe');
+      document.body.appendChild(iframe);
+
+      const iframeRef: RefObject<HTMLIFrameElement> = { current: iframe };
+
+      const params: ProviderParametersModel = {
+        url: 'https://example.com/payment',
+        method: 'GET',
+        body: 'token=abc123&session=xyz',
+      };
+
+      loadPaymentProviderUrl(params, iframeRef);
+
+      expect(iframe.src).toBe('https://example.com/payment?token=abc123&session=xyz');
+      expect(window.location.href).not.toBe('https://example.com/payment?token=abc123&session=xyz');
+
+      document.body.removeChild(iframe);
+    });
   });
 
   describe('POST method', () => {

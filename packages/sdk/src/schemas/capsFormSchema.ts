@@ -3,6 +3,8 @@ import * as z from 'zod';
 import { GLOBAL_CAPS_SETTINGS } from '../config';
 import { Action } from '../types';
 import { CapsFormConfig } from '../types/CapsFormConfig';
+import { LocaleOrCountry } from '../types/LocaleOrCountry';
+import { validateBillingAddress } from './validations/validateBillingAddress';
 import { validateEmail } from './validations/validateEmail';
 import { validateExpiryDate } from './validations/validateExpiryDate';
 import { validateMobilePhone } from './validations/validateMobilePhone';
@@ -16,7 +18,7 @@ export type ValidationError = {
 export type Validate = (
   data: CapsFormSchema,
   config: Pick<CapsFormConfig, 'isSeller' | 'content' | 'providersConfig'>,
-) => ValidationError | undefined;
+) => ValidationError | ValidationError[] | undefined;
 
 export const capsFormSchema = ({ isSeller, content, maxAmount, providersConfig }: CapsFormConfig) =>
   z
@@ -49,13 +51,29 @@ export const capsFormSchema = ({ isSeller, content, maxAmount, providersConfig }
         message: content.cgv.validation.mustAccept,
       }),
       payment_condition_id: z.string().optional(),
-      billing_details: z
-        .object({
-          email: z.string().nullable().optional(),
-          mobile_phone: z.string().nullable().optional(),
-        })
-        .nullable()
-        .optional(),
+      billing_details: z.object({
+        email: z.string().nullable().optional(),
+        mobile_phone: z.string().nullable().optional(),
+        attendee: z
+          .object({
+            first_name: z.string().optional(),
+            last_name: z.string().optional(),
+          })
+          .optional(),
+        address: z.object({
+          additional_information_1: z.string().optional(),
+          additional_information_2: z.string().optional(),
+          number: z.string().optional(),
+          street: z.string().optional(),
+          add_on: z.string().optional(),
+          town: z.string().optional(),
+          city: z.string().optional(),
+          state_or_district: z.string().optional(),
+          zip_code: z.string().optional(),
+          country: z.string().optional(),
+          country_code: z.custom<LocaleOrCountry>(),
+        }),
+      }),
       token: z
         .object({
           value: z.string().min(1).optional(),
@@ -71,15 +89,24 @@ export const capsFormSchema = ({ isSeller, content, maxAmount, providersConfig }
     .superRefine((data, ctx) => {
       const config = { isSeller, content, providersConfig };
 
-      const validations = [validateToken, validateExpiryDate, validateEmail, validateMobilePhone];
+      const validations = [
+        validateToken,
+        validateExpiryDate,
+        validateEmail,
+        validateMobilePhone,
+        validateBillingAddress,
+      ];
       validations.forEach((validate) => {
-        const error = validate(data, config);
+        const result = validate(data, config);
 
-        if (error) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: error.message,
-            path: error.path,
+        if (result) {
+          const errors = Array.isArray(result) ? result : [result];
+          errors.forEach((error) => {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: error.message,
+              path: error.path,
+            });
           });
         }
       });

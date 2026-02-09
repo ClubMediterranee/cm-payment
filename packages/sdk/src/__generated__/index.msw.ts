@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3375.1
+ * OpenAPI spec version: 0.3377.2
  */
 import { faker } from '@faker-js/faker';
 
@@ -33,6 +33,8 @@ import {
 } from './index.schemas';
 import type {
   CartUpgradeRoomModel,
+  ClientSchemaModel,
+  CountriesModel,
   CreateBookingResponseModel,
   CustomerBookingModelV3,
   CustomerBookingPaymentScheduleModel,
@@ -47,6 +49,46 @@ import type {
   ProviderParametersModel,
   TokenHolderModel,
 } from './index.schemas';
+
+export const getGetV0CountriesResponseMock = (): CountriesModel =>
+  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+    id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    label: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    languages: faker.helpers.arrayElement([
+      {
+        default: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          null,
+        ]),
+        values: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+          () => ({
+            value: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                null,
+              ]),
+              undefined,
+            ]),
+            label: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                null,
+              ]),
+              undefined,
+            ]),
+            locale: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                null,
+              ]),
+              undefined,
+            ]),
+          }),
+        ),
+      },
+      undefined,
+    ]),
+  }));
 
 export const getGetV1PaymentProvidersResponseMock = (): PaymentProviderListModel2 =>
   Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
@@ -814,6 +856,31 @@ export const getGetV2CustomersCustomerIdProfileResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetV3SchemasResourceLocaleorcountryResponseMock = (
+  overrideResponse: Partial<ClientSchemaModel> = {},
+): ClientSchemaModel => ({
+  title: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  $schema: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  $id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  type: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  additionalProperties: faker.datatype.boolean(),
+  required: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+    ),
+    undefined,
+  ]),
+  definitions: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  properties: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
   overrideResponse: Partial<CustomerBookingModelV3> = {},
 ): CustomerBookingModelV3 => ({
@@ -1343,6 +1410,34 @@ export const getPostV1PaymentsPaymentIdNotifyResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetV0CountriesMockHandler = (
+  overrideResponse?:
+    | CountriesModel
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<CountriesModel> | CountriesModel),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    '*/v0/countries',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV0CountriesResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetV1PaymentProvidersMockHandler = (
   overrideResponse?:
     | PaymentProviderListModel2
@@ -1475,6 +1570,34 @@ export const getGetV2CustomersCustomerIdProfileMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getGetV2CustomersCustomerIdProfileResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetV3SchemasResourceLocaleorcountryMockHandler = (
+  overrideResponse?:
+    | ClientSchemaModel
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ClientSchemaModel> | ClientSchemaModel),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    '*/v3/schemas/:resource/:localeOrCountry',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV3SchemasResourceLocaleorcountryResponseMock(),
         ),
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       );
@@ -1739,11 +1862,13 @@ export const getPostV1PaymentsPaymentIdNotifyMockHandler = (
   );
 };
 export const getClubMedAPIMock = () => [
+  getGetV0CountriesMockHandler(),
   getGetV1PaymentProvidersMockHandler(),
   getGetV2ProposalsProposalIdMockHandler(),
   getGetV0PaymentsPaymentIdStatusMockHandler(),
   getGetV1ProposalsProposalIdPaymentScheduleMockHandler(),
   getGetV2CustomersCustomerIdProfileMockHandler(),
+  getGetV3SchemasResourceLocaleorcountryMockHandler(),
   getGetV3CustomersCustomerIdBookingsBookingIdMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler(),
