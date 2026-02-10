@@ -19,3 +19,4 @@ export * from './types/PspProviders';
 export * from './utils/fetcher';
 export * from './utils/formatCurrency';
 export * from './utils/formatDate';
+export * from './utils/url/getPaymentUrl';
