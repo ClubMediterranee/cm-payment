@@ -7,6 +7,16 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: false,
   maxAmount: 10000,
+  providersConfig: {
+    TEST_PROVIDER: {
+      is_active: true,
+      display_type: 'redirect',
+    },
+    MHIPAY: {
+      is_active: true,
+      display_type: 'hosted_field',
+    },
+  },
 };
 
 describe('validateToken', () => {

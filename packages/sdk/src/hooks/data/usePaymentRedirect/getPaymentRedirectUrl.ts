@@ -49,16 +49,17 @@ export const getPaymentRedirectUrl = async (
 
   const callbacks = getRedirectPaymentCallbackUrls(paymentId, formData.provider_id);
 
-  const { url, body } = await postV0PaymentsPaymentIdRedirectRequest(paymentId, {
+  const redirectParams = await postV0PaymentsPaymentIdRedirectRequest(paymentId, {
     ...callbacks,
+    payment_condition_id: formData.payment_condition_id,
     template_id: formData.template_id,
     billing_details: cleanBillingDetails(formData.billing_details, formData.template_id),
     token: formData.token?.value,
   });
 
-  if (!url) {
+  if (!redirectParams.url) {
     throw new Error('Payment redirect URL not found');
   }
 
-  return `${url}?${body}`;
+  return redirectParams;
 };

@@ -2,7 +2,8 @@ export const TOKENS = {
   PaymentSchedule: Symbol('PaymentSchedule'),
   Cgv: Symbol('Cgv'),
   ContactChoice: Symbol('ContactChoice'),
-  IframeProvider: Symbol('IframeProvider'),
   PaymentProviders: Symbol('PaymentProviders'),
-  CardForm: Symbol('CardForm'),
+  PaymentWidget: Symbol('PaymentWidget'),
+  CardInstallments: Symbol('CardInstallments'),
+  SubmitButton: Symbol('SubmitButton'),
 } as const;
