@@ -7,7 +7,6 @@ export * from './components/PaymentSchedule';
 export * from './components/PaymentWidget';
 export * from './components/SubmitButton';
 export * from './components/ui/FormPanel';
-export * from './hooks/usePaymentConfirmation';
 export * from './hooks/utils/useCapsConfigContext';
 export * from './hooks/utils/useDisclosure';
 export * from './providers/CapsForm';

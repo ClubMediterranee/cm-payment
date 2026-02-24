@@ -1,6 +1,7 @@
-import { constant, inject } from '@tsed/di';
+import { constant, context, inject } from '@tsed/di';
+import { PlatformContext } from '@tsed/platform-http';
 
-import { ApiClient } from '../api/ApiClient.js';
+import { HttpClient } from './HttpClient.js';
 
 export const fetcher = async <T>({
   url,
@@ -18,11 +19,13 @@ export const fetcher = async <T>({
   const callee = 'API';
   const baseURL = constant<string>('CLUBMED_API_URL', '');
   const apiKey = constant<string>('API_KEY');
-
   const callerHeader = constant<string>('AKAMAI_CALLER_HEADER', 'X-CLUBMED-CALLER');
-  const apiClient = inject(ApiClient);
+  const httpClient = inject(HttpClient);
 
-  return apiClient.fetch({
+  const $ctx = context<PlatformContext>();
+  const acceptLanguage = $ctx?.request.headers['accept-language'];
+
+  return httpClient.fetch({
     callee,
     url: baseURL + url,
     method,
@@ -30,6 +33,7 @@ export const fetcher = async <T>({
     headers: {
       'x-api-key': apiKey,
       caller: callerHeader,
+      ...(acceptLanguage ? { 'Accept-Language': acceptLanguage } : {}),
       ...headers,
     },
     data,

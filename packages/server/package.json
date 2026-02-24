@@ -7,6 +7,7 @@
     "barrels": "barrels",
     "start": "pnpm run barrels && nodemon src/index.ts",
     "start:prod": "cross-env NODE_ENV=production node dist/index.js",
+    "generate:types": "orval --config orval.config.ts",
     "test": "pnpm run test:lint && pnpm run test:coverage",
     "test:lint": "eslint",
     "test:lint:fix": "eslint --fix",
