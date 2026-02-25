@@ -56,6 +56,14 @@ export type Content = {
     cardNumber: string;
     expiryDate: string;
     cvc: string;
+    validation: {
+      expiryDate: string;
+      expired: string;
+      cardNumber: string;
+      cardNumberRequired: string;
+      cvc: string;
+      cvcRequired: string;
+    };
   };
   freeDeposit: {
     title: string;

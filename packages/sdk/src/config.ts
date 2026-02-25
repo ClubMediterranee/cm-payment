@@ -9,6 +9,7 @@ export const GLOBAL_CAPS_SETTINGS = Object.freeze({
     [PspProviders.HIPAY]: 'hosted_field',
     [PspProviders.EPAYGATE]: 'iframe',
     [PspProviders.EGLOBALCOLLECT]: 'iframe',
+    [PspProviders.MCYBERSOURCE]: 'hosted_field',
   } as Record<PspProviders, PaymentProviderDisplayType>,
   withContactMethodProviders: [PspProviders.EVOXPAY],
   templateIds: {

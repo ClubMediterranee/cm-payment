@@ -4,7 +4,7 @@ import clsx from 'clsx';
 export const ErrorMessage = ({ message }: { message?: string }) => {
   return (
     <span
-      className={clsx('text-red font-bold flex gap-10 items-center my-10', !message && 'hidden')}
+      className={clsx('text-red  flex gap-10 items-center text-b4', !message && 'hidden')}
       aria-hidden={!message}
       role="alert"
     >

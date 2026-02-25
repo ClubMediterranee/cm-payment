@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 
 import { useDisclosure } from './useDisclosure';
 
-export const useScriptLoader = (url: string) => {
+type ScriptAttributes = Pick<HTMLScriptElement, 'integrity' | 'crossOrigin'>;
+
+export const useScriptLoader = (url: string, attributes?: ScriptAttributes) => {
   const { isOpen: isLoaded, onOpen: onLoad, onClose: onError } = useDisclosure();
 
   useEffect(() => {
@@ -13,11 +15,13 @@ export const useScriptLoader = (url: string) => {
       return;
     }
 
-    const script = document.createElement('script');
-    script.src = url;
-    script.async = true;
-    script.onload = onLoad;
-    script.onerror = onError;
+    const script = Object.assign(document.createElement('script'), {
+      src: url,
+      async: true,
+      onload: onLoad,
+      onerror: onError,
+      ...attributes,
+    });
 
     document.head.appendChild(script);
 
@@ -26,7 +30,7 @@ export const useScriptLoader = (url: string) => {
         document.head.removeChild(script);
       }
     };
-  }, [onError, onLoad, url]);
+  }, [onError, onLoad, url, attributes?.integrity, attributes?.crossOrigin]);
 
   return { isLoaded };
 };

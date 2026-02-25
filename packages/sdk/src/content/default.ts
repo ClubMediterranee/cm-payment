@@ -63,6 +63,14 @@ export const defaultContent: Content = {
     cardNumber: 'Card number',
     expiryDate: 'Expiry date',
     cvc: 'Security code',
+    validation: {
+      expiryDate: 'Expiry date is required',
+      expired: 'Card is expired',
+      cardNumber: 'Invalid card number',
+      cardNumberRequired: 'Card number is required',
+      cvc: 'Invalid security code',
+      cvcRequired: 'Security code is required',
+    },
   },
   freeDeposit: {
     title: 'Pay the amount of your choice without fees',

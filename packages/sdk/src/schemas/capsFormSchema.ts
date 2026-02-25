@@ -4,6 +4,7 @@ import { GLOBAL_CAPS_SETTINGS } from '../config';
 import { Action } from '../types';
 import { CapsFormConfig } from '../types/CapsFormConfig';
 import { validateEmail } from './validations/validateEmail';
+import { validateExpiryDate } from './validations/validateExpiryDate';
 import { validateMobilePhone } from './validations/validateMobilePhone';
 import { validateToken } from './validations/validateToken';
 
@@ -61,11 +62,16 @@ export const capsFormSchema = ({ isSeller, content, maxAmount, providersConfig }
           status: z.enum(['idle', 'pending', 'success', 'error']),
         })
         .optional(),
+      creditCard: z
+        .object({
+          expiryDate: z.string().optional(),
+        })
+        .optional(),
     })
     .superRefine((data, ctx) => {
       const config = { isSeller, content, providersConfig };
 
-      const validations = [validateToken, validateEmail, validateMobilePhone];
+      const validations = [validateToken, validateExpiryDate, validateEmail, validateMobilePhone];
       validations.forEach((validate) => {
         const error = validate(data, config);
 

@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3358.0
+ * OpenAPI spec version: 0.3375.1
  */
 import { faker } from '@faker-js/faker';
 
@@ -45,6 +45,7 @@ import type {
   ProposalPaymentScheduleModelV1,
   ProposalResponseModelV1,
   ProviderParametersModel,
+  TokenHolderModel,
 } from './index.schemas';
 
 export const getGetV1PaymentProvidersResponseMock = (): PaymentProviderListModel2 =>
@@ -175,7 +176,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
                 faker.string.alpha({ length: { min: 10, max: 20 } }),
                 undefined,
               ]),
-              deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+              deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+              external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
               method: faker.helpers.arrayElement([
                 faker.string.alpha({ length: { min: 10, max: 20 } }),
                 undefined,
@@ -198,7 +200,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
                 ]),
-                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
                 method: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
@@ -269,7 +272,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
                 ]),
-                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
                 method: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
@@ -330,7 +334,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
                 ]),
-                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
                 method: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
@@ -377,7 +382,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
                 faker.string.alpha({ length: { min: 10, max: 20 } }),
                 undefined,
               ]),
-              deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+              deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+              external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
               method: faker.helpers.arrayElement([
                 faker.string.alpha({ length: { min: 10, max: 20 } }),
                 undefined,
@@ -400,7 +406,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
                 ]),
-                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
                 method: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
@@ -464,7 +471,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
           faker.string.alpha({ length: { min: 10, max: 20 } }),
           undefined,
         ]),
-        deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         method: faker.helpers.arrayElement([
           faker.string.alpha({ length: { min: 10, max: 20 } }),
           undefined,
@@ -486,7 +494,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
           faker.string.alpha({ length: { min: 10, max: 20 } }),
           undefined,
         ]),
-        deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         method: faker.helpers.arrayElement([
           faker.string.alpha({ length: { min: 10, max: 20 } }),
           undefined,
@@ -542,7 +551,8 @@ export const getGetV2ProposalsProposalIdResponseMock = (
         faker.string.alpha({ length: { min: 10, max: 20 } }),
         undefined,
       ]),
-      deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+      deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+      external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
       method: faker.helpers.arrayElement([
         faker.string.alpha({ length: { min: 10, max: 20 } }),
         undefined,
@@ -840,6 +850,12 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
     undefined,
   ]),
   total_price: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+  discounts: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    })),
+    undefined,
+  ]),
   locale: faker.helpers.arrayElement([
     faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
     undefined,
@@ -892,7 +908,8 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
                 ]),
-                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
                 method: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
@@ -1025,7 +1042,8 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
                 ]),
-                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
                 method: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
@@ -1068,7 +1086,8 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
                 ]),
-                deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
                 method: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
                   undefined,
@@ -1094,7 +1113,8 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
             faker.string.alpha({ length: { min: 10, max: 20 } }),
             undefined,
           ]),
-          deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+          deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+          external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
           method: faker.helpers.arrayElement([
             faker.string.alpha({ length: { min: 10, max: 20 } }),
             undefined,
@@ -1129,7 +1149,8 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
         faker.string.alpha({ length: { min: 10, max: 20 } }),
         undefined,
       ]),
-      deprecated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+      deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+      external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
       method: faker.helpers.arrayElement([
         faker.string.alpha({ length: { min: 10, max: 20 } }),
         undefined,
@@ -1285,6 +1306,14 @@ export const getPostV3BookingsResponseMock = (
       ...overrideResponse,
     },
   ]);
+
+export const getPostV0PaymentProvidersProviderIdRequestTokenResponseMock = (
+  overrideResponse: Partial<TokenHolderModel> = {},
+): TokenHolderModel => ({
+  format: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  token: faker.string.alpha({ length: { min: 10, max: 20 } }),
+  ...overrideResponse,
+});
 
 export const getPostV0PaymentsPaymentIdRedirectRequestResponseMock = (
   overrideResponse: Partial<ProviderParametersModel> = {},
@@ -1626,6 +1655,34 @@ export const getPostV3BookingsMockHandler = (
   );
 };
 
+export const getPostV0PaymentProvidersProviderIdRequestTokenMockHandler = (
+  overrideResponse?:
+    | TokenHolderModel
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0],
+      ) => Promise<TokenHolderModel> | TokenHolderModel),
+  options?: RequestHandlerOptions,
+) => {
+  return http.post(
+    '*/v0/payment_providers/:providerId/request_token',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getPostV0PaymentProvidersProviderIdRequestTokenResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
+
 export const getPostV0PaymentsPaymentIdRedirectRequestMockHandler = (
   overrideResponse?:
     | ProviderParametersModel
@@ -1693,6 +1750,7 @@ export const getClubMedAPIMock = () => [
   getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler(),
   getPostV1PaymentsMockHandler(),
   getPostV3BookingsMockHandler(),
+  getPostV0PaymentProvidersProviderIdRequestTokenMockHandler(),
   getPostV0PaymentsPaymentIdRedirectRequestMockHandler(),
   getPostV1PaymentsPaymentIdNotifyMockHandler(),
 ];
