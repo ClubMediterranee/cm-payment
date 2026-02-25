@@ -22,7 +22,12 @@ export default defineConfig({
     dts({
       entryRoot: 'src',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['**/*.spec.{ts,tsx}', '**/*.stories.{ts,tsx}', '**/__mocks__/**'],
+      exclude: [
+        '**/*.spec.{ts,tsx}',
+        '**/*.stories.{ts,tsx}',
+        '**/__mocks__/**',
+        '**/*.msw.{ts,tsx}',
+      ],
       tsconfigPath: './tsconfig.build.json',
     }),
     viteStaticCopy({
@@ -64,7 +69,12 @@ export default defineConfig({
       plugins: [preserveDirectives() as never],
       input: Object.fromEntries(
         globbySync('src/**/*.{ts,tsx}', {
-          ignore: ['**/*.spec.{ts,tsx}', '**/*.stories.{ts,tsx}', '**/__mocks__/**'],
+          ignore: [
+            '**/*.spec.{ts,tsx}',
+            '**/*.stories.{ts,tsx}',
+            '**/__mocks__/**',
+            '**/*.msw.{ts,tsx}',
+          ],
         }).map((file) => [
           // The name of the entry point
           // lib/nested/foo.ts becomes nested/foo
