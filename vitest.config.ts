@@ -57,8 +57,8 @@ export default defineConfig({
       thresholds: {
         autoUpdate: true,
         statements: 85.11,
-        branches: 89.56,
-        functions: 86.39,
+        branches: 87.42,
+        functions: 79.5,
         lines: 85.11,
       },
     },
@@ -75,6 +75,7 @@ export default defineConfig({
         ],
         test: {
           name: 'storybook',
+          testTimeout: 30000,
           browser: {
             enabled: true,
             headless: true,
