@@ -4,7 +4,6 @@ import type { PropsWithChildren } from 'react';
 
 import * as apiGenerated from '../../../__generated__';
 import type { CybersourceMicroform } from '../../../types/Cybersource';
-import * as decodeJwtModule from '../../../utils/decodeJwt';
 import * as useCapsConfigContext from '../../utils/useCapsConfigContext';
 import * as useFormContext from '../../utils/useForm';
 import * as useScriptLoader from '../../utils/useScriptLoader';
@@ -78,7 +77,6 @@ describe('useCybersource', () => {
 
   let mockSetValue: ReturnType<typeof vi.fn>;
   let mockFormState: { isSubmitting: boolean; errors: any };
-  let useFormContextMock: ReturnType<typeof vi.fn>;
 
   const Wrapper = ({ children }: PropsWithChildren) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -97,7 +95,7 @@ describe('useCybersource', () => {
       type: 'booking',
     } as any);
 
-    useFormContextMock = vi.spyOn(useFormContext, 'useFormContext').mockImplementation(
+    vi.spyOn(useFormContext, 'useFormContext').mockImplementation(
       () =>
         ({
           formState: mockFormState,
