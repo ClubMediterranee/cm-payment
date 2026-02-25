@@ -32,6 +32,14 @@ const createValidFormData = () => ({
   billing_details: {
     email: 'test@example.com',
     mobile_phone: '+33612345678',
+    address: {
+      number: '42',
+      street: 'Avenue des Champs-Élysées',
+      city: 'Paris',
+      zip_code: '75008',
+      country: 'France',
+      country_code: 'FR',
+    },
   },
 });
 
@@ -79,12 +87,16 @@ describe('capsFormSchema', () => {
       }).success,
     ).toBe(true);
     expect(schema.safeParse({ ...createValidFormData(), token: undefined }).success).toBe(true);
-    expect(schema.safeParse({ ...createValidFormData(), billing_details: undefined }).success).toBe(
-      true,
-    );
-    expect(schema.safeParse({ ...createValidFormData(), billing_details: null }).success).toBe(
-      true,
-    );
+    expect(
+      schema.safeParse({
+        ...createValidFormData(),
+        billing_details: {
+          ...createValidFormData().billing_details,
+          email: null,
+          mobile_phone: null,
+        },
+      }).success,
+    ).toBe(true);
   });
 
   it('should call all validators in superRefine', () => {
@@ -125,7 +137,13 @@ describe('capsFormSchema', () => {
       ...createValidFormData(),
       amount: '-50',
       cgv: false,
-      billing_details: { email: 'invalid', mobile_phone: null },
+      billing_details: {
+        email: 'invalid',
+        mobile_phone: null,
+        address: {
+          country_code: 'FR',
+        },
+      },
     };
 
     const result = schema.safeParse(invalidData);

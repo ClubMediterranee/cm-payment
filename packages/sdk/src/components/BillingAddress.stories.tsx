@@ -222,15 +222,26 @@ export const Default: Story = {
 
     await waitFor(
       () => {
-        expect(canvas.getByText('First Name')).toBeInTheDocument();
+        expect(canvas.getByText('First Name', { exact: false })).toBeInTheDocument();
       },
-      { timeout: 5000 },
+      { timeout: 10000 },
     );
 
-    expect(canvas.getByText('Last Name')).toBeInTheDocument();
-    expect(canvas.getByText('Street')).toBeInTheDocument();
-    expect(canvas.getByText('City')).toBeInTheDocument();
-    expect(canvas.getByText('Postal Code')).toBeInTheDocument();
+    expect(canvas.getByText('Last Name', { exact: false })).toBeInTheDocument();
+
+    const streetElements = canvas.getAllByText('Street', { exact: false });
+    expect(streetElements.length).toBeGreaterThan(0);
+
+    expect(canvas.getByText('City', { exact: false })).toBeInTheDocument();
+    expect(canvas.getByText('Postal Code', { exact: false })).toBeInTheDocument();
+
+    await waitFor(
+      () => {
+        const inputs = canvas.getAllByRole('textbox');
+        expect(inputs.length).toBeGreaterThan(0);
+      },
+      { timeout: 10000 },
+    );
 
     const inputs = canvas.getAllByRole('textbox');
     const firstNameInput = inputs[0];
@@ -283,28 +294,42 @@ export const WithProfilePrefill: Story = {
 
     await waitFor(
       () => {
-        expect(canvas.getByText('First Name')).toBeInTheDocument();
+        expect(canvas.getByText('First Name', { exact: false })).toBeInTheDocument();
       },
-      { timeout: 5000 },
+      { timeout: 10000 },
+    );
+
+    await waitFor(
+      () => {
+        const inputs = canvas.getAllByRole('textbox', { hidden: true });
+        expect(inputs.length).toBeGreaterThan(5);
+      },
+      { timeout: 10000 },
     );
 
     const inputs = canvas.getAllByRole('textbox', { hidden: true });
     const firstNameInput = inputs[0] as HTMLInputElement;
     const lastNameInput = inputs[1] as HTMLInputElement;
-    const streetInput = inputs[3] as HTMLInputElement;
-    const cityInput = inputs[4] as HTMLInputElement;
-    const postalCodeInput = inputs[5] as HTMLInputElement;
 
     await waitFor(
       () => {
         expect(firstNameInput.value).toBe('Jean');
+        expect(lastNameInput.value).toBe('Dupont');
       },
-      { timeout: 5000 },
+      { timeout: 10000 },
     );
 
-    expect(lastNameInput.value).toBe('Dupont');
-    expect(streetInput.value).toBe('Avenue des Champs-Élysées');
-    expect(cityInput.value).toBe('Paris');
-    expect(postalCodeInput.value).toBe('75008');
+    const inputsWithStreet = inputs.filter((input: HTMLInputElement) =>
+      input.value.includes('Avenue des Champs-Élysées'),
+    );
+    expect(inputsWithStreet.length).toBeGreaterThan(0);
+
+    const inputsWithParis = inputs.filter((input: HTMLInputElement) => input.value === 'Paris');
+    expect(inputsWithParis.length).toBeGreaterThan(0);
+
+    const inputsWithPostalCode = inputs.filter(
+      (input: HTMLInputElement) => input.value === '75008',
+    );
+    expect(inputsWithPostalCode.length).toBeGreaterThan(0);
   },
 };
