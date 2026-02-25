@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3375.1
+ * OpenAPI spec version: 0.3377.2
  */
 /**
  * Eligible attendees for this accommodation
@@ -8658,6 +8658,14 @@ export interface DescriptionAccommodationCategoriesList {
   accommodation_categories?: AccommodationCategoriesList;
 }
 
+export interface PspOfResortModel {
+  /**
+   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
+   * @pattern ^([EMS][0-9A-Z]+)$
+   */
+  id: string;
+}
+
 /**
  * External service type
  */
@@ -8704,14 +8712,6 @@ export interface ExternalServiceModel {
 }
 
 export type ExternalServicesModel = ExternalServiceModel[];
-
-export interface PspOfResortModel {
-  /**
-   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
-   * @pattern ^([EMS][0-9A-Z]+)$
-   */
-  id: string;
-}
 
 export interface AccommodationCodeModel {
   /** Club Méditerranée accommodation code */
@@ -12385,6 +12385,15 @@ export interface AssociatedAccommodationModel {
 
 export type AssociatedAccommodationsModel = AssociatedAccommodationModel[];
 
+export interface FloorModel {
+  /** ID of the floor for this accommodation */
+  id?: string;
+  /** Label of the floor for this accommodation */
+  label: string;
+}
+
+export type FloorsModel = FloorModel[];
+
 /**
  * true if the accommodation is composed of communicating rooms
  */
@@ -12441,6 +12450,7 @@ export interface AccommodationModelV1 {
   restriction_information: RestrictionsInformationModel;
   /** possible plan of this accommodation */
   plan?: string;
+  floors?: FloorsModel;
   _links?: LinksModel;
 }
 
@@ -13317,57 +13327,39 @@ export interface ThematicModel {
  */
 export type ProductThematicsModel = ThematicModel[];
 
-export interface AttendeePaymentScheduleModel {
-  /** Payment schedule Id */
-  id: string;
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id?: string;
-}
-
-export type HouseholdPaymentScheduleModel = AttendeePaymentScheduleModel[];
-
 /**
- * Due date for the payment
+ * Proposal price base info
  */
-export type DepositRepaymentScheduleModelV1Deadline = string | null;
-
-export interface DepositRepaymentScheduleModelV1 {
-  /**
-   * Amount to pay for this repayment
-   * @minimum 0
-   */
-  expected_payment_amount?: number;
-  /** Due date for the payment */
-  deadline: DepositRepaymentScheduleModelV1Deadline;
+export interface AttendeePriceModel {
+  /** Total price(discount_price_with_fees + package_options.price) calculated from your criteria */
+  total?: number;
+  /** Total price(initial_price_with_fees + package_options.price) calculated from your criteria */
+  total_without_discount?: number;
+  discounts?: DiscountsModel;
+  trip?: ProposalTripModel;
+  included_services?: IncludedServicesModel;
+  package_options?: PackageOptionsModel;
+  /** Attendee ID */
+  id?: string;
 }
 
-/**
- * List of repayment deposit
- */
-export type DepositRepaymentScheduleModelListV1 = DepositRepaymentScheduleModelV1[];
+export type AttendeesPricesModel = AttendeePriceModel[];
 
-export interface HouseholdPaymentScheduleModelV1 {
-  attendees?: HouseholdPaymentScheduleModel;
-  /** @minimum 0 */
-  total: number;
-  deposit_repayment_schedule?: DepositRepaymentScheduleModelListV1;
+export interface ProposalPriceDetailsResponseHouseholdModel {
+  attendees_prices?: AttendeesPricesModel;
 }
 
-export type HouseholdPaymentScheduleModels = HouseholdPaymentScheduleModelV1[];
+export type ProposalPriceDetailsResponseHouseholdsModel =
+  ProposalPriceDetailsResponseHouseholdModel[];
 
-export interface ProposalPaymentScheduleModelV1 {
+export interface ProposalPriceDetailsPerHouseholdResponseModel {
   /**
    * The iso 3 currency. Ex: CNY,EUR,..
    * @minLength 3
    * @maxLength 3
    */
   currency: string;
-  /** Show if the agency's commission is included or not */
-  commission_included: boolean;
-  households?: HouseholdPaymentScheduleModels;
+  households?: ProposalPriceDetailsResponseHouseholdsModel;
 }
 
 /**
@@ -13660,39 +13652,57 @@ export interface JourneyModel {
 
 export type TransportJourneysModel = JourneyModel[];
 
+export interface AttendeePaymentScheduleModel {
+  /** Payment schedule Id */
+  id: string;
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id?: string;
+}
+
+export type HouseholdPaymentScheduleModel = AttendeePaymentScheduleModel[];
+
 /**
- * Proposal price base info
+ * Due date for the payment
  */
-export interface AttendeePriceModel {
-  /** Total price(discount_price_with_fees + package_options.price) calculated from your criteria */
-  total?: number;
-  /** Total price(initial_price_with_fees + package_options.price) calculated from your criteria */
-  total_without_discount?: number;
-  discounts?: DiscountsModel;
-  trip?: ProposalTripModel;
-  included_services?: IncludedServicesModel;
-  package_options?: PackageOptionsModel;
-  /** Attendee ID */
-  id?: string;
+export type DepositRepaymentScheduleModelV1Deadline = string | null;
+
+export interface DepositRepaymentScheduleModelV1 {
+  /**
+   * Amount to pay for this repayment
+   * @minimum 0
+   */
+  expected_payment_amount?: number;
+  /** Due date for the payment */
+  deadline: DepositRepaymentScheduleModelV1Deadline;
 }
 
-export type AttendeesPricesModel = AttendeePriceModel[];
+/**
+ * List of repayment deposit
+ */
+export type DepositRepaymentScheduleModelListV1 = DepositRepaymentScheduleModelV1[];
 
-export interface ProposalPriceDetailsResponseHouseholdModel {
-  attendees_prices?: AttendeesPricesModel;
+export interface HouseholdPaymentScheduleModelV1 {
+  attendees?: HouseholdPaymentScheduleModel;
+  /** @minimum 0 */
+  total: number;
+  deposit_repayment_schedule?: DepositRepaymentScheduleModelListV1;
 }
 
-export type ProposalPriceDetailsResponseHouseholdsModel =
-  ProposalPriceDetailsResponseHouseholdModel[];
+export type HouseholdPaymentScheduleModels = HouseholdPaymentScheduleModelV1[];
 
-export interface ProposalPriceDetailsPerHouseholdResponseModel {
+export interface ProposalPaymentScheduleModelV1 {
   /**
    * The iso 3 currency. Ex: CNY,EUR,..
    * @minLength 3
    * @maxLength 3
    */
   currency: string;
-  households?: ProposalPriceDetailsResponseHouseholdsModel;
+  /** Show if the agency's commission is included or not */
+  commission_included: boolean;
+  households?: HouseholdPaymentScheduleModels;
 }
 
 /**
@@ -14626,6 +14636,7 @@ export interface AccommodationModelV2 {
   restriction_information: RestrictionsInformationModel;
   plans?: AccommodationPlansModel;
   areas?: AccommodationAreasRefModelV2;
+  floors?: FloorsModel;
   _links?: LinksModel;
 }
 
@@ -21648,82 +21659,6 @@ export interface ContactEventModel {
   prioritization?: PrioritizationModel;
 }
 
-export interface SponsorshipsPostModel {
-  /**
-   * A valid email adress
-   * @pattern ^[^\s@]+@[^\s@]+\.[^\s@]+$
-   */
-  email: string;
-  /** user's civility :see the /civilities resource */
-  civility: string;
-  /**
-   * The user first name, Ex : Jean
-   * @maxLength 20
-   */
-  first_name: string;
-  /** The user first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤 */
-  unicode_first_name?: string;
-  /**
-   * The user last name Ex: Chang
-   * @maxLength 30
-   */
-  last_name: string;
-  /** The user last name in unicode character, useful in double byte countries like China,  Ex : 昌 */
-  unicode_last_name?: string;
-}
-
-export interface AssignCustomerToProposalsSummaryElement {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  proposal_id: string;
-  /** proposal identifier */
-  opportunity_id?: string;
-}
-
-export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
-
-/**
- * adult attendees number
- */
-export type CreateBookmarkModelAdultsCount =
-  (typeof CreateBookmarkModelAdultsCount)[keyof typeof CreateBookmarkModelAdultsCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateBookmarkModelAdultsCount = {
-  NUMBER_0: 0,
-} as const;
-
-/**
- * children attendees number
- */
-export type CreateBookmarkModelChildrenCount = 0 | null;
-
-export interface CreateBookmarkModel {
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
-  resort_departure_date?: string;
-  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
-  resort_arrival_date?: string;
-  /** Total number of journey attendees. */
-  number_attendees?: number;
-  /** adult attendees number */
-  adults_count: CreateBookmarkModelAdultsCount;
-  /** children attendees number */
-  children_count?: CreateBookmarkModelChildrenCount;
-  birthdates?: CreateBookmarksBirthdatesModel;
-  /** The departure option id from product/id booking criteria. */
-  departure_option_id?: string;
-  price?: CreateBookmarkPriceModel;
-}
-
-/**
- * List of bookmarks
- */
-export type CreateBookmarksModel = CreateBookmarkModel[];
-
 /**
  * PHONE/CHAT
  */
@@ -21836,6 +21771,82 @@ export interface ResponseSaleInteractionsModelV0 {
   interaction: ResponseSaleInteractionModel;
 }
 
+/**
+ * adult attendees number
+ */
+export type CreateBookmarkModelAdultsCount =
+  (typeof CreateBookmarkModelAdultsCount)[keyof typeof CreateBookmarkModelAdultsCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CreateBookmarkModelAdultsCount = {
+  NUMBER_0: 0,
+} as const;
+
+/**
+ * children attendees number
+ */
+export type CreateBookmarkModelChildrenCount = 0 | null;
+
+export interface CreateBookmarkModel {
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
+  resort_departure_date?: string;
+  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
+  resort_arrival_date?: string;
+  /** Total number of journey attendees. */
+  number_attendees?: number;
+  /** adult attendees number */
+  adults_count: CreateBookmarkModelAdultsCount;
+  /** children attendees number */
+  children_count?: CreateBookmarkModelChildrenCount;
+  birthdates?: CreateBookmarksBirthdatesModel;
+  /** The departure option id from product/id booking criteria. */
+  departure_option_id?: string;
+  price?: CreateBookmarkPriceModel;
+}
+
+/**
+ * List of bookmarks
+ */
+export type CreateBookmarksModel = CreateBookmarkModel[];
+
+export interface AssignCustomerToProposalsSummaryElement {
+  /**
+   * Proposal identifier
+   * @pattern ^\d+$
+   */
+  proposal_id: string;
+  /** proposal identifier */
+  opportunity_id?: string;
+}
+
+export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
+
+export interface SponsorshipsPostModel {
+  /**
+   * A valid email adress
+   * @pattern ^[^\s@]+@[^\s@]+\.[^\s@]+$
+   */
+  email: string;
+  /** user's civility :see the /civilities resource */
+  civility: string;
+  /**
+   * The user first name, Ex : Jean
+   * @maxLength 20
+   */
+  first_name: string;
+  /** The user first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤 */
+  unicode_first_name?: string;
+  /**
+   * The user last name Ex: Chang
+   * @maxLength 30
+   */
+  last_name: string;
+  /** The user last name in unicode character, useful in double byte countries like China,  Ex : 昌 */
+  unicode_last_name?: string;
+}
+
 export type PostSurveyQuestionsModel = SurveyQuestionModel[];
 
 /**
@@ -21916,6 +21927,43 @@ export interface PartnerContactModel {
   id: string;
 }
 
+export interface PostPaymentAliasResponse {
+  /**
+   * booking Id (file number)
+   * @pattern ^\d+$
+   */
+  booking_id: string;
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** Payment call back url */
+  callback_url: string;
+}
+
+/**
+ * payment redirect headers
+ */
+export type HeadersModelAnyOf = {
+  /** Content type */
+  'Content-type'?: string;
+};
+
+/**
+ * payment redirect headers
+ */
+export type HeadersModel = HeadersModelAnyOf | null;
+
+export interface PostPaymentAliasModel {
+  /** payment alias */
+  alias: string;
+  /** payment redirect url */
+  url: string;
+  /** payment redirect method */
+  method: string;
+  headers?: HeadersModel;
+  /** payment redirect body */
+  body?: string;
+}
+
 export interface PaymentAuthorizationInput {
   /** provider response */
   provider_response: string;
@@ -21952,43 +22000,6 @@ export interface PaymentAuthorizationResponse {
   status?: string;
   data?: Data;
   errors?: PaymentAuthorizationResponseErrors;
-}
-
-export interface PostPaymentAliasResponse {
-  /**
-   * booking Id (file number)
-   * @pattern ^\d+$
-   */
-  booking_id: string;
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** Payment call back url */
-  callback_url: string;
-}
-
-/**
- * payment redirect headers
- */
-export type HeadersModelAnyOf = {
-  /** Content type */
-  'Content-type'?: string;
-};
-
-/**
- * payment redirect headers
- */
-export type HeadersModel = HeadersModelAnyOf | null;
-
-export interface PostPaymentAliasModel {
-  /** payment alias */
-  alias: string;
-  /** payment redirect url */
-  url: string;
-  /** payment redirect method */
-  method: string;
-  headers?: HeadersModel;
-  /** payment redirect body */
-  body?: string;
 }
 
 /**
@@ -22446,6 +22457,93 @@ export interface SingleProposalResponseModel {
   vendor?: SingleProposalResponseVendorModel;
 }
 
+export interface Departure {
+  /**
+   * City, Airport, Train station, Harbor station code, max seven letters
+   * @maxLength 7
+   */
+  location_id: string;
+  /** Departure date */
+  date: string;
+}
+
+export interface Arrival {
+  /**
+   * City, Airport, Train station, Harbor station code, max seven letters
+   * @maxLength 7
+   */
+  location_id: string;
+}
+
+/**
+ * Allows to choose a specific flight/train class
+ */
+export type AlternativeTransportsParamsFlightClassModel =
+  (typeof AlternativeTransportsParamsFlightClassModel)[keyof typeof AlternativeTransportsParamsFlightClassModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AlternativeTransportsParamsFlightClassModel = {
+  ECO: 'ECO',
+  BUS: 'BUS',
+  FIR: 'FIR',
+  '1CL': '1CL',
+  '2CL': '2CL',
+  'EC+': 'EC+',
+  DIB: 'DIB',
+  DIV: 'DIV',
+  PCR: 'PCR',
+  PRE: 'PRE',
+} as const;
+
+export interface AlternativeTransportParamModel {
+  departure: Departure;
+  arrival: Arrival;
+  flight_class?: AlternativeTransportsParamsFlightClassModel;
+  /** Between 0 and 2. 0 meaning "without stopover", 1 and 2 include with and without stopovers. */
+  max_connections?: number;
+}
+
+export type AlternativeTransportParamsV0 = AlternativeTransportParamModel[];
+
+export interface AlternativeTransportPrice {
+  /**
+   * Price for this transport (inbound/outbound)
+   * @minimum 0
+   */
+  amount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency_code: string;
+}
+
+export interface TotalDifferentialPriceModel {
+  /** Additional price to pay if this transport is selected (can be negative) */
+  amount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency_code: string;
+  /** For a journey, defines if this price is the best price compared to the first proposal */
+  min_differential_price: boolean;
+}
+
+export type Journeys = JourneyModel[];
+
+export interface AlternativeTransportModelV0 {
+  /** Alternative transport ID */
+  id: string;
+  price: AlternativeTransportPrice;
+  total_differential_price: TotalDifferentialPriceModel;
+  journeys: Journeys;
+}
+
+export type AlternativeTransportsModelV0 = AlternativeTransportModelV0[];
+
 /**
  * Indicates the way of the journey (outbound / inbound)
  */
@@ -22737,93 +22835,6 @@ export interface AvailableTransportModel {
 
 export type AvailableTransportsModel = AvailableTransportModel[];
 
-export interface Departure {
-  /**
-   * City, Airport, Train station, Harbor station code, max seven letters
-   * @maxLength 7
-   */
-  location_id: string;
-  /** Departure date */
-  date: string;
-}
-
-export interface Arrival {
-  /**
-   * City, Airport, Train station, Harbor station code, max seven letters
-   * @maxLength 7
-   */
-  location_id: string;
-}
-
-/**
- * Allows to choose a specific flight/train class
- */
-export type AlternativeTransportsParamsFlightClassModel =
-  (typeof AlternativeTransportsParamsFlightClassModel)[keyof typeof AlternativeTransportsParamsFlightClassModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AlternativeTransportsParamsFlightClassModel = {
-  ECO: 'ECO',
-  BUS: 'BUS',
-  FIR: 'FIR',
-  '1CL': '1CL',
-  '2CL': '2CL',
-  'EC+': 'EC+',
-  DIB: 'DIB',
-  DIV: 'DIV',
-  PCR: 'PCR',
-  PRE: 'PRE',
-} as const;
-
-export interface AlternativeTransportParamModel {
-  departure: Departure;
-  arrival: Arrival;
-  flight_class?: AlternativeTransportsParamsFlightClassModel;
-  /** Between 0 and 2. 0 meaning "without stopover", 1 and 2 include with and without stopovers. */
-  max_connections?: number;
-}
-
-export type AlternativeTransportParamsV0 = AlternativeTransportParamModel[];
-
-export interface AlternativeTransportPrice {
-  /**
-   * Price for this transport (inbound/outbound)
-   * @minimum 0
-   */
-  amount: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency_code: string;
-}
-
-export interface TotalDifferentialPriceModel {
-  /** Additional price to pay if this transport is selected (can be negative) */
-  amount: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency_code: string;
-  /** For a journey, defines if this price is the best price compared to the first proposal */
-  min_differential_price: boolean;
-}
-
-export type Journeys = JourneyModel[];
-
-export interface AlternativeTransportModelV0 {
-  /** Alternative transport ID */
-  id: string;
-  price: AlternativeTransportPrice;
-  total_differential_price: TotalDifferentialPriceModel;
-  journeys: Journeys;
-}
-
-export type AlternativeTransportsModelV0 = AlternativeTransportModelV0[];
-
 /**
  * customer profile first name. Cannot be modified. Use customers/{customer_id}/profile instead
  */
@@ -23088,6 +23099,16 @@ export interface NotifyPaymentOrderNotificationStatus {
   provider_id: string;
   /** Codified value, looking like a bank card brand, required by accountant department. */
   payment_method?: string;
+}
+
+/**
+ * Sales network id returned by the /partners/{partner_id}/sales_networks resources. Ex: OPERA_00_P2T
+ */
+export type RefreshProposalInputSalesNetworkId = string | null;
+
+export interface RefreshProposalInput {
+  /** Sales network id returned by the /partners/{partner_id}/sales_networks resources. Ex: OPERA_00_P2T */
+  sales_network_id?: RefreshProposalInputSalesNetworkId;
 }
 
 /**
@@ -23366,16 +23387,6 @@ export interface NewAlternativeTransportModel {
 
 export type AlternativeTransportsV1Model = NewAlternativeTransportModel[];
 
-/**
- * Sales network id returned by the /partners/{partner_id}/sales_networks resources. Ex: OPERA_00_P2T
- */
-export type RefreshProposalInputSalesNetworkId = string | null;
-
-export interface RefreshProposalInput {
-  /** Sales network id returned by the /partners/{partner_id}/sales_networks resources. Ex: OPERA_00_P2T */
-  sales_network_id?: RefreshProposalInputSalesNetworkId;
-}
-
 export interface UpdateProposalTransportModelV2 {
   /** id of the chosen transportation provided through, POST /v0/alternative_transports */
   id: string;
@@ -23576,6 +23587,45 @@ export interface CustomerTypeConversionResponseModel {
 
 export type CustomersTypeConversionResponseModel = CustomerTypeConversionResponseModel[];
 
+/**
+ * The rate is a more or less advantageous price condition that you can chose to apply to a proposal. Select the rate type you want to apply from the list.
+ */
+export type ProposalRatesInputModelTypes =
+  (typeof ProposalRatesInputModelTypes)[keyof typeof ProposalRatesInputModelTypes];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProposalRatesInputModelTypes = {
+  STANDARD_RATE: 'STANDARD_RATE',
+  FLEXIBLE_RATE: 'FLEXIBLE_RATE',
+  NON_REFUNDABLE_RATE: 'NON_REFUNDABLE_RATE',
+} as const;
+
+export interface PutProposalRatesInputModel {
+  type: ProposalRatesInputModelTypes;
+}
+
+export interface PutPackagesInputModel {
+  /** a package_id from /products/{product_id}/packages resource */
+  id: string;
+}
+
+export interface ReplacementAccommodationsArrangement {
+  /** id of the accommodation */
+  id: string;
+  /** number of accommodations where the attendees will be allocated */
+  quantity: number;
+  attendees: AccommodationsArrangementAttendeesModel;
+}
+
+export type ReplacementAccommodationsArrangements = ReplacementAccommodationsArrangement[];
+
+export interface PutProposalOfferPayloadOffer {
+  /** Id of the offer to set in the proposal */
+  offer_id: string;
+}
+
+export type PutProposalOfferPayload = PutProposalOfferPayloadOffer[];
+
 export interface AProposalServiceScheduleAttendee {
   /** Attendee identifier */
   id: string;
@@ -23600,55 +23650,6 @@ export interface AProposalService {
 }
 
 export type ProposalServicesList = AProposalService[];
-
-export interface PutProposalOfferPayloadOffer {
-  /** Id of the offer to set in the proposal */
-  offer_id: string;
-}
-
-export type PutProposalOfferPayload = PutProposalOfferPayloadOffer[];
-
-export interface PutPackagesInputModel {
-  /** a package_id from /products/{product_id}/packages resource */
-  id: string;
-}
-
-export interface ReplacementAccommodationsArrangement {
-  /** id of the accommodation */
-  id: string;
-  /** number of accommodations where the attendees will be allocated */
-  quantity: number;
-  attendees: AccommodationsArrangementAttendeesModel;
-}
-
-export type ReplacementAccommodationsArrangements = ReplacementAccommodationsArrangement[];
-
-/**
- * The rate is a more or less advantageous price condition that you can chose to apply to a proposal. Select the rate type you want to apply from the list.
- */
-export type ProposalRatesInputModelTypes =
-  (typeof ProposalRatesInputModelTypes)[keyof typeof ProposalRatesInputModelTypes];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProposalRatesInputModelTypes = {
-  STANDARD_RATE: 'STANDARD_RATE',
-  FLEXIBLE_RATE: 'FLEXIBLE_RATE',
-  NON_REFUNDABLE_RATE: 'NON_REFUNDABLE_RATE',
-} as const;
-
-export interface PutProposalRatesInputModel {
-  type: ProposalRatesInputModelTypes;
-}
-
-export interface PutAccommodationsArrangement {
-  /** id of the accommodation */
-  id: string;
-  /** Number of occupants in the accommodation */
-  occupancy: number;
-  attendees: AccommodationsArrangementAttendeesModel;
-}
-
-export type PutAccommodationsArrangements = PutAccommodationsArrangement[];
 
 /**
  * customer's status
@@ -23703,6 +23704,16 @@ export interface PutProposalAttendeesResponseHouseholdModel {
 }
 
 export type PutProposalAttendeesResponseModelV1 = PutProposalAttendeesResponseHouseholdModel[];
+
+export interface PutAccommodationsArrangement {
+  /** id of the accommodation */
+  id: string;
+  /** Number of occupants in the accommodation */
+  occupancy: number;
+  attendees: AccommodationsArrangementAttendeesModel;
+}
+
+export type PutAccommodationsArrangements = PutAccommodationsArrangement[];
 
 /**
  * location number
@@ -25260,6 +25271,21 @@ export interface CybersourceTokenRequestParams {
   /** Optional booking ID */
   booking_id?: string;
 }
+
+export type GetV0CountriesParams = {
+  /**
+   * string composed of a field name (can be a path), a comparison operator (>, >=, <=, <, ==, !=) and a value. Logical operator AND applies between filters
+   */
+  filter?: FilterArrayParamModel;
+};
+
+export type GetV3SchemasResourceLocaleorcountryParams = {
+  /**
+   * Proposal identifier
+   * @pattern ^\d+$
+   */
+  proposal_id?: string;
+};
 
 export type PostV3BookingsParams = {
   /**

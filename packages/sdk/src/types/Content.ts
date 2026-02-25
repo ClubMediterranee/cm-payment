@@ -87,4 +87,35 @@ export type Content = {
       conditionRequired: string;
     };
   };
+  billingAddress: {
+    title: string;
+    fields: {
+      first_name: string;
+      last_name: string;
+      number: string;
+      street: string;
+      add_on: string;
+      city: string;
+      state_or_district: string;
+      zip_code: string;
+      country: string;
+      country_code: string;
+      additional_information_1: string;
+      additional_information_2: string;
+      town: string;
+    };
+    placeholders: {
+      select: string;
+    };
+    validation: {
+      required: string;
+      maxLength: string;
+      pattern: string;
+      invalidValue: string;
+    };
+    errors: {
+      schemaFetchFailed: string;
+      schemaInvalid: string;
+    };
+  };
 };

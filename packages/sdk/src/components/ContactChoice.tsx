@@ -20,11 +20,11 @@ export const ContactChoice = ({ reference, uuid }: Props) => {
   const { content } = useCapsConfigContext();
   const { control } = useFormContext();
 
-  useProfilePrefill();
   const { contactChoices, sendLinkText, shouldDisplay } = useContactChoice({
     reference,
     uuid,
   });
+  useProfilePrefill(!!shouldDisplay);
 
   if (!shouldDisplay) {
     return null;

@@ -1,5 +1,6 @@
 import {
   Action,
+  BillingAddress,
   CardInstallments,
   Cgv,
   ContactChoice,
@@ -84,6 +85,7 @@ export function PaymentPage() {
         <CardInstallments />
         <ContactChoice reference={reference} uuid={uuid} />
         <Cgv />
+        <BillingAddress />
         <PaymentWidget />
         {error?.message && (
           <p ref={ref} className="text-red font-semibold my-4">

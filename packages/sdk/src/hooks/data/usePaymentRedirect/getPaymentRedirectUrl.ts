@@ -9,17 +9,32 @@ import { CapsFormSchema } from '../../../schemas/capsFormSchema';
 import { CapsSettings } from '../../../types/CapsSettings';
 import { getRedirectPaymentCallbackUrls } from '../../../utils/url/getRedirectPaymentCallbackUrls';
 
-const cleanBillingDetails = (
-  billingDetails: CapsFormSchema['billing_details'],
-  templateId: CapsFormSchema['template_id'],
-) => {
-  if (templateId === GLOBAL_CAPS_SETTINGS.templateIds.email) {
-    return { ...billingDetails, mobile_phone: undefined };
+const mapBillingDetails = (formData: CapsFormSchema) => {
+  const { billing_details, template_id } = formData;
+
+  const number = billing_details.address?.number;
+  const street = billing_details.address?.street;
+  const address1 = [number, street].filter(Boolean).join(' ') || undefined;
+
+  const mappedDetails = {
+    email: billing_details.email,
+    mobile_phone: billing_details.mobile_phone,
+    first_name: billing_details.attendee?.first_name,
+    last_name: billing_details.attendee?.last_name,
+    address1,
+    locality: billing_details.address?.city,
+    postal_code: billing_details.address?.zip_code,
+    administrative_area: billing_details.address?.state_or_district,
+    country_code: billing_details.address?.country_code,
+  };
+
+  if (template_id === GLOBAL_CAPS_SETTINGS.templateIds.email) {
+    return { ...mappedDetails, mobile_phone: undefined };
   }
-  if (templateId === GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone) {
-    return { ...billingDetails, email: undefined };
+  if (template_id === GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone) {
+    return { ...mappedDetails, email: undefined };
   }
-  return billingDetails;
+  return mappedDetails;
 };
 
 export const getPaymentRedirectUrl = async (
@@ -53,7 +68,7 @@ export const getPaymentRedirectUrl = async (
     ...callbacks,
     payment_condition_id: formData.payment_condition_id,
     template_id: formData.template_id,
-    billing_details: cleanBillingDetails(formData.billing_details, formData.template_id),
+    billing_details: mapBillingDetails(formData),
     token: formData.token?.value,
   });
 

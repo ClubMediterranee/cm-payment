@@ -182,7 +182,7 @@ describe('CapsForm', () => {
   });
 
   it('accepte tous les composants requis pour issuer GO', () => {
-    mockUseCapsConfigContext.mockReturnValueOnce({
+    mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
       oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
@@ -203,10 +203,11 @@ describe('CapsForm', () => {
     }
 
     consoleErrorSpy.mockRestore();
+    mockUseCapsConfigContext.mockReset();
   });
 
   it('génère une erreur si composants manquants pour issuer GO', () => {
-    mockUseCapsConfigContext.mockReturnValueOnce({
+    mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
       oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
@@ -223,10 +224,11 @@ describe('CapsForm', () => {
     }).toThrow('Missing required components');
 
     consoleErrorSpy.mockRestore();
+    mockUseCapsConfigContext.mockReset();
   });
 
   it('accepte un formulaire minimal pour issuer PARTNERS', () => {
-    mockUseCapsConfigContext.mockReturnValueOnce({
+    mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
       oidc: { issuerType: OidcIssuerTypes.PARTNERS, accessToken: 'token' },
@@ -245,10 +247,11 @@ describe('CapsForm', () => {
     }
 
     consoleErrorSpy.mockRestore();
+    mockUseCapsConfigContext.mockReset();
   });
 
   it('accepte un formulaire vide pour issuer PARTNERS', () => {
-    mockUseCapsConfigContext.mockReturnValueOnce({
+    mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
       oidc: { issuerType: OidcIssuerTypes.PARTNERS, accessToken: 'token' },
@@ -267,6 +270,7 @@ describe('CapsForm', () => {
     }
 
     consoleErrorSpy.mockRestore();
+    mockUseCapsConfigContext.mockReset();
   });
 
   it('utilise le action fourni en props', () => {

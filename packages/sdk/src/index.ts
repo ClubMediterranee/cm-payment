@@ -1,3 +1,4 @@
+export * from './components/BillingAddress';
 export * from './components/CardInstallments';
 export * from './components/Cgv';
 export * from './components/ContactChoice';

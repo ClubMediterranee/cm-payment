@@ -23,13 +23,23 @@ const createPostForm = (url: string, fields: Record<string, string>): HTMLFormEl
   return form;
 };
 
-const handleGetRedirect = (url: string, iframe?: HTMLIFrameElement): void => {
+const handleGetRedirect = (
+  url: string,
+  body: string | undefined,
+  iframe?: HTMLIFrameElement,
+): void => {
+  let finalUrl = url;
+
+  if (body) {
+    finalUrl = `${url}?${body}`;
+  }
+
   if (iframe) {
-    iframe.src = url;
+    iframe.src = finalUrl;
     return;
   }
 
-  window.location.href = url;
+  window.location.href = finalUrl;
 };
 
 const handlePostRedirect = (
@@ -56,9 +66,12 @@ export const loadPaymentProviderUrl = (
   const iframe = targetIframe?.current;
   const normalizedMethod = method.toUpperCase();
 
-  const handlers: Record<string, () => void> = {
-    GET: () => handleGetRedirect(url, iframe),
-    POST: () => handlePostRedirect(url, body, iframe),
+  const handlers: Record<
+    string,
+    (url: string, body: string | undefined, iframe?: HTMLIFrameElement) => void
+  > = {
+    GET: handleGetRedirect,
+    POST: handlePostRedirect,
   };
 
   const handler = handlers[normalizedMethod];
@@ -67,5 +80,5 @@ export const loadPaymentProviderUrl = (
     throw new Error(`Unsupported HTTP method: ${method}`);
   }
 
-  handler();
+  handler(url, body, iframe);
 };

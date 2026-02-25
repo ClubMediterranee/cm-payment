@@ -94,4 +94,35 @@ export const defaultContent: Content = {
       conditionRequired: 'Please select the number of installments',
     },
   },
+  billingAddress: {
+    title: 'Billing Address',
+    fields: {
+      first_name: 'First Name',
+      last_name: 'Last Name',
+      number: 'Street Number',
+      street: 'Street',
+      add_on: 'Additional Information',
+      city: 'City',
+      state_or_district: 'State / Province',
+      zip_code: 'Postal Code',
+      country: 'Country',
+      country_code: 'Country',
+      additional_information_1: 'Additional Information 1',
+      additional_information_2: 'Additional Information 2',
+      town: 'Town',
+    },
+    placeholders: {
+      select: 'Select an option',
+    },
+    validation: {
+      required: 'This field is required',
+      maxLength: 'Maximum length exceeded',
+      pattern: 'Invalid format',
+      invalidValue: 'Invalid value',
+    },
+    errors: {
+      schemaFetchFailed: 'Failed to load billing address form. Please try again.',
+      schemaInvalid: 'Billing address form configuration error. Please contact support.',
+    },
+  },
 };

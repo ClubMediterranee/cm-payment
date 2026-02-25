@@ -40,6 +40,17 @@ describe('getPaymentRedirectUrl', () => {
     template_id: 'template-456',
     billing_details: {
       email: 'test@example.com',
+      attendee: {
+        first_name: 'John',
+        last_name: 'Doe',
+      },
+      address: {
+        street: '123 Main St',
+        city: 'Paris',
+        zip_code: '75001',
+        state_or_district: 'Île-de-France',
+        country_code: 'FR',
+      },
     },
     token: undefined,
   };
@@ -92,9 +103,18 @@ describe('getPaymentRedirectUrl', () => {
     });
     expect(mockPostV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith('payment-123', {
       callback_url: 'https://callback.url/payment',
+      payment_condition_id: undefined,
       template_id: 'template-456',
       billing_details: {
         email: 'test@example.com',
+        mobile_phone: undefined,
+        first_name: 'John',
+        last_name: 'Doe',
+        address1: '123 Main St',
+        locality: 'Paris',
+        postal_code: '75001',
+        administrative_area: 'Île-de-France',
+        country_code: 'FR',
       },
       token: undefined,
     });
@@ -231,9 +251,18 @@ describe('getPaymentRedirectUrl', () => {
 
     expect(mockPostV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith('payment-555', {
       callback_url: '',
+      payment_condition_id: undefined,
       template_id: 'template-456',
       billing_details: {
         email: 'test@example.com',
+        mobile_phone: undefined,
+        first_name: 'John',
+        last_name: 'Doe',
+        address1: '123 Main St',
+        locality: 'Paris',
+        postal_code: '75001',
+        administrative_area: 'Île-de-France',
+        country_code: 'FR',
       },
       token: undefined,
     });
@@ -270,15 +299,157 @@ describe('getPaymentRedirectUrl', () => {
     expect(mockPostV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith('payment-999', {
       callback_url: 'https://callback.url/client',
       callback_url_seller: 'https://callback.url/seller',
+      payment_condition_id: undefined,
       template_id: 'template-456',
       billing_details: {
         email: 'test@example.com',
+        mobile_phone: undefined,
+        first_name: 'John',
+        last_name: 'Doe',
+        address1: '123 Main St',
+        locality: 'Paris',
+        postal_code: '75001',
+        administrative_area: 'Île-de-France',
+        country_code: 'FR',
       },
       token: undefined,
     });
     expect(result).toEqual({
       url: 'https://redirect.url',
       body: 'data=test',
+    });
+  });
+
+  it('should handle missing billing address fields', async () => {
+    const formDataWithoutAddress = {
+      ...mockFormData,
+      billing_details: {
+        email: 'test@example.com',
+      },
+    };
+
+    mockPostV1Payments.mockResolvedValue({
+      id: 'payment-111',
+    } as any);
+
+    mockPostV0PaymentsPaymentIdRedirectRequest.mockResolvedValue({
+      url: 'https://test.url',
+      body: 'test=data',
+    } as any);
+
+    await getPaymentRedirectUrl(formDataWithoutAddress as any, {
+      type: 'booking',
+      id: 'booking-222',
+      customerId: 'customer-333',
+    });
+
+    expect(mockPostV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith('payment-111', {
+      callback_url: 'https://callback.url/payment',
+      payment_condition_id: undefined,
+      template_id: 'template-456',
+      billing_details: {
+        email: 'test@example.com',
+        mobile_phone: undefined,
+        first_name: undefined,
+        last_name: undefined,
+        address1: undefined,
+        locality: undefined,
+        postal_code: undefined,
+        administrative_area: undefined,
+        country_code: undefined,
+      },
+      token: undefined,
+    });
+  });
+
+  it('should handle partial billing address with only street', async () => {
+    const formDataWithPartialAddress = {
+      ...mockFormData,
+      billing_details: {
+        email: 'test@example.com',
+        address: {
+          street: '456 Oak Ave',
+        },
+      },
+    };
+
+    mockPostV1Payments.mockResolvedValue({
+      id: 'payment-444',
+    } as any);
+
+    mockPostV0PaymentsPaymentIdRedirectRequest.mockResolvedValue({
+      url: 'https://test.url',
+      body: 'test=data',
+    } as any);
+
+    await getPaymentRedirectUrl(formDataWithPartialAddress as any, {
+      type: 'booking',
+      id: 'booking-555',
+      customerId: 'customer-666',
+    });
+
+    expect(mockPostV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith('payment-444', {
+      callback_url: 'https://callback.url/payment',
+      payment_condition_id: undefined,
+      template_id: 'template-456',
+      billing_details: {
+        email: 'test@example.com',
+        mobile_phone: undefined,
+        first_name: undefined,
+        last_name: undefined,
+        address1: '456 Oak Ave',
+        locality: undefined,
+        postal_code: undefined,
+        administrative_area: undefined,
+        country_code: undefined,
+      },
+      token: undefined,
+    });
+  });
+
+  it('should handle billing address with both number and street', async () => {
+    const formDataWithNumberAndStreet = {
+      ...mockFormData,
+      billing_details: {
+        email: 'test@example.com',
+        address: {
+          number: '42',
+          street: 'Elm Street',
+        },
+      },
+    };
+
+    mockPostV1Payments.mockResolvedValue({
+      id: 'payment-777',
+    } as any);
+
+    mockPostV0PaymentsPaymentIdRedirectRequest.mockResolvedValue({
+      url: 'https://test.url',
+      body: 'test=data',
+    } as any);
+
+    await getPaymentRedirectUrl(formDataWithNumberAndStreet as any, {
+      type: 'booking',
+      id: 'booking-888',
+      customerId: 'customer-999',
+    });
+
+    expect(mockPostV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith('payment-777', {
+      callback_url: 'https://callback.url/payment',
+      payment_condition_id: undefined,
+      template_id: 'template-456',
+      billing_details: {
+        email: 'test@example.com',
+        mobile_phone: undefined,
+        first_name: undefined,
+        last_name: undefined,
+        address1: '42 Elm Street',
+        locality: undefined,
+        postal_code: undefined,
+        administrative_area: undefined,
+        country_code: undefined,
+      },
+      token: undefined,
     });
   });
 });
