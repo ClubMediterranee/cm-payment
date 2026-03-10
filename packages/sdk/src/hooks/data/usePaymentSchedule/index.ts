@@ -6,6 +6,8 @@ import { selectPaymentSchedule } from './selectPaymentSchedule';
 
 export const PAYMENT_SCHEDULE_QUERY_KEY = (id: string) => ['paymentSchedule', id];
 
+//fetchPaymentSchedule
+
 export const paymentScheduleQueryOptions = (id: string) => ({
   queryKey: PAYMENT_SCHEDULE_QUERY_KEY(id),
   queryFn: getPaymentSchedule,
