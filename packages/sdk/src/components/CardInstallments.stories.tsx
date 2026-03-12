@@ -104,6 +104,31 @@ const defaultHandlersWithInstallments = [
       }),
     );
   }),
+  http.get('*/v3/customers/test-customer/bookings/test-booking', () => {
+    return Response.json({
+      stays: [
+        {
+          product_id: 'PROD123',
+          resort_arrival_date: '20251231',
+          resort_leaving_date: '20260107',
+          attendees: [
+            {
+              adults_count: 2,
+              children_count: 0,
+            },
+          ],
+          accommodations: [
+            {
+              quantity: 1,
+            },
+          ],
+          outward_trip: {
+            transportation: ['PLANE'],
+          },
+        },
+      ],
+    });
+  }),
   http.get('*/v1/payment_providers', () => {
     return Response.json(paymentProvidersWithInstallments);
   }),
@@ -124,6 +149,31 @@ const defaultHandlersWithoutInstallments = [
         ],
       }),
     );
+  }),
+  http.get('*/v3/customers/test-customer/bookings/test-booking', () => {
+    return Response.json({
+      stays: [
+        {
+          product_id: 'PROD123',
+          resort_arrival_date: '20251231',
+          resort_leaving_date: '20260107',
+          attendees: [
+            {
+              adults_count: 2,
+              children_count: 0,
+            },
+          ],
+          accommodations: [
+            {
+              quantity: 1,
+            },
+          ],
+          outward_trip: {
+            transportation: ['PLANE'],
+          },
+        },
+      ],
+    });
   }),
   http.get('*/v1/payment_providers', () => {
     return Response.json(paymentProvidersWithoutInstallments);

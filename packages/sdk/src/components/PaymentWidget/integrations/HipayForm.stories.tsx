@@ -35,6 +35,20 @@ Composant de formulaire Hipay qui affiche les champs hébergés pour la saisie d
           token: { value: '', status: 'idle' },
         }}
         proposalId="12345678"
+        paymentConfig={{
+          providers: {
+            MHIPAY: {
+              is_active: true,
+              settings: {
+                script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
+                username: '94675627.stage-secure-gateway.hipay-tpp.com',
+                password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
+                environment: 'stage',
+              },
+            },
+          },
+          featureFlip: {},
+        }}
       >
         <HipayForm />
       </MockedProvider>
@@ -154,6 +168,20 @@ export const ErrorTest: Story = {
           token: { value: '', status: 'idle' },
         }}
         proposalId="12345678"
+        paymentConfig={{
+          providers: {
+            MHIPAY: {
+              is_active: true,
+              settings: {
+                script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
+                username: '94675627.stage-secure-gateway.hipay-tpp.com',
+                password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
+                environment: 'stage',
+              },
+            },
+          },
+          featureFlip: {},
+        }}
       >
         <HipayFormWithSubmit />
       </MockedProvider>

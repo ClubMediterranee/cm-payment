@@ -204,7 +204,10 @@ export const Default: Story = {
   render: () => (
     <MockedProvider
       bookingId="123"
-      paymentConfig={{ providers: { CYBERSOURCE: { is_active: true } }, featureFlip: {} }}
+      paymentConfig={{
+        providers: { CYBERSOURCE: { is_active: true, settings: {} } },
+        featureFlip: {},
+      }}
       defaultValues={{
         provider_id: 'CYBERSOURCE',
         billing_details: {
@@ -276,7 +279,10 @@ export const WithProfilePrefill: Story = {
       bookingId="123"
       customerId="789"
       oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
-      paymentConfig={{ providers: { CYBERSOURCE: { is_active: true } }, featureFlip: {} }}
+      paymentConfig={{
+        providers: { CYBERSOURCE: { is_active: true, settings: {} } },
+        featureFlip: {},
+      }}
       defaultValues={{
         provider_id: 'CYBERSOURCE',
         billing_details: {

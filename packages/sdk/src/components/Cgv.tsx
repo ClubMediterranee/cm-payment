@@ -10,7 +10,7 @@ import { CheckboxSkeleton, TitleSkeleton } from './ui/skeletons';
 
 export const Cgv = () => {
   const { content } = useCapsConfigContext();
-  const { control } = useFormContext();
+  const { control, trigger } = useFormContext();
 
   return (
     <div className="w-full">
@@ -27,8 +27,9 @@ export const Cgv = () => {
                 <Checkbox
                   validationStatus={validationStatus}
                   aria-invalid={!!error}
-                  onChange={(_, newValue) => {
+                  onChange={async (_, newValue) => {
                     onChange(newValue ?? false);
+                    await trigger('cgv');
                   }}
                 >
                   <span className="text-b4 font-bold">{content.cgv.content}</span>

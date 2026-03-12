@@ -11,6 +11,7 @@ import {
   CMS_PREFIXES,
   FEATURE_FLIPS_MAPPING,
   PROVIDER_PSP_PREFIX,
+  PROVIDER_SETTINGS_MAPPING,
   SETTINGS_MAPPING,
 } from './mapping';
 
@@ -30,6 +31,29 @@ const transformKeysToRecord = (
     },
     {} as Record<string, boolean>,
   );
+};
+
+const mapProvidersSettings = (
+  settings: Record<string, unknown>,
+): Record<string, Record<string, unknown>> => {
+  const allProvidersSettings: Record<string, Record<string, unknown>> = {};
+
+  Object.entries(PROVIDER_SETTINGS_MAPPING).forEach(([provider, settingsMapping]) => {
+    const providerSettings: Record<string, unknown> = {};
+
+    Object.entries(settingsMapping).forEach(([settingKey, cmsPath]) => {
+      if (typeof cmsPath === 'string') {
+        const settingValue = cmsPath.split('.').reduce((obj, key) => obj?.[key], settings as any);
+        providerSettings[settingKey] = settingValue !== undefined ? settingValue : cmsPath;
+      } else {
+        providerSettings[settingKey] = cmsPath;
+      }
+    });
+
+    allProvidersSettings[provider] = providerSettings;
+  });
+
+  return allProvidersSettings;
 };
 
 const getFeatureFlipValue = ({
@@ -62,9 +86,13 @@ const getFeatureFlipValue = ({
 
 const mapProvidersConfig = ({
   legacyFlips,
+  providersSettings,
   issuerType,
   locale,
-}: ExtractParams): Record<string, PaymentProviderConfig> => {
+}: ExtractParams & { providersSettings: Record<string, Record<string, unknown>> }): Record<
+  string,
+  PaymentProviderConfig
+> => {
   const pattern = new RegExp(`${PROVIDER_PSP_PREFIX}([^.]+)$`);
 
   const providerNames = new Set(
@@ -78,12 +106,14 @@ const mapProvidersConfig = ({
       const pspKey = `${PROVIDER_PSP_PREFIX}${provider}`;
       const value = getFeatureFlipValue({ legacyFlips, key: pspKey, issuerType, locale });
       const providerUpper = provider.toUpperCase();
+
       acc[providerUpper] = {
         is_active: value,
         display_type:
           GLOBAL_CAPS_SETTINGS.providersDisplayMode[
             providerUpper as keyof typeof GLOBAL_CAPS_SETTINGS.providersDisplayMode
           ] || 'redirect',
+        settings: providersSettings[providerUpper] || {},
       };
 
       return acc;
@@ -147,9 +177,10 @@ export const mapPaymentConfig = ({
 }): PaymentConfig => {
   const keys = featureFlip.keys ?? [];
   const legacyFlips = transformKeysToRecord(keys);
+  const providersSettings = mapProvidersSettings(settings);
 
   return {
-    providers: mapProvidersConfig({ legacyFlips, issuerType, locale }),
+    providers: mapProvidersConfig({ legacyFlips, providersSettings, issuerType, locale }),
     featureFlip: mapFeatureFlips({ legacyFlips, issuerType, locale }),
     settings: mapSettings({ settings, issuerType }),
   };

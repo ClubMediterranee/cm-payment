@@ -2,12 +2,19 @@ import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 
+import { GLOBAL_CAPS_SETTINGS } from '../../config';
 import { useFormCallbacks } from '../../contexts/FormCallbacksContext';
 import { usePaymentSubmit } from '../../hooks/usePaymentSubmit';
 import { useFormContext, useWatch } from '../../hooks/utils/useForm';
+import { PspProviders } from '../../types/PspProviders';
 import { IframeMessageType } from '../../utils/iframe/constants';
 import { getIframeHeight } from '../../utils/iframe/getIframeHeight';
 import { useIframeMessageBridge } from '../../utils/iframe/useIframeMessageBridge';
+import { UpliftForm } from './integrations/UpliftForm';
+
+const thirdPartyIframeRegistry = {
+  [PspProviders.MUPLIFT]: UpliftForm,
+};
 
 export const IframeView = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null!);
@@ -17,13 +24,17 @@ export const IframeView = () => {
   });
 
   const {
-    formState: { isValid },
+    formState: { isValid, errors },
     trigger,
     setValue,
   } = useFormContext();
 
   const watchedPaymentConditionId = useWatch('payment_condition_id');
   const watchedProviderId = useWatch('provider_id');
+
+  const isThirdPartyIframe = GLOBAL_CAPS_SETTINGS.thirdPartyIframeProviders.includes(
+    watchedProviderId as PspProviders,
+  );
 
   const { onLoad, onLoadEnd } = useFormCallbacks();
 
@@ -47,7 +58,7 @@ export const IframeView = () => {
   });
 
   useEffect(() => {
-    if (isValid) {
+    if (isValid && !isThirdPartyIframe) {
       handleSubmit();
     }
   }, [isValid, watchedPaymentConditionId]);
@@ -55,6 +66,13 @@ export const IframeView = () => {
   useEffect(() => {
     trigger();
   }, []);
+
+  const ThirdPartyIframeComponent =
+    thirdPartyIframeRegistry[watchedProviderId as keyof typeof thirdPartyIframeRegistry];
+
+  if (ThirdPartyIframeComponent && !errors.cgv?.message) {
+    return <ThirdPartyIframeComponent />;
+  }
 
   if (!isValid) {
     return null;

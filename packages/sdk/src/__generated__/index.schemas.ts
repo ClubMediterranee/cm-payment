@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3377.2
+ * OpenAPI spec version: 0.3389.0
  */
 /**
  * Eligible attendees for this accommodation
@@ -6161,160 +6161,6 @@ export interface ProfileModelV0 {
 }
 
 /**
- * List of children birthdates
- */
-export type Birthdates = string[];
-
-/**
- * indicates the type of proposal that has been saved on the customer account
- */
-export type ProposalSummaryTypeModel =
-  (typeof ProposalSummaryTypeModel)[keyof typeof ProposalSummaryTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ProposalSummaryTypeModel = {
-  PRE_BOOKING: 'PRE_BOOKING',
-  STANDARD: 'STANDARD',
-} as const;
-
-/**
- * Transportation mode: PLANE, TRAIN, BOAT, UNKNOWN or null
- */
-export type TransportType = 'PLANE' | 'TRAIN' | 'BOAT' | 'UNKNOWN' | null;
-
-export type TransportSummaryDepartureCity = string | null;
-
-export type TransportSummaryArrivalCity = string | null;
-
-export interface TransportSummary {
-  transport_type?: TransportType;
-  departure_city?: TransportSummaryDepartureCity;
-  arrival_city?: TransportSummaryArrivalCity;
-}
-
-export interface ProposalDiscountsModel {
-  /** id of the applied discount on the proposal */
-  id: string;
-}
-
-/**
- * List of applied discounts on the proposal
- */
-export type Discounts = ProposalDiscountsModel[];
-
-/**
- * Proposal's reservation date
- */
-export type ProposalSummaryModelReservationDate = string | null;
-
-/**
- * Saved proposals for a customer
- */
-export interface ProposalSummaryModel {
-  /** Context id */
-  id: string;
-  /** Product id. Ex: AGAC */
-  product_id: string;
-  /** Resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  resort_arrival_date?: string;
-  /** Resort departure date 
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  resort_departure_date?: string;
-  /**
-   * The count of adults
-   * @minimum 0
-   */
-  adults_count?: number;
-  /**
-   * The count of children
-   * @minimum 0
-   */
-  children_count?: number;
-  birthdates?: Birthdates;
-  type?: ProposalSummaryTypeModel;
-  /** Indicates weither the proposal can be transformed into a booking or not. Always displayed as false when attendees are not added. */
-  is_bookable?: boolean;
-  transport_summary?: TransportSummary;
-  discounts?: Discounts;
-  /** Proposal's reservation date */
-  reservation_date?: ProposalSummaryModelReservationDate;
-}
-
-/**
- * List of customer's saved proposals summary
- */
-export type ProposalSummariesModel = ProposalSummaryModel[];
-
-export type CreateBookmarksBirthdatesModelAnyOfItem = string | null;
-
-/**
- * List of birthdate of kids. Ex: 20160430. Date format YYYYMMDD
- */
-export type CreateBookmarksBirthdatesModel = CreateBookmarksBirthdatesModelAnyOfItem[] | null;
-
-export interface CreateBookmarkPriceModel {
-  /** Price */
-  amount: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-/**
- * adult attendees number
- */
-export type BookmarkModelAdultsCount =
-  (typeof BookmarkModelAdultsCount)[keyof typeof BookmarkModelAdultsCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BookmarkModelAdultsCount = {
-  NUMBER_0: 0,
-} as const;
-
-/**
- * children attendees number
- */
-export type BookmarkModelChildrenCount = 0 | null;
-
-export interface BookmarkModel {
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
-  resort_departure_date?: string;
-  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
-  resort_arrival_date?: string;
-  /** Total number of journey attendees. */
-  number_attendees?: number;
-  /** adult attendees number */
-  adults_count: BookmarkModelAdultsCount;
-  /** children attendees number */
-  children_count?: BookmarkModelChildrenCount;
-  birthdates?: CreateBookmarksBirthdatesModel;
-  /** The departure option id from product/id booking criteria. */
-  departure_option_id?: string;
-  price?: CreateBookmarkPriceModel;
-  /** Bookmark's id */
-  id: string;
-  _links?: LinksModel;
-}
-
-/**
- * List of bookmarks
- */
-export type BookmarksModel = BookmarkModel[];
-
-export interface CustomerCrmHistoryItemModel {
-  /** Url to use so as to retrieve GM's emails */
-  url?: string;
-}
-
-export type CustomerCrmHistoryModel = CustomerCrmHistoryItemModel[];
-
-/**
  * customer profile first name. Cannot be modified. Use customers/{customer_id}/profile instead
  */
 export type VisaModelV0AnyOfFirstName = string | null;
@@ -6763,6 +6609,160 @@ export interface TravelDocumentsModelV0 {
   driving_licence?: TravelDocumentDrivingLicenceModelV0;
   travel_membership_cards?: TravelMembershipCardsV0;
 }
+
+export type CreateBookmarksBirthdatesModelAnyOfItem = string | null;
+
+/**
+ * List of birthdate of kids. Ex: 20160430. Date format YYYYMMDD
+ */
+export type CreateBookmarksBirthdatesModel = CreateBookmarksBirthdatesModelAnyOfItem[] | null;
+
+export interface CreateBookmarkPriceModel {
+  /** Price */
+  amount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+/**
+ * adult attendees number
+ */
+export type BookmarkModelAdultsCount =
+  (typeof BookmarkModelAdultsCount)[keyof typeof BookmarkModelAdultsCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BookmarkModelAdultsCount = {
+  NUMBER_0: 0,
+} as const;
+
+/**
+ * children attendees number
+ */
+export type BookmarkModelChildrenCount = 0 | null;
+
+export interface BookmarkModel {
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
+  resort_departure_date?: string;
+  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
+  resort_arrival_date?: string;
+  /** Total number of journey attendees. */
+  number_attendees?: number;
+  /** adult attendees number */
+  adults_count: BookmarkModelAdultsCount;
+  /** children attendees number */
+  children_count?: BookmarkModelChildrenCount;
+  birthdates?: CreateBookmarksBirthdatesModel;
+  /** The departure option id from product/id booking criteria. */
+  departure_option_id?: string;
+  price?: CreateBookmarkPriceModel;
+  /** Bookmark's id */
+  id: string;
+  _links?: LinksModel;
+}
+
+/**
+ * List of bookmarks
+ */
+export type BookmarksModel = BookmarkModel[];
+
+export interface CustomerCrmHistoryItemModel {
+  /** Url to use so as to retrieve GM's emails */
+  url?: string;
+}
+
+export type CustomerCrmHistoryModel = CustomerCrmHistoryItemModel[];
+
+/**
+ * List of children birthdates
+ */
+export type Birthdates = string[];
+
+/**
+ * indicates the type of proposal that has been saved on the customer account
+ */
+export type ProposalSummaryTypeModel =
+  (typeof ProposalSummaryTypeModel)[keyof typeof ProposalSummaryTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ProposalSummaryTypeModel = {
+  PRE_BOOKING: 'PRE_BOOKING',
+  STANDARD: 'STANDARD',
+} as const;
+
+/**
+ * Transportation mode: PLANE, TRAIN, BOAT, UNKNOWN or null
+ */
+export type TransportType = 'PLANE' | 'TRAIN' | 'BOAT' | 'UNKNOWN' | null;
+
+export type TransportSummaryDepartureCity = string | null;
+
+export type TransportSummaryArrivalCity = string | null;
+
+export interface TransportSummary {
+  transport_type?: TransportType;
+  departure_city?: TransportSummaryDepartureCity;
+  arrival_city?: TransportSummaryArrivalCity;
+}
+
+export interface ProposalDiscountsModel {
+  /** id of the applied discount on the proposal */
+  id: string;
+}
+
+/**
+ * List of applied discounts on the proposal
+ */
+export type Discounts = ProposalDiscountsModel[];
+
+/**
+ * Proposal's reservation date
+ */
+export type ProposalSummaryModelReservationDate = string | null;
+
+/**
+ * Saved proposals for a customer
+ */
+export interface ProposalSummaryModel {
+  /** Context id */
+  id: string;
+  /** Product id. Ex: AGAC */
+  product_id: string;
+  /** Resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  resort_arrival_date?: string;
+  /** Resort departure date 
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  resort_departure_date?: string;
+  /**
+   * The count of adults
+   * @minimum 0
+   */
+  adults_count?: number;
+  /**
+   * The count of children
+   * @minimum 0
+   */
+  children_count?: number;
+  birthdates?: Birthdates;
+  type?: ProposalSummaryTypeModel;
+  /** Indicates weither the proposal can be transformed into a booking or not. Always displayed as false when attendees are not added. */
+  is_bookable?: boolean;
+  transport_summary?: TransportSummary;
+  discounts?: Discounts;
+  /** Proposal's reservation date */
+  reservation_date?: ProposalSummaryModelReservationDate;
+}
+
+/**
+ * List of customer's saved proposals summary
+ */
+export type ProposalSummariesModel = ProposalSummaryModel[];
 
 export type OptinsModel = OptinModel[];
 
@@ -8658,14 +8658,6 @@ export interface DescriptionAccommodationCategoriesList {
   accommodation_categories?: AccommodationCategoriesList;
 }
 
-export interface PspOfResortModel {
-  /**
-   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
-   * @pattern ^([EMS][0-9A-Z]+)$
-   */
-  id: string;
-}
-
 /**
  * External service type
  */
@@ -8712,6 +8704,14 @@ export interface ExternalServiceModel {
 }
 
 export type ExternalServicesModel = ExternalServiceModel[];
+
+export interface PspOfResortModel {
+  /**
+   * Provider id, as returned by <code>GET&nbsp;/v0/payment_providers</code>
+   * @pattern ^([EMS][0-9A-Z]+)$
+   */
+  id: string;
+}
 
 export interface AccommodationCodeModel {
   /** Club Méditerranée accommodation code */
@@ -10578,6 +10578,133 @@ export interface ServiceAttendee {
 export type ProposalServiceScheduleAttendees = ServiceAttendee[];
 
 /**
+ * Direction of transfer
+ */
+export type ValidServiceTransferInformationWaysV2Model =
+  | 'INBOUND'
+  | 'OUTBOUND'
+  | 'WITHIN_TOUR'
+  | null;
+
+/**
+ * travel company id (IATA)
+ * @maxLength 3
+ */
+export type ProposalTransferTravelCompanyModelAnyOfId = string | null;
+
+/**
+ * travel company label
+ */
+export type ProposalTransferTravelCompanyModelAnyOfLabel = string | null;
+
+/**
+ * travel company information
+ */
+export type ProposalTransferTravelCompanyModelAnyOf = {
+  /**
+   * travel company id (IATA)
+   * @maxLength 3
+   */
+  id?: ProposalTransferTravelCompanyModelAnyOfId;
+  /** travel company label */
+  label?: ProposalTransferTravelCompanyModelAnyOfLabel;
+};
+
+/**
+ * travel company information
+ */
+export type ProposalTransferTravelCompanyModel = ProposalTransferTravelCompanyModelAnyOf | null;
+
+/**
+ * arrival or departure travel time
+ * @pattern ^\d+:\d+:\d+.\d+$
+ */
+export type ProposalcustomerTravelingInformationModelAnyOfTime = string | null;
+
+/**
+ * arrival or departure travel reference
+ * @maxLength 6
+ */
+export type ProposalcustomerTravelingInformationModelAnyOfTravelReference = string | null;
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type ProposalcustomerTravelingInformationModelAnyOf = {
+  /**
+   * arrival or departure travel time
+   * @pattern ^\d+:\d+:\d+.\d+$
+   */
+  time?: ProposalcustomerTravelingInformationModelAnyOfTime;
+  /**
+   * arrival or departure travel reference
+   * @maxLength 6
+   */
+  travel_reference?: ProposalcustomerTravelingInformationModelAnyOfTravelReference;
+  travel_company?: ProposalTransferTravelCompanyModel;
+};
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type ProposalcustomerTravelingInformationModel =
+  ProposalcustomerTravelingInformationModelAnyOf | null;
+
+export type ProposalTransfersBookingFromV2AnyOfId = string | null;
+
+export type ProposalTransfersBookingFromV2AnyOfLabel = string | null;
+
+/**
+ * transfer pickup place
+ */
+export type ProposalTransfersBookingFromV2AnyOf = {
+  id?: ProposalTransfersBookingFromV2AnyOfId;
+  label?: ProposalTransfersBookingFromV2AnyOfLabel;
+};
+
+/**
+ * transfer pickup place
+ */
+export type ProposalTransfersBookingFromV2 = ProposalTransfersBookingFromV2AnyOf | null;
+
+export type ProposalTransfersBookingToV2AnyOfId = string | null;
+
+export type ProposalTransfersBookingToV2AnyOfLabel = string | null;
+
+/**
+ * transfer drop off place
+ */
+export type ProposalTransfersBookingToV2AnyOf = {
+  id?: ProposalTransfersBookingToV2AnyOfId;
+  label?: ProposalTransfersBookingToV2AnyOfLabel;
+};
+
+/**
+ * transfer drop off place
+ */
+export type ProposalTransfersBookingToV2 = ProposalTransfersBookingToV2AnyOf | null;
+
+/**
+ * Any special comment regarding the transfer
+ * @maxLength 30
+ */
+export type ProposalTransferInformationModelComment = string | null;
+
+export interface ProposalTransferInformationModel {
+  way: ValidServiceTransferInformationWaysV2Model;
+  customer_traveling_information: ProposalcustomerTravelingInformationModel;
+  from?: ProposalTransfersBookingFromV2;
+  to?: ProposalTransfersBookingToV2;
+  /**
+   * Any special comment regarding the transfer
+   * @maxLength 30
+   */
+  comment?: ProposalTransferInformationModelComment;
+}
+
+export type ProposalTransferInformationsModel = ProposalTransferInformationModel[] | null;
+
+/**
  * service start date
  */
 export type ProposalServiceScheduleStartDate = string | null;
@@ -10593,6 +10720,7 @@ export interface ProposalServiceSchedule {
   /** service end date */
   end_date: ProposalServiceScheduleEndDate;
   attendees?: ProposalServiceScheduleAttendees;
+  transfer_information?: ProposalTransferInformationsModel;
 }
 
 export type ProposalServiceSchedules = ProposalServiceSchedule[];
@@ -10699,6 +10827,405 @@ export interface TravelerResponseModel {
 }
 
 export type TravelerListModel = TravelerResponseModel[];
+
+/**
+ * booking's status
+ */
+export type BaseBookingStatusModel =
+  (typeof BaseBookingStatusModel)[keyof typeof BaseBookingStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseBookingStatusModel = {
+  OPTION: 'OPTION',
+  CANCELED: 'CANCELED',
+  VALIDATED: 'VALIDATED',
+  PARTIALLY_VALIDATED: 'PARTIALLY_VALIDATED',
+  EXPIRED: 'EXPIRED',
+  UNKNOWN: 'UNKNOWN',
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  MUTE: 'MUTE',
+  EXPIRED_OPTION: 'EXPIRED_OPTION',
+  QUOTATION: 'QUOTATION',
+  HOPE: 'HOPE',
+  EXPIRED_HOPE: 'EXPIRED_HOPE',
+  EXPIRED_QUOTATION: 'EXPIRED_QUOTATION',
+  REQUEST: 'REQUEST',
+  ARCHIVED: 'ARCHIVED',
+} as const;
+
+/**
+ * booking payment's status
+ */
+export type BaseBookingPaymentStatusModel =
+  (typeof BaseBookingPaymentStatusModel)[keyof typeof BaseBookingPaymentStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const BaseBookingPaymentStatusModel = {
+  PAID: 'PAID',
+  UNPAID: 'UNPAID',
+  IN_CREDIT: 'IN_CREDIT',
+  PENDING: 'PENDING',
+  UNKNOWN: 'UNKNOWN',
+} as const;
+
+/**
+ * type of booking
+ */
+export type CustomerBookingTypeModel =
+  (typeof CustomerBookingTypeModel)[keyof typeof CustomerBookingTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CustomerBookingTypeModel = {
+  CLUBMED_RESORT: 'CLUBMED_RESORT',
+  CLUBMED_CRUISE: 'CLUBMED_CRUISE',
+  CLUBMED_CIRCUIT: 'CLUBMED_CIRCUIT',
+} as const;
+
+/**
+ * status of the feedback form
+ */
+export type GMFeedbackStatusesModel =
+  (typeof GMFeedbackStatusesModel)[keyof typeof GMFeedbackStatusesModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GMFeedbackStatusesModel = {
+  AVAILABLE: 'AVAILABLE',
+  UNAVAILABLE: 'UNAVAILABLE',
+} as const;
+
+export type GMFeedbackModelAnyOf = {
+  status?: GMFeedbackStatusesModel;
+  _links?: LinksModel;
+};
+
+export type GMFeedbackModel = GMFeedbackModelAnyOf | null;
+
+/**
+ * adult attendees number
+ */
+export type AttendeesModelAnyOfAdultsCount =
+  (typeof AttendeesModelAnyOfAdultsCount)[keyof typeof AttendeesModelAnyOfAdultsCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AttendeesModelAnyOfAdultsCount = {
+  NUMBER_0: 0,
+} as const;
+
+/**
+ * children attendees number
+ */
+export type AttendeesModelAnyOfChildrenCount =
+  (typeof AttendeesModelAnyOfChildrenCount)[keyof typeof AttendeesModelAnyOfChildrenCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AttendeesModelAnyOfChildrenCount = {
+  NUMBER_0: 0,
+} as const;
+
+export type AttendeesModelAnyOf = {
+  /** adult attendees number */
+  adults_count?: AttendeesModelAnyOfAdultsCount;
+  /** children attendees number */
+  children_count?: AttendeesModelAnyOfChildrenCount;
+  _links?: LinksModel;
+};
+
+export type AttendeesModel = AttendeesModelAnyOf | null;
+
+/**
+ * Transportation mode
+ */
+export type CustomerBookingStayOutwardTripTransportationModeModel =
+  (typeof CustomerBookingStayOutwardTripTransportationModeModel)[keyof typeof CustomerBookingStayOutwardTripTransportationModeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CustomerBookingStayOutwardTripTransportationModeModel = {
+  PLANE: 'PLANE',
+  TRAIN: 'TRAIN',
+  BOAT: 'BOAT',
+  UNKNOWN: 'UNKNOWN',
+} as const;
+
+/**
+ * city of departure
+ */
+export type CustomerBookingOutwardTripModelAnyOfDepartureCity = string | null;
+
+/**
+ * city of arrival
+ */
+export type CustomerBookingOutwardTripModelAnyOfArrivalCity = string | null;
+
+/**
+ * number of attendees concerned by this trip
+ */
+export type CustomerBookingOutwardTripModelAnyOfAttendeesCount =
+  (typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount)[keyof typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CustomerBookingOutwardTripModelAnyOfAttendeesCount = {
+  NUMBER_0: 0,
+} as const;
+
+export type CustomerBookingOutwardTripModelAnyOf = {
+  /** city of departure */
+  departure_city?: CustomerBookingOutwardTripModelAnyOfDepartureCity;
+  /** city of arrival */
+  arrival_city?: CustomerBookingOutwardTripModelAnyOfArrivalCity;
+  transportation?: CustomerBookingStayOutwardTripTransportationModeModel;
+  /** number of attendees concerned by this trip */
+  attendees_count?: CustomerBookingOutwardTripModelAnyOfAttendeesCount;
+};
+
+export type CustomerBookingOutwardTripModel = CustomerBookingOutwardTripModelAnyOf | null;
+
+export type StayAccommodationRoomsModel = RoomModel[];
+
+/**
+ * accommodation occupancy start date
+ */
+export type StayAccommodationModelStartDate = string | null;
+
+/**
+ * accommodation occupancy end date
+ */
+export type StayAccommodationModelEndDate = string | null;
+
+/**
+ * false if there is no baby bed in the room
+ */
+export type StayAccommodationModelBabyBed = boolean | null;
+
+/**
+ * Indicate if the room is sharable
+ */
+export type StayAccommodationModelSharedRoom = boolean | null;
+
+/**
+ * number of persons in the room
+ */
+export type StayAccommodationModelOccupation = 0 | null;
+
+export interface StayAccommodationModel {
+  /** accommodation occupancy start date */
+  start_date?: StayAccommodationModelStartDate;
+  /** accommodation occupancy end date */
+  end_date?: StayAccommodationModelEndDate;
+  /** number of accommodations for the id and time period */
+  quantity: number;
+  /** false if there is no baby bed in the room */
+  baby_bed?: StayAccommodationModelBabyBed;
+  /** Indicate if the room is sharable */
+  shared_room?: StayAccommodationModelSharedRoom;
+  /** number of persons in the room */
+  occupation?: StayAccommodationModelOccupation;
+  /** accommodation id */
+  accommodation_id?: string;
+  rooms?: StayAccommodationRoomsModel;
+  _links?: LinksModel;
+}
+
+export type StayAccommodationsModel = StayAccommodationModel[];
+
+/**
+ * List of attendee
+ */
+export type BookingPackageAttendeeIdsModel = string[];
+
+/**
+ * package label
+ */
+export type BookingPackageModelLabel = string | null;
+
+export interface BookingPackageModel {
+  /** package id of the booking */
+  id: string;
+  /** package label */
+  label?: BookingPackageModelLabel;
+  attendee_ids?: BookingPackageAttendeeIdsModel;
+  _links?: LinksModel;
+}
+
+export type BookingPackagesModel = BookingPackageModel[];
+
+/**
+ * resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD
+ */
+export type CustomerBookingStayModelResortArrivalDate = string | null;
+
+/**
+ * false if no upsell can be applied to this booking using the api
+ */
+export type CustomerBookingStayModelApiUpsellAvailable = boolean | null;
+
+export interface CustomerBookingStayModel {
+  /** stay id */
+  id?: string;
+  /** product concerned by the booking */
+  product_id?: string;
+  /** Label (name of product) */
+  label?: string;
+  product_type?: ProductTypeModel;
+  /** resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD */
+  resort_arrival_date?: CustomerBookingStayModelResortArrivalDate;
+  /** duration of the stay */
+  duration?: number;
+  gm_feedback?: GMFeedbackModel;
+  attendees?: AttendeesModel;
+  outward_trip?: CustomerBookingOutwardTripModel;
+  /** false if no upsell can be applied to this booking using the api */
+  api_upsell_available: CustomerBookingStayModelApiUpsellAvailable;
+  accommodations?: StayAccommodationsModel;
+  packages?: BookingPackagesModel;
+  _links?: LinksModel;
+}
+
+/**
+ * list of stays, filled except when type=CLUBMED_CRUISE
+ */
+export type CustomerBookingStaysModel = CustomerBookingStayModel[];
+
+/**
+ * Status of the easy arrival
+ */
+export type ValidEasyArrivalStatuesModel =
+  | 'UNAVAILABLE'
+  | 'AVAILABLE'
+  | 'UNEDITABLE'
+  | 'DONE'
+  | null;
+
+/**
+ * The easy arrival service can be associated to a given booking. This service eases the arrival in the resort, by example, the skis can be directly put in your lockers or your children habits are known by the staff of the children club.<br>The GM feedback form about the stay allows the Club Med staff to improve their services
+ */
+export interface EasyArrivalModel {
+  status?: ValidEasyArrivalStatuesModel;
+  _links?: LinksModel;
+}
+
+/**
+ * YYYYMMDD
+ */
+export type CustomerBookingModelCreationDate = string | null;
+
+/**
+ * true if the booking is composed of mulitple sales contracts, owned by different customers. Online sale processes are not possible in this case.
+ */
+export type CustomerBookingModelMultipleSaleContracts = boolean | null;
+
+/**
+ * Link to the Clubmed countdown builder and sharing page.
+ */
+export type CustomerBookingModelDepartureCountdownHref = string | null;
+
+/**
+ * expiration date time of an option => filled only when booking_status=OPTION
+ */
+export type CustomerBookingModelExpirationDateTime = string | null;
+
+/**
+ * Language/Country the booking has been created with
+ */
+export type CustomerBookingModelLocale = string | null;
+
+export interface CustomerBookingModel {
+  /** booking id */
+  id: string;
+  /** YYYYMMDD */
+  creation_date?: CustomerBookingModelCreationDate;
+  /** YYYYMMDD */
+  departure_date?: string;
+  /** YYYYMMDD */
+  return_date?: string;
+  booking_status?: BaseBookingStatusModel;
+  payment_status?: BaseBookingPaymentStatusModel;
+  /** true if the booking is composed of mulitple sales contracts, owned by different customers. Online sale processes are not possible in this case. */
+  multiple_sale_contracts: CustomerBookingModelMultipleSaleContracts;
+  /** Link to the Clubmed countdown builder and sharing page. */
+  departure_countdown_href: CustomerBookingModelDepartureCountdownHref;
+  /** expiration date time of an option => filled only when booking_status=OPTION */
+  expiration_date_time?: CustomerBookingModelExpirationDateTime;
+  vendor?: VendorModel;
+  type?: CustomerBookingTypeModel;
+  stays?: CustomerBookingStaysModel;
+  easy_arrival?: EasyArrivalModel;
+  /** Language/Country the booking has been created with */
+  locale?: CustomerBookingModelLocale;
+  _links?: LinksModel;
+}
+
+export type CustomerBookingsModel = CustomerBookingModel[];
+
+/**
+ * Loyalty type
+ */
+export type LoyaltyType = (typeof LoyaltyType)[keyof typeof LoyaltyType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LoyaltyType = {
+  FREQUENCY: 'FREQUENCY',
+  BOOKING: 'BOOKING',
+  BIRTHDAY: 'BIRTHDAY',
+  BOOSTER: 'BOOSTER',
+  BONUS: 'BONUS',
+  ADDED: 'ADDED',
+  TRANSFER: 'TRANSFER',
+  SPONSORHSIP: 'SPONSORHSIP',
+  FLIGGY: 'FLIGGY',
+  PURCHASES_IN_RESORT: 'PURCHASES_IN_RESORT',
+  YEARLY_BONUS: 'YEARLY_BONUS',
+} as const;
+
+/**
+ * ids of the different products of the booking
+ */
+export type ProductIds = string[];
+
+/**
+ * Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate = string | null;
+
+/**
+ * Related booking info
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModelAnyOf = {
+  /**
+   * booking Id (file number)
+   * @pattern ^\d+$
+   */
+  id: string;
+  /** Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example */
+  arrival_date: CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate;
+  product_ids: ProductIds;
+};
+
+/**
+ * Related booking info
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModel =
+  CustomerLoyaltyDetailsRelatedBookingModelAnyOf | null;
+
+/**
+ * Points expiration date
+ */
+export type CustomerLoyaltyDetailsModelExpirationDate = string | null;
+
+export interface CustomerLoyaltyDetailsModel {
+  type: LoyaltyType;
+  /**
+   * Number of points
+   * @minimum 0
+   */
+  points: number;
+  /** Points expiration date */
+  expiration_date: CustomerLoyaltyDetailsModelExpirationDate;
+  /** true when points are expired */
+  expired: boolean;
+  related_booking: CustomerLoyaltyDetailsRelatedBookingModel;
+}
+
+export type CustomerLoyaltyDetailsResponseModel = CustomerLoyaltyDetailsModel[];
 
 /**
  * customer profile first name. Cannot be modified. Use customers/{customer_id}/profile instead
@@ -11283,405 +11810,6 @@ export interface TravelDocumentModel {
   driving_licence?: TravelDocumentDrivingLicenceModel;
   travel_membership_cards?: TravelMembershipCards;
 }
-
-/**
- * booking's status
- */
-export type BaseBookingStatusModel =
-  (typeof BaseBookingStatusModel)[keyof typeof BaseBookingStatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseBookingStatusModel = {
-  OPTION: 'OPTION',
-  CANCELED: 'CANCELED',
-  VALIDATED: 'VALIDATED',
-  PARTIALLY_VALIDATED: 'PARTIALLY_VALIDATED',
-  EXPIRED: 'EXPIRED',
-  UNKNOWN: 'UNKNOWN',
-  PENDING_PAYMENT: 'PENDING_PAYMENT',
-  MUTE: 'MUTE',
-  EXPIRED_OPTION: 'EXPIRED_OPTION',
-  QUOTATION: 'QUOTATION',
-  HOPE: 'HOPE',
-  EXPIRED_HOPE: 'EXPIRED_HOPE',
-  EXPIRED_QUOTATION: 'EXPIRED_QUOTATION',
-  REQUEST: 'REQUEST',
-  ARCHIVED: 'ARCHIVED',
-} as const;
-
-/**
- * booking payment's status
- */
-export type BaseBookingPaymentStatusModel =
-  (typeof BaseBookingPaymentStatusModel)[keyof typeof BaseBookingPaymentStatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BaseBookingPaymentStatusModel = {
-  PAID: 'PAID',
-  UNPAID: 'UNPAID',
-  IN_CREDIT: 'IN_CREDIT',
-  PENDING: 'PENDING',
-  UNKNOWN: 'UNKNOWN',
-} as const;
-
-/**
- * type of booking
- */
-export type CustomerBookingTypeModel =
-  (typeof CustomerBookingTypeModel)[keyof typeof CustomerBookingTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CustomerBookingTypeModel = {
-  CLUBMED_RESORT: 'CLUBMED_RESORT',
-  CLUBMED_CRUISE: 'CLUBMED_CRUISE',
-  CLUBMED_CIRCUIT: 'CLUBMED_CIRCUIT',
-} as const;
-
-/**
- * status of the feedback form
- */
-export type GMFeedbackStatusesModel =
-  (typeof GMFeedbackStatusesModel)[keyof typeof GMFeedbackStatusesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GMFeedbackStatusesModel = {
-  AVAILABLE: 'AVAILABLE',
-  UNAVAILABLE: 'UNAVAILABLE',
-} as const;
-
-export type GMFeedbackModelAnyOf = {
-  status?: GMFeedbackStatusesModel;
-  _links?: LinksModel;
-};
-
-export type GMFeedbackModel = GMFeedbackModelAnyOf | null;
-
-/**
- * adult attendees number
- */
-export type AttendeesModelAnyOfAdultsCount =
-  (typeof AttendeesModelAnyOfAdultsCount)[keyof typeof AttendeesModelAnyOfAdultsCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AttendeesModelAnyOfAdultsCount = {
-  NUMBER_0: 0,
-} as const;
-
-/**
- * children attendees number
- */
-export type AttendeesModelAnyOfChildrenCount =
-  (typeof AttendeesModelAnyOfChildrenCount)[keyof typeof AttendeesModelAnyOfChildrenCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AttendeesModelAnyOfChildrenCount = {
-  NUMBER_0: 0,
-} as const;
-
-export type AttendeesModelAnyOf = {
-  /** adult attendees number */
-  adults_count?: AttendeesModelAnyOfAdultsCount;
-  /** children attendees number */
-  children_count?: AttendeesModelAnyOfChildrenCount;
-  _links?: LinksModel;
-};
-
-export type AttendeesModel = AttendeesModelAnyOf | null;
-
-/**
- * Transportation mode
- */
-export type CustomerBookingStayOutwardTripTransportationModeModel =
-  (typeof CustomerBookingStayOutwardTripTransportationModeModel)[keyof typeof CustomerBookingStayOutwardTripTransportationModeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CustomerBookingStayOutwardTripTransportationModeModel = {
-  PLANE: 'PLANE',
-  TRAIN: 'TRAIN',
-  BOAT: 'BOAT',
-  UNKNOWN: 'UNKNOWN',
-} as const;
-
-/**
- * city of departure
- */
-export type CustomerBookingOutwardTripModelAnyOfDepartureCity = string | null;
-
-/**
- * city of arrival
- */
-export type CustomerBookingOutwardTripModelAnyOfArrivalCity = string | null;
-
-/**
- * number of attendees concerned by this trip
- */
-export type CustomerBookingOutwardTripModelAnyOfAttendeesCount =
-  (typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount)[keyof typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CustomerBookingOutwardTripModelAnyOfAttendeesCount = {
-  NUMBER_0: 0,
-} as const;
-
-export type CustomerBookingOutwardTripModelAnyOf = {
-  /** city of departure */
-  departure_city?: CustomerBookingOutwardTripModelAnyOfDepartureCity;
-  /** city of arrival */
-  arrival_city?: CustomerBookingOutwardTripModelAnyOfArrivalCity;
-  transportation?: CustomerBookingStayOutwardTripTransportationModeModel;
-  /** number of attendees concerned by this trip */
-  attendees_count?: CustomerBookingOutwardTripModelAnyOfAttendeesCount;
-};
-
-export type CustomerBookingOutwardTripModel = CustomerBookingOutwardTripModelAnyOf | null;
-
-export type StayAccommodationRoomsModel = RoomModel[];
-
-/**
- * accommodation occupancy start date
- */
-export type StayAccommodationModelStartDate = string | null;
-
-/**
- * accommodation occupancy end date
- */
-export type StayAccommodationModelEndDate = string | null;
-
-/**
- * false if there is no baby bed in the room
- */
-export type StayAccommodationModelBabyBed = boolean | null;
-
-/**
- * Indicate if the room is sharable
- */
-export type StayAccommodationModelSharedRoom = boolean | null;
-
-/**
- * number of persons in the room
- */
-export type StayAccommodationModelOccupation = 0 | null;
-
-export interface StayAccommodationModel {
-  /** accommodation occupancy start date */
-  start_date?: StayAccommodationModelStartDate;
-  /** accommodation occupancy end date */
-  end_date?: StayAccommodationModelEndDate;
-  /** number of accommodations for the id and time period */
-  quantity: number;
-  /** false if there is no baby bed in the room */
-  baby_bed?: StayAccommodationModelBabyBed;
-  /** Indicate if the room is sharable */
-  shared_room?: StayAccommodationModelSharedRoom;
-  /** number of persons in the room */
-  occupation?: StayAccommodationModelOccupation;
-  /** accommodation id */
-  accommodation_id?: string;
-  rooms?: StayAccommodationRoomsModel;
-  _links?: LinksModel;
-}
-
-export type StayAccommodationsModel = StayAccommodationModel[];
-
-/**
- * List of attendee
- */
-export type BookingPackageAttendeeIdsModel = string[];
-
-/**
- * package label
- */
-export type BookingPackageModelLabel = string | null;
-
-export interface BookingPackageModel {
-  /** package id of the booking */
-  id: string;
-  /** package label */
-  label?: BookingPackageModelLabel;
-  attendee_ids?: BookingPackageAttendeeIdsModel;
-  _links?: LinksModel;
-}
-
-export type BookingPackagesModel = BookingPackageModel[];
-
-/**
- * resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD
- */
-export type CustomerBookingStayModelResortArrivalDate = string | null;
-
-/**
- * false if no upsell can be applied to this booking using the api
- */
-export type CustomerBookingStayModelApiUpsellAvailable = boolean | null;
-
-export interface CustomerBookingStayModel {
-  /** stay id */
-  id?: string;
-  /** product concerned by the booking */
-  product_id?: string;
-  /** Label (name of product) */
-  label?: string;
-  product_type?: ProductTypeModel;
-  /** resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD */
-  resort_arrival_date?: CustomerBookingStayModelResortArrivalDate;
-  /** duration of the stay */
-  duration?: number;
-  gm_feedback?: GMFeedbackModel;
-  attendees?: AttendeesModel;
-  outward_trip?: CustomerBookingOutwardTripModel;
-  /** false if no upsell can be applied to this booking using the api */
-  api_upsell_available: CustomerBookingStayModelApiUpsellAvailable;
-  accommodations?: StayAccommodationsModel;
-  packages?: BookingPackagesModel;
-  _links?: LinksModel;
-}
-
-/**
- * list of stays, filled except when type=CLUBMED_CRUISE
- */
-export type CustomerBookingStaysModel = CustomerBookingStayModel[];
-
-/**
- * Status of the easy arrival
- */
-export type ValidEasyArrivalStatuesModel =
-  | 'UNAVAILABLE'
-  | 'AVAILABLE'
-  | 'UNEDITABLE'
-  | 'DONE'
-  | null;
-
-/**
- * The easy arrival service can be associated to a given booking. This service eases the arrival in the resort, by example, the skis can be directly put in your lockers or your children habits are known by the staff of the children club.<br>The GM feedback form about the stay allows the Club Med staff to improve their services
- */
-export interface EasyArrivalModel {
-  status?: ValidEasyArrivalStatuesModel;
-  _links?: LinksModel;
-}
-
-/**
- * YYYYMMDD
- */
-export type CustomerBookingModelCreationDate = string | null;
-
-/**
- * true if the booking is composed of mulitple sales contracts, owned by different customers. Online sale processes are not possible in this case.
- */
-export type CustomerBookingModelMultipleSaleContracts = boolean | null;
-
-/**
- * Link to the Clubmed countdown builder and sharing page.
- */
-export type CustomerBookingModelDepartureCountdownHref = string | null;
-
-/**
- * expiration date time of an option => filled only when booking_status=OPTION
- */
-export type CustomerBookingModelExpirationDateTime = string | null;
-
-/**
- * Language/Country the booking has been created with
- */
-export type CustomerBookingModelLocale = string | null;
-
-export interface CustomerBookingModel {
-  /** booking id */
-  id: string;
-  /** YYYYMMDD */
-  creation_date?: CustomerBookingModelCreationDate;
-  /** YYYYMMDD */
-  departure_date?: string;
-  /** YYYYMMDD */
-  return_date?: string;
-  booking_status?: BaseBookingStatusModel;
-  payment_status?: BaseBookingPaymentStatusModel;
-  /** true if the booking is composed of mulitple sales contracts, owned by different customers. Online sale processes are not possible in this case. */
-  multiple_sale_contracts: CustomerBookingModelMultipleSaleContracts;
-  /** Link to the Clubmed countdown builder and sharing page. */
-  departure_countdown_href: CustomerBookingModelDepartureCountdownHref;
-  /** expiration date time of an option => filled only when booking_status=OPTION */
-  expiration_date_time?: CustomerBookingModelExpirationDateTime;
-  vendor?: VendorModel;
-  type?: CustomerBookingTypeModel;
-  stays?: CustomerBookingStaysModel;
-  easy_arrival?: EasyArrivalModel;
-  /** Language/Country the booking has been created with */
-  locale?: CustomerBookingModelLocale;
-  _links?: LinksModel;
-}
-
-export type CustomerBookingsModel = CustomerBookingModel[];
-
-/**
- * Loyalty type
- */
-export type LoyaltyType = (typeof LoyaltyType)[keyof typeof LoyaltyType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const LoyaltyType = {
-  FREQUENCY: 'FREQUENCY',
-  BOOKING: 'BOOKING',
-  BIRTHDAY: 'BIRTHDAY',
-  BOOSTER: 'BOOSTER',
-  BONUS: 'BONUS',
-  ADDED: 'ADDED',
-  TRANSFER: 'TRANSFER',
-  SPONSORHSIP: 'SPONSORHSIP',
-  FLIGGY: 'FLIGGY',
-  PURCHASES_IN_RESORT: 'PURCHASES_IN_RESORT',
-  YEARLY_BONUS: 'YEARLY_BONUS',
-} as const;
-
-/**
- * ids of the different products of the booking
- */
-export type ProductIds = string[];
-
-/**
- * Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example
- */
-export type CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate = string | null;
-
-/**
- * Related booking info
- */
-export type CustomerLoyaltyDetailsRelatedBookingModelAnyOf = {
-  /**
-   * booking Id (file number)
-   * @pattern ^\d+$
-   */
-  id: string;
-  /** Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example */
-  arrival_date: CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate;
-  product_ids: ProductIds;
-};
-
-/**
- * Related booking info
- */
-export type CustomerLoyaltyDetailsRelatedBookingModel =
-  CustomerLoyaltyDetailsRelatedBookingModelAnyOf | null;
-
-/**
- * Points expiration date
- */
-export type CustomerLoyaltyDetailsModelExpirationDate = string | null;
-
-export interface CustomerLoyaltyDetailsModel {
-  type: LoyaltyType;
-  /**
-   * Number of points
-   * @minimum 0
-   */
-  points: number;
-  /** Points expiration date */
-  expiration_date: CustomerLoyaltyDetailsModelExpirationDate;
-  /** true when points are expired */
-  expired: boolean;
-  related_booking: CustomerLoyaltyDetailsRelatedBookingModel;
-}
-
-export type CustomerLoyaltyDetailsResponseModel = CustomerLoyaltyDetailsModel[];
 
 /**
  * email
@@ -13006,6 +13134,8 @@ export type ChildcareModelV1IsIncluded = boolean | null;
 export interface ChildcareModelV1 {
   /** Id of this childcare */
   id: string;
+  /** ID of the category activity for this childcare */
+  activity_category_id?: string;
   /** Label of this childcare */
   label: string;
   images?: ChildcareImageListModel;
@@ -14235,6 +14365,42 @@ export interface ProfileModelV2 {
 }
 
 /**
+ * Customer loyalty program status at the time of the earned points
+ */
+export type LoyaltyProgramStatus = (typeof LoyaltyProgramStatus)[keyof typeof LoyaltyProgramStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LoyaltyProgramStatus = {
+  NONE: 'NONE',
+  TURQUOISE: 'TURQUOISE',
+  SILVER: 'SILVER',
+  GOLD: 'GOLD',
+  PLATINUM: 'PLATINUM',
+} as const;
+
+/**
+ * Points expiration date
+ */
+export type CustomerLoyaltyDetailsV2ModelExpirationDate = string | null;
+
+export interface CustomerLoyaltyDetailsV2Model {
+  type: LoyaltyType;
+  /**
+   * Number of points
+   * @minimum 0
+   */
+  points: number;
+  /** Points expiration date */
+  expiration_date: CustomerLoyaltyDetailsV2ModelExpirationDate;
+  /** true when points are expired */
+  expired: boolean;
+  related_booking: CustomerLoyaltyDetailsRelatedBookingModel;
+  loyalty_program_status?: LoyaltyProgramStatus;
+}
+
+export type CustomerLoyaltyDetailsResponseV2Model = CustomerLoyaltyDetailsV2Model[];
+
+/**
  * type of the commercial offer
  */
 export type CommercialOfferModelType =
@@ -14690,6 +14856,8 @@ export type ChildcareModelV2IsIncluded = boolean | null;
 export interface ChildcareModelV2 {
   /** Id of this childcare */
   id: string;
+  /** ID of the category activity for this childcare */
+  activity_category_id?: string;
   /** Label of this childcare */
   label: string;
   images?: ChildcareImageListModel;
@@ -16531,6 +16699,233 @@ export interface AreasGeoDataApiModel {
   areas_center?: AreasCenterGeoDataList;
 }
 
+/**
+ * Sell Contract that meta description, use its id to download it.
+ */
+export interface Sellcontract {
+  /** id of the document */
+  id: string;
+  /** A document type to be able to filter: ie TCS for terms and conditions of service */
+  type: string;
+  /** a label the customer would see to identify the document */
+  label: string;
+  _links?: LinksModel;
+}
+
+/**
+ * Sell Contracts : documents customer receives when he/she books a travel
+ */
+export type Sellcontractlist = Sellcontract[];
+
+export interface CustomerBookingPaymentSchedule {
+  /** amount to pay before the deadline */
+  amount?: number;
+  /** deadline for payment of the amount */
+  deadline?: string;
+}
+
+export type PaymentSchedules = CustomerBookingPaymentSchedule[];
+
+/**
+ * Payment schedule of a booking
+ */
+export interface CustomerBookingPaymentScheduleModel {
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  /** amount already paid */
+  paid?: number;
+  /** total amount to pay */
+  total?: number;
+  payment_schedules?: PaymentSchedules;
+}
+
+/**
+ * Package price per attendee
+ */
+export interface AttendeePackageModel {
+  /** Package id */
+  id: string;
+  /** Price per attendee */
+  price_per_attendee: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+/**
+ * list of possible package upgrades for this attendee
+ */
+export type AttendeePackagesModel = AttendeePackageModel[];
+
+/**
+ * ids of the attendees who must also upgrade their package
+ */
+export type LinkedAttendeeIds = string[];
+
+export interface AttendeePackageUpgradeModel {
+  /** Attendee id */
+  id: string;
+  packages?: AttendeePackagesModel;
+  linked_attendee_ids?: LinkedAttendeeIds;
+}
+
+/**
+ * List of childcare services fof the booking
+ */
+export type AttendeesPackageUpgradeModel = AttendeePackageUpgradeModel[];
+
+/**
+ * mimeType
+ */
+export type ContentMimeType = string | null;
+
+/**
+ * mimeType Name
+ */
+export type ContentMimeTypeName = string | null;
+
+/**
+ * content
+ */
+export interface Content {
+  /** mimeType */
+  mime_type?: ContentMimeType;
+  /** mimeType Name */
+  mime_type_name?: ContentMimeTypeName;
+  /**  size in bytes */
+  size_in_bytes?: number;
+  /** media encoding */
+  encoding?: string;
+}
+
+/**
+ * Links
+ * @minItems 1
+ */
+export type SupportRequestAttachedDocumentLinksModel = LinkModel[];
+
+/**
+ * attachment insertion date
+ */
+export type SupportRequestAttachedDocumentV0InsertionDate = string | null;
+
+export interface SupportRequestAttachedDocumentV0 {
+  /** document unique id */
+  id: string;
+  /** document name */
+  name: string;
+  /** attachment insertion date */
+  insertion_date?: SupportRequestAttachedDocumentV0InsertionDate;
+  content?: Content;
+  _links?: SupportRequestAttachedDocumentLinksModel;
+}
+
+export type AttachedDocuments = SupportRequestAttachedDocumentV0[];
+
+export interface CustomerBookingCrmHistoryItemModel {
+  /** Sub-division of a booking. A booking_id can have severals bulletin_ids */
+  bulletin_number?: string;
+  /** Url to use so as to retrieve GM's emails */
+  url?: string;
+}
+
+export type CustomerBookingCrmHistoryItemsModel = CustomerBookingCrmHistoryItemModel[];
+
+export type ExpensesConsumerProfileModelCustomerId = number | null;
+
+export interface ExpensesConsumerProfileModel {
+  /** name */
+  last_name: string;
+  /** surname */
+  first_name: string;
+  customer_id?: ExpensesConsumerProfileModelCustomerId;
+}
+
+export interface ExpensesPurchasePriceModel {
+  /** amount of the purchase without any discount */
+  amount_without_discount: number;
+  /** amount of the discount */
+  discount_amount: number;
+  /** amount payed with gift pass */
+  gift_pass_amount: number;
+  /** payroll amount */
+  amount_with_discount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+/**
+ * date on time of this purchase
+ */
+export type ExpensesConsumerPurchaseModelOperationDate = string | null;
+
+/**
+ * purchase quantity of this item
+ */
+export type ExpensesConsumerPurchaseModelQuantity =
+  (typeof ExpensesConsumerPurchaseModelQuantity)[keyof typeof ExpensesConsumerPurchaseModelQuantity];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExpensesConsumerPurchaseModelQuantity = {
+  NUMBER_0: 0,
+} as const;
+
+export interface ExpensesConsumerPurchaseModel {
+  /** category code of the purchased product */
+  category_code: string;
+  /** category label of the purchased product */
+  category_label: string;
+  /** label of the purchased product */
+  label: string;
+  /** operation type */
+  operation_type: string;
+  /** date on time of this purchase */
+  operation_date: ExpensesConsumerPurchaseModelOperationDate;
+  /** Codified value, looking like a bank card brand, required by accountant department. */
+  payment_method: string;
+  /** purchase quantity of this item */
+  quantity: ExpensesConsumerPurchaseModelQuantity;
+  price?: ExpensesPurchasePriceModel;
+}
+
+export type ExpensesConsumerPurchasesModel = ExpensesConsumerPurchaseModel[];
+
+export interface ExpensesConsumerModel {
+  profile?: ExpensesConsumerProfileModel;
+  purchases: ExpensesConsumerPurchasesModel;
+}
+
+export type ExpensesConsumersModel = ExpensesConsumerModel[];
+
+export type CustomerBookingExpensesItemModelBookingId = number | null;
+
+/**
+ * date on time of the last modified of this information
+ */
+export type CustomerBookingExpensesItemModelLastModifiedDate = string | null;
+
+export interface CustomerBookingExpensesItemModel {
+  booking_id?: CustomerBookingExpensesItemModelBookingId;
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** date on time of the last modified of this information */
+  last_modified_date?: CustomerBookingExpensesItemModelLastModifiedDate;
+  consumers: ExpensesConsumersModel;
+}
+
+export type CustomerBookingExpensesModel = CustomerBookingExpensesItemModel[];
+
 export interface SpaBookingAppointmentPriceModel {
   /** Spa booking's price */
   value: number;
@@ -16628,233 +17023,6 @@ Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMD
 export type SpaBookingsModel = SpaBookingModel[];
 
 /**
- * Sell Contract that meta description, use its id to download it.
- */
-export interface Sellcontract {
-  /** id of the document */
-  id: string;
-  /** A document type to be able to filter: ie TCS for terms and conditions of service */
-  type: string;
-  /** a label the customer would see to identify the document */
-  label: string;
-  _links?: LinksModel;
-}
-
-/**
- * Sell Contracts : documents customer receives when he/she books a travel
- */
-export type Sellcontractlist = Sellcontract[];
-
-export interface CustomerBookingPaymentSchedule {
-  /** amount to pay before the deadline */
-  amount?: number;
-  /** deadline for payment of the amount */
-  deadline?: string;
-}
-
-export type PaymentSchedules = CustomerBookingPaymentSchedule[];
-
-/**
- * Payment schedule of a booking
- */
-export interface CustomerBookingPaymentScheduleModel {
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  /** amount already paid */
-  paid?: number;
-  /** total amount to pay */
-  total?: number;
-  payment_schedules?: PaymentSchedules;
-}
-
-/**
- * Package price per attendee
- */
-export interface AttendeePackageModel {
-  /** Package id */
-  id: string;
-  /** Price per attendee */
-  price_per_attendee: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-/**
- * list of possible package upgrades for this attendee
- */
-export type AttendeePackagesModel = AttendeePackageModel[];
-
-/**
- * ids of the attendees who must also upgrade their package
- */
-export type LinkedAttendeeIds = string[];
-
-export interface AttendeePackageUpgradeModel {
-  /** Attendee id */
-  id: string;
-  packages?: AttendeePackagesModel;
-  linked_attendee_ids?: LinkedAttendeeIds;
-}
-
-/**
- * List of childcare services fof the booking
- */
-export type AttendeesPackageUpgradeModel = AttendeePackageUpgradeModel[];
-
-export interface CustomerBookingCrmHistoryItemModel {
-  /** Sub-division of a booking. A booking_id can have severals bulletin_ids */
-  bulletin_number?: string;
-  /** Url to use so as to retrieve GM's emails */
-  url?: string;
-}
-
-export type CustomerBookingCrmHistoryItemsModel = CustomerBookingCrmHistoryItemModel[];
-
-/**
- * mimeType
- */
-export type ContentMimeType = string | null;
-
-/**
- * mimeType Name
- */
-export type ContentMimeTypeName = string | null;
-
-/**
- * content
- */
-export interface Content {
-  /** mimeType */
-  mime_type?: ContentMimeType;
-  /** mimeType Name */
-  mime_type_name?: ContentMimeTypeName;
-  /**  size in bytes */
-  size_in_bytes?: number;
-  /** media encoding */
-  encoding?: string;
-}
-
-/**
- * Links
- * @minItems 1
- */
-export type SupportRequestAttachedDocumentLinksModel = LinkModel[];
-
-/**
- * attachment insertion date
- */
-export type SupportRequestAttachedDocumentV0InsertionDate = string | null;
-
-export interface SupportRequestAttachedDocumentV0 {
-  /** document unique id */
-  id: string;
-  /** document name */
-  name: string;
-  /** attachment insertion date */
-  insertion_date?: SupportRequestAttachedDocumentV0InsertionDate;
-  content?: Content;
-  _links?: SupportRequestAttachedDocumentLinksModel;
-}
-
-export type AttachedDocuments = SupportRequestAttachedDocumentV0[];
-
-export type ExpensesConsumerProfileModelCustomerId = number | null;
-
-export interface ExpensesConsumerProfileModel {
-  /** name */
-  last_name: string;
-  /** surname */
-  first_name: string;
-  customer_id?: ExpensesConsumerProfileModelCustomerId;
-}
-
-export interface ExpensesPurchasePriceModel {
-  /** amount of the purchase without any discount */
-  amount_without_discount: number;
-  /** amount of the discount */
-  discount_amount: number;
-  /** amount payed with gift pass */
-  gift_pass_amount: number;
-  /** payroll amount */
-  amount_with_discount: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-/**
- * date on time of this purchase
- */
-export type ExpensesConsumerPurchaseModelOperationDate = string | null;
-
-/**
- * purchase quantity of this item
- */
-export type ExpensesConsumerPurchaseModelQuantity =
-  (typeof ExpensesConsumerPurchaseModelQuantity)[keyof typeof ExpensesConsumerPurchaseModelQuantity];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExpensesConsumerPurchaseModelQuantity = {
-  NUMBER_0: 0,
-} as const;
-
-export interface ExpensesConsumerPurchaseModel {
-  /** category code of the purchased product */
-  category_code: string;
-  /** category label of the purchased product */
-  category_label: string;
-  /** label of the purchased product */
-  label: string;
-  /** operation type */
-  operation_type: string;
-  /** date on time of this purchase */
-  operation_date: ExpensesConsumerPurchaseModelOperationDate;
-  /** Codified value, looking like a bank card brand, required by accountant department. */
-  payment_method: string;
-  /** purchase quantity of this item */
-  quantity: ExpensesConsumerPurchaseModelQuantity;
-  price?: ExpensesPurchasePriceModel;
-}
-
-export type ExpensesConsumerPurchasesModel = ExpensesConsumerPurchaseModel[];
-
-export interface ExpensesConsumerModel {
-  profile?: ExpensesConsumerProfileModel;
-  purchases: ExpensesConsumerPurchasesModel;
-}
-
-export type ExpensesConsumersModel = ExpensesConsumerModel[];
-
-export type CustomerBookingExpensesItemModelBookingId = number | null;
-
-/**
- * date on time of the last modified of this information
- */
-export type CustomerBookingExpensesItemModelLastModifiedDate = string | null;
-
-export interface CustomerBookingExpensesItemModel {
-  booking_id?: CustomerBookingExpensesItemModelBookingId;
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** date on time of the last modified of this information */
-  last_modified_date?: CustomerBookingExpensesItemModelLastModifiedDate;
-  consumers: ExpensesConsumersModel;
-}
-
-export type CustomerBookingExpensesModel = CustomerBookingExpensesItemModel[];
-
-/**
  * Employee's gender
  */
 export type Gender = (typeof Gender)[keyof typeof Gender];
@@ -16922,6 +17090,130 @@ export interface Occupancy {
  * list of room occupancy
  */
 export type Occupancies = Occupancy[];
+
+/**
+ * type of the service
+ */
+export type CartPriceDetailModelTypes =
+  (typeof CartPriceDetailModelTypes)[keyof typeof CartPriceDetailModelTypes];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CartPriceDetailModelTypes = {
+  CHILDCARE: 'CHILDCARE',
+  TRANSFER: 'TRANSFER',
+  RENTAL: 'RENTAL',
+  EXCURSION: 'EXCURSION',
+  LAND_SPORT: 'LAND_SPORT',
+  WINTER_SPORT: 'WINTER_SPORT',
+  WATER_SPORT: 'WATER_SPORT',
+  WELLNESS: 'WELLNESS',
+  INSURANCE: 'INSURANCE',
+  PARKING: 'PARKING',
+  CONCIERGERIE: 'CONCIERGERIE',
+} as const;
+
+export interface CartPriceDetailModel {
+  /** total price for the given type of service (ie. childcares, transfers, ...) */
+  amount?: number;
+  type?: CartPriceDetailModelTypes;
+}
+
+export type CartPriceDetails = CartPriceDetailModel[];
+
+/**
+ * Cart price
+ */
+export interface CartPrice {
+  /** total price for all services currently in cart. */
+  total?: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  detail?: CartPriceDetails;
+}
+
+export type CartServiceTypeModel = (typeof CartServiceTypeModel)[keyof typeof CartServiceTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CartServiceTypeModel = {
+  CHILDCARE: 'CHILDCARE',
+  TRANSFER: 'TRANSFER',
+  RENTAL: 'RENTAL',
+  EXCURSION: 'EXCURSION',
+  LAND_SPORT: 'LAND_SPORT',
+  WINTER_SPORT: 'WINTER_SPORT',
+  WATER_SPORT: 'WATER_SPORT',
+  WELLNESS: 'WELLNESS',
+  INSURANCE: 'INSURANCE',
+  PARKING: 'PARKING',
+  CONCIERGERIE: 'CONCIERGERIE',
+} as const;
+
+export interface CartServiceScheduleAttendee {
+  /** concerned attendee id */
+  id: string;
+  /** service's price for the concerned attendee */
+  price?: number;
+}
+
+/**
+ * service attendees
+ */
+export type CartServiceScheduleAttendees = CartServiceScheduleAttendee[];
+
+/**
+ * start date for service deliverance
+ */
+export type CartServiceScheduleModelStartDate = string | null;
+
+/**
+ * end date for service deliverance
+ */
+export type CartServiceScheduleModelEndDate = string | null;
+
+export interface CartServiceScheduleModel {
+  /** start date for service deliverance */
+  start_date?: CartServiceScheduleModelStartDate;
+  /** end date for service deliverance */
+  end_date?: CartServiceScheduleModelEndDate;
+  attendees?: CartServiceScheduleAttendees;
+}
+
+export type CartServiceSchedulesModel = CartServiceScheduleModel[];
+
+/**
+ * Service's stay index
+ * @minimum 0
+ */
+export type CartServiceModelStayIndex = number | null;
+
+export interface CartServiceModel {
+  /** service id */
+  id: string;
+  type: CartServiceTypeModel;
+  schedules?: CartServiceSchedulesModel;
+  /**
+   * Service's stay index
+   * @minimum 0
+   */
+  stay_index: CartServiceModelStayIndex;
+  sold_only_with?: MandatoryServiceIdModel;
+  not_compatible_with?: NotCompatibleServiceIdsModel;
+  _links?: LinksModel;
+}
+
+/**
+ * Cart services
+ */
+export type CartServicesModel = CartServiceModel[];
+
+export interface CartModel {
+  price: CartPrice;
+  services?: CartServicesModel;
+}
 
 /**
  * Pre check in availability. Possible values : AVAILABLE, UNAVAILABLE, NOT_YET, UNEDITABLE
@@ -17203,130 +17495,6 @@ export interface CustomerBookingPriceDetails {
 /**
  * type of the service
  */
-export type CartPriceDetailModelTypes =
-  (typeof CartPriceDetailModelTypes)[keyof typeof CartPriceDetailModelTypes];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CartPriceDetailModelTypes = {
-  CHILDCARE: 'CHILDCARE',
-  TRANSFER: 'TRANSFER',
-  RENTAL: 'RENTAL',
-  EXCURSION: 'EXCURSION',
-  LAND_SPORT: 'LAND_SPORT',
-  WINTER_SPORT: 'WINTER_SPORT',
-  WATER_SPORT: 'WATER_SPORT',
-  WELLNESS: 'WELLNESS',
-  INSURANCE: 'INSURANCE',
-  PARKING: 'PARKING',
-  CONCIERGERIE: 'CONCIERGERIE',
-} as const;
-
-export interface CartPriceDetailModel {
-  /** total price for the given type of service (ie. childcares, transfers, ...) */
-  amount?: number;
-  type?: CartPriceDetailModelTypes;
-}
-
-export type CartPriceDetails = CartPriceDetailModel[];
-
-/**
- * Cart price
- */
-export interface CartPrice {
-  /** total price for all services currently in cart. */
-  total?: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  detail?: CartPriceDetails;
-}
-
-export type CartServiceTypeModel = (typeof CartServiceTypeModel)[keyof typeof CartServiceTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CartServiceTypeModel = {
-  CHILDCARE: 'CHILDCARE',
-  TRANSFER: 'TRANSFER',
-  RENTAL: 'RENTAL',
-  EXCURSION: 'EXCURSION',
-  LAND_SPORT: 'LAND_SPORT',
-  WINTER_SPORT: 'WINTER_SPORT',
-  WATER_SPORT: 'WATER_SPORT',
-  WELLNESS: 'WELLNESS',
-  INSURANCE: 'INSURANCE',
-  PARKING: 'PARKING',
-  CONCIERGERIE: 'CONCIERGERIE',
-} as const;
-
-export interface CartServiceScheduleAttendee {
-  /** concerned attendee id */
-  id: string;
-  /** service's price for the concerned attendee */
-  price?: number;
-}
-
-/**
- * service attendees
- */
-export type CartServiceScheduleAttendees = CartServiceScheduleAttendee[];
-
-/**
- * start date for service deliverance
- */
-export type CartServiceScheduleModelStartDate = string | null;
-
-/**
- * end date for service deliverance
- */
-export type CartServiceScheduleModelEndDate = string | null;
-
-export interface CartServiceScheduleModel {
-  /** start date for service deliverance */
-  start_date?: CartServiceScheduleModelStartDate;
-  /** end date for service deliverance */
-  end_date?: CartServiceScheduleModelEndDate;
-  attendees?: CartServiceScheduleAttendees;
-}
-
-export type CartServiceSchedulesModel = CartServiceScheduleModel[];
-
-/**
- * Service's stay index
- * @minimum 0
- */
-export type CartServiceModelStayIndex = number | null;
-
-export interface CartServiceModel {
-  /** service id */
-  id: string;
-  type: CartServiceTypeModel;
-  schedules?: CartServiceSchedulesModel;
-  /**
-   * Service's stay index
-   * @minimum 0
-   */
-  stay_index: CartServiceModelStayIndex;
-  sold_only_with?: MandatoryServiceIdModel;
-  not_compatible_with?: NotCompatibleServiceIdsModel;
-  _links?: LinksModel;
-}
-
-/**
- * Cart services
- */
-export type CartServicesModel = CartServiceModel[];
-
-export interface CartModel {
-  price: CartPrice;
-  services?: CartServicesModel;
-}
-
-/**
- * type of the service
- */
 export type ServiceTypesV1Model = (typeof ServiceTypesV1Model)[keyof typeof ServiceTypesV1Model];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -17562,15 +17730,6 @@ export interface ServiceAttendeeV2Model {
 }
 
 export type ServiceV2Attendees = ServiceAttendeeV2Model[];
-
-/**
- * Direction of transfer
- */
-export type ValidServiceTransferInformationWaysV2Model =
-  | 'INBOUND'
-  | 'OUTBOUND'
-  | 'WITHIN_TOUR'
-  | null;
 
 /**
  * arrival or departure travel time
@@ -18012,72 +18171,6 @@ export interface ServiceV3Model {
 
 export type ServicesV3Model = ServiceV3Model[];
 
-/**
- * Eligible services status
- */
-export type ValidEligibleServiceStatusesModel =
-  (typeof ValidEligibleServiceStatusesModel)[keyof typeof ValidEligibleServiceStatusesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ValidEligibleServiceStatusesModel = {
-  WRITABLE: 'WRITABLE',
-  READABLE: 'READABLE',
-  UNAVAILABLE: 'UNAVAILABLE',
-} as const;
-
-/**
- * Services excluded when we choosing the current service
- */
-export type MutuallyExcludableServiceIds = string[];
-
-/**
- * Number of equipment rent for this service
- */
-export type EligibleAttendeeServiceModelSubscribedAttendeesCount = number | null;
-
-export interface EligibleAttendeeServiceModel {
-  /** Service ID */
-  id: string;
-  /** Quota exceeded */
-  quota_exceeded: boolean;
-  /** Number of equipment rent for this service */
-  subscribed_attendees_count: EligibleAttendeeServiceModelSubscribedAttendeesCount;
-  mutually_excludable_service_ids: MutuallyExcludableServiceIds;
-}
-
-export type EligibleAttendeeServicesModel = EligibleAttendeeServiceModel[];
-
-export interface EligibleAttendeeModel {
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id: string;
-  civility: string;
-  last_name: string;
-  first_name: string;
-  birthdate: string;
-  nationality: string;
-  /** Age at arrival date */
-  age_at_arrival?: number;
-  services: EligibleAttendeeServicesModel;
-}
-
-export type EligibleAttendeesModel = EligibleAttendeeModel[];
-
-export interface EligibleServiceModel {
-  /** ClubMed Product identifier */
-  product_id: string;
-  status?: ValidEligibleServiceStatusesModel;
-  /** Arrival date in the resort */
-  arrival_date: string;
-  /** Indicates the trip end date YYYYMMDD */
-  return_date: string;
-  attendees?: EligibleAttendeesModel;
-}
-
-export type EligibleServicesModel = EligibleServiceModel[];
-
 export type CartUpgradeRoomPriceModelAnyOf = {
   /** Room price amount */
   amount: number;
@@ -18173,6 +18266,72 @@ export interface PaymentScheduleModel {
   total?: PaymentScheduleModelTotal;
   payment_schedules?: PaymentScheduleDeadlineItemsModel;
 }
+
+/**
+ * Eligible services status
+ */
+export type ValidEligibleServiceStatusesModel =
+  (typeof ValidEligibleServiceStatusesModel)[keyof typeof ValidEligibleServiceStatusesModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ValidEligibleServiceStatusesModel = {
+  WRITABLE: 'WRITABLE',
+  READABLE: 'READABLE',
+  UNAVAILABLE: 'UNAVAILABLE',
+} as const;
+
+/**
+ * Services excluded when we choosing the current service
+ */
+export type MutuallyExcludableServiceIds = string[];
+
+/**
+ * Number of equipment rent for this service
+ */
+export type EligibleAttendeeServiceModelSubscribedAttendeesCount = number | null;
+
+export interface EligibleAttendeeServiceModel {
+  /** Service ID */
+  id: string;
+  /** Quota exceeded */
+  quota_exceeded: boolean;
+  /** Number of equipment rent for this service */
+  subscribed_attendees_count: EligibleAttendeeServiceModelSubscribedAttendeesCount;
+  mutually_excludable_service_ids: MutuallyExcludableServiceIds;
+}
+
+export type EligibleAttendeeServicesModel = EligibleAttendeeServiceModel[];
+
+export interface EligibleAttendeeModel {
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id: string;
+  civility: string;
+  last_name: string;
+  first_name: string;
+  birthdate: string;
+  nationality: string;
+  /** Age at arrival date */
+  age_at_arrival?: number;
+  services: EligibleAttendeeServicesModel;
+}
+
+export type EligibleAttendeesModel = EligibleAttendeeModel[];
+
+export interface EligibleServiceModel {
+  /** ClubMed Product identifier */
+  product_id: string;
+  status?: ValidEligibleServiceStatusesModel;
+  /** Arrival date in the resort */
+  arrival_date: string;
+  /** Indicates the trip end date YYYYMMDD */
+  return_date: string;
+  attendees?: EligibleAttendeesModel;
+}
+
+export type EligibleServicesModel = EligibleServiceModel[];
 
 /**
  * location number
@@ -20913,11 +21072,11 @@ export const NotifyMemoizeFilterModel = {
   PRODUCT_CHILDCARE_PRICE: 'PRODUCT_CHILDCARE_PRICE',
   PRODUCT_PICTURES: 'PRODUCT_PICTURES',
   PRODUCT_TRANSFERS: 'PRODUCT_TRANSFERS',
-  PRODUCT_WITH_PRICES: 'PRODUCT_WITH_PRICES',
+  PRODUCT_WITH_PRICES_V3: 'PRODUCT_WITH_PRICES_V3',
   PRODUCT_WITHOUT_PRICE_V2: 'PRODUCT_WITHOUT_PRICE_V2',
   PRODUCTS_IDS: 'PRODUCTS_IDS',
-  PRODUCT_OPENING_DATES_V2: 'PRODUCT_OPENING_DATES_V2',
-  PRODUCTS_WITH_PRICES_V6: 'PRODUCTS_WITH_PRICES_V6',
+  PRODUCT_OPENING_DATES_V3: 'PRODUCT_OPENING_DATES_V3',
+  PRODUCTS_WITH_PRICES_V8: 'PRODUCTS_WITH_PRICES_V8',
   PRODUCTS_WITHOUT_PRICES_V2: 'PRODUCTS_WITHOUT_PRICES_V2',
   QUABLE_V5_ACTIVITY: 'QUABLE_V5_ACTIVITY',
   QUABLE_V5_ACTIVITY_FACILITIES: 'QUABLE_V5_ACTIVITY_FACILITIES',
@@ -20964,6 +21123,7 @@ export const NotifyMemoizeFilterModel = {
   TRANSPORT_STATIONS: 'TRANSPORT_STATIONS',
   PRODUCT_IDS_WITH_SIBLING: 'PRODUCT_IDS_WITH_SIBLING',
   ACTIVITIES_THEMATIC: 'ACTIVITIES_THEMATIC',
+  CIVILITIES: 'CIVILITIES',
 } as const;
 
 export type NotifyMemoizeFiltersModel = NotifyMemoizeFilterModel[];
@@ -21040,6 +21200,48 @@ export interface PaymentCheckoutResponseModel {
   message?: string;
   /** Codified value, looking like a bank card brand, required by accountant department. */
   payment_method?: string;
+}
+
+/**
+ * Specifies the communication channel used to send the generated payment link to the customer
+ */
+export type PaymentLinkChannel = (typeof PaymentLinkChannel)[keyof typeof PaymentLinkChannel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentLinkChannel = {
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+} as const;
+
+export interface PaymentLinkRequestModel {
+  /** Attendee customer identifier */
+  customer_id?: string;
+  /** Booking identifier */
+  booking_id?: string;
+  /** Customer first name */
+  first_name: string;
+  /** Customer last name */
+  last_name: string;
+  /** Link expiration date */
+  expiration_date_time: string;
+  /** Customer email */
+  email: string;
+  /** Phone number */
+  phone: string;
+  channel: PaymentLinkChannel;
+  /** Payment amount */
+  amount: number;
+  /** Club Med product unique id */
+  product_id: string;
+}
+
+export interface PaymentLinkResponseModel {
+  /** URL used to process remote payments */
+  url: string;
+  /** Payment redirect method */
+  method: string;
+  /** Payment id */
+  payment_id: string;
 }
 
 /**
@@ -21266,6 +21468,9 @@ export interface KnownAttendeesInformationModel {
   birthdate?: KnownAttendeesInformationModelBirthdate;
 }
 
+/**
+ * The attendees order will be stored as provided
+ */
 export type KnownAttendeesInformationList = KnownAttendeesInformationModel[];
 
 /**
@@ -21368,53 +21573,29 @@ export interface ProposalsSearchV3PayloadModel {
  */
 export type ProposalsSearchV3ResponseModel = ProposalResponseModelV1[];
 
-export type BookingShareOptinListModel = OptinModel[];
-
-export interface BookingShareAttendee {
+export interface RoomStatusEventPayload {
   /**
    * Customer ID (neolid clic)
    * @pattern ^[1-9][0-9]*$
    */
-  customer_id: string;
-  /** Email of the attendee */
+  customer_id?: string;
+  /** The room Id */
+  room_id: string;
+  status: Status;
+}
+
+export interface CreateBookingRoomInterventionModel {
+  /** The intervention category code */
+  code: string;
+  /** The concerned room the current intervention */
+  room_id: string;
+  assets: BookingInterventionAssetsModel;
+  /** The phone number to contact the GM */
+  contact: string;
+  /** The e-mail to contact the GM */
   email: string;
-  optins?: BookingShareOptinListModel;
-}
-
-export type BookingShareAttendees = BookingShareAttendee[];
-
-/**
- * Determine the nature of the call
- */
-export type ValidBookingShareTypesModel =
-  (typeof ValidBookingShareTypesModel)[keyof typeof ValidBookingShareTypesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ValidBookingShareTypesModel = {
-  TRIPS: 'TRIPS',
-  SELL_CONTRACTS: 'SELL_CONTRACTS',
-} as const;
-
-export interface BookingShareModel {
-  attendees?: BookingShareAttendees;
-  /**
-   * customer id of a booking main customer
-   * @pattern ^[1-9][0-9]*$
-   */
-  main_customer_id: string;
-  /** Email of the seller recorded in the booking */
-  seller_email?: string;
-  /** Email of the attendee not part of the file */
-  other_email?: string;
-  type?: ValidBookingShareTypesModel;
-}
-
-export interface PostBookingRenewalPayloadModel {
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id: string;
+  /** The customer id (only for GO connection) */
+  customer_id?: string;
 }
 
 export interface BookingCommentRequest {
@@ -21473,29 +21654,53 @@ export interface BookingCommentResponse {
   last_update?: BookingCommentLastUpdate;
 }
 
-export interface CreateBookingRoomInterventionModel {
-  /** The intervention category code */
-  code: string;
-  /** The concerned room the current intervention */
-  room_id: string;
-  assets: BookingInterventionAssetsModel;
-  /** The phone number to contact the GM */
-  contact: string;
-  /** The e-mail to contact the GM */
-  email: string;
-  /** The customer id (only for GO connection) */
-  customer_id?: string;
-}
-
-export interface RoomStatusEventPayload {
+export interface PostBookingRenewalPayloadModel {
   /**
    * Customer ID (neolid clic)
    * @pattern ^[1-9][0-9]*$
    */
-  customer_id?: string;
-  /** The room Id */
-  room_id: string;
-  status: Status;
+  customer_id: string;
+}
+
+export type BookingShareOptinListModel = OptinModel[];
+
+export interface BookingShareAttendee {
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id: string;
+  /** Email of the attendee */
+  email: string;
+  optins?: BookingShareOptinListModel;
+}
+
+export type BookingShareAttendees = BookingShareAttendee[];
+
+/**
+ * Determine the nature of the call
+ */
+export type ValidBookingShareTypesModel =
+  (typeof ValidBookingShareTypesModel)[keyof typeof ValidBookingShareTypesModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ValidBookingShareTypesModel = {
+  TRIPS: 'TRIPS',
+  SELL_CONTRACTS: 'SELL_CONTRACTS',
+} as const;
+
+export interface BookingShareModel {
+  attendees?: BookingShareAttendees;
+  /**
+   * customer id of a booking main customer
+   * @pattern ^[1-9][0-9]*$
+   */
+  main_customer_id: string;
+  /** Email of the seller recorded in the booking */
+  seller_email?: string;
+  /** Email of the attendee not part of the file */
+  other_email?: string;
+  type?: ValidBookingShareTypesModel;
 }
 
 export type ContactEventWayModel = (typeof ContactEventWayModel)[keyof typeof ContactEventWayModel];
@@ -21659,6 +21864,82 @@ export interface ContactEventModel {
   prioritization?: PrioritizationModel;
 }
 
+export interface SponsorshipsPostModel {
+  /**
+   * A valid email adress
+   * @pattern ^[^\s@]+@[^\s@]+\.[^\s@]+$
+   */
+  email: string;
+  /** user's civility :see the /civilities resource */
+  civility: string;
+  /**
+   * The user first name, Ex : Jean
+   * @maxLength 20
+   */
+  first_name: string;
+  /** The user first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤 */
+  unicode_first_name?: string;
+  /**
+   * The user last name Ex: Chang
+   * @maxLength 30
+   */
+  last_name: string;
+  /** The user last name in unicode character, useful in double byte countries like China,  Ex : 昌 */
+  unicode_last_name?: string;
+}
+
+export interface AssignCustomerToProposalsSummaryElement {
+  /**
+   * Proposal identifier
+   * @pattern ^\d+$
+   */
+  proposal_id: string;
+  /** proposal identifier */
+  opportunity_id?: string;
+}
+
+export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
+
+/**
+ * adult attendees number
+ */
+export type CreateBookmarkModelAdultsCount =
+  (typeof CreateBookmarkModelAdultsCount)[keyof typeof CreateBookmarkModelAdultsCount];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CreateBookmarkModelAdultsCount = {
+  NUMBER_0: 0,
+} as const;
+
+/**
+ * children attendees number
+ */
+export type CreateBookmarkModelChildrenCount = 0 | null;
+
+export interface CreateBookmarkModel {
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
+  resort_departure_date?: string;
+  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
+  resort_arrival_date?: string;
+  /** Total number of journey attendees. */
+  number_attendees?: number;
+  /** adult attendees number */
+  adults_count: CreateBookmarkModelAdultsCount;
+  /** children attendees number */
+  children_count?: CreateBookmarkModelChildrenCount;
+  birthdates?: CreateBookmarksBirthdatesModel;
+  /** The departure option id from product/id booking criteria. */
+  departure_option_id?: string;
+  price?: CreateBookmarkPriceModel;
+}
+
+/**
+ * List of bookmarks
+ */
+export type CreateBookmarksModel = CreateBookmarkModel[];
+
 /**
  * PHONE/CHAT
  */
@@ -21771,82 +22052,6 @@ export interface ResponseSaleInteractionsModelV0 {
   interaction: ResponseSaleInteractionModel;
 }
 
-/**
- * adult attendees number
- */
-export type CreateBookmarkModelAdultsCount =
-  (typeof CreateBookmarkModelAdultsCount)[keyof typeof CreateBookmarkModelAdultsCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateBookmarkModelAdultsCount = {
-  NUMBER_0: 0,
-} as const;
-
-/**
- * children attendees number
- */
-export type CreateBookmarkModelChildrenCount = 0 | null;
-
-export interface CreateBookmarkModel {
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
-  resort_departure_date?: string;
-  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
-  resort_arrival_date?: string;
-  /** Total number of journey attendees. */
-  number_attendees?: number;
-  /** adult attendees number */
-  adults_count: CreateBookmarkModelAdultsCount;
-  /** children attendees number */
-  children_count?: CreateBookmarkModelChildrenCount;
-  birthdates?: CreateBookmarksBirthdatesModel;
-  /** The departure option id from product/id booking criteria. */
-  departure_option_id?: string;
-  price?: CreateBookmarkPriceModel;
-}
-
-/**
- * List of bookmarks
- */
-export type CreateBookmarksModel = CreateBookmarkModel[];
-
-export interface AssignCustomerToProposalsSummaryElement {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  proposal_id: string;
-  /** proposal identifier */
-  opportunity_id?: string;
-}
-
-export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
-
-export interface SponsorshipsPostModel {
-  /**
-   * A valid email adress
-   * @pattern ^[^\s@]+@[^\s@]+\.[^\s@]+$
-   */
-  email: string;
-  /** user's civility :see the /civilities resource */
-  civility: string;
-  /**
-   * The user first name, Ex : Jean
-   * @maxLength 20
-   */
-  first_name: string;
-  /** The user first name in unicode character, useful in double byte countries like China, Ex : 牛仔裤 */
-  unicode_first_name?: string;
-  /**
-   * The user last name Ex: Chang
-   * @maxLength 30
-   */
-  last_name: string;
-  /** The user last name in unicode character, useful in double byte countries like China,  Ex : 昌 */
-  unicode_last_name?: string;
-}
-
 export type PostSurveyQuestionsModel = SurveyQuestionModel[];
 
 /**
@@ -21863,36 +22068,6 @@ export interface PostSurveyModel {
 }
 
 export type PostSurveysModel = PostSurveyModel[];
-
-export interface ProposalsSummaryElement {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  proposal_id: string;
-  /** ID of the proposal identifier */
-  opportunity_id?: string;
-}
-
-export type ProposalsSummaryList = ProposalsSummaryElement[];
-
-export interface ProposalsSummarySeller {
-  name?: string;
-  /** phone number of the seller */
-  phone?: string;
-  /** email of the seller */
-  email?: string;
-}
-
-export interface AssignPartnerToProposalsSummaryModel {
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id?: string;
-  proposals?: ProposalsSummaryList;
-  seller?: ProposalsSummarySeller;
-}
 
 export type CreationContactModelJobTitle = string | null;
 
@@ -21925,6 +22100,36 @@ export interface PartnerContactModel {
   preferred_language?: PartnerContactModelPreferredLanguage;
   phones?: PhonesModel;
   id: string;
+}
+
+export interface ProposalsSummaryElement {
+  /**
+   * Proposal identifier
+   * @pattern ^\d+$
+   */
+  proposal_id: string;
+  /** ID of the proposal identifier */
+  opportunity_id?: string;
+}
+
+export type ProposalsSummaryList = ProposalsSummaryElement[];
+
+export interface ProposalsSummarySeller {
+  name?: string;
+  /** phone number of the seller */
+  phone?: string;
+  /** email of the seller */
+  email?: string;
+}
+
+export interface AssignPartnerToProposalsSummaryModel {
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id?: string;
+  proposals?: ProposalsSummaryList;
+  seller?: ProposalsSummarySeller;
 }
 
 export interface PostPaymentAliasResponse {
@@ -22021,6 +22226,46 @@ export interface TokenHolderModel {
   format: string;
   /** The token returned by the provider, depending of the PSP, it may be a litteral value or a structure. */
   token: string;
+}
+
+/**
+ * A Payment Provider dependant value to specify where the identification frame would be displayed
+ */
+export type ProviderPaymentAuthorizationInputTarget = string | null;
+
+/**
+ * Url to get back when approvement had been processed
+ */
+export type ProviderPaymentAuthorizationInputCallbackUrl = string | null;
+
+export interface ProviderPaymentAuthorizationInput {
+  /** The user agent content-type capability */
+  http_accept?: string;
+  /** Customer User Agent */
+  http_user_agent?: string;
+  /** Response parameters from the Payment Provider */
+  provider_response: string;
+  /** A Payment Provider dependant value to specify where the identification frame would be displayed */
+  target?: ProviderPaymentAuthorizationInputTarget;
+  /** Url to get back when approvement had been processed */
+  callback_url?: ProviderPaymentAuthorizationInputCallbackUrl;
+}
+
+/**
+ * Anwser from the provider to notify
+ */
+export type ProviderPaymentAuthorizationResponseProviderResponse = string | null;
+
+/**
+ * A Base64 encoded html to execute
+ */
+export type ProviderPaymentAuthorizationResponseHtmlAnswer = string | null;
+
+export interface ProviderPaymentAuthorizationResponse {
+  /** Anwser from the provider to notify */
+  provider_response?: ProviderPaymentAuthorizationResponseProviderResponse;
+  /** A Base64 encoded html to execute */
+  html_answer?: ProviderPaymentAuthorizationResponseHtmlAnswer;
 }
 
 /**
@@ -22165,46 +22410,6 @@ export interface ProviderParametersModel {
 }
 
 /**
- * A Payment Provider dependant value to specify where the identification frame would be displayed
- */
-export type ProviderPaymentAuthorizationInputTarget = string | null;
-
-/**
- * Url to get back when approvement had been processed
- */
-export type ProviderPaymentAuthorizationInputCallbackUrl = string | null;
-
-export interface ProviderPaymentAuthorizationInput {
-  /** The user agent content-type capability */
-  http_accept?: string;
-  /** Customer User Agent */
-  http_user_agent?: string;
-  /** Response parameters from the Payment Provider */
-  provider_response: string;
-  /** A Payment Provider dependant value to specify where the identification frame would be displayed */
-  target?: ProviderPaymentAuthorizationInputTarget;
-  /** Url to get back when approvement had been processed */
-  callback_url?: ProviderPaymentAuthorizationInputCallbackUrl;
-}
-
-/**
- * Anwser from the provider to notify
- */
-export type ProviderPaymentAuthorizationResponseProviderResponse = string | null;
-
-/**
- * A Base64 encoded html to execute
- */
-export type ProviderPaymentAuthorizationResponseHtmlAnswer = string | null;
-
-export interface ProviderPaymentAuthorizationResponse {
-  /** Anwser from the provider to notify */
-  provider_response?: ProviderPaymentAuthorizationResponseProviderResponse;
-  /** A Base64 encoded html to execute */
-  html_answer?: ProviderPaymentAuthorizationResponseHtmlAnswer;
-}
-
-/**
  * Customer ID (neolid clic)
  * @pattern ^[1-9][0-9]*$
  */
@@ -22227,6 +22432,9 @@ Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
   birthdate?: ProposalSearchBestKnownAttendeesInformationModelBirthdate;
 }
 
+/**
+ * The attendees order will be stored as provided
+ */
 export type ProposalSearchBestKnownAttendeesInformationList =
   ProposalSearchBestKnownAttendeesInformationModel[];
 
@@ -24807,37 +25015,6 @@ export interface ProfilePatchModelV0 {
 }
 
 /**
- * value to apply
- */
-export type Op = (typeof Op)[keyof typeof Op];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Op = {
-  add: 'add',
-  remove: 'remove',
-  replace: 'replace',
-  move: 'move',
-  copy: 'copy',
-} as const;
-
-export type JsonPatchElementValue = string | null;
-
-export interface JsonPatchElement {
-  op: Op;
-  /** 
-    Path to modify (separated by /). For example, to change passeport's expiration date : path = "/passport/expiration_date".
-    Refer to GET v1/customers/{customer_id}/travel_documents to know the order of visas documents.
-    If you want to add a visa no matter its position in the list, path should be "/visas/-".
-    If you want to add a visa at the first position in the list, path should be "/visas/0".
-    If you want to update the expiration_date of the second visa, path should be "/visas/1/expiration_date".
-   */
-  path: string;
-  value?: JsonPatchElementValue;
-}
-
-export type JsonPatchModel = JsonPatchElement[];
-
-/**
  * email
  */
 export type ProfilePatchModelV1Email = string | null;
@@ -24893,6 +25070,113 @@ export interface ProfilePatchModelV1 {
   /** true if the customer allows the use of its personal data by Club Med */
   personal_data_usage_allowed?: boolean;
   identity?: NationalIdentifierCodeModel;
+}
+
+/**
+ * value to apply
+ */
+export type Op = (typeof Op)[keyof typeof Op];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Op = {
+  add: 'add',
+  remove: 'remove',
+  replace: 'replace',
+  move: 'move',
+  copy: 'copy',
+} as const;
+
+export type JsonPatchElementValue = string | null;
+
+export interface JsonPatchElement {
+  op: Op;
+  /** 
+    Path to modify (separated by /). For example, to change passeport's expiration date : path = "/passport/expiration_date".
+    Refer to GET v1/customers/{customer_id}/travel_documents to know the order of visas documents.
+    If you want to add a visa no matter its position in the list, path should be "/visas/-".
+    If you want to add a visa at the first position in the list, path should be "/visas/0".
+    If you want to update the expiration_date of the second visa, path should be "/visas/1/expiration_date".
+   */
+  path: string;
+  value?: JsonPatchElementValue;
+}
+
+export type JsonPatchModel = JsonPatchElement[];
+
+/**
+ * travel company id (IATA)
+ * @maxLength 3
+ */
+export type TravelCompanyAnyOfId = string | null;
+
+export type TravelCompanyAnyOf = {
+  /**
+   * travel company id (IATA)
+   * @maxLength 3
+   */
+  id?: TravelCompanyAnyOfId;
+};
+
+export type TravelCompany = TravelCompanyAnyOf | null;
+
+/**
+ * arrival or departure travel time
+ * @pattern ^\d{2}:\d{2}:\d{2}(\.\d{3})?$
+ */
+export type PatchTransferProposalV0CustomerTravelingInformationAnyOfTime = string | null;
+
+/**
+ * arrival or departure travel reference
+ * @maxLength 6
+ */
+export type PatchTransferProposalV0CustomerTravelingInformationAnyOfTravelReference = string | null;
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type PatchTransferProposalV0CustomerTravelingInformationAnyOf = {
+  /**
+   * arrival or departure travel time
+   * @pattern ^\d{2}:\d{2}:\d{2}(\.\d{3})?$
+   */
+  time?: PatchTransferProposalV0CustomerTravelingInformationAnyOfTime;
+  /**
+   * arrival or departure travel reference
+   * @maxLength 6
+   */
+  travel_reference?: PatchTransferProposalV0CustomerTravelingInformationAnyOfTravelReference;
+  travel_company?: TravelCompany;
+};
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type PatchTransferProposalV0CustomerTravelingInformation =
+  PatchTransferProposalV0CustomerTravelingInformationAnyOf | null;
+
+/**
+ * Any special comment regarding the transfer
+ * @maxLength 30
+ */
+export type PatchTransferProposalV0ScheduleComment = string | null;
+
+export interface PatchTransferProposalV0Schedule {
+  /** Indicates the transfer's start date */
+  start_date: string;
+  /** Indicates the transfer's end date */
+  end_date: string;
+  customer_traveling_information?: PatchTransferProposalV0CustomerTravelingInformation;
+  /**
+   * Any special comment regarding the transfer
+   * @maxLength 30
+   */
+  comment?: PatchTransferProposalV0ScheduleComment;
+}
+
+export type PatchTransferProposalV0Schedules = PatchTransferProposalV0Schedule[];
+
+export interface PatchTransferProposalV0Payload {
+  schedules: PatchTransferProposalV0Schedules;
 }
 
 export interface PaymentCheckoutStayFormalitiesInput {
@@ -25232,9 +25516,9 @@ export const AcceptLanguageParamModel = {
   'fr-TJ': 'fr-TJ',
   'en-GE': 'en-GE',
   'en-AZ': 'en-AZ',
+  'fr-TN': 'fr-TN',
   'es-DO': 'es-DO',
   'fr-TM': 'fr-TM',
-  'fr-TN': 'fr-TN',
   'sk-SK': 'sk-SK',
 } as const;
 

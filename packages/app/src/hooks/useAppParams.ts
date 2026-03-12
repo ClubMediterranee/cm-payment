@@ -82,10 +82,6 @@ export function useAppParams() {
       callbackUrlSeller,
     };
 
-    if (values?.bookingId && !auth.isAuthenticated) {
-      setLocation('/404');
-    }
-
     const validationResult = ParamsSchema.safeParse(values);
 
     if (!validationResult.success) {

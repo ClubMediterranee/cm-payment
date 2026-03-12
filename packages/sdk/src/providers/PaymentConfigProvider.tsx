@@ -7,7 +7,7 @@ import { mergeFromPattern } from '../utils/mergeFromPattern';
 import { QueryClientProvider } from './QueryClientProvider';
 
 export type PaymentConfigProviderProps = PropsWithChildren<
-  Omit<CapsSettings, 'content' | 'id' | 'type'> & {
+  Omit<CapsSettings, 'content' | 'id' | 'type' | 'country' | 'language'> & {
     content?: Partial<CapsSettings['content']>;
     bookingId?: string;
     proposalId?: string;
@@ -30,8 +30,12 @@ export const PaymentConfigProvider = ({
 }: PaymentConfigProviderProps) => {
   const activeContent = mergeFromPattern(defaultContent, props.content);
 
+  const [country, language] = props.locale.split('-');
+
   ref.value = {
     ...props,
+    country,
+    language,
     content: activeContent,
     id: bookingId || proposalId!,
     type: bookingId ? 'booking' : 'proposal',

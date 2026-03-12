@@ -22,6 +22,8 @@ export const ENDPOINTS = [
   'POST /v0/payment_providers/{provider_id}/request_token',
   'GET /v3/schemas/{resource}/{localeOrCountry}',
   'GET /v0/countries',
+  'GET /v5/proposals/{proposal_id}/transport_details',
+  'GET /v4/customers/{customer_id}/bookings/{booking_id}/transport_details',
 ];
 
 export default function (schema) {

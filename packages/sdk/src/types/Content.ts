@@ -18,6 +18,11 @@ export type Content = {
   paymentSchedule: {
     payFullAmount: `${string}{amount}${string}`;
     payDeposit: `${string}{amount}${string}{deadline}${string}{balance}${string}`;
+    buyNowPayLater: {
+      iconLabel: `${string}{icon}${string}`;
+      priceLabel: `${string}{price}${string}`;
+      unavailable: string;
+    };
   };
   cgv: {
     title: string;

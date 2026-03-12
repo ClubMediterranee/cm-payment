@@ -1,5 +1,5 @@
 import type { Hipay, HipayError, HipayInstance, HipaySDK } from '../../../types/Hipay';
-import { createHipayHostedFields, HIPAY_CONFIG, mapHipayErrorsToObject } from './hipay';
+import { createHipayHostedFields, mapHipayErrorsToObject } from './hipay';
 
 describe('hipay utilities', () => {
   describe('createHipayHostedFields', () => {
@@ -32,13 +32,17 @@ describe('hipay utilities', () => {
         expiryDate: { placeholder: "Date d'expiration", selector: '#expiry' },
       };
 
-      const result = createHipayHostedFields(fields);
+      const mockConfig = {
+        username: 'test-username',
+        password: 'test-password',
+        environment: 'stage',
+        max_amount: null,
+        min_days_before_departure: null,
+      };
 
-      expect(mockHiPay).toHaveBeenCalledWith({
-        environment: HIPAY_CONFIG.environment,
-        username: HIPAY_CONFIG.username,
-        password: HIPAY_CONFIG.password,
-      });
+      const result = createHipayHostedFields(fields, mockConfig);
+
+      expect(mockHiPay).toHaveBeenCalledWith(mockConfig);
       expect(mockHipaySDK.create).toHaveBeenCalledWith('card', { fields });
       expect(result).toBe(mockHipayInstance);
     });

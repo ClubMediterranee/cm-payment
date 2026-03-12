@@ -3,9 +3,10 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3377.2
+ * OpenAPI spec version: 0.3389.0
  */
 import type {
+  BookingTransportDetailsListModelV2,
   CartUpgradeRoomModel,
   ClientSchemaModel,
   CountriesModel,
@@ -27,6 +28,7 @@ import type {
   ProfileModelV2,
   ProposalPaymentScheduleModelV1,
   ProposalResponseModelV1,
+  ProposalTransportDetailsListModelV5,
   ProviderParametersModel,
   TokenHolderModel,
   TokenRequestModel,
@@ -556,6 +558,16 @@ export const getV3SchemasResourceLocaleorcountry = (
 };
 
 /**
+ * @summary Returns the transportation description for the given proposal
+ */
+export const getV5ProposalsProposalIdTransportDetails = (proposalId: string) => {
+  return fetcher<ProposalTransportDetailsListModelV5>({
+    url: `/v5/proposals/${proposalId}/transport_details`,
+    method: 'GET',
+  });
+};
+
+/**
  * @summary details of one booking
  */
 export const getV3CustomersCustomerIdBookingsBookingId = (
@@ -577,6 +589,19 @@ export const getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules = (
 ) => {
   return fetcher<CustomerBookingPaymentScheduleModel>({
     url: `/v0/customers/${customerId}/bookings/${bookingId}/payment_schedules`,
+    method: 'GET',
+  });
+};
+
+/**
+ * @summary transport details of one booking
+ */
+export const getV4CustomersCustomerIdBookingsBookingIdTransportDetails = (
+  customerId: string,
+  bookingId: string,
+) => {
+  return fetcher<BookingTransportDetailsListModelV2>({
+    url: `/v4/customers/${customerId}/bookings/${bookingId}/transport_details`,
     method: 'GET',
   });
 };
@@ -711,11 +736,17 @@ export type GetV2CustomersCustomerIdProfileResult = NonNullable<
 export type GetV3SchemasResourceLocaleorcountryResult = NonNullable<
   Awaited<ReturnType<typeof getV3SchemasResourceLocaleorcountry>>
 >;
+export type GetV5ProposalsProposalIdTransportDetailsResult = NonNullable<
+  Awaited<ReturnType<typeof getV5ProposalsProposalIdTransportDetails>>
+>;
 export type GetV3CustomersCustomerIdBookingsBookingIdResult = NonNullable<
   Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingId>>
 >;
 export type GetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResult = NonNullable<
   Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules>>
+>;
+export type GetV4CustomersCustomerIdBookingsBookingIdTransportDetailsResult = NonNullable<
+  Awaited<ReturnType<typeof getV4CustomersCustomerIdBookingsBookingIdTransportDetails>>
 >;
 export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = NonNullable<
   Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartAccommodations>>

@@ -25,6 +25,12 @@ const sidebars: SidebarsConfig = {
     'integration/integrated/installation',
     'integration/integrated/form-setup',
     'integration/integrated/examples',
+    {
+      type: 'html',
+      value: '<div class="sidebar-section-title">Référence</div>',
+      defaultStyle: false,
+    },
+    'content-keys',
   ],
 };
 

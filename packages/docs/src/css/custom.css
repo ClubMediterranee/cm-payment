@@ -369,6 +369,37 @@ table {
   white-space: nowrap;
 }
 
+.content-keys-table table {
+  table-layout: fixed;
+  width: 100%;
+  display: table;
+  overflow-x: visible;
+  white-space: normal;
+}
+
+.content-keys-table table td,
+.content-keys-table table th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  vertical-align: top;
+}
+
+.content-keys-table table th:nth-child(1),
+.content-keys-table table td:nth-child(1) {
+  width: 50%;
+}
+
+.content-keys-table table th:nth-child(2),
+.content-keys-table table td:nth-child(2) {
+  width: 25%;
+}
+
+.content-keys-table table th:nth-child(3),
+.content-keys-table table td:nth-child(3) {
+  width: 25%;
+}
+
 @media (max-width: 996px) {
   table {
     font-size: 0.875rem;

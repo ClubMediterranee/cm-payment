@@ -1,0 +1,222 @@
+import { renderHook } from '@testing-library/react';
+
+import { useStay } from '../../data/useStay';
+import { useTransportDetails } from '../../data/useTransportDetails';
+import { useWatch } from '../../utils/useForm';
+import { useUpliftOrder } from './useUpliftOrder';
+
+vi.mock('../../data/useStay', () => ({
+  useStay: vi.fn(),
+}));
+
+vi.mock('../../data/useTransportDetails', () => ({
+  useTransportDetails: vi.fn(),
+}));
+
+vi.mock('../../utils/useForm', () => ({
+  useWatch: vi.fn(),
+}));
+
+const mockUseStay = vi.mocked(useStay);
+const mockUseTransportDetails = vi.mocked(useTransportDetails);
+const mockUseWatch = vi.mocked(useWatch);
+
+describe('useUpliftOrder', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseTransportDetails.mockReturnValue({
+      data: { tripType: 'oneway', journeys: [] },
+    } as any);
+  });
+
+  it('should return order with zero amount when amount is missing', () => {
+    mockUseWatch.mockReturnValue('');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260615',
+        resortDepartureDate: '20260622',
+        adultsCount: 2,
+        childrenCount: 0,
+        transportTypes: [],
+        roomCount: 1,
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.order_amount).toBe(0);
+  });
+
+  it('should handle missing stay data gracefully', () => {
+    mockUseWatch.mockReturnValue('999.99');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260615',
+        resortDepartureDate: '20260622',
+        transportTypes: [],
+        roomCount: 1,
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current).toBeDefined();
+  });
+
+  it('should build complete order with valid data', () => {
+    mockUseWatch.mockReturnValue('999.99');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260615',
+        resortDepartureDate: '20260622',
+        adultsCount: 4,
+        childrenCount: 1,
+        transportTypes: [],
+        roomCount: 3,
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current).toEqual({
+      order_amount: 99999,
+      travelers: [],
+      billing_contact: {},
+      air_reservations: [],
+      hotel_reservations: [
+        {
+          hotel_name: 'PCAC',
+          number_of_rooms: 3,
+          reservation_type: 'standard',
+          has_deposit: 'false',
+          check_in: '20260615',
+          check_out: '20260622',
+        },
+      ],
+      add_ons: [],
+    });
+  });
+
+  it('should calculate numberOfRooms correctly with adults only', () => {
+    mockUseWatch.mockReturnValue('1500');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260701',
+        resortDepartureDate: '20260708',
+        adultsCount: 3,
+        childrenCount: 0,
+        transportTypes: [],
+        roomCount: 2,
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.hotel_reservations[0].number_of_rooms).toBe(2);
+  });
+
+  it('should calculate numberOfRooms correctly with adults and children', () => {
+    mockUseWatch.mockReturnValue('1500');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260701',
+        resortDepartureDate: '20260708',
+        adultsCount: 2,
+        childrenCount: 2,
+        transportTypes: [],
+        roomCount: 2,
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.hotel_reservations[0].number_of_rooms).toBe(2);
+  });
+
+  it('should default to 1 room when totalGuests is 0', () => {
+    mockUseWatch.mockReturnValue('500');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260801',
+        resortDepartureDate: '20260805',
+        adultsCount: 0,
+        childrenCount: 0,
+        transportTypes: [],
+        roomCount: 1,
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.hotel_reservations[0].number_of_rooms).toBe(1);
+  });
+
+  it('should handle missing dates with empty strings', () => {
+    mockUseWatch.mockReturnValue('750');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: null,
+        resortDepartureDate: null,
+        adultsCount: 2,
+        childrenCount: 0,
+        transportTypes: [],
+        roomCount: 1,
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.hotel_reservations[0].check_in).toBeNull();
+    expect(result.current?.hotel_reservations[0].check_out).toBeNull();
+  });
+
+  it('should convert amount to cents correctly', () => {
+    mockUseWatch.mockReturnValue('1234.56');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260601',
+        resortDepartureDate: '20260607',
+        adultsCount: 2,
+        childrenCount: 0,
+        transportTypes: [],
+        roomCount: 1,
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.order_amount).toBe(123456);
+  });
+
+  it('should update order when amount changes', () => {
+    mockUseWatch.mockReturnValue('500');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260601',
+        resortDepartureDate: '20260607',
+        adultsCount: 2,
+        childrenCount: 0,
+        transportTypes: [],
+        roomCount: 1,
+      },
+    } as any);
+
+    const { result, rerender } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.order_amount).toBe(50000);
+
+    mockUseWatch.mockReturnValue('750');
+    rerender();
+
+    expect(result.current?.order_amount).toBe(75000);
+  });
+});

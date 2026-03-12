@@ -18,10 +18,14 @@ describe('mapPaymentConfig', () => {
         locale: 'fr-FR',
       });
 
-      expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect' },
-        MHIPAY: { is_active: false, display_type: 'hosted_field' },
+      expect(result.providers.EVOXPAY).toEqual({
+        is_active: true,
+        display_type: 'redirect',
+        settings: {},
       });
+      expect(result.providers.MHIPAY.is_active).toBe(false);
+      expect(result.providers.MHIPAY.display_type).toBe('hosted_field');
+      expect(result.providers.MHIPAY.settings).toHaveProperty('environment', 'stage');
     });
 
     it('should extract seller PSP providers for GO issuer', () => {
@@ -40,8 +44,8 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect' },
-        PAYPAL: { is_active: false, display_type: 'redirect' },
+        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
+        PAYPAL: { is_active: false, display_type: 'redirect', settings: {} },
       });
     });
 
@@ -58,7 +62,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        STRIPE: { is_active: true, display_type: 'redirect' },
+        STRIPE: { is_active: true, display_type: 'redirect', settings: {} },
       });
     });
 
@@ -79,7 +83,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect' },
+        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
       });
     });
 
@@ -100,7 +104,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect' },
+        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
       });
     });
   });
@@ -258,7 +262,7 @@ describe('mapPaymentConfig', () => {
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect' },
+        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
       });
     });
   });
@@ -280,10 +284,14 @@ describe('mapPaymentConfig', () => {
         locale: 'fr-FR',
       });
 
-      expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect' },
-        MHIPAY: { is_active: false, display_type: 'hosted_field' },
+      expect(result.providers.EVOXPAY).toEqual({
+        is_active: true,
+        display_type: 'redirect',
+        settings: {},
       });
+      expect(result.providers.MHIPAY.is_active).toBe(false);
+      expect(result.providers.MHIPAY.display_type).toBe('hosted_field');
+      expect(result.providers.MHIPAY.settings).toHaveProperty('environment', 'stage');
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
       });

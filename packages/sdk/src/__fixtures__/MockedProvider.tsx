@@ -29,6 +29,7 @@ interface MockedProviderProps {
   content?: Content;
   paymentConfig?: Partial<PaymentConfig>;
   maxAmount?: number;
+  locale?: string;
 }
 
 export const MockedProvider = ({
@@ -42,6 +43,7 @@ export const MockedProvider = ({
   defaultValues,
   paymentConfig,
   maxAmount = 10000,
+  locale = 'fr-FR',
 }: MockedProviderProps) => {
   const isSeller = [OidcIssuerTypes.PARTNERS, OidcIssuerTypes.GO].includes(
     oidc?.issuerType as OidcIssuerTypes,
@@ -71,22 +73,36 @@ export const MockedProvider = ({
   }, [proposalId, bookingId, customerId, action]);
 
   useEffect(() => {
-    if (paymentConfig) {
-      sdkQueryClient.setQueryData(
-        PAYMENT_CONFIG_QUERY_KEY('fr-FR', oidc?.issuerType || OidcIssuerTypes.GM),
-        {
-          ...paymentConfig,
-          settings: { daysBeforeTripToAllowFreeDeposit: 0, ...paymentConfig.settings },
-        },
-      );
-    }
-  }, [paymentConfig]);
+    const providersWithDefaults = Object.entries(paymentConfig?.providers || {}).reduce(
+      (acc, [key, config]) => {
+        if (config) {
+          acc[key] = {
+            ...config,
+            settings: {
+              ...config.settings,
+            },
+          };
+        }
+        return acc;
+      },
+      {} as PaymentConfig['providers'],
+    );
+
+    sdkQueryClient.setQueryData(
+      PAYMENT_CONFIG_QUERY_KEY(locale, oidc?.issuerType || OidcIssuerTypes.GM),
+      {
+        ...paymentConfig,
+        providers: providersWithDefaults,
+        settings: { daysBeforeTripToAllowFreeDeposit: 0, ...paymentConfig?.settings },
+      },
+    );
+  }, [paymentConfig, locale, oidc?.issuerType]);
 
   return (
     <PaymentConfigProvider
       content={content}
       paymentGatewayUrl="https://mock.clubmed.com"
-      locale="fr-FR"
+      locale={locale}
       callbackUrl="http://localhost:3000/callback"
       proposalId={proposalId}
       bookingId={bookingId}

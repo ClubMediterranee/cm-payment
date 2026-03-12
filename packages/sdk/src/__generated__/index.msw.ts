@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3377.2
+ * OpenAPI spec version: 0.3389.0
  */
 import { faker } from '@faker-js/faker';
 
@@ -14,7 +14,9 @@ import {
   ActionCode,
   AutoOptionableStatus,
   BookingStatus,
+  BookingTransportDetailsTripWayModel,
   CancellationPolicyTypeModel,
+  Class,
   CreateBookingResponseTypesModel,
   CustomerBookingPaymentStatusModel,
   DiscountTypeModel,
@@ -25,13 +27,17 @@ import {
   ProposalPriceFeeModel,
   ProposalResponseCustomerTypeModel,
   ProposalServiceTypes,
+  ProposalTransportDetailsTripWayModel,
   Status,
   StatutPaiement,
   TransportationType,
+  TravelSectionAttendeeStatusModel,
+  TravelSectionTransportTypeModel,
   ValidOptinChanelModel,
   Way,
 } from './index.schemas';
 import type {
+  BookingTransportDetailsListModelV2,
   CartUpgradeRoomModel,
   ClientSchemaModel,
   CountriesModel,
@@ -46,6 +52,7 @@ import type {
   ProfileModelV2,
   ProposalPaymentScheduleModelV1,
   ProposalResponseModelV1,
+  ProposalTransportDetailsListModelV5,
   ProviderParametersModel,
   TokenHolderModel,
 } from './index.schemas';
@@ -881,6 +888,252 @@ export const getGetV3SchemasResourceLocaleorcountryResponseMock = (
   ...overrideResponse,
 });
 
+export const getGetV5ProposalsProposalIdTransportDetailsResponseMock = (
+  overrideResponse: Partial<ProposalTransportDetailsListModelV5> = {},
+): ProposalTransportDetailsListModelV5 => ({
+  time_validity_limit: faker.helpers.arrayElement([
+    faker.date.past().toISOString().split('T')[0],
+    undefined,
+  ]),
+  journeys: faker.helpers.arrayElement([
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      way: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(ProposalTransportDetailsTripWayModel)),
+        undefined,
+      ]),
+      total_duration_in_min: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        null,
+      ]),
+      travel_sections: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          attendees: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                ticket_number: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                status: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement(Object.values(TravelSectionAttendeeStatusModel)),
+                  undefined,
+                ]),
+                reservation_number: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                pnr: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+          departure: {
+            city: faker.helpers.arrayElement([
+              {
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            location: faker.helpers.arrayElement([
+              {
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                terminal_code: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            date: faker.helpers.arrayElement([
+              faker.date.past().toISOString().split('T')[0],
+              undefined,
+            ]),
+            time: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                null,
+              ]),
+              undefined,
+            ]),
+          },
+          arrival: {
+            city: faker.helpers.arrayElement([
+              {
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            location: faker.helpers.arrayElement([
+              {
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                terminal_code: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            date: faker.helpers.arrayElement([
+              faker.date.past().toISOString().split('T')[0],
+              undefined,
+            ]),
+            time: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                null,
+              ]),
+              undefined,
+            ]),
+          },
+          transport: {
+            type: faker.helpers.arrayElement([
+              faker.helpers.arrayElement(Object.values(TravelSectionTransportTypeModel)),
+              undefined,
+            ]),
+            class: faker.helpers.arrayElement([
+              faker.helpers.arrayElement(Object.values(Class)),
+              undefined,
+            ]),
+            company: faker.helpers.arrayElement([
+              {
+                operator: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([null]),
+                  undefined,
+                ]),
+                exploiter: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([null]),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            travel_number: faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              undefined,
+            ]),
+            baggage: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+            vehicle_type: faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              undefined,
+            ]),
+            reference: faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              undefined,
+            ]),
+            fare_class: faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              undefined,
+            ]),
+            carbon_emission: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                null,
+              ]),
+              undefined,
+            ]),
+            average_carbon_emission: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                null,
+              ]),
+              undefined,
+            ]),
+          },
+          clubmed_transport: faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+          flight_code: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            null,
+          ]),
+          cancellation_policy_type: faker.helpers.arrayElement(
+            Object.values(CancellationPolicyTypeModel),
+          ),
+          technical_stops: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+              null,
+            ]),
+            undefined,
+          ]),
+          connection_duration_in_min: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+              null,
+            ]),
+            undefined,
+          ]),
+          stopover_duration_in_min: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+              null,
+            ]),
+            undefined,
+          ]),
+          duration_in_min: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+              null,
+            ]),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+    })),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
   overrideResponse: Partial<CustomerBookingModelV3> = {},
 ): CustomerBookingModelV3 => ({
@@ -1264,6 +1517,267 @@ export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesRespons
   ...overrideResponse,
 });
 
+export const getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsResponseMock =
+  (): BookingTransportDetailsListModelV2 =>
+    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+      way: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(Object.values(BookingTransportDetailsTripWayModel)),
+        undefined,
+      ]),
+      stay_id: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      total_duration_in_min: faker.helpers.arrayElement([
+        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+        null,
+      ]),
+      pre_post_trip: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+      travel_sections: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          attendees: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                ticket_number: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                status: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement(Object.values(TravelSectionAttendeeStatusModel)),
+                  undefined,
+                ]),
+                reservation_number: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                pnr: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+          departure: {
+            city: faker.helpers.arrayElement([
+              {
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            location: faker.helpers.arrayElement([
+              {
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                terminal_code: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            date: faker.helpers.arrayElement([
+              faker.date.past().toISOString().split('T')[0],
+              undefined,
+            ]),
+            time: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                null,
+              ]),
+              undefined,
+            ]),
+          },
+          arrival: {
+            city: faker.helpers.arrayElement([
+              {
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.string.alpha({ length: { min: 10, max: 20 } }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            location: faker.helpers.arrayElement([
+              {
+                id: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                label: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+                terminal_code: faker.helpers.arrayElement([
+                  faker.string.alpha({ length: { min: 10, max: 20 } }),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            date: faker.helpers.arrayElement([
+              faker.date.past().toISOString().split('T')[0],
+              undefined,
+            ]),
+            time: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.string.alpha({ length: { min: 10, max: 20 } }),
+                null,
+              ]),
+              undefined,
+            ]),
+          },
+          transport: {
+            type: faker.helpers.arrayElement([
+              faker.helpers.arrayElement(Object.values(TravelSectionTransportTypeModel)),
+              undefined,
+            ]),
+            class: faker.helpers.arrayElement([
+              faker.helpers.arrayElement(Object.values(Class)),
+              undefined,
+            ]),
+            company: faker.helpers.arrayElement([
+              {
+                operator: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([null]),
+                  undefined,
+                ]),
+                exploiter: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([null]),
+                  undefined,
+                ]),
+              },
+              undefined,
+            ]),
+            travel_number: faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              undefined,
+            ]),
+            baggage: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
+            vehicle_type: faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              undefined,
+            ]),
+            reference: faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              undefined,
+            ]),
+            fare_class: faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              undefined,
+            ]),
+            carbon_emission: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                null,
+              ]),
+              undefined,
+            ]),
+            average_carbon_emission: faker.helpers.arrayElement([
+              faker.helpers.arrayElement([
+                faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                null,
+              ]),
+              undefined,
+            ]),
+          },
+          clubmed_transport: faker.helpers.arrayElement([faker.datatype.boolean(), null]),
+          flight_code: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          cancellation_policy_type: faker.helpers.arrayElement([
+            faker.helpers.arrayElement(['AUCUN', 'THEO', 'WEBTHEO', 'NDC'] as const),
+            undefined,
+          ]),
+          technical_stops: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+              null,
+            ]),
+            undefined,
+          ]),
+          connection_duration_in_min: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+              null,
+            ]),
+            undefined,
+          ]),
+          stopover_duration_in_min: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+              null,
+            ]),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+      _links: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          rel: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+          external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+          method: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          href: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          label: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+    }));
+
 export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock = (
   overrideResponse: Partial<CartUpgradeRoomModel> = {},
 ): CartUpgradeRoomModel => ({
@@ -1606,6 +2120,34 @@ export const getGetV3SchemasResourceLocaleorcountryMockHandler = (
   );
 };
 
+export const getGetV5ProposalsProposalIdTransportDetailsMockHandler = (
+  overrideResponse?:
+    | ProposalTransportDetailsListModelV5
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ProposalTransportDetailsListModelV5> | ProposalTransportDetailsListModelV5),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    '*/v5/proposals/:proposalId/transport_details',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV5ProposalsProposalIdTransportDetailsResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
+
 export const getGetV3CustomersCustomerIdBookingsBookingIdMockHandler = (
   overrideResponse?:
     | CustomerBookingModelV3
@@ -1654,6 +2196,34 @@ export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHan
               ? await overrideResponse(info)
               : overrideResponse
             : getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
+
+export const getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsMockHandler = (
+  overrideResponse?:
+    | BookingTransportDetailsListModelV2
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<BookingTransportDetailsListModelV2> | BookingTransportDetailsListModelV2),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    '*/v4/customers/:customerId/bookings/:bookingId/transport_details',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsResponseMock(),
         ),
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       );
@@ -1869,8 +2439,10 @@ export const getClubMedAPIMock = () => [
   getGetV1ProposalsProposalIdPaymentScheduleMockHandler(),
   getGetV2CustomersCustomerIdProfileMockHandler(),
   getGetV3SchemasResourceLocaleorcountryMockHandler(),
+  getGetV5ProposalsProposalIdTransportDetailsMockHandler(),
   getGetV3CustomersCustomerIdBookingsBookingIdMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler(),
+  getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler(),
   getPostV1PaymentsMockHandler(),

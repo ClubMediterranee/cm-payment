@@ -59,7 +59,6 @@ export const FreeDepositField = ({ field, error, isValid }: FreeDepositFieldProp
           label={content.freeDeposit.payNowLabel}
           className="!text-b6"
           type="number"
-          value={field.value}
           onChange={(_, value) => field.onChange(value)}
           placeholder={content.freeDeposit.placeholder}
           errorMessage={error?.message}

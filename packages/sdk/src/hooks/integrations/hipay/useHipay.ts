@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
+import { PspProviders } from '../../../types/PspProviders';
+import { usePaymentProviderSettings } from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useDisclosure } from '../../utils/useDisclosure';
 import { useFormContext, useWatch } from '../../utils/useForm';
 import { useScriptLoader } from '../../utils/useScriptLoader';
-import { createHipayHostedFields, HIPAY_CONFIG, mapHipayErrorsToObject } from './hipay';
+import { createHipayHostedFields, mapHipayErrorsToObject } from './hipay';
 
 type UseHipayParams = {
   fieldSelectors: {
@@ -20,7 +22,10 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
   const { content } = useCapsConfigContext();
   const { formState, setValue } = useFormContext();
   const { isSubmitting } = formState;
-  const { isLoaded } = useScriptLoader(HIPAY_CONFIG.scriptUrl);
+
+  const { script_url, ...hipayConfig } = usePaymentProviderSettings(PspProviders.HIPAY);
+
+  const { isLoaded } = useScriptLoader(script_url);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const watchedToken = useWatch('token.value');
@@ -67,24 +72,27 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
   };
 
   const initializeHipay = () => {
-    instance.current = createHipayHostedFields({
-      cardHolder: {
-        placeholder: content.creditCardForm.fullName,
-        selector: fieldSelectors.cardHolder,
+    instance.current = createHipayHostedFields(
+      {
+        cardHolder: {
+          placeholder: content.creditCardForm.fullName,
+          selector: fieldSelectors.cardHolder,
+        },
+        cardNumber: {
+          placeholder: content.creditCardForm.cardNumber,
+          selector: fieldSelectors.cardNumber,
+        },
+        cvc: {
+          placeholder: content.creditCardForm.cvc,
+          selector: fieldSelectors.cvc,
+        },
+        expiryDate: {
+          placeholder: content.creditCardForm.expiryDate,
+          selector: fieldSelectors.expiryDate,
+        },
       },
-      cardNumber: {
-        placeholder: content.creditCardForm.cardNumber,
-        selector: fieldSelectors.cardNumber,
-      },
-      cvc: {
-        placeholder: content.creditCardForm.cvc,
-        selector: fieldSelectors.cvc,
-      },
-      expiryDate: {
-        placeholder: content.creditCardForm.expiryDate,
-        selector: fieldSelectors.expiryDate,
-      },
-    });
+      hipayConfig,
+    );
 
     instance.current?.on('ready', onHipayReady);
 
