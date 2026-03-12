@@ -29,6 +29,6 @@ const content = {
 
 ---
 
-import ContentKeysTables from './\_content-keys-tables.md';
+import ContentKeysTables from './content-keys-tables.md';
 
 <ContentKeysTables />
