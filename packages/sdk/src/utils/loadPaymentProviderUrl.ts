@@ -2,27 +2,22 @@ import type { RefObject } from 'react';
 
 import type { ProviderParametersModel } from '../__generated__/index.schemas';
 
-const buildUrlWithParams = (url: string, body?: string): string => {
-  if (!body) return url;
-
-  const urlObj = new URL(url);
-  const params = new URLSearchParams(body);
-  params.forEach((value, key) => urlObj.searchParams.set(key, value));
-  return urlObj.toString();
+const createHiddenInput = (name: string, value: string): HTMLInputElement => {
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = name;
+  input.value = value;
+  return input;
 };
 
-const submitPostForm = (url: string, body: string, targetDocument: Document): void => {
+const createPostForm = (url: string, fields: Record<string, string>): HTMLFormElement => {
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = url;
   form.style.display = 'none';
 
-  new URLSearchParams(body).forEach((value, name) => {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = name;
-    input.value = value;
-    form.appendChild(input);
+  Object.entries(fields).forEach(([name, value]) => {
+    form.appendChild(createHiddenInput(name, value));
   });
 
   return form;
@@ -69,7 +64,7 @@ export const loadPaymentProviderUrl = (
   targetIframe?: RefObject<HTMLIFrameElement>,
 ): void => {
   const iframe = targetIframe?.current;
-  const targetDocument = iframe?.contentDocument ?? iframe?.contentWindow?.document ?? document;
+  const normalizedMethod = method.toUpperCase();
 
   const handlers: Record<
     string,

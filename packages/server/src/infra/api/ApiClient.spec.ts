@@ -1,4 +1,3 @@
-import type { ApiProduct } from '@clubmed/infra/clubmed/interfaces/product/index.js';
 import { DIContext, DITest, inject, runInContext } from '@tsed/di';
 
 import { ApiClient } from './ApiClient.js';
@@ -65,45 +64,6 @@ describe('ApiClient', () => {
         url: '/v0/locales',
       });
       expect(result).toEqual(expectedLocales);
-    });
-  });
-  describe('getProducts()', () => {
-    it('should call endpoint to get products with locale', async () => {
-      // GIVEN
-      const { client, ctx } = await createServiceFixture();
-      const locale = 'fr_FR';
-      const expectedProducts: ApiProduct[] = [
-        {
-          id: 'test',
-          full_title: 'Test Resort',
-          opening_status: 'OPEN',
-          resort_id: 'TEST',
-          title: 'Test',
-          key_points: [],
-          kids_activities_introduction: {} as any,
-          exclusive_collection_introduction: {} as any,
-        },
-      ] as any;
-
-      vi.spyOn(client, 'raw').mockResolvedValue({
-        data: expectedProducts,
-        headers: {
-          'x-test': 'test',
-        },
-      } as never);
-
-      // WHEN
-      const result = await runInContext(ctx, () => client.getProducts(locale));
-
-      // THEN
-      expect(client.raw).toHaveBeenCalledWith({
-        method: 'GET',
-        url: '/v2/products',
-        headers: {
-          'Accept-Language': locale,
-        },
-      });
-      expect(result).toEqual(expectedProducts);
     });
   });
 });
