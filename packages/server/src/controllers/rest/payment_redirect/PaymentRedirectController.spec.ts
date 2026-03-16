@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PaymentConfirmationService } from '../../../services/PaymentConfirmationService.js';
 import { PaymentRedirectController } from './PaymentRedirectController.js';
 
 describe('PaymentRedirectController', () => {

@@ -1,10 +1,11 @@
-import { getPaymentUrl, OidcIssuerTypes } from '@clubmed/caps';
+import { OidcIssuerTypes } from '@clubmed/caps';
 import { Button } from '@clubmed/trident-ui/molecules/Buttons/v2/Button';
 import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
 import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
 import { type FormEvent, useState } from 'react';
 
+import { getPaymentUrl } from '../../../sdk/src/utils/url/getPaymentUrl.js';
 import { AppSettings } from '../config.js';
 import { Select } from './select/index.js';
 

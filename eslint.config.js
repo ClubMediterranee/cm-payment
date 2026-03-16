@@ -1,4 +1,3 @@
-import stylistic from '@stylistic/eslint-plugin';
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -29,7 +28,6 @@ export default tseslint.config(
       },
     },
     plugins: {
-      ...stylistic.configs.recommended.plugins,
       react: reactPlugin,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
@@ -37,11 +35,9 @@ export default tseslint.config(
       'simple-import-sort': simpleImportSortPlugin,
     },
     rules: {
-      ...stylistic.configs.recommended.rules,
       ...reactPlugin.configs.flat.recommended.rules,
       ...jsxA11yPlugin.flatConfigs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      '@stylistic/lines-between-class-members': ['error', 'always', { exceptAfterOverload: true }],
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'error',
       'simple-import-sort/imports': 'error',

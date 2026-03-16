@@ -14,10 +14,8 @@ export interface HttpRequestConfig<Data = unknown> extends HttpClientOptions<Dat
   response: AxiosResponse;
 }
 
-export interface HttpRequestErrorConfig<Data = unknown> extends Omit<
-  HttpRequestConfig<Data>,
-  'response'
-> {
+export interface HttpRequestErrorConfig<Data = unknown>
+  extends Omit<HttpRequestConfig<Data>, 'response'> {
   response?: AxiosResponse;
   error: AxiosError;
 }

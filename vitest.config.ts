@@ -42,6 +42,7 @@ export default defineConfig({
         '**/*.msw.{ts,tsx}',
         '**/__fixtures__/**',
         '**/tests/**',
+        '**/__generated__/**',
         'lib/atoms/Icons/**',
         'lib/tailwind/**',
         'lib/types/**',
