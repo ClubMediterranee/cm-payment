@@ -18,7 +18,7 @@ COPY packages/esbuild-pkg-plugin/package.json ./packages/esbuild-pkg-plugin/
 RUN npm install -g pnpm
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile --shamefully-hoist
+RUN pnpm install --frozen-lockfile --shamefully-hoist --ignore-scripts
 
 # Copy all source code
 COPY . .
