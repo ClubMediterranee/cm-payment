@@ -25,7 +25,7 @@ export const config: Partial<TsED.Configuration> = {
   extends: [DotEnvsConfigSource],
   host: process.env['HOST'],
   acceptMimes: ['application/json'],
-  httpPort: 8083,
+  httpPort: process.env['PORT'] || 8083,
   httpsPort: false, // CHANGE
   mount: {
     '/rest': [...Object.values(rest)],
