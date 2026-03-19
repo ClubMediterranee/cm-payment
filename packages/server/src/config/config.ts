@@ -28,6 +28,7 @@ export const config: Partial<TsED.Configuration> = {
   httpPort: process.env['PORT'] || 8083,
   httpsPort: false, // CHANGE
   CLUBMED_API_URL: process.env['API_TARGET'] || 'https://api.integ.clubmed.com',
+  API_KEY: process.env['API_KEY'],
   mount: {
     '/rest': [...Object.values(rest)],
   },

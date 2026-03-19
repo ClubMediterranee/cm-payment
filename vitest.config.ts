@@ -3,8 +3,8 @@ import { fileURLToPath } from 'node:url';
 
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import react from '@vitejs/plugin-react-swc';
+import { playwright } from '@vitest/browser-playwright';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 const dirname =
@@ -14,13 +14,13 @@ const dirname =
 export default defineConfig({
   plugins: [
     react(),
-    tsconfigPaths({
-      projects: ['tsconfig.app.json'],
-    }),
     svgr({
       include: '**/*.svg?react',
     }),
   ],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -29,7 +29,6 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      all: true,
       include: ['packages/*/src/**/*.{tsx,ts}'],
       exclude: [
         '**/packages/starter/**',
@@ -80,7 +79,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [
               {
                 browser: 'chromium',

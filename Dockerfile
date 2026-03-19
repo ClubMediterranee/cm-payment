@@ -12,7 +12,6 @@ COPY packages/starter/package.json ./packages/starter/
 COPY packages/sdk/package.json ./packages/sdk/
 COPY packages/docs/package.json ./packages/docs/
 COPY packages/server/package.json ./packages/server/
-COPY packages/esbuild-pkg-plugin/package.json ./packages/esbuild-pkg-plugin/
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -24,7 +23,6 @@ RUN pnpm install --frozen-lockfile --shamefully-hoist --ignore-scripts
 COPY . .
 
 # Build all applications with correct base paths
-RUN pnpm --filter @clubmed/esbuild-cjs-shim-plugin run build:lib
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/starter/ pnpm --filter @clubmed/starter run build
 RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook

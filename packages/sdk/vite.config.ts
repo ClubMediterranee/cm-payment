@@ -1,4 +1,4 @@
-import { dirname, extname, join, relative, resolve } from 'node:path';
+import { dirname, extname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import react from '@vitejs/plugin-react-swc';
@@ -8,17 +8,11 @@ import preserveDirectives from 'rollup-preserve-directives';
 import { defineConfig, type PluginOption } from 'vite';
 import dts from 'vite-plugin-dts';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import tsconfigPaths from 'vite-tsconfig-paths';
-
-const root = import.meta.dirname;
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    tsconfigPaths({
-      projects: [join(root, '../../tsconfig.app.json')],
-    }),
     dts({
       entryRoot: 'src',
       include: ['src/**/*.{ts,tsx}'],
@@ -42,6 +36,7 @@ export default defineConfig({
     visualizer({ open: false, filename: 'dist/stats.html' }),
   ] as PluginOption[],
   resolve: {
+    tsconfigPaths: true,
     alias: {
       '@clubmed/trident-icons': dirname(
         fileURLToPath(import.meta.resolve('@clubmed/trident-icons')),
