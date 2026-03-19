@@ -27,6 +27,7 @@ export const config: Partial<TsED.Configuration> = {
   acceptMimes: ['application/json'],
   httpPort: process.env['PORT'] || 8083,
   httpsPort: false, // CHANGE
+  CLUBMED_API_URL: process.env['API_TARGET'] || 'https://api.integ.clubmed.com',
   mount: {
     '/rest': [...Object.values(rest)],
   },
@@ -56,7 +57,7 @@ export const config: Partial<TsED.Configuration> = {
     {
       use: httpProxy,
       options: {
-        upstream: process.env.CLUBMED_API_URL || 'https://api.integ.clubmed.com',
+        upstream: process.env.API_TARGET || 'https://api.integ.clubmed.com',
         prefix: '/api',
         rewritePrefix: '/',
         http2: false,

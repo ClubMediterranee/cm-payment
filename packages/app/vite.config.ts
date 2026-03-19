@@ -49,11 +49,6 @@ export default defineConfig({
         secure: false,
         changeOrigin: true,
       },
-      '/rest': {
-        target: process.env.REST_TARGET,
-        secure: false,
-        changeOrigin: true,
-      },
     },
   },
 });
