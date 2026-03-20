@@ -22,13 +22,16 @@ export class PaymentRedirectController {
     @Context() ctx: Context,
   ) {
     const params = { ...queryParams, ...bodyParams };
+    const { locale, mode, ...redirectParams } = params;
+
+    if (locale) {
+      ctx.request.headers['accept-language'] = locale;
+    }
 
     const redirectUrl = await this.paymentConfirmationService.handlePaymentRedirect(
       paymentId,
-      params,
+      redirectParams,
     );
-
-    const mode = params.mode || 'redirect';
 
     if (mode === 'iframe') {
       const html = await this.views.render('iframe-redirect.ejs', {

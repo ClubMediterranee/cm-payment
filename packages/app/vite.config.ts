@@ -17,8 +17,8 @@ console.log('- HOST:', process.env.HOST);
 console.log('- VITE_BASE_PATH:', process.env.VITE_BASE_PATH);
 console.log('- VITE_GM_OIDC_URL:', process.env.VITE_GM_OIDC_URL);
 console.log('- VITE_GO_OIDC_URL:', process.env.VITE_GO_OIDC_URL);
-console.log('- REST_TARGET:', process.env.REST_TARGET);
-console.log('');
+console.log('- REST_TARGET:', process.env.VITE_REST_TARGET);
+console.log('- PAYMENT_GATEWAY_URL:', process.env.VITE_PAYMENT_GATEWAY_URL);
 
 // https://vite.dev/config/
 export default defineConfig({

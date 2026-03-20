@@ -14,12 +14,15 @@ export function getRedirectPaymentCallbackUrls(
     oidc: { issuerType },
     type,
     id,
+    locale,
     callbackUrl,
     callbackUrlSeller,
   } = getPaymentConfig();
 
   const baseUrl = new URL(paymentGatewayUrl);
   baseUrl.pathname = `/rest/payment_redirect/${paymentId}`;
+
+  baseUrl.searchParams.set('locale', locale);
 
   if (providerId) {
     baseUrl.searchParams.set('provider_id', providerId);

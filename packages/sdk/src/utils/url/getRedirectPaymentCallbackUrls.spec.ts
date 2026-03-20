@@ -20,6 +20,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
+        locale: 'fr-FR',
         callbackUrl: 'https://app.clubmed.com/confirmation',
         callbackUrlSeller: undefined,
       } as any);
@@ -28,7 +29,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
       });
       expect(result).not.toHaveProperty('callback_url_seller');
     });
@@ -39,6 +40,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
+        locale: 'fr-FR',
         callbackUrl: 'https://app.clubmed.com/client/confirmation',
         callbackUrlSeller: 'https://app.clubmed.com/seller/dashboard',
       } as any);
@@ -47,7 +49,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fclient%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fclient%2Fconfirmation',
       });
       expect(result).not.toHaveProperty('callback_url_seller');
     });
@@ -60,6 +62,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
+        locale: 'fr-FR',
         callbackUrl: 'https://app.clubmed.com/confirmation',
         callbackUrlSeller: undefined,
       } as any);
@@ -68,7 +71,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
       });
       expect(result).not.toHaveProperty('callback_url_seller');
     });
@@ -79,6 +82,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
+        locale: 'fr-FR',
         callbackUrl: 'https://app.clubmed.com/client/confirmation',
         callbackUrlSeller: 'https://app.clubmed.com/seller/dashboard',
       } as any);
@@ -87,9 +91,9 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fclient%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fclient%2Fconfirmation',
         callback_url_seller:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fseller%2Fdashboard',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fseller%2Fdashboard',
       });
     });
   });
@@ -101,6 +105,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.PARTNERS, accessToken: 'token' },
         type: 'proposal',
         id: 'proposal-999',
+        locale: 'fr-FR',
         callbackUrl: 'https://partner.com/confirmation',
         callbackUrlSeller: undefined,
       } as any);
@@ -109,7 +114,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-777?provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fconfirmation',
       });
       expect(result).not.toHaveProperty('callback_url_seller');
     });
@@ -120,6 +125,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.PARTNERS, accessToken: 'token' },
         type: 'proposal',
         id: 'proposal-999',
+        locale: 'fr-FR',
         callbackUrl: 'https://partner.com/client/confirmation',
         callbackUrlSeller: 'https://partner.com/seller/dashboard',
       } as any);
@@ -128,9 +134,9 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-777?provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fclient%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fclient%2Fconfirmation',
         callback_url_seller:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-777?provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fseller%2Fdashboard',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fseller%2Fdashboard',
       });
     });
   });
@@ -142,6 +148,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
+        locale: 'fr-FR',
         callbackUrl: '',
         callbackUrlSeller: undefined,
       } as any);
@@ -150,7 +157,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?provider_id=PROVIDER-789&mode=undefined&callback_url=',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=',
       });
     });
 
@@ -160,6 +167,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
+        locale: 'fr-FR',
         callbackUrl: 'https://app.clubmed.com/confirmation',
         callbackUrlSeller: 'https://app.clubmed.com/seller',
       } as any);
@@ -168,9 +176,9 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
         callback_url_seller:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fseller',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fseller',
       });
     });
 
@@ -180,6 +188,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
         type: 'proposal',
         id: 'proposal-555',
+        locale: 'fr-FR',
         callbackUrl: 'https://app.clubmed.com/confirmation',
         callbackUrlSeller: 'https://app.clubmed.com/seller',
       } as any);
