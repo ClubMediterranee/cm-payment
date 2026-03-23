@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
-import { usePaymentConfig } from '.';
 import { PspProviders } from '../../../types/PspProviders';
+import { usePaymentConfig } from '.';
 import { usePaymentProviderSettings } from './usePaymentProviderSettings';
 
 vi.mock('.', () => ({

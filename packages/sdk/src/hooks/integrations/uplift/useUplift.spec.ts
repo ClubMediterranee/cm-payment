@@ -2,7 +2,6 @@ import { renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
 
 import { PspProviders } from '../../../types/PspProviders';
-import { UpliftStatus } from '../../../types/Uplift';
 import { usePaymentProviderSettings } from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatch } from '../../utils/useForm';
