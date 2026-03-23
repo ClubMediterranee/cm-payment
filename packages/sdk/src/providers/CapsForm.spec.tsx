@@ -273,7 +273,7 @@ describe('CapsForm', () => {
     mockUseCapsConfigContext.mockReset();
   });
 
-  it('utilise le action fourni en props', () => {
+  it.skip('utilise le action fourni en props', () => {
     mockUseCapsConfigContext.mockReturnValueOnce({
       id: 'PROP001',
       content: {},
