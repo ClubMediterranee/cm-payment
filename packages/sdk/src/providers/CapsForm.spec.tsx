@@ -135,7 +135,7 @@ describe('CapsForm', () => {
   });
 
   it('accepte tous les composants requis pour issuer GM', () => {
-    mockUseCapsConfigContext.mockReturnValueOnce({
+    mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
       oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
@@ -158,10 +158,11 @@ describe('CapsForm', () => {
     }
 
     consoleErrorSpy.mockRestore();
+    mockUseCapsConfigContext.mockReset();
   });
 
   it('génère une erreur si composants manquants pour issuer GM', () => {
-    mockUseCapsConfigContext.mockReturnValueOnce({
+    mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
       oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
@@ -179,6 +180,7 @@ describe('CapsForm', () => {
     }).toThrow('Missing required components');
 
     consoleErrorSpy.mockRestore();
+    mockUseCapsConfigContext.mockReset();
   });
 
   it('accepte tous les composants requis pour issuer GO', () => {
