@@ -26,31 +26,45 @@ export type UpliftChangeEvent = {
 export type UpliftOrder = {
   order_amount: number;
   travelers: Array<{
-    id: number;
-    first_name: string;
-    last_name: string;
-    date_of_birth: string;
+    id?: number;
+    first_name?: string;
+    last_name?: string;
+    date_of_birth?: string;
   }>;
   billing_contact: {
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-    date_of_birth: string;
+    id?: number;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone?: string;
+    date_of_birth?: string;
     street_address?: string;
     city?: string;
     region?: string;
     country?: string;
     postal_code?: string;
   };
-  air_reservations: Array<unknown>;
+  air_reservations: Array<{
+    airline_name?: string | null;
+    origin?: string | null;
+    destination?: string | null;
+    trip_type: 'oneway' | 'roundtrip';
+    itinerary: Array<{
+      departure_apc?: string | null;
+      departure_time?: string | null;
+      arrival_apc?: string | null;
+      arrival_time?: string | null;
+      fare_class?: string | null;
+      carrier_code?: string | null;
+    }>;
+  }>;
   hotel_reservations: Array<{
     hotel_name: string;
     number_of_rooms: number;
-    room_type: string;
-    check_in: string;
-    check_out: string;
+    reservation_type: string;
+    has_deposit: string;
+    check_in?: string;
+    check_out?: string;
   }>;
   add_ons: Array<unknown>;
 };
@@ -64,6 +78,7 @@ declare global {
         select: () => void;
         deselect: () => void;
         exit: () => void;
+        clear: () => void;
         getToken: () => Promise<string>;
         error: (message: string, level: string) => void;
         confirm: (orderId: string) => void;

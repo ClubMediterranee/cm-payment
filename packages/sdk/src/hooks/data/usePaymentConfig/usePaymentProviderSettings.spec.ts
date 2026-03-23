@@ -35,7 +35,7 @@ describe('usePaymentProviderSettings', () => {
       },
     } as any);
 
-    const { result } = renderHook(() => usePaymentProviderSettings(PspProviders.MHIPAY));
+    const { result } = renderHook(() => usePaymentProviderSettings(PspProviders.HIPAY));
 
     expect(result.current).toEqual({
       api_key: 'test-api-key',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { PspProviders } from '../../../types/PspProviders';
@@ -32,12 +32,8 @@ export const useUplift = () => {
     }
   }, [data]);
 
-  console.log(data);
-
-  useEffect(() => {
-    if (!code || !order) return;
-
-    const configuration = {
+  const configuration = useMemo(
+    () => ({
       apiKey: api_key,
       locale,
       currency: watchedCurrency,
@@ -45,18 +41,30 @@ export const useUplift = () => {
       channel: 'desktop',
       container: '#uplift-container',
       onChange: setData,
-    };
+    }),
+    [api_key, locale, watchedCurrency],
+  );
+
+  useEffect(() => {
+    if (!code || !order) return;
 
     const initUplift = () => {
       if (!window.Uplift) return;
 
       window.Uplift.Payments.init(configuration);
-      window.Uplift.Payments.load(order);
+      window.Uplift?.Payments?.load(order);
     };
 
     loadUplift(code);
     window.upReady = initUplift;
-  }, [code, api_key, locale, watchedCurrency, order]);
+  }, [code, api_key, locale, watchedCurrency, order, configuration]);
+
+  useEffect(() => {
+    return () => {
+      window.Uplift?.Payments.exit();
+      window.Uplift?.Payments.clear();
+    };
+  }, []);
 
   return { status: data?.status ?? null };
 };

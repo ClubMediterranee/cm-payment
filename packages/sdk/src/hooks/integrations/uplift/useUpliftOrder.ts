@@ -1,29 +1,30 @@
+import { UpliftOrder } from '../../../types/Uplift';
 import { useStay } from '../../data/useStay';
 import { useTransportDetails } from '../../data/useTransportDetails';
 import { useWatch } from '../../utils/useForm';
 import { computePriceInCents } from './uplift';
 
-export const useUpliftOrder = () => {
+export const useUpliftOrder = (): UpliftOrder | null => {
   const amount = useWatch('amount');
   const { data: stay } = useStay();
 
   const enableTransportQuery = stay.transportTypes.includes('PLANE');
 
-  const { data: transport = { journeys: [] } } = useTransportDetails({
+  const { data: transport } = useTransportDetails({
     enabled: enableTransportQuery,
   });
 
-  if (enableTransportQuery && !transport.journeys.length) return null;
+  if (enableTransportQuery && !transport?.journeys.length) return null;
 
   return {
     order_amount: computePriceInCents(Number(amount)),
-    travelers: [],
-    billing_contact: {},
-    air_reservations: transport.journeys.map((journey) => ({
+    travelers: [] as UpliftOrder['travelers'],
+    billing_contact: {} as UpliftOrder['billing_contact'],
+    air_reservations: (transport?.journeys || []).map((journey) => ({
       airline_name: journey.airlineName,
       origin: journey.originAirport,
       destination: journey.destinationAirport,
-      trip_type: transport.tripType,
+      trip_type: transport?.tripType || 'oneway',
       itinerary: journey.segments.map((segment) => ({
         departure_apc: segment.departureAirport,
         departure_time: segment.departureDate,

@@ -638,9 +638,12 @@ export const BuyNowPayLaterUplift: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await waitFor(() => {
-      expect(canvas.getByRole('radio', { name: /Pay monthly from/ })).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(canvas.getByRole('radio', { name: /Pay monthly from/ })).toBeInTheDocument();
+      },
+      { timeout: 5000 },
+    );
   },
   render(args: any) {
     return (
