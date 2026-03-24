@@ -1,15 +1,7 @@
 import { formatCurrency, FormPanel as Panel } from '@clubmed/caps';
 import { Icon } from '@clubmed/trident-icons';
-import { useParams } from 'wouter';
 
-import { useQueryParams } from '../hooks/useQueryParams';
-
-type ConfirmationParams = {
-  payment_status: string;
-  booking_id: string;
-  payment_amount: string;
-  payment_currency: string;
-};
+import { useAppParams } from '../hooks/useAppParams';
 
 const getStatusConfig = (status: string) => {
   if (status === 'OK') {
@@ -31,10 +23,8 @@ const getStatusConfig = (status: string) => {
 };
 
 export const ConfirmationPage = () => {
-  const { issuer } = useParams<{ issuer: string }>();
-  const params = useQueryParams<ConfirmationParams>();
-
-  const { payment_status, booking_id, payment_amount, payment_currency } = params;
+  const { oidc: { issuerType } = {}, values } = useAppParams();
+  const { payment_status, booking_id, payment_amount, payment_currency } = values;
 
   const statusConfig = getStatusConfig(payment_status);
   const formattedAmount = formatCurrency({
@@ -45,9 +35,7 @@ export const ConfirmationPage = () => {
 
   return (
     <div className="flex flex-col gap-20 mx-auto w-10/12 md:max-w-[49rem] py-40">
-      <h1 className="text-h3 font-serif text-center">
-        Confirmation de paiement - {issuer?.toUpperCase()}
-      </h1>
+      <h1 className="text-h3 font-serif text-center">Confirmation de paiement - {issuerType}</h1>
 
       <Panel className="bg-white w-full p-0">
         <div className="flex flex-col font-bold">

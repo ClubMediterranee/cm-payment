@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "NodeNext",
+    "target": "ESNext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "NodeNext",
+    "downlevelIteration": false,
+    "isolatedModules": false,
+    "suppressImplicitAnyIndexErrors": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "newLine": "LF",
+    "skipLibCheck": true,
+    "lib": ["ESNext", "esnext.asynciterable"],
+    "declaration": false,
+    "noResolve": false,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*", ".templates/**/*"],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "dist",
+    "node_modules",
+    "**/helpers/*Fixture.ts",
+    "**/__mock__/**",
+    "coverage"
+  ],
+  "linterOptions": {
+    "exclude": []
+  }
+}

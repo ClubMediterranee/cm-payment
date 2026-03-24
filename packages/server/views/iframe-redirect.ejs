@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Payment Redirect</title>
+  </head>
+  <body>
+    <script>
+      (function() {
+        const redirectUrl = <%- JSON.stringify(redirectUrl) %>;
+
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'CAPS_PAYMENT_REDIRECT',
+            url: redirectUrl
+          }, '*');
+        }
+      })();
+    </script>
+  </body>
+</html>

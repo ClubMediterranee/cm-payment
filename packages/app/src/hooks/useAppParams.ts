@@ -35,6 +35,7 @@ export function useAppParams() {
 
   const [, setLocation] = useLocation();
   const [match, result] = useRoute('/:issuer/:type/:id');
+  const [isConfirmationRoute, resultConfirmation] = useRoute('/:issuer/confirmation');
   const session = useSessionStorage('payment.params');
 
   const {
@@ -43,10 +44,25 @@ export function useAppParams() {
     action,
     callback_url: callbackUrl,
     callback_url_seller: callbackUrlSeller,
+    ...confirmationParams
   } = useQueryParams<any>();
 
   if (auth.isLoading) {
     return {};
+  }
+
+  if (isConfirmationRoute) {
+    const issuerType = resultConfirmation?.issuer.toUpperCase() as OidcIssuerTypes;
+
+    return {
+      paymentGatewayUrl: import.meta.env.VITE_PAYMENT_GATEWAY_URL,
+      values: confirmationParams,
+      api: AppSettings.api[issuerType],
+      oidc: {
+        issuerType,
+        accessToken: auth?.user?.access_token || '',
+      },
+    };
   }
 
   if (match) {

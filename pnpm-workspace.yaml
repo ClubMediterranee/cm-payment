@@ -2,7 +2,9 @@ packages:
   - packages/*
 
 onlyBuiltDependencies:
+  - "@scarf/scarf"
   - "@swc/core"
   - core-js
   - core-js-pure
   - esbuild
+  - msw

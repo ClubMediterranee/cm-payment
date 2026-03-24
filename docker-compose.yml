@@ -12,10 +12,8 @@ services:
 
     environment:
       - PORT=8080
-
-      - NGINX_HOST=localhost
-      - NGINX_PORT=8080
       - API_TARGET=${API_TARGET:-https://api.integ.clubmed.com}
+      - API_KEY=${API_KEY}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.payment-apps.rule=Host(`localhost`)"

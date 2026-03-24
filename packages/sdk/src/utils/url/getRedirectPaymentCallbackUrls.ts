@@ -1,5 +1,7 @@
+import { GLOBAL_CAPS_SETTINGS } from '../../config';
 import { getPaymentConfig } from '../../providers/PaymentConfigProvider';
 import { OidcIssuerTypes } from '../../types/CapsSettings';
+import { PspProviders } from '../../types/PspProviders';
 
 type CallbackUrls = { callback_url: string; callback_url_seller?: string };
 
@@ -12,12 +14,15 @@ export function getRedirectPaymentCallbackUrls(
     oidc: { issuerType },
     type,
     id,
+    locale,
     callbackUrl,
     callbackUrlSeller,
   } = getPaymentConfig();
 
   const baseUrl = new URL(paymentGatewayUrl);
-  baseUrl.pathname = `${issuerType.toLocaleLowerCase()}/redirect/${paymentId}`;
+  baseUrl.pathname = `/rest/payment_redirect/${paymentId}`;
+
+  baseUrl.searchParams.set('locale', locale);
 
   if (providerId) {
     baseUrl.searchParams.set('provider_id', providerId);
@@ -25,6 +30,9 @@ export function getRedirectPaymentCallbackUrls(
   if (type === 'proposal') {
     baseUrl.searchParams.set('proposal_id', id);
   }
+
+  const providerDisplayMode = GLOBAL_CAPS_SETTINGS.providersDisplayMode[providerId as PspProviders];
+  baseUrl.searchParams.set('mode', providerDisplayMode);
 
   const clientUrl = new URL(baseUrl);
   clientUrl.searchParams.set('callback_url', callbackUrl || '');

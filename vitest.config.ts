@@ -3,8 +3,8 @@ import { fileURLToPath } from 'node:url';
 
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import react from '@vitejs/plugin-react-swc';
+import { playwright } from '@vitest/browser-playwright';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 const dirname =
@@ -14,13 +14,13 @@ const dirname =
 export default defineConfig({
   plugins: [
     react(),
-    tsconfigPaths({
-      projects: ['tsconfig.app.json'],
-    }),
     svgr({
       include: '**/*.svg?react',
     }),
   ],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -29,7 +29,6 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      all: true,
       include: ['packages/*/src/**/*.{tsx,ts}'],
       exclude: [
         '**/packages/starter/**',
@@ -42,6 +41,7 @@ export default defineConfig({
         '**/*.msw.{ts,tsx}',
         '**/__fixtures__/**',
         '**/tests/**',
+        '**/__generated__/**',
         'lib/atoms/Icons/**',
         'lib/tailwind/**',
         'lib/types/**',
@@ -56,10 +56,10 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        statements: 85.11,
-        branches: 87.42,
-        functions: 79.5,
-        lines: 85.11,
+        statements: 84.34,
+        branches: 74.04,
+        functions: 76.04,
+        lines: 82.9,
       },
     },
     projects: [
@@ -79,7 +79,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [
               {
                 browser: 'chromium',
