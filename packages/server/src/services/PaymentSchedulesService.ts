@@ -5,7 +5,7 @@ import {
   CustomerBookingPaymentScheduleModel,
   PaymentScheduleModel,
   ProposalPaymentScheduleModelV1,
-} from 'src/infra/api/__generated__/index.schemas.js';
+} from '../infra/api/__generated__/index.schemas.js';
 
 import {
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
