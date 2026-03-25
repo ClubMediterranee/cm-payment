@@ -1,7 +1,7 @@
 import { Controller, Inject } from '@tsed/di';
-import { BodyParams, Context, PathParams, QueryParams } from '@tsed/platform-params';
+import { BodyParams, QueryParams } from '@tsed/platform-params';
 import { PlatformViews } from '@tsed/platform-views';
-import { Get, Post } from '@tsed/schema';
+import { Get } from '@tsed/schema';
 
 import { PaymentConfigService } from '../../../services/PaymentConfigService.js';
 
@@ -17,7 +17,6 @@ export class PaymentConfigController {
   async getConfig(
     @QueryParams() queryParams: Record<string, any>,
     @BodyParams() bodyParams: Record<string, any>,
-    @Context() ctx: Context,
   ) {
     const params = { ...queryParams, ...bodyParams };
 

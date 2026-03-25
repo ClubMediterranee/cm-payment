@@ -1,10 +1,10 @@
 import { DITest } from '@tsed/di';
 import { describe, expect, it, vi } from 'vitest';
 
-import { PaymentConfigService } from './PaymentConfigService.js';
 import { fetcher } from '../infra/http/fetcher.js';
-import { LegacyCmsFeatureFlipKey, LegacyCmsFeatureFlipResponse } from '../types/LegacyCms.js';
 import { OidcIssuerTypes } from '../types/CapsSettings.js';
+import { LegacyCmsFeatureFlipKey, LegacyCmsFeatureFlipResponse } from '../types/LegacyCms.js';
+import { PaymentConfigService } from './PaymentConfigService.js';
 
 export const getLegacyCmsFeatureFlip = (cmsUrl: string) => {
   return fetcher<LegacyCmsFeatureFlipResponse>({

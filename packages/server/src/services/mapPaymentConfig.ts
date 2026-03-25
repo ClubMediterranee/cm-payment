@@ -1,12 +1,12 @@
-import { GLOBAL_CAPS_SETTINGS } from './config.js';
 import { OidcIssuerTypes } from '../types/CapsSettings.js';
+import { LegacyCmsFeatureFlipResponse } from '../types/LegacyCms.js';
 import {
   FeatureFlipsConfig,
   PaymentConfig,
   PaymentProviderConfig,
   PaymentSettings,
 } from '../types/PaymentConfig.js';
-import { LegacyCmsFeatureFlipResponse } from '../types/LegacyCms.js';
+import { GLOBAL_CAPS_SETTINGS } from './config.js';
 import {
   CMS_PREFIXES,
   FEATURE_FLIPS_MAPPING,

@@ -1,11 +1,11 @@
 import { Service } from '@tsed/di';
-
-import { mapPaymentConfig } from './mapPaymentConfig.js';
 import { PaymentConfig } from 'src/types/PaymentConfig.js';
 
-const LEGACY_FEATURE_FLIP_CMS_ENDPOINT = (cmsUrl: String) =>
+import { mapPaymentConfig } from './mapPaymentConfig.js';
+
+const LEGACY_FEATURE_FLIP_CMS_ENDPOINT = (cmsUrl: string) =>
   `${cmsUrl}/v1/contents/feature-flip/locales/fr-FR/releases/live/value`;
-const LEGACY_CMS_ENDPOINT = (cmsUrl: String, locale: string) =>
+const LEGACY_CMS_ENDPOINT = (cmsUrl: string, locale: string) =>
   `${cmsUrl}/v1/contents/b2c-common/locales/${locale}/releases/live/value`;
 
 const fetcher = async <T>(url: string) => {

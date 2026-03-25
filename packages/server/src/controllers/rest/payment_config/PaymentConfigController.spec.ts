@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PaymentConfirmationService } from '../../../services/PaymentConfirmationService.js';
+import { OidcIssuerTypes } from '../../../types/CapsSettings.js';
 import { PaymentConfigController } from './PaymentConfigController.js';
 
 describe('PaymentConfigController', () => {
   let controller: PaymentConfigController;
   let mockPaymentService: any;
-  let mockViews: any;
 
   beforeEach(() => {
     mockPaymentService = {
@@ -23,34 +22,20 @@ describe('PaymentConfigController', () => {
 
   describe('getConfig()', () => {
     it('should fetch config', async () => {
-      mockPaymentService.handlePaymentRedirect.mockResolvedValue(
-        'https://example.com/success?status=ok',
-      );
-
-      const mockContext = {
-        response: {
-          redirect: vi.fn(),
-          contentType: vi.fn(),
-          setHeader: vi.fn(),
-        },
-      };
-
-      await controller.redirect(
-        'payment123',
-        { callback_url: 'https://example.com/callback', provider_id: 'HIPAY' },
+      await controller.getConfig(
         {},
-        mockContext as any,
+        {
+          cms_url: 'https://example.com/cms',
+          issuerType: OidcIssuerTypes.GM,
+          locale: 'fr-FR',
+        },
       );
 
-      expect(mockPaymentService.handlePaymentRedirect).toHaveBeenCalledWith('payment123', {
-        callback_url: 'https://example.com/callback',
-        provider_id: 'HIPAY',
+      expect(mockPaymentService.getPaymentConfig).toHaveBeenCalledWith({
+        cms_url: 'https://example.com/cms',
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
       });
-      expect(mockContext.response.redirect).toHaveBeenCalledWith(
-        302,
-        'https://example.com/success?status=ok',
-      );
-      expect(mockContext.response.contentType).not.toHaveBeenCalled();
     });
   });
 });
