@@ -1,11 +1,4 @@
 import { Service } from '@tsed/di';
-import {
-  Action,
-  CartUpgradeRoomModel,
-  CustomerBookingPaymentScheduleModel,
-  PaymentScheduleModel,
-  ProposalPaymentScheduleModelV1,
-} from '../infra/api/__generated__/index.schemas.js';
 
 import {
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
@@ -13,6 +6,13 @@ import {
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../infra/api/__generated__/index.js';
+import {
+  Action,
+  CartUpgradeRoomModel,
+  CustomerBookingPaymentScheduleModel,
+  PaymentScheduleModel,
+  ProposalPaymentScheduleModelV1,
+} from '../infra/api/__generated__/index.schemas.js';
 
 type PaymentSchedule = {
   currency: string;
