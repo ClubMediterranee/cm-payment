@@ -48,7 +48,7 @@ export const getPaymentProviders = async ({
       (!min_days_before_departure ||
         !resortArrivalDate ||
         (parseApiDate(resortArrivalDate) &&
-          daysUntilToday(parseApiDate(resortArrivalDate)!) >= Number(min_days_before_departure)))
+          daysUntilToday(parseApiDate(resortArrivalDate)!) < Number(min_days_before_departure)))
     );
   });
 };
