@@ -1,6 +1,6 @@
 import { Controller, Inject } from '@tsed/di';
-import { BodyParams, Context, PathParams, QueryParams } from '@tsed/platform-params';
-import { Get, Post } from '@tsed/schema';
+import { BodyParams, QueryParams } from '@tsed/platform-params';
+import { Get } from '@tsed/schema';
 
 import { PaymentSchedulesService } from '../../../services/PaymentSchedulesService.js';
 
@@ -13,7 +13,6 @@ export class PaymentScheduleController {
   async paymentSchedules(
     @QueryParams() queryParams: Record<string, any>,
     @BodyParams() bodyParams: Record<string, any>,
-    @Context() ctx: Context,
   ) {
     const params = { ...queryParams, ...bodyParams };
 

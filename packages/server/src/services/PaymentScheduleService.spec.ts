@@ -1,14 +1,13 @@
 import { DITest } from '@tsed/di';
 import { describe, expect, it, vi } from 'vitest';
 
-import * as api from '../infra/api/__generated__/index.js';
-import { PaymentSchedulesService } from './PaymentSchedulesService.js';
 import {
   CustomerBookingPaymentScheduleModel,
   HouseholdPaymentScheduleModels,
 } from '@/infra/api/__generated__/index.schemas.js';
 
-type PaymentType = 'booking' | 'proposal';
+import * as api from '../infra/api/__generated__/index.js';
+import { PaymentSchedulesService } from './PaymentSchedulesService.js';
 
 const Action = {
   PAYMENT_CART: 'PAYMENT_CART',

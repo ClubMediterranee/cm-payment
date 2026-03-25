@@ -1,13 +1,4 @@
 import { Service } from '@tsed/di';
-
-import {
-  getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
-  getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule,
-  getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
-  getV0PaymentsPaymentIdStatus,
-  getV1ProposalsProposalIdPaymentSchedule,
-  postV1PaymentsPaymentIdNotify,
-} from '../infra/api/__generated__/index.js';
 import {
   Action,
   CartUpgradeRoomModel,
@@ -15,6 +6,13 @@ import {
   PaymentScheduleModel,
   ProposalPaymentScheduleModelV1,
 } from 'src/infra/api/__generated__/index.schemas.js';
+
+import {
+  getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
+  getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule,
+  getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
+  getV1ProposalsProposalIdPaymentSchedule,
+} from '../infra/api/__generated__/index.js';
 
 type PaymentSchedule = {
   currency: string;
@@ -29,7 +27,7 @@ type PaymentType = 'booking' | 'proposal';
 @Service()
 export class PaymentSchedulesService {
   async handlePaymentSchedules(params: Record<string, any>) {
-    const { type, proposal_id, customer_id, action, ...providerResponse } = params;
+    const { type, proposal_id, customer_id, action } = params;
 
     let response:
       | ProposalPaymentScheduleModelV1
