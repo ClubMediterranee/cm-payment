@@ -28,10 +28,10 @@ export class PaymentRedirectController {
       ctx.request.headers['accept-language'] = locale;
     }
 
-    const redirectUrl = await this.paymentConfirmationService.handlePaymentRedirect(
-      paymentId,
-      redirectParams,
-    );
+    const redirectUrl = await this.paymentConfirmationService.handlePaymentRedirect(paymentId, {
+      ...redirectParams,
+      locale,
+    });
 
     if (mode === 'iframe') {
       const html = await this.views.render('iframe-redirect.ejs', {
@@ -46,6 +46,8 @@ export class PaymentRedirectController {
 
       return html;
     }
+
+    console.log(redirectUrl);
 
     return ctx.response.redirect(302, redirectUrl);
   }

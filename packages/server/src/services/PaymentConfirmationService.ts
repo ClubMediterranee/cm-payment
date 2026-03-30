@@ -21,7 +21,7 @@ export class PaymentConfirmationService {
     paymentId: string,
     queryParams: Record<string, any>,
   ): Promise<string> {
-    const { callback_url, proposal_id, provider_id, ...providerResponse } = queryParams;
+    const { callback_url, proposal_id, provider_id, locale, ...providerResponse } = queryParams;
 
     const strategy = getPaymentValidationStrategy(provider_id);
 
@@ -30,7 +30,7 @@ export class PaymentConfirmationService {
         ? await this.confirmPaymentWithPolling(paymentId)
         : await this.confirmPaymentWithNotify(paymentId, providerResponse);
 
-    return this.buildCallbackUrl(callback_url, paymentData, proposal_id);
+    return this.buildCallbackUrl(callback_url, paymentData, proposal_id, locale);
   }
 
   private async confirmPaymentWithNotify(
@@ -72,6 +72,7 @@ export class PaymentConfirmationService {
     callbackUrl: string | null,
     paymentData: PaymentData,
     proposalId: string | null,
+    locale: string | null,
   ): string {
     if (!callbackUrl) {
       throw new Error('callback_url is required');
@@ -80,6 +81,7 @@ export class PaymentConfirmationService {
     const params = new URLSearchParams({
       ...paymentData,
       ...(proposalId ? { proposal_id: proposalId } : {}),
+      ...(locale ? { locale } : {}),
     });
 
     return `${callbackUrl}?${params.toString()}`;

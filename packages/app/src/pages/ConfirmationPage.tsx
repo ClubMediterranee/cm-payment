@@ -3,13 +3,21 @@ import { Icon } from '@clubmed/trident-icons';
 
 import { useAppParams } from '../hooks/useAppParams';
 
+const translations = {
+  paymentConfirmation: 'Payment confirmation',
+  myBooking: 'My booking',
+  amount: 'Amount',
+  paymentValidated: 'Your payment has been validated',
+  paymentFailed: 'Your payment has failed',
+};
+
 const getStatusConfig = (status: string) => {
   if (status === 'OK') {
     return {
       icon: 'CheckOutlined',
       iconColor: 'text-green',
       bgColor: 'bg-green-light',
-      title: 'Votre paiement a été validé',
+      title: translations.paymentValidated,
       titleColor: 'text-green',
     };
   }
@@ -17,7 +25,7 @@ const getStatusConfig = (status: string) => {
     icon: 'CrossOutlined',
     iconColor: 'text-red',
     bgColor: 'bg-red-light',
-    title: 'Votre paiement a échoué',
+    title: translations.paymentFailed,
     titleColor: 'text-red',
   };
 };
@@ -30,21 +38,23 @@ export const ConfirmationPage = () => {
   const formattedAmount = formatCurrency({
     amount: Number(payment_amount),
     currency: payment_currency,
-    locale: 'fr-FR',
+    locale: values.locale,
   });
 
   return (
     <div className="flex flex-col gap-20 mx-auto w-10/12 md:max-w-[49rem] py-40">
-      <h1 className="text-h3 font-serif text-center">Confirmation de paiement - {issuerType}</h1>
+      <h1 className="text-h3 font-serif text-center">
+        {translations.paymentConfirmation} - {issuerType}
+      </h1>
 
       <Panel className="bg-white w-full p-0">
         <div className="flex flex-col font-bold">
           <div className="flex justify-between items-center px-20 py-12">
-            <span className="text-b3 text-grey-dark">Ma réservation</span>
+            <span className="text-b3 text-grey-dark">{translations.myBooking}</span>
             <span className="text-b3 font-mono">{booking_id}</span>
           </div>
           <div className="flex justify-between items-center bg-sienna text-white px-20 py-12">
-            <span className="text-b3 ">Montant</span>
+            <span className="text-b3 ">{translations.amount}</span>
             <span className="text-h5 ">{formattedAmount}</span>
           </div>
         </div>
