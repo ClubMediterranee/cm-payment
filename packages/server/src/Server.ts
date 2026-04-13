@@ -1,18 +1,23 @@
 import '@tsed/ajv';
-import '@tsed/platform-log-request';
 import '@tsed/platform-fastify';
+import '@tsed/platform-log-request';
 import '@tsed/swagger';
 
 import { Configuration, configuration, constant, logger } from '@tsed/di';
 import { application, type PlatformStaticsOptions } from '@tsed/platform-http';
 
 import { config } from './config/config.js';
+import { requestLoggerMiddleware } from './middlewares/requestLogger.js';
 
 @Configuration(config)
 export class Server {
   protected app = application();
 
   protected disableRoutesSummary = constant<boolean>('logger.disableRoutesSummary');
+
+  $beforeRoutesInit() {
+    this.app.getApp().addHook('onRequest', requestLoggerMiddleware);
+  }
 
   $staticsMounted(mountPath: string, options: PlatformStaticsOptions) {
     if (options.isApp) {

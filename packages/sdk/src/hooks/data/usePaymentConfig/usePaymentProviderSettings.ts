@@ -1,5 +1,5 @@
-import { usePaymentConfig } from '.';
 import { CommonProviderSettings } from '../../../types/PaymentConfig';
+import { usePaymentConfig } from '.';
 import { PROVIDER_SETTINGS_MAPPING } from './mapping';
 
 export type ProviderSettings = {

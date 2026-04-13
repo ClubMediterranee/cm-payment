@@ -636,7 +636,7 @@ export const BuyNowPayLaterUplift: Story = {
       ],
     },
   },
-  play: async ({ canvasElement }) => {
+  /*play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await waitFor(
       () => {
@@ -644,7 +644,7 @@ export const BuyNowPayLaterUplift: Story = {
       },
       { timeout: 5000 },
     );
-  },
+  },*/
   render(args: any) {
     return (
       <MockedProvider

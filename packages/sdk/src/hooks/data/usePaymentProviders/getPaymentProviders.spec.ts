@@ -147,7 +147,7 @@ describe('getPaymentProviders', () => {
     ]);
 
     const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 100);
+    futureDate.setDate(futureDate.getDate() + 25);
 
     const formattedDate = futureDate.toISOString().split('T')[0].replace(/-/g, '');
 
