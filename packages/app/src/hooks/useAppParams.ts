@@ -56,7 +56,7 @@ export function useAppParams() {
 
     return {
       paymentGatewayUrl: import.meta.env.VITE_PAYMENT_GATEWAY_URL,
-      values: confirmationParams,
+      values: { locale, ...confirmationParams },
       api: AppSettings.api[issuerType],
       oidc: {
         issuerType,
@@ -81,10 +81,6 @@ export function useAppParams() {
       callbackUrl,
       callbackUrlSeller,
     };
-
-    if (values?.bookingId && !auth.isAuthenticated) {
-      setLocation('/404');
-    }
 
     const validationResult = ParamsSchema.safeParse(values);
 

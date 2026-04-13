@@ -36,7 +36,7 @@ function CapsFormProvider({
   onLoadEnd,
   ...props
 }: CapsFormProps) {
-  const { id, content, locale } = useCapsConfigContext();
+  const { id, content, locale, type, customerId } = useCapsConfigContext();
   const { isSeller } = useOidcContext();
 
   const { data: paymentConfig } = usePaymentConfig();
@@ -50,7 +50,12 @@ function CapsFormProvider({
     { data: paymentSchedule },
   ] = useSuspenseQueries({
     queries: [
-      paymentProvidersQueryOptions(paymentConfig.providers),
+      paymentProvidersQueryOptions({
+        providerConfig: paymentConfig.providers,
+        type: type as 'booking' | 'proposal',
+        id: id!,
+        customerId,
+      }),
       paymentScheduleQueryOptions(id),
     ],
   });
@@ -64,7 +69,7 @@ function CapsFormProvider({
     defaultValues: {
       action: resolvedAction,
       provider_id: paymentProviders?.[0]?.id,
-      amount: paymentSchedule?.[0]?.amount?.toString(),
+      amount: paymentSchedule?.[0]?.amount?.toString() || '',
       currency: paymentSchedule?.[0]?.currency,
       payment_condition_id: getDefaultPaymentConditionId(paymentProviders?.[0]),
       billing_details: {

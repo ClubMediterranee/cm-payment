@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 
 import type { HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
+import * as usePaymentProviderSettings from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import * as useCapsConfigContext from '../../utils/useCapsConfigContext';
 import * as useFormContext from '../../utils/useForm';
 import * as useScriptLoader from '../../utils/useScriptLoader';
@@ -63,6 +64,15 @@ describe('useHipay', () => {
       error: null,
     });
 
+    vi.spyOn(usePaymentProviderSettings, 'usePaymentProviderSettings').mockReturnValue({
+      script_url: 'https://libs.hipay.com/js/sdkjs.js',
+      username: 'test-username',
+      password: 'test-password',
+      environment: 'stage',
+      max_amount: null,
+      min_days_before_departure: null,
+    } as any);
+
     vi.spyOn(hipayHelpers, 'createHipayHostedFields').mockReturnValue(mockHipayInstance);
   });
 
@@ -78,24 +88,33 @@ describe('useHipay', () => {
     expect(result.current.isReady).toBe(false);
 
     await waitFor(() => {
-      expect(hipayHelpers.createHipayHostedFields).toHaveBeenCalledWith({
-        cardHolder: {
-          placeholder: mockContent.creditCardForm.fullName,
-          selector: mockFieldSelectors.cardHolder,
+      expect(hipayHelpers.createHipayHostedFields).toHaveBeenCalledWith(
+        {
+          cardHolder: {
+            placeholder: mockContent.creditCardForm.fullName,
+            selector: mockFieldSelectors.cardHolder,
+          },
+          cardNumber: {
+            placeholder: mockContent.creditCardForm.cardNumber,
+            selector: mockFieldSelectors.cardNumber,
+          },
+          cvc: {
+            placeholder: mockContent.creditCardForm.cvc,
+            selector: mockFieldSelectors.cvc,
+          },
+          expiryDate: {
+            placeholder: mockContent.creditCardForm.expiryDate,
+            selector: mockFieldSelectors.expiryDate,
+          },
         },
-        cardNumber: {
-          placeholder: mockContent.creditCardForm.cardNumber,
-          selector: mockFieldSelectors.cardNumber,
+        {
+          username: 'test-username',
+          password: 'test-password',
+          environment: 'stage',
+          max_amount: null,
+          min_days_before_departure: null,
         },
-        cvc: {
-          placeholder: mockContent.creditCardForm.cvc,
-          selector: mockFieldSelectors.cvc,
-        },
-        expiryDate: {
-          placeholder: mockContent.creditCardForm.expiryDate,
-          selector: mockFieldSelectors.expiryDate,
-        },
-      });
+      );
       expect(mockHipayInstance.on).toHaveBeenCalledWith('ready', expect.any(Function));
       expect(mockHipayInstance.on).toHaveBeenCalledWith('inputChange', expect.any(Function));
     });

@@ -8,6 +8,7 @@ import { useProfilePrefill } from '../hooks/useProfilePrefill';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useWatch } from '../hooks/utils/useForm';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
+import { setBillingFields } from '../stores/billingFieldsStore';
 import { TOKENS } from '../types/Tokens';
 import { FormPanel } from './ui/FormPanel';
 import { TextFieldSkeleton } from './ui/skeletons';
@@ -106,9 +107,11 @@ const BillingAddressContent = () => {
 
 export const BillingAddress = () => {
   const watchedProvider = useWatchedPaymentProvider();
+
   const showBillingForm = watchedProvider?.billing_address_form === true;
 
   if (!showBillingForm) {
+    setBillingFields([]);
     return null;
   }
 

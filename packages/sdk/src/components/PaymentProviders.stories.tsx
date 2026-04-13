@@ -24,6 +24,31 @@ const commonHandlers = [
       }),
     );
   }),
+  http.get('*/v3/customers/customer-456/bookings/booking-123', () => {
+    return Response.json({
+      stays: [
+        {
+          product_id: 'PROD123',
+          resort_arrival_date: '20251001',
+          resort_leaving_date: '20251008',
+          attendees: [
+            {
+              adults_count: 2,
+              children_count: 1,
+            },
+          ],
+          accommodations: [
+            {
+              quantity: 1,
+            },
+          ],
+          outward_trip: {
+            transportation: ['PLANE'],
+          },
+        },
+      ],
+    });
+  }),
 ];
 
 const commonMockedProviderProps = {
@@ -32,9 +57,10 @@ const commonMockedProviderProps = {
   customerId: 'customer-456',
   paymentConfig: {
     providers: {
-      PROVIDER_1: { is_active: true },
-      PROVIDER_2: { is_active: true },
-      PROVIDER_3: { is_active: true },
+      PROVIDER_1: { is_active: true, settings: {} },
+      PROVIDER_2: { is_active: true, settings: {} },
+      PROVIDER_3: { is_active: true, settings: {} },
+      PROVIDER_4: { is_active: false, settings: {} },
     },
     featureFlip: {},
   },

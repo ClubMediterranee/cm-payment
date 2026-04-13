@@ -21,6 +21,11 @@ export const defaultContent: Content = {
     payFullAmount: 'I pay today the full amount of {amount}',
     payDeposit:
       'I pay today, at no charge, a deposit of {amount} and at the latest on {deadline} the balance of {balance}',
+    buyNowPayLater: {
+      iconLabel: 'I pay in {icon} by credit card',
+      priceLabel: 'Pay monthly from {price}',
+      unavailable: 'Pay Monthly is currently unavailable',
+    },
   },
   cgv: {
     title: 'Terms and Conditions',

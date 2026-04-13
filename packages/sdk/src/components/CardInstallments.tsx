@@ -1,5 +1,5 @@
 import { Select } from '@clubmed/trident-ui/molecules/Forms/Select';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
@@ -28,6 +28,12 @@ export const CardInstallments = () => {
 
   const [selectedCardType, setSelectedCardType] = useState(cardTypes[0]);
   const watchedPaymentConditionId = useWatch('payment_condition_id');
+
+  useEffect(() => {
+    if (cardTypes.length > 0 && !selectedCardType) {
+      setSelectedCardType(cardTypes[0]);
+    }
+  }, [cardTypes, selectedCardType]);
 
   const handleCardTypeChange = (cardType: string) => {
     setSelectedCardType(cardType);

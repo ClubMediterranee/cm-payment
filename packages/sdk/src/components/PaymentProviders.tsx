@@ -8,6 +8,7 @@ import { usePaymentProviders } from '../hooks/data/usePaymentProviders';
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useWatch } from '../hooks/utils/useForm';
+import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { TOKENS } from '../types/Tokens';
 import { formatCurrency } from '../utils/formatCurrency';
 import { getDefaultPaymentConditionId } from '../utils/paymentProviders';
@@ -32,6 +33,7 @@ export const PaymentProviders = () => {
   } = usePaymentSchedule();
 
   const watchedAmount = useWatch('amount');
+  const watchedProvider = useWatchedPaymentProvider();
 
   const PROVIDER_LABEL = {
     [PaymentProvider1CategoryPaymentMethod.CreditCard]: content.paymentProviders.creditCard.label,
@@ -39,6 +41,14 @@ export const PaymentProviders = () => {
       content.paymentProviders.bankTransfer.label,
     [PaymentProvider1CategoryPaymentMethod.Paypal]: content.paymentProviders.paypal.label,
   };
+
+  const isBuyNowPayLater =
+    watchedProvider?.category_payment_method ===
+    PaymentProvider1CategoryPaymentMethod.BuyNowPayLater;
+
+  if (isBuyNowPayLater) {
+    return null;
+  }
 
   return (
     <FormPanel className="p-0">

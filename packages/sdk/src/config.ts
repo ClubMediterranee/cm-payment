@@ -5,11 +5,14 @@ import { TOKENS } from './types/Tokens';
 
 export const GLOBAL_CAPS_SETTINGS = Object.freeze({
   serverValidationProviders: [PspProviders.EVOXPAY],
+  thirdPartyIframeProviders: [PspProviders.MUPLIFT],
   providersDisplayMode: {
     [PspProviders.HIPAY]: 'hosted_field',
     [PspProviders.EPAYGATE]: 'iframe',
     [PspProviders.EGLOBALCOLLECT]: 'iframe',
     [PspProviders.MCYBERSOURCE]: 'hosted_field',
+    [PspProviders.MUPLIFT]: 'iframe',
+    [PspProviders.EHIPAYBNPL]: 'redirect',
   } as Record<PspProviders, PaymentProviderDisplayType>,
   withContactMethodProviders: [PspProviders.EVOXPAY],
   templateIds: {

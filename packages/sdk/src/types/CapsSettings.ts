@@ -25,6 +25,8 @@ export type ClubMedApiSettings = {
 export type CapsSettings = {
   paymentGatewayUrl: string;
   locale: string;
+  country: string;
+  language: string;
   id: string;
   customerId?: string;
   callbackUrl: string;

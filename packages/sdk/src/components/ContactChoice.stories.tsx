@@ -32,7 +32,12 @@ const ContactChoiceWithFormProvider = (args: any) => {
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
       paymentConfig={{
-        providers: { EVOXPAY: { is_active: true } },
+        providers: {
+          EVOXPAY: {
+            is_active: true,
+            settings: {},
+          },
+        },
         featureFlip: {},
       }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
@@ -152,9 +157,6 @@ export const WithAdditionalInteractions: Story = {
     },
     msw: {
       handlers: [
-        http.get('*/v2/customers/456/profile', () => {
-          return Response.json({ mobile_phone: '123456789' });
-        }),
         http.get('*/v1/payment_providers', () => {
           return Response.json([
             {
@@ -167,6 +169,7 @@ export const WithAdditionalInteractions: Story = {
             },
           ]);
         }),
+        ...handlers,
       ],
     },
   },
@@ -177,7 +180,10 @@ export const WithAdditionalInteractions: Story = {
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
       paymentConfig={{
         providers: {
-          EVOXPAY: { is_active: true },
+          EVOXPAY: {
+            is_active: true,
+            settings: {},
+          },
         },
         featureFlip: {},
       }}
@@ -326,25 +332,6 @@ export const AccessibilityTest: Story = {
         story: "Test d'accessibilité du composant ContactChoice.",
       },
     },
-    msw: {
-      handlers: [
-        http.get('*/v2/customers/456/profile', () => {
-          return Response.json({ mobile_phone: '123456789' });
-        }),
-        http.get('*/v1/payment_providers', () => {
-          return Response.json([
-            {
-              id: 'EVOXPAY',
-              label: 'Carte bancaire',
-              connection_type: 'REDIRECT',
-              category_payment_method: 'CreditCard',
-              billing_address_form: true,
-              required_delay_before_departure: 0,
-            },
-          ]);
-        }),
-      ],
-    },
   },
   render: (args) => (
     <MockedProvider
@@ -353,7 +340,10 @@ export const AccessibilityTest: Story = {
       oidc={{ issuerType: OidcIssuerTypes.PARTNERS, accessToken: '' }}
       paymentConfig={{
         providers: {
-          EVOXPAY: { is_active: true },
+          EVOXPAY: {
+            is_active: true,
+            settings: {},
+          },
         },
         featureFlip: {},
       }}

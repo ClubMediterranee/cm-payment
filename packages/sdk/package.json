@@ -18,6 +18,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "generate:types": "orval",
+    "docs:content": "tsx scripts/generate-content-docs.ts",
     "preview": "vite preview"
   },
   "dependencies": {

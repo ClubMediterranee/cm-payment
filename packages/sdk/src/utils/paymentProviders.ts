@@ -1,7 +1,7 @@
 import type { PaymentProvider1 } from '../__generated__/index.schemas';
 import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 
-export const sortTimePaymentConditions = (provider: PaymentProvider1): PaymentProvider1 => ({
+export const sortTimePaymentConditions = <T extends PaymentProvider1>(provider: T): T => ({
   ...provider,
   payment_methods: provider.payment_methods?.map((method) => ({
     ...method,
@@ -13,7 +13,7 @@ export const sortTimePaymentConditions = (provider: PaymentProvider1): PaymentPr
   })),
 });
 
-export const enrichWithPaymentConditions = (provider: PaymentProvider1) => {
+export const enrichWithPaymentConditions = <T extends PaymentProvider1>(provider: T) => {
   const payment_conditions =
     provider.payment_methods?.reduce(
       (acc, method) => {

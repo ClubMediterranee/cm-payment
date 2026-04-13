@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
@@ -156,6 +157,9 @@ const handlers = [
         },
       }),
     );
+  }),
+  http.get('*/v1/payment_providers', () => {
+    return Response.json([]);
   }),
 ];
 
@@ -392,6 +396,283 @@ export const FreeDepositInteraction: Story = {
         }}
       >
         <PaymentSchedule {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+const createBnplMswHandlers = (currency: string) => {
+  const toDateStr = (date: Date) => date.toISOString().split('T')[0];
+  const toCompact = (date: Date) => toDateStr(date).replace(/-/g, '');
+  const addDays = (date: Date, days: number) => {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  };
+
+  const departure = faker.date.soon({ days: 10 });
+  const returnDate = addDays(departure, 5);
+  const deadline = addDays(departure, -4);
+
+  return [
+    http.get('*/v2/proposals/proposal-total', () => {
+      return Response.json({
+        product_id: 'PROD123',
+        resort_arrival_date: toCompact(departure),
+        resort_departure_date: toCompact(returnDate),
+        households: [
+          {
+            attendees: [
+              {
+                customer_id: '123456',
+              },
+            ],
+          },
+        ],
+        accommodations: [
+          {
+            quantity: 1,
+          },
+        ],
+        transportation_summary: [
+          {
+            transportation_type: 'PLANE',
+          },
+        ],
+      });
+    }),
+    http.get('*/v5/proposals/proposal-total/transport_details', () => {
+      return Response.json({
+        journeys: [
+          {
+            way: 'OUTBOUND',
+            total_duration_in_min: 480,
+            travel_sections: [
+              {
+                departure: {
+                  location: { id: 'CDG' },
+                  date: toDateStr(departure),
+                  time: '10:00',
+                },
+                arrival: {
+                  location: { id: 'JFK' },
+                  date: toDateStr(departure),
+                  time: '14:00',
+                },
+                transport: {
+                  company: {
+                    operator: {
+                      id: 'AF',
+                      label: 'Air France',
+                    },
+                  },
+                  fare_class: 'Y',
+                },
+                clubmed_transport: true,
+                flight_code: 'AF001',
+                cancellation_policy_type: 'AUCUN',
+              },
+            ],
+          },
+          {
+            way: 'INBOUND',
+            total_duration_in_min: 480,
+            travel_sections: [
+              {
+                departure: {
+                  location: { id: 'JFK' },
+                  date: toDateStr(returnDate),
+                  time: '16:00',
+                },
+                arrival: {
+                  location: { id: 'CDG' },
+                  date: toDateStr(returnDate),
+                  time: '20:00',
+                },
+                transport: {
+                  company: {
+                    operator: {
+                      id: 'AF',
+                      label: 'Air France',
+                    },
+                  },
+                  fare_class: 'Y',
+                },
+                clubmed_transport: true,
+                flight_code: 'AF002',
+                cancellation_policy_type: 'AUCUN',
+              },
+            ],
+          },
+        ],
+      });
+    }),
+    http.get('*/v1/proposals/proposal-total/payment_schedule', () => {
+      return Response.json(
+        getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
+          currency,
+          commission_included: true,
+          households: [
+            {
+              attendees: [
+                {
+                  id: 'A',
+                  customer_id: '123456',
+                },
+              ],
+              total: currency === 'USD' ? 3650 : 999.99,
+              deposit_repayment_schedule: [
+                {
+                  expected_payment_amount: currency === 'USD' ? 3650 : 999.99,
+                  deadline: toCompact(deadline),
+                },
+              ],
+            },
+          ],
+        }),
+      );
+    }),
+  ];
+};
+
+export const BuyNowPayLaterOney: Story = {
+  args: {
+    payment_mode: '3x',
+  },
+  argTypes: {
+    payment_mode: {
+      control: { type: 'select' },
+      options: ['3x', '4x'],
+      description: 'Mode de paiement Oney',
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Affiche l'option BNPL Oney : paiement en 3x ou 4x sans frais.",
+      },
+    },
+    msw: {
+      handlers: [
+        ...createBnplMswHandlers('EUR'),
+        http.get('*/v1/payment_providers', () => {
+          return Response.json([
+            {
+              id: 'EHIPAYBNPL',
+              label: 'Oney',
+              description: 'Paiement en 3x ou 4x sans frais',
+              connection_type: 'IFRAME',
+              category_payment_method: 'BuyNowPayLater',
+              billing_address_form: false,
+              required_delay_before_departure: 0,
+            },
+          ]);
+        }),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() => {
+      expect(canvas.getByRole('radio', { name: /I pay in.*by credit card/ })).toBeInTheDocument();
+    });
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="bnpl-oney"
+        action={Action.PAYMENT_RESA}
+        proposalId="proposal-total"
+        locale="fr-FR"
+        defaultValues={{
+          amount: '999.99',
+          currency: 'EUR',
+        }}
+        paymentConfig={{
+          providers: {
+            EHIPAYBNPL: {
+              is_active: true,
+              settings: {
+                max_amount: null,
+                min_days_before_departure: null,
+                merchant_id: '8a3ddbfcd79c44f09882c6e39af07fca',
+                payment_mode: args.payment_mode || '3x',
+                script_url: 'https://assets-staging.oney.io/build/loader.min.js',
+              },
+            },
+          },
+          featureFlip: {},
+        }}
+      >
+        <PaymentSchedule {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+export const BuyNowPayLaterUplift: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: "Affiche l'option BNPL Uplift : paiement mensuel flexible.",
+      },
+    },
+    msw: {
+      handlers: [
+        ...createBnplMswHandlers('USD'),
+        http.get('*/v1/payment_providers', () => {
+          return Response.json([
+            {
+              id: 'MUPLIFT',
+              label: 'Uplift',
+              description: 'Paiement mensuel flexible',
+              connection_type: 'IFRAME',
+              category_payment_method: 'BuyNowPayLater',
+              billing_address_form: false,
+              required_delay_before_departure: 0,
+            },
+          ]);
+        }),
+      ],
+    },
+  },
+  /*play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(
+      () => {
+        expect(canvas.getByRole('radio', { name: /Pay monthly from/ })).toBeInTheDocument();
+      },
+      { timeout: 5000 },
+    );
+  },*/
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="bnpl-uplift"
+        action={Action.PAYMENT_RESA}
+        proposalId="proposal-total"
+        locale="en-US"
+        defaultValues={{
+          amount: '3650',
+          currency: 'USD',
+        }}
+        paymentConfig={{
+          providers: {
+            MUPLIFT: {
+              is_active: true,
+              settings: {
+                max_amount: null,
+                min_days_before_departure: null,
+                code: 'UP-75709538-99',
+                api_key: 'MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X',
+              },
+            },
+          },
+          featureFlip: {},
+        }}
+      >
+        <PaymentSchedule {...args} />
+        <div id="uplift-container" className="w-full mt-24" />
       </MockedProvider>
     );
   },
