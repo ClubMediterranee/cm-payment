@@ -2,17 +2,13 @@ import { render, screen } from '@testing-library/react';
 
 import { ConfirmationPage } from './ConfirmationPage';
 
-const { formatCurrency } = vi.hoisted(() => ({
-  formatCurrency: vi.fn(),
-}));
-
 vi.mock('@clubmed/caps', () => ({
   FormPanel: ({ children, className }: any) => (
     <div data-testid="panel" className={className}>
       {children}
     </div>
   ),
-  formatCurrency,
+  formatCurrency: vi.fn(),
 }));
 
 vi.mock('@clubmed/trident-icons', () => ({
@@ -24,6 +20,8 @@ vi.mock('@clubmed/trident-icons', () => ({
 vi.mock('../hooks/useAppParams', () => ({
   useAppParams: vi.fn(),
 }));
+
+import { formatCurrency } from '@clubmed/caps';
 
 import { useAppParams } from '../hooks/useAppParams';
 
