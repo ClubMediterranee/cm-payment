@@ -1,6 +1,6 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 
-import type { Hipay, HipayPaypalInstance } from '../../../types/Hipay';
+import type { Hipay } from '../../../types/Hipay';
 import { PspProviders } from '../../../types/PspProviders';
 import * as usePaymentProviderSettings from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import * as usePaymentSubmit from '../../usePaymentSubmit';
@@ -18,7 +18,7 @@ vi.mock('react-hook-form', async () => {
 });
 
 describe('useHipayPaypal', () => {
-  const mockHipayPaypalInstance: HipayPaypalInstance = {
+  const mockHipayPaypalInstance = {
     on: vi.fn(),
     destroy: vi.fn(),
   };
