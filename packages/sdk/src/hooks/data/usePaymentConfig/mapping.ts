@@ -8,6 +8,7 @@ export const CMS_PREFIXES = {
 
 export const FEATURE_FLIPS_MAPPING: Record<string, keyof FeatureFlipsConfig> = {
   'booking.banking.enableFreeDeposit': 'isFreeDepositEnabled',
+  'psp.paypal.enable_button': 'isPaypalButtonEnabled',
 };
 
 export const SETTINGS_MAPPING = {
@@ -28,16 +29,44 @@ export const PROVIDER_SETTINGS_MAPPING = {
     script_url: 'https://assets-staging.oney.io/build/loader.min.js',
     max_amount: 'booking.banking.paymentSchedule.bnpl.maxAmount',
     min_days_before_departure: 45,
+    display_type: 'redirect',
   },
   MUPLIFT: {
     api_key: 'MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X',
     code: 'UP-75709538-99',
+    display_type: 'iframe',
   },
   MHIPAY: {
     script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
-    username: '94675627.stage-secure-gateway.hipay-tpp.com',
-    password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
+    username: '94685941.stage-secure-gateway.hipay-tpp.com',
+    password: 'Test_KDArvJ3iCVesjQj3XRriMkXs',
     environment: 'stage',
+    display_type: 'hosted_field',
+  },
+  MHIPAYPP: {
+    script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
+    username: '94685941.stage-secure-gateway.hipay-tpp.com',
+    password: 'Test_KDArvJ3iCVesjQj3XRriMkXs',
+    environment: 'stage',
+    display_type: 'redirect',
+  },
+  EIXOPAY: {
+    display_type: 'redirect',
+  },
+  EVOXPAY: {
+    display_type: 'redirect',
+  },
+  ENETPAY: {
+    display_type: 'redirect',
+  },
+  EGLOBALCOLLECT: {
+    display_type: 'iframe',
+  },
+  EPAYGATE: {
+    display_type: 'iframe',
+  },
+  MCYBERSOURCE: {
+    display_type: 'hosted_field',
   },
 } as const;
 

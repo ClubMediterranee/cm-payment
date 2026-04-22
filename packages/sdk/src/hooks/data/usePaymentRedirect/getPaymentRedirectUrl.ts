@@ -7,6 +7,7 @@ import {
 import { GLOBAL_CAPS_SETTINGS } from '../../../config';
 import { CapsFormSchema } from '../../../schemas/capsFormSchema';
 import { CapsSettings } from '../../../types/CapsSettings';
+import { PaymentProviderDisplayType } from '../../../types/PaymentConfig';
 import { getRedirectPaymentCallbackUrls } from '../../../utils/url/getRedirectPaymentCallbackUrls';
 
 const mapBillingDetails = (formData: CapsFormSchema) => {
@@ -40,6 +41,7 @@ const mapBillingDetails = (formData: CapsFormSchema) => {
 export const getPaymentRedirectUrl = async (
   formData: CapsFormSchema,
   { type, id, customerId }: Pick<CapsSettings, 'type' | 'id' | 'customerId'>,
+  displayType?: PaymentProviderDisplayType,
 ) => {
   let customer_id = customerId;
   let booking_id = id;
@@ -62,7 +64,7 @@ export const getPaymentRedirectUrl = async (
     provider_id: formData.provider_id,
   });
 
-  const callbacks = getRedirectPaymentCallbackUrls(paymentId, formData.provider_id);
+  const callbacks = getRedirectPaymentCallbackUrls(paymentId, formData.provider_id, displayType);
 
   const redirectParams = await postV0PaymentsPaymentIdRedirectRequest(paymentId, {
     ...callbacks,

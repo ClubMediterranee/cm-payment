@@ -29,7 +29,9 @@ describe('getPaymentConfig', () => {
       expect(result.providers.EVOXPAY).toEqual({
         is_active: true,
         display_type: 'redirect',
-        settings: {},
+        settings: {
+          display_type: 'redirect',
+        },
       });
       expect(result.providers.MHIPAY.is_active).toBe(false);
       expect(result.providers.MHIPAY.display_type).toBe('hosted_field');
@@ -48,6 +50,7 @@ describe('getPaymentConfig', () => {
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
     });
 
@@ -69,6 +72,7 @@ describe('getPaymentConfig', () => {
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
     });
   });
@@ -88,7 +92,11 @@ describe('getPaymentConfig', () => {
       const result = await getPaymentConfig({ issuerType: OidcIssuerTypes.GO, locale: 'fr-FR' });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
+        EVOXPAY: {
+          is_active: true,
+          display_type: 'redirect',
+          settings: { display_type: 'redirect' },
+        },
         PAYPAL: { is_active: false, display_type: 'redirect', settings: {} },
       });
     });
@@ -105,6 +113,7 @@ describe('getPaymentConfig', () => {
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
     });
   });
@@ -144,10 +153,15 @@ describe('getPaymentConfig', () => {
       const result = await getPaymentConfig({ issuerType: OidcIssuerTypes.GM, locale: 'fr-FR' });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
+        EVOXPAY: {
+          is_active: true,
+          display_type: 'redirect',
+          settings: { display_type: 'redirect' },
+        },
       });
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
       expect(result.settings).toEqual({});
     });

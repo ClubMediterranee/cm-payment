@@ -1,4 +1,4 @@
-import { useHipay } from '../../../hooks/integrations/hipay/useHipay';
+import { useHipayHostedFields } from '../../../hooks/integrations/hipay/useHipayHostedFields';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext';
 import { FormPanel } from '../../ui/FormPanel';
 import { HostedField } from '../../ui/HostedField';
@@ -13,7 +13,7 @@ const fieldSelectors = {
 export const HipayForm = () => {
   const { content } = useCapsConfigContext();
 
-  const { errors, isReady } = useHipay({
+  const { errors, isReady } = useHipayHostedFields({
     fieldSelectors,
   });
 
