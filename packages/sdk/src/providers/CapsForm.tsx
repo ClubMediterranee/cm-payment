@@ -52,11 +52,11 @@ function CapsFormProvider({
     queries: [
       paymentProvidersQueryOptions({
         providerConfig: paymentConfig.providers,
-        type: type as 'booking' | 'proposal',
-        id: id!,
+        id,
+        type,
         customerId,
       }),
-      paymentScheduleQueryOptions(id),
+      paymentScheduleQueryOptions(id, type, customerId),
     ],
   });
 

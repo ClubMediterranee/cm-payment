@@ -28,7 +28,6 @@ export const config: Partial<TsED.Configuration> = {
   httpPort: process.env['PORT'] || 8083,
   httpsPort: false, // CHANGE
   CLUBMED_API_URL: process.env['API_TARGET'] || 'https://api.integ.clubmed.com',
-  API_KEY: process.env['API_KEY'],
   mount: {
     '/rest': [...Object.values(rest)],
   },
@@ -65,7 +64,18 @@ export const config: Partial<TsED.Configuration> = {
         replyOptions: {
           rewriteRequestHeaders: (originalReq: any, headers: any) => ({
             ...headers,
-            'x-request-id': originalReq.headers['x-request-id'] || '',
+            ...(originalReq.headers['x-request-id'] && {
+              'x-request-id': originalReq.headers['x-request-id'],
+            }),
+            ...(originalReq.headers['x-api-key'] && {
+              'x-api-key': originalReq.headers['x-api-key'],
+            }),
+            ...(originalReq.headers.authorization && {
+              authorization: originalReq.headers.authorization,
+            }),
+            ...(originalReq.headers['accept-language'] && {
+              'accept-language': originalReq.headers['accept-language'],
+            }),
           }),
         },
       },

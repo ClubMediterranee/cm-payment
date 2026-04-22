@@ -1,10 +1,9 @@
 import { DITest } from '@tsed/di';
-import { describe, expect, it, vi } from 'vitest';
 
-import * as api from '../infra/api/__generated__/index.js';
+import * as api from '../../infra/api/__generated__/index.js';
 import { PaymentConfirmationService } from './PaymentConfirmationService.js';
 
-vi.mock('../infra/api/__generated__/index.js', () => ({
+vi.mock('../../infra/api/__generated__/index.js', () => ({
   getV0PaymentsPaymentIdStatus: vi.fn(),
   postV1PaymentsPaymentIdNotify: vi.fn(),
 }));

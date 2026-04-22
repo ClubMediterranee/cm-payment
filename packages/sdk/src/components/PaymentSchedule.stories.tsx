@@ -5,158 +5,73 @@ import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
-import {
-  getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock,
-  getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock,
-  getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock,
-  getGetV1ProposalsProposalIdPaymentScheduleResponseMock,
-} from '../__generated__/index.msw';
 import { Action } from '../__generated__/index.schemas';
 import { PaymentSchedule } from './PaymentSchedule';
 
 const handlers = [
-  http.get('*/v0/customers/*/bookings/booking-total/payment_schedules', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+  http.get('*/rest/payment_schedules/booking/booking-total', () => {
+    return Response.json([
+      {
+        amount: 3079,
+        deadline: '20251006',
         currency: 'EUR',
-        total: 3079,
-        paid: 0,
-        payment_schedules: [
-          {
-            deadline: '20251006',
-            amount: 3079,
-          },
-        ],
-      }),
-    );
+      },
+    ]);
   }),
-  http.get('*/v0/customers/*/bookings/booking-free-deposit/payment_schedules', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+  http.get('*/rest/payment_schedules/booking/booking-free-deposit', () => {
+    return Response.json([
+      {
+        amount: 500,
+        deadline: '20251031',
         currency: 'EUR',
-        total: 500,
-        paid: 0,
-        payment_schedules: [
-          {
-            deadline: '20251031',
-            amount: 500,
-          },
-        ],
-      }),
-    );
+      },
+    ]);
   }),
-  http.get('*/v1/proposals/proposal-total/payment_schedule', () => {
-    return Response.json(
-      getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
+  http.get('*/rest/payment_schedules/proposal/proposal-total', () => {
+    return Response.json([
+      {
+        amount: 2808,
+        deadline: '20251006',
         currency: 'EUR',
-        commission_included: true,
-        households: [
-          {
-            attendees: [
-              {
-                id: 'A',
-                customer_id: '152773840',
-              },
-            ],
-            total: 2808,
-            deposit_repayment_schedule: [
-              {
-                expected_payment_amount: 2808,
-                deadline: '20251006',
-              },
-            ],
-          },
-        ],
-      }),
-    );
+      },
+    ]);
   }),
-  http.get('*/v0/customers/*/bookings/booking-deposit/payment_schedules', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+  http.get('*/rest/payment_schedules/booking/booking-deposit', () => {
+    return Response.json([
+      {
+        amount: 2000,
         currency: 'EUR',
-        total: 2000,
-        paid: 0,
-        payment_schedules: [
-          {
-            deadline: '20251006',
-            amount: 500,
-          },
-          {
-            deadline: '20251031',
-            amount: 1500,
-          },
-        ],
-      }),
-    );
-  }),
-  http.get('*/v1/proposals/proposal-deposit/payment_schedule', () => {
-    return Response.json(
-      getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
+      },
+      {
+        amount: 500,
+        deadline: '20251031',
+        balance: 1500,
         currency: 'EUR',
-        commission_included: true,
-        households: [
-          {
-            attendees: [
-              {
-                id: 'A',
-                customer_id: '152773842',
-              },
-            ],
-            total: 2584,
-            deposit_repayment_schedule: [
-              {
-                expected_payment_amount: 790,
-                deadline: '20251027',
-              },
-              {
-                expected_payment_amount: 1794,
-                deadline: '20251031',
-              },
-            ],
-          },
-        ],
-      }),
-    );
+      },
+    ]);
   }),
-  http.get('*/v0/customers/*/bookings/booking-paid/payment_schedules', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+  http.get('*/rest/payment_schedules/proposal/proposal-deposit', () => {
+    return Response.json([
+      {
+        amount: 2584,
         currency: 'EUR',
-        total: 2584,
-        paid: 790,
-        payment_schedules: [
-          {
-            deadline: '20251031',
-            amount: 1794,
-          },
-        ],
-      }),
-    );
-  }),
-  http.get('*/v0/customers/*/bookings/*/cart/payment_schedule', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock({
+      },
+      {
+        amount: 790,
+        deadline: '20251031',
+        balance: 1794,
         currency: 'EUR',
-        total: 1500,
-        paid: 0,
-        payment_schedules: [
-          {
-            deadline: '20251020',
-            amount: 1500,
-          },
-        ],
-      }),
-    );
+      },
+    ]);
   }),
-  http.get('*/v0/customers/*/bookings/*/cart/accommodations', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock({
-        price: {
-          amount: 800,
-          currency: 'EUR',
-        },
-      }),
-    );
+  http.get('*/rest/payment_schedules/booking/booking-paid', () => {
+    return Response.json([
+      {
+        amount: 1794,
+        deadline: '20251031',
+        currency: 'EUR',
+      },
+    ]);
   }),
   http.get('*/v1/payment_providers', () => {
     return Response.json([]);
@@ -401,7 +316,7 @@ export const FreeDepositInteraction: Story = {
   },
 };
 
-const createBnplMswHandlers = (currency: string) => {
+const createBnplMswHandlers = () => {
   const toDateStr = (date: Date) => date.toISOString().split('T')[0];
   const toCompact = (date: Date) => toDateStr(date).replace(/-/g, '');
   const addDays = (date: Date, days: number) => {
@@ -412,7 +327,6 @@ const createBnplMswHandlers = (currency: string) => {
 
   const departure = faker.date.soon({ days: 10 });
   const returnDate = addDays(departure, 5);
-  const deadline = addDays(departure, -4);
 
   return [
     http.get('*/v2/proposals/proposal-total', () => {
@@ -507,30 +421,14 @@ const createBnplMswHandlers = (currency: string) => {
         ],
       });
     }),
-    http.get('*/v1/proposals/proposal-total/payment_schedule', () => {
-      return Response.json(
-        getGetV1ProposalsProposalIdPaymentScheduleResponseMock({
-          currency,
-          commission_included: true,
-          households: [
-            {
-              attendees: [
-                {
-                  id: 'A',
-                  customer_id: '123456',
-                },
-              ],
-              total: currency === 'USD' ? 3650 : 999.99,
-              deposit_repayment_schedule: [
-                {
-                  expected_payment_amount: currency === 'USD' ? 3650 : 999.99,
-                  deadline: toCompact(deadline),
-                },
-              ],
-            },
-          ],
-        }),
-      );
+    http.get('*/rest/payment_schedules/proposal/proposal-total', () => {
+      return Response.json([
+        {
+          amount: 2808,
+          deadline: '20251006',
+          currency: 'EUR',
+        },
+      ]);
     }),
   ];
 };
@@ -554,7 +452,7 @@ export const BuyNowPayLaterOney: Story = {
     },
     msw: {
       handlers: [
-        ...createBnplMswHandlers('EUR'),
+        ...createBnplMswHandlers(),
         http.get('*/v1/payment_providers', () => {
           return Response.json([
             {
@@ -585,7 +483,7 @@ export const BuyNowPayLaterOney: Story = {
         proposalId="proposal-total"
         locale="fr-FR"
         defaultValues={{
-          amount: '999.99',
+          amount: '2808',
           currency: 'EUR',
         }}
         paymentConfig={{
@@ -619,7 +517,7 @@ export const BuyNowPayLaterUplift: Story = {
     },
     msw: {
       handlers: [
-        ...createBnplMswHandlers('USD'),
+        ...createBnplMswHandlers(),
         http.get('*/v1/payment_providers', () => {
           return Response.json([
             {
@@ -653,7 +551,7 @@ export const BuyNowPayLaterUplift: Story = {
         proposalId="proposal-total"
         locale="en-US"
         defaultValues={{
-          amount: '3650',
+          amount: '2808',
           currency: 'USD',
         }}
         paymentConfig={{

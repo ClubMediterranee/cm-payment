@@ -3,4 +3,5 @@
  */
 export * from './health/HealthController.js';
 export * from './payment_redirect/PaymentRedirectController.js';
+export * from './payment_schedules/PaymentScheduleController.js';
 export * from './version/VersionController.js';

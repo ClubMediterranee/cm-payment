@@ -17,7 +17,7 @@ export const checkFreeDepositAuthorization = async ({
   resortArrivalDate,
   freeDepositConfig,
 }: CheckFreeDepositAuthorizationArgs) => {
-  const { id, type } = getPaymentConfig();
+  const { id, type, customerId } = getPaymentConfig();
   const { enabled, daysBeforeTripToAllowFreeDeposit } = freeDepositConfig;
   if (!enabled) {
     return false;
@@ -26,13 +26,8 @@ export const checkFreeDepositAuthorization = async ({
 
   let apiDeadline = resortArrivalDate;
   if (daysBeforeTripToAllowFreeDeposit === null) {
-    const paymentScheduleOptions = paymentScheduleQueryOptions(id);
-    const paymentSchedule = paymentScheduleOptions.select(
-      await sdkQueryClient.fetchQuery({
-        queryKey: paymentScheduleOptions.queryKey,
-        queryFn: paymentScheduleOptions.queryFn as any, // TODO: fix multiple return typing
-      }),
-    );
+    const paymentScheduleOptions = paymentScheduleQueryOptions(id, type, customerId);
+    const paymentSchedule = await sdkQueryClient.fetchQuery(paymentScheduleOptions);
     apiDeadline = paymentSchedule[0]?.deadline;
   }
 

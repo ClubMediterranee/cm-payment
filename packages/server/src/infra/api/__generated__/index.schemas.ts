@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3386.2
+ * OpenAPI spec version: 0.3406.1
  */
 /**
  * Eligible attendees for this accommodation
@@ -17,8 +17,7 @@ export interface AccommodationArrangementPricePerAttendeeModel {
   amount: number;
 }
 
-export type AccommodationsArrangementPricePerAttendeeModel =
-  AccommodationArrangementPricePerAttendeeModel[];
+export type AccommodationsArrangementPricePerAttendeeModel = AccommodationArrangementPricePerAttendeeModel[];
 
 export interface LinkModel {
   /** Name of the relationship */
@@ -43,8 +42,8 @@ export type LinksModel = LinkModel[];
 /**
  * Remaining stock of this accommodation
  */
-export type GetAccommodationArrangementResponseModelRemainingStock =
-  (typeof GetAccommodationArrangementResponseModelRemainingStock)[keyof typeof GetAccommodationArrangementResponseModelRemainingStock];
+export type GetAccommodationArrangementResponseModelRemainingStock = typeof GetAccommodationArrangementResponseModelRemainingStock[keyof typeof GetAccommodationArrangementResponseModelRemainingStock];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetAccommodationArrangementResponseModelRemainingStock = {
@@ -65,6 +64,8 @@ export interface GetAccommodationArrangementResponseModel {
    */
   currency: string;
   eligible_attendees?: AccommodationArrangementEligibleAttendeesModel;
+  /** if true, this room is eligible to bypass age restrictions (example : 3 adults in a 2 adults - 1 child room) */
+  waivable?: boolean;
   price_per_attendee?: AccommodationsArrangementPricePerAttendeeModel;
   _links?: LinksModel;
 }
@@ -132,8 +133,8 @@ export type ActivityCategoriesModel = ActivityCategoryModel[];
 /**
  * slot in the day for this service
  */
-export type AdditionalServiceTimeSlotsModel =
-  (typeof AdditionalServiceTimeSlotsModel)[keyof typeof AdditionalServiceTimeSlotsModel];
+export type AdditionalServiceTimeSlotsModel = typeof AdditionalServiceTimeSlotsModel[keyof typeof AdditionalServiceTimeSlotsModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdditionalServiceTimeSlotsModel = {
@@ -181,8 +182,8 @@ export type SoldOnlyWith = string[];
 /**
  * Service type
  */
-export type SupportedAdditionalServiceTypes =
-  (typeof SupportedAdditionalServiceTypes)[keyof typeof SupportedAdditionalServiceTypes];
+export type SupportedAdditionalServiceTypes = typeof SupportedAdditionalServiceTypes[keyof typeof SupportedAdditionalServiceTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SupportedAdditionalServiceTypes = {
@@ -316,9 +317,7 @@ export interface RangeNotSatisfiableModel {
 /**
  * Properties related to the configuration
  */
-export interface Properties {
-  [key: string]: unknown;
-}
+export interface Properties { [key: string]: unknown }
 
 /**
  * The user that perform the change on the data
@@ -416,7 +415,8 @@ export type ApiKeysInfoModel = ApiKeyInfoModel[];
 /**
  * Weight unit
  */
-export type WeightUnit = (typeof WeightUnit)[keyof typeof WeightUnit];
+export type WeightUnit = typeof WeightUnit[keyof typeof WeightUnit];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WeightUnit = {
@@ -427,7 +427,8 @@ export const WeightUnit = {
 /**
  * Weather unit
  */
-export type WeatherUnit = (typeof WeatherUnit)[keyof typeof WeatherUnit];
+export type WeatherUnit = typeof WeatherUnit[keyof typeof WeatherUnit];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WeatherUnit = {
@@ -503,7 +504,8 @@ export type ApiLocalesModel = ApiLocaleModel[];
 /**
  * The content-type used to call the Payload URL
  */
-export type ContentType = (typeof ContentType)[keyof typeof ContentType];
+export type ContentType = typeof ContentType[keyof typeof ContentType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ContentType = {
@@ -514,12 +516,10 @@ export const ContentType = {
 /**
  * The headers used to call the Payload URL
  */
-export interface Headers {
-  [key: string]: unknown;
-}
+export interface Headers { [key: string]: unknown }
 
-export type ApiWebhookAllowedEventModel =
-  (typeof ApiWebhookAllowedEventModel)[keyof typeof ApiWebhookAllowedEventModel];
+export type ApiWebhookAllowedEventModel = typeof ApiWebhookAllowedEventModel[keyof typeof ApiWebhookAllowedEventModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ApiWebhookAllowedEventModel = {
@@ -647,8 +647,8 @@ export type CountriesModel = CountryModel[];
 /**
  * type of the customer
  */
-export type CustomerSearchTypeModel =
-  (typeof CustomerSearchTypeModel)[keyof typeof CustomerSearchTypeModel];
+export type CustomerSearchTypeModel = typeof CustomerSearchTypeModel[keyof typeof CustomerSearchTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerSearchTypeModel = {
@@ -662,7 +662,8 @@ export const CustomerSearchTypeModel = {
 /**
  * Phone type
  */
-export type PhoneTypeModel = (typeof PhoneTypeModel)[keyof typeof PhoneTypeModel];
+export type PhoneTypeModel = typeof PhoneTypeModel[keyof typeof PhoneTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PhoneTypeModel = {
@@ -1165,7 +1166,8 @@ export interface DataScoreModel {
 /**
  * type of product
  */
-export type ProductTypeModel = (typeof ProductTypeModel)[keyof typeof ProductTypeModel];
+export type ProductTypeModel = typeof ProductTypeModel[keyof typeof ProductTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductTypeModel = {
@@ -1322,11 +1324,13 @@ export type InsurancesModel = InsuranceModel[];
 /**
  * Legal information unique identifier
  */
-export type Id = (typeof Id)[keyof typeof Id];
+export type Id = typeof Id[keyof typeof Id];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Id = {
   NDC: 'NDC',
+  NDCx: 'NDCx',
   WEBTHEO: 'WEBTHEO',
   THEO: 'THEO',
   EMAIL_OPTIN: 'EMAIL_OPTIN',
@@ -1370,8 +1374,8 @@ export type LegalInfoTypeModel = 'IDCARD' | 'PASSPORT' | 'VISA' | 'ESTA' | 'DRIV
 /**
  * Describe which attendees are concerned by these usages
  */
-export type LegalInfoUsagesConcernedAttendeesModel =
-  (typeof LegalInfoUsagesConcernedAttendeesModel)[keyof typeof LegalInfoUsagesConcernedAttendeesModel];
+export type LegalInfoUsagesConcernedAttendeesModel = typeof LegalInfoUsagesConcernedAttendeesModel[keyof typeof LegalInfoUsagesConcernedAttendeesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LegalInfoUsagesConcernedAttendeesModel = {
@@ -1926,7 +1930,8 @@ export type TransportationCompaniesModel = TransportationCompanyModel[];
 /**
  * Advised display template for this caller
  */
-export type Template = (typeof Template)[keyof typeof Template];
+export type Template = typeof Template[keyof typeof Template];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Template = {
@@ -1943,8 +1948,8 @@ export interface UserPersonalizationModel {
 /**
  * booking's status
  */
-export type BaseBookingStatusModelV2 =
-  (typeof BaseBookingStatusModelV2)[keyof typeof BaseBookingStatusModelV2];
+export type BaseBookingStatusModelV2 = typeof BaseBookingStatusModelV2[keyof typeof BaseBookingStatusModelV2];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BaseBookingStatusModelV2 = {
@@ -1958,8 +1963,8 @@ export const BaseBookingStatusModelV2 = {
 /**
  * booking payment's status
  */
-export type BaseBookingPaymentStatusModelV2 =
-  (typeof BaseBookingPaymentStatusModelV2)[keyof typeof BaseBookingPaymentStatusModelV2];
+export type BaseBookingPaymentStatusModelV2 = typeof BaseBookingPaymentStatusModelV2[keyof typeof BaseBookingPaymentStatusModelV2];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BaseBookingPaymentStatusModelV2 = {
@@ -1973,16 +1978,7 @@ export const BaseBookingPaymentStatusModelV2 = {
 /**
  * type of product
  */
-export type NullableProductTypeModel =
-  | 'CRUISE'
-  | 'TOUR'
-  | 'JOYVIEW'
-  | 'VILLAGE'
-  | 'VILLA'
-  | 'SUMMER_CAMP'
-  | 'URBAN_OASIS'
-  | 'LODGE'
-  | null;
+export type NullableProductTypeModel = 'CRUISE' | 'TOUR' | 'JOYVIEW' | 'VILLAGE' | 'VILLA' | 'SUMMER_CAMP' | 'URBAN_OASIS' | 'LODGE' | null;
 
 export interface BookingProductModel {
   /** Product id. 4 letters identifier, suffixed with season (SUMMER or WINTER) for a double season resort. For CM2C cruises, the format is CM2C{START_DATE}{END_DATE} */
@@ -2043,8 +2039,8 @@ export type BookingOptionDurabilityV1Model = BookingOptionDurabilityV1ModelAnyOf
 /**
  * Attendee type
  */
-export type BookingAttendeeTypesModel =
-  (typeof BookingAttendeeTypesModel)[keyof typeof BookingAttendeeTypesModel];
+export type BookingAttendeeTypesModel = typeof BookingAttendeeTypesModel[keyof typeof BookingAttendeeTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingAttendeeTypesModel = {
@@ -2124,8 +2120,8 @@ export type BookingsV1Model = BaseGetBookingModel[];
 /**
  * Type of national identifier code, null if not recognized
  */
-export type NationalIdentifierCodeTypeModel =
-  (typeof NationalIdentifierCodeTypeModel)[keyof typeof NationalIdentifierCodeTypeModel];
+export type NationalIdentifierCodeTypeModel = typeof NationalIdentifierCodeTypeModel[keyof typeof NationalIdentifierCodeTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NationalIdentifierCodeTypeModel = {
@@ -2155,8 +2151,8 @@ export type NationalIdentifierCodeModel = NationalIdentifierCodeModelAnyOf | nul
 /**
  * Customer loyalty program status (not editable)
  */
-export type CustomerLoyaltyProgramStatusModel =
-  (typeof CustomerLoyaltyProgramStatusModel)[keyof typeof CustomerLoyaltyProgramStatusModel];
+export type CustomerLoyaltyProgramStatusModel = typeof CustomerLoyaltyProgramStatusModel[keyof typeof CustomerLoyaltyProgramStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerLoyaltyProgramStatusModel = {
@@ -2251,7 +2247,8 @@ export type CustomerListModel = CustomerModel[];
 /**
  * Indicates to which type the concerned offer belong. Generic offers are the one that can be applied to a proposal. Specific offers are the one that retrieve information from the content manager
  */
-export type OfferLightTypeModel = (typeof OfferLightTypeModel)[keyof typeof OfferLightTypeModel];
+export type OfferLightTypeModel = typeof OfferLightTypeModel[keyof typeof OfferLightTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OfferLightTypeModel = {
@@ -2368,8 +2365,8 @@ export type PaymentMethodListModel2 = PaymentMethodModel4[];
 /**
  * Codified value, looking like a bank card brand, required by accountant department.
  */
-export type PaymentProvider1CategoryPaymentMethod =
-  (typeof PaymentProvider1CategoryPaymentMethod)[keyof typeof PaymentProvider1CategoryPaymentMethod];
+export type PaymentProvider1CategoryPaymentMethod = typeof PaymentProvider1CategoryPaymentMethod[keyof typeof PaymentProvider1CategoryPaymentMethod];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PaymentProvider1CategoryPaymentMethod = {
@@ -2438,8 +2435,8 @@ export interface ProductAreaModelV2 {
 
 export type ProductAreasModelV1 = ProductAreaModelV2[];
 
-export type ProductLightProductAvailableServicesModel =
-  (typeof ProductLightProductAvailableServicesModel)[keyof typeof ProductLightProductAvailableServicesModel];
+export type ProductLightProductAvailableServicesModel = typeof ProductLightProductAvailableServicesModel[keyof typeof ProductLightProductAvailableServicesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductLightProductAvailableServicesModel = {
@@ -2536,7 +2533,8 @@ export type DurationModel = DurationModelAnyOf | null;
 /**
  * commercial status indicating if the product is OPEN, CLOSED or NOT_YET_OPEN
  */
-export type OpeningStatus = (typeof OpeningStatus)[keyof typeof OpeningStatus];
+export type OpeningStatus = typeof OpeningStatus[keyof typeof OpeningStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OpeningStatus = {
@@ -2651,7 +2649,8 @@ export type ProductFeeModel = ProductFeeModelAnyOf | null;
 /**
  * type of price. (ADULT, or ROOM)
  */
-export type PricePer = (typeof PricePer)[keyof typeof PricePer];
+export type PricePer = typeof PricePer[keyof typeof PricePer];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PricePer = {
@@ -2666,8 +2665,7 @@ export type TermsAndConditionAccommodationModelV1AnyOf = {
   label?: string;
 };
 
-export type TermsAndConditionAccommodationModelV1 =
-  TermsAndConditionAccommodationModelV1AnyOf | null;
+export type TermsAndConditionAccommodationModelV1 = TermsAndConditionAccommodationModelV1AnyOf | null;
 
 export type DepartureCityV1AnyOf = {
   /** departure city id, if any transportation */
@@ -2690,7 +2688,8 @@ export type DepartureLocationModelV1 = DepartureLocationModelV1AnyOf | null;
 /**
  * Indicates the default price display. Either per trip, either per night
  */
-export type DefaultPriceDisplay = (typeof DefaultPriceDisplay)[keyof typeof DefaultPriceDisplay];
+export type DefaultPriceDisplay = typeof DefaultPriceDisplay[keyof typeof DefaultPriceDisplay];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DefaultPriceDisplay = {
@@ -2782,8 +2781,8 @@ export type ProductRangeV1AnyOf = {
  */
 export type ProductRangeV1 = ProductRangeV1AnyOf | null;
 
-export type ProductLightSeasonsModel =
-  (typeof ProductLightSeasonsModel)[keyof typeof ProductLightSeasonsModel];
+export type ProductLightSeasonsModel = typeof ProductLightSeasonsModel[keyof typeof ProductLightSeasonsModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductLightSeasonsModel = {
@@ -2836,7 +2835,8 @@ export interface ProductTag {
 
 export type ProductTags = ProductTag[];
 
-export type ProductLineModel = (typeof ProductLineModel)[keyof typeof ProductLineModel];
+export type ProductLineModel = typeof ProductLineModel[keyof typeof ProductLineModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductLineModel = {
@@ -2890,7 +2890,7 @@ export interface ProductSummaryV1 {
   /** The ClubMed mobile app supports this product for in resort experience features */
   clubmed_mobile_app_availability?: ProductSummaryV1ClubmedMobileAppAvailability;
   /** Easy Arrival supports this product for in product experience features
-   */
+ */
   easy_arrival_availability?: ProductSummaryV1EasyArrivalAvailability;
   comfort?: ProductComfortModelV1;
   departure_details?: DepartureDetailsModel;
@@ -3100,7 +3100,8 @@ export type SearchPriceV1 = SearchPriceV1Product[];
 /**
  * Airports or Train Stations or Ports
  */
-export type Type = (typeof Type)[keyof typeof Type];
+export type Type = typeof Type[keyof typeof Type];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Type = {
@@ -3132,7 +3133,8 @@ export type TransportStationsModel = TransportStationModel[];
 /**
  * Main attendee's last name
  */
-export type LastName = (typeof LastName)[keyof typeof LastName];
+export type LastName = typeof LastName[keyof typeof LastName];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LastName = {
@@ -3257,7 +3259,7 @@ export type ProductEasyArrivalModelIsAvailable = boolean | null;
 
 export interface ProductEasyArrivalModel {
   /** Easy Arrival supports this product for in product experience features
-   */
+ */
   is_available?: ProductEasyArrivalModelIsAvailable;
   /** ClubMed Mobile App description */
   description?: string;
@@ -3440,7 +3442,8 @@ export type ApiWebhookLogEntriesModel = ApiWebhookLogEntryModel[];
 /**
  * booking's status
  */
-export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus];
+export type BookingStatus = typeof BookingStatus[keyof typeof BookingStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingStatus = {
@@ -3464,7 +3467,8 @@ export const BookingStatus = {
 /**
  * define if this booking was sold by CLUBMED or PARTNERS
  */
-export type SoldBy = (typeof SoldBy)[keyof typeof SoldBy];
+export type SoldBy = typeof SoldBy[keyof typeof SoldBy];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SoldBy = {
@@ -3475,7 +3479,8 @@ export const SoldBy = {
 /**
  * type of the vendor
  */
-export type VendorTypeModel = (typeof VendorTypeModel)[keyof typeof VendorTypeModel];
+export type VendorTypeModel = typeof VendorTypeModel[keyof typeof VendorTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const VendorTypeModel = {
@@ -3516,8 +3521,8 @@ export type VendorModel = VendorModelAnyOf | null;
 /**
  * Booking payment's status
  */
-export type BookingDetailPaymentStatusModelV0 =
-  (typeof BookingDetailPaymentStatusModelV0)[keyof typeof BookingDetailPaymentStatusModelV0];
+export type BookingDetailPaymentStatusModelV0 = typeof BookingDetailPaymentStatusModelV0[keyof typeof BookingDetailPaymentStatusModelV0];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingDetailPaymentStatusModelV0 = {
@@ -3541,7 +3546,8 @@ export interface BookingDetailAttendeePriceModelV0 {
 /**
  * The room status
  */
-export type Status = (typeof Status)[keyof typeof Status];
+export type Status = typeof Status[keyof typeof Status];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Status = {
@@ -3588,8 +3594,8 @@ export type Rooms = RoomModel[];
 /**
  * number of persons in the room
  */
-export type AccommodationModelOccupation =
-  (typeof AccommodationModelOccupation)[keyof typeof AccommodationModelOccupation];
+export type AccommodationModelOccupation = typeof AccommodationModelOccupation[keyof typeof AccommodationModelOccupation];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationModelOccupation = {
@@ -3626,8 +3632,8 @@ export type StayModelV0EndDate = string | null;
 /**
  * adult attendees number
  */
-export type StayModelV0AdultsCount =
-  (typeof StayModelV0AdultsCount)[keyof typeof StayModelV0AdultsCount];
+export type StayModelV0AdultsCount = typeof StayModelV0AdultsCount[keyof typeof StayModelV0AdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StayModelV0AdultsCount = {
@@ -3637,8 +3643,8 @@ export const StayModelV0AdultsCount = {
 /**
  * children attendees number
  */
-export type StayModelV0ChildrenCount =
-  (typeof StayModelV0ChildrenCount)[keyof typeof StayModelV0ChildrenCount];
+export type StayModelV0ChildrenCount = typeof StayModelV0ChildrenCount[keyof typeof StayModelV0ChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StayModelV0ChildrenCount = {
@@ -3667,8 +3673,8 @@ export type Stays = StayModelV0[];
 /**
  * type of trip
  */
-export type BookingDetailsOutwardTripModel =
-  (typeof BookingDetailsOutwardTripModel)[keyof typeof BookingDetailsOutwardTripModel];
+export type BookingDetailsOutwardTripModel = typeof BookingDetailsOutwardTripModel[keyof typeof BookingDetailsOutwardTripModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingDetailsOutwardTripModel = {
@@ -3679,8 +3685,8 @@ export const BookingDetailsOutwardTripModel = {
 /**
  * Transportation mode
  */
-export type BookingTransportTypes =
-  (typeof BookingTransportTypes)[keyof typeof BookingTransportTypes];
+export type BookingTransportTypes = typeof BookingTransportTypes[keyof typeof BookingTransportTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingTransportTypes = {
@@ -3730,8 +3736,8 @@ export type DetailAttendeesModelV0EndDate = string | null;
 /**
  * adult attendees number
  */
-export type DetailAttendeesModelV0AdultsCount =
-  (typeof DetailAttendeesModelV0AdultsCount)[keyof typeof DetailAttendeesModelV0AdultsCount];
+export type DetailAttendeesModelV0AdultsCount = typeof DetailAttendeesModelV0AdultsCount[keyof typeof DetailAttendeesModelV0AdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DetailAttendeesModelV0AdultsCount = {
@@ -3741,8 +3747,8 @@ export const DetailAttendeesModelV0AdultsCount = {
 /**
  * children attendees number
  */
-export type DetailAttendeesModelV0ChildrenCount =
-  (typeof DetailAttendeesModelV0ChildrenCount)[keyof typeof DetailAttendeesModelV0ChildrenCount];
+export type DetailAttendeesModelV0ChildrenCount = typeof DetailAttendeesModelV0ChildrenCount[keyof typeof DetailAttendeesModelV0ChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DetailAttendeesModelV0ChildrenCount = {
@@ -3781,8 +3787,8 @@ export type DetailsAttendees = DetailAttendeesModelV0[];
 /**
  * adult attendees number
  */
-export type BookingDetailAttendeeModelV0AdultsCount =
-  (typeof BookingDetailAttendeeModelV0AdultsCount)[keyof typeof BookingDetailAttendeeModelV0AdultsCount];
+export type BookingDetailAttendeeModelV0AdultsCount = typeof BookingDetailAttendeeModelV0AdultsCount[keyof typeof BookingDetailAttendeeModelV0AdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingDetailAttendeeModelV0AdultsCount = {
@@ -3792,8 +3798,8 @@ export const BookingDetailAttendeeModelV0AdultsCount = {
 /**
  * children attendees number
  */
-export type BookingDetailAttendeeModelV0ChildrenCount =
-  (typeof BookingDetailAttendeeModelV0ChildrenCount)[keyof typeof BookingDetailAttendeeModelV0ChildrenCount];
+export type BookingDetailAttendeeModelV0ChildrenCount = typeof BookingDetailAttendeeModelV0ChildrenCount[keyof typeof BookingDetailAttendeeModelV0ChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingDetailAttendeeModelV0ChildrenCount = {
@@ -3860,7 +3866,8 @@ export interface BookingDetailModelV0 {
 /**
  * Name of redis client
  */
-export type Source = (typeof Source)[keyof typeof Source];
+export type Source = typeof Source[keyof typeof Source];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Source = {
@@ -3892,7 +3899,8 @@ export type CacheKeys = CacheKeyList[];
 /**
  * type of customer: GM (customer having at least one booking, GO (Club Med's employee) or PROSPECT (customer without any booking)
  */
-export type CustomerType = (typeof CustomerType)[keyof typeof CustomerType];
+export type CustomerType = typeof CustomerType[keyof typeof CustomerType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerType = {
@@ -4063,7 +4071,8 @@ export type NotificationTypesModel = NotificationTypeModel[];
 /**
  * Indicates to which type the concerned offer belong. Generic offers are the one that can be applied to a proposal. Specific offers are the one that retrieve information from the content manager
  */
-export type OfferTypeModel = (typeof OfferTypeModel)[keyof typeof OfferTypeModel];
+export type OfferTypeModel = typeof OfferTypeModel[keyof typeof OfferTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OfferTypeModel = {
@@ -4287,7 +4296,8 @@ export interface OfferModelV0 {
 /**
  * Automatic Option Status: Set as NONE when the proposal is not tagged as to be converted automatically. Displayed as SCHEDULED when the proposal is tagged as to be converted automatically. CONVERTED indicates that the proposal was tagged as to be converted and has been done successfully. On the contrary, FAILED indicates that the proposal was tagged as to be converted but has failed.
  */
-export type AutoOptionableStatus = (typeof AutoOptionableStatus)[keyof typeof AutoOptionableStatus];
+export type AutoOptionableStatus = typeof AutoOptionableStatus[keyof typeof AutoOptionableStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AutoOptionableStatus = {
@@ -4312,8 +4322,8 @@ export type SavedProposalModelGmNumber = string | null;
 /**
  * children attendees number
  */
-export type SavedProposalModelChildrenCount =
-  (typeof SavedProposalModelChildrenCount)[keyof typeof SavedProposalModelChildrenCount];
+export type SavedProposalModelChildrenCount = typeof SavedProposalModelChildrenCount[keyof typeof SavedProposalModelChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SavedProposalModelChildrenCount = {
@@ -4372,6 +4382,29 @@ export interface SavedProposalModel {
 
 export type SavedProposalsModel = SavedProposalModel[];
 
+/**
+ * List of allowed locales for this seller
+ */
+export type SalesmanLocalesModel = string[];
+
+export interface SalesmanModel {
+  /** seller first name */
+  first_name: string;
+  /** seller last name */
+  last_name: string;
+  /** seller email */
+  email: string;
+  /** seller salesman id */
+  salesman_id: string;
+  /** seller sales network id */
+  sales_network_id: string;
+  /** seller agency full name */
+  agency_full_name: string;
+  /** seller partner id */
+  partner_id: string;
+  locales: SalesmanLocalesModel;
+}
+
 export interface SponsorshipsDiscountsByLocalModel {
   /** Discount on a potential GM (sponsor) trip */
   sponsor_discount: number;
@@ -4394,8 +4427,8 @@ export interface SponsorshipsDiscountsByLocalModel {
 /**
  * Communication channel
  */
-export type ValidOptinChanelModel =
-  (typeof ValidOptinChanelModel)[keyof typeof ValidOptinChanelModel];
+export type ValidOptinChanelModel = typeof ValidOptinChanelModel[keyof typeof ValidOptinChanelModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidOptinChanelModel = {
@@ -4464,7 +4497,8 @@ export type ToursDepartureDatesModel = TourDepartureDatesModel[];
 /**
  * booking's status
  */
-export type BookingStatusesModel = (typeof BookingStatusesModel)[keyof typeof BookingStatusesModel];
+export type BookingStatusesModel = typeof BookingStatusesModel[keyof typeof BookingStatusesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingStatusesModel = {
@@ -4488,8 +4522,8 @@ export const BookingStatusesModel = {
 /**
  * Booking payment's status
  */
-export type BookingDetailPaymentStatusModel =
-  (typeof BookingDetailPaymentStatusModel)[keyof typeof BookingDetailPaymentStatusModel];
+export type BookingDetailPaymentStatusModel = typeof BookingDetailPaymentStatusModel[keyof typeof BookingDetailPaymentStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingDetailPaymentStatusModel = {
@@ -4514,7 +4548,8 @@ export interface BookingDetailAttendeePriceModel {
 /**
  * type of this comment
  */
-export type StayCommentTypeModel = (typeof StayCommentTypeModel)[keyof typeof StayCommentTypeModel];
+export type StayCommentTypeModel = typeof StayCommentTypeModel[keyof typeof StayCommentTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StayCommentTypeModel = {
@@ -4549,7 +4584,8 @@ export type StayModelEndDate = string | null;
 /**
  * adult attendees number
  */
-export type StayModelAdultsCount = (typeof StayModelAdultsCount)[keyof typeof StayModelAdultsCount];
+export type StayModelAdultsCount = typeof StayModelAdultsCount[keyof typeof StayModelAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StayModelAdultsCount = {
@@ -4559,8 +4595,8 @@ export const StayModelAdultsCount = {
 /**
  * children attendees number
  */
-export type StayModelChildrenCount =
-  (typeof StayModelChildrenCount)[keyof typeof StayModelChildrenCount];
+export type StayModelChildrenCount = typeof StayModelChildrenCount[keyof typeof StayModelChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StayModelChildrenCount = {
@@ -4614,8 +4650,8 @@ export type DetailAttendeesModelEndDate = string | null;
 /**
  * adult attendees number
  */
-export type DetailAttendeesModelAdultsCount =
-  (typeof DetailAttendeesModelAdultsCount)[keyof typeof DetailAttendeesModelAdultsCount];
+export type DetailAttendeesModelAdultsCount = typeof DetailAttendeesModelAdultsCount[keyof typeof DetailAttendeesModelAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DetailAttendeesModelAdultsCount = {
@@ -4625,8 +4661,8 @@ export const DetailAttendeesModelAdultsCount = {
 /**
  * children attendees number
  */
-export type DetailAttendeesModelChildrenCount =
-  (typeof DetailAttendeesModelChildrenCount)[keyof typeof DetailAttendeesModelChildrenCount];
+export type DetailAttendeesModelChildrenCount = typeof DetailAttendeesModelChildrenCount[keyof typeof DetailAttendeesModelChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DetailAttendeesModelChildrenCount = {
@@ -4665,8 +4701,8 @@ export type DetailsAttendeesModel = DetailAttendeesModel[];
 /**
  * adult attendees number
  */
-export type BookingDetailAttendeeModelAdultsCount =
-  (typeof BookingDetailAttendeeModelAdultsCount)[keyof typeof BookingDetailAttendeeModelAdultsCount];
+export type BookingDetailAttendeeModelAdultsCount = typeof BookingDetailAttendeeModelAdultsCount[keyof typeof BookingDetailAttendeeModelAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingDetailAttendeeModelAdultsCount = {
@@ -4676,8 +4712,8 @@ export const BookingDetailAttendeeModelAdultsCount = {
 /**
  * children attendees number
  */
-export type BookingDetailAttendeeModelChildrenCount =
-  (typeof BookingDetailAttendeeModelChildrenCount)[keyof typeof BookingDetailAttendeeModelChildrenCount];
+export type BookingDetailAttendeeModelChildrenCount = typeof BookingDetailAttendeeModelChildrenCount[keyof typeof BookingDetailAttendeeModelChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingDetailAttendeeModelChildrenCount = {
@@ -4882,7 +4918,8 @@ export type OfferProductsModel = OfferProductModel[];
 /**
  * Indicates to which subtype the concerned offer belongs. None if this offer has no specific subtype, sales_opening offers are promotions specific to sales opening
  */
-export type OfferSubtypeModel = (typeof OfferSubtypeModel)[keyof typeof OfferSubtypeModel];
+export type OfferSubtypeModel = typeof OfferSubtypeModel[keyof typeof OfferSubtypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OfferSubtypeModel = {
@@ -4893,7 +4930,8 @@ export const OfferSubtypeModel = {
 /**
  * offer code unit
  */
-export type OfferCodeUnitModel = (typeof OfferCodeUnitModel)[keyof typeof OfferCodeUnitModel];
+export type OfferCodeUnitModel = typeof OfferCodeUnitModel[keyof typeof OfferCodeUnitModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OfferCodeUnitModel = {
@@ -5155,8 +5193,7 @@ export interface ExclusiveCollectionIntroductionStrengthModel {
   label: string;
 }
 
-export type ExclusiveCollectionIntroductionStrengthsModel =
-  ExclusiveCollectionIntroductionStrengthModel[];
+export type ExclusiveCollectionIntroductionStrengthsModel = ExclusiveCollectionIntroductionStrengthModel[];
 
 export interface ExclusiveCollectionIntroductionSpecificModel {
   /** Title of the Exclusive Collection space for this product */
@@ -5231,7 +5268,7 @@ export interface ProductModelV1 {
   /** The ClubMed mobile app supports this product for in resort experience features */
   clubmed_mobile_app_availability?: ProductModelV1ClubmedMobileAppAvailability;
   /** Easy Arrival supports this product for in product experience features
-   */
+ */
   easy_arrival_availability?: ProductModelV1EasyArrivalAvailability;
   comfort?: ProductComfortModelV1;
   departure_details?: DepartureDetailsModel;
@@ -5397,8 +5434,8 @@ export interface ProductV2Model {
 /**
  * type of fees
  */
-export type ProposalPriceFeeModel =
-  (typeof ProposalPriceFeeModel)[keyof typeof ProposalPriceFeeModel];
+export type ProposalPriceFeeModel = typeof ProposalPriceFeeModel[keyof typeof ProposalPriceFeeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalPriceFeeModel = {
@@ -5442,7 +5479,8 @@ export type IncludedServicesModel = IncludedServiceModel[];
 /**
  * Package option type
  */
-export type ProposalServiceTypes = (typeof ProposalServiceTypes)[keyof typeof ProposalServiceTypes];
+export type ProposalServiceTypes = typeof ProposalServiceTypes[keyof typeof ProposalServiceTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalServiceTypes = {
@@ -5487,7 +5525,8 @@ export type PackageOptionsModel = PackageOptionModel[];
 /**
  * Discount type. Possible values: OFFER or SPECIFIC or RATE or SERVICE_OFFER
  */
-export type DiscountTypeModel = (typeof DiscountTypeModel)[keyof typeof DiscountTypeModel];
+export type DiscountTypeModel = typeof DiscountTypeModel[keyof typeof DiscountTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DiscountTypeModel = {
@@ -5549,8 +5588,8 @@ export interface ProposalPriceModelV1 {
 /**
  * Discount type. Possible value: OFFER, SPECIFIC or SERVICE_OFFER
  */
-export type ProposalPriceDiscountModel =
-  (typeof ProposalPriceDiscountModel)[keyof typeof ProposalPriceDiscountModel];
+export type ProposalPriceDiscountModel = typeof ProposalPriceDiscountModel[keyof typeof ProposalPriceDiscountModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalPriceDiscountModel = {
@@ -5631,8 +5670,8 @@ export type ProposalOptionDurationModelV1 = ProposalOptionDurationModelV1AnyOf |
 /**
  * customer's status
  */
-export type ProposalResponseCustomerTypeModel =
-  (typeof ProposalResponseCustomerTypeModel)[keyof typeof ProposalResponseCustomerTypeModel];
+export type ProposalResponseCustomerTypeModel = typeof ProposalResponseCustomerTypeModel[keyof typeof ProposalResponseCustomerTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalResponseCustomerTypeModel = {
@@ -5666,7 +5705,8 @@ export type ProposalHouseholdsModelV1 = HouseholdModel[];
 /**
  * transportation way
  */
-export type Way = (typeof Way)[keyof typeof Way];
+export type Way = typeof Way[keyof typeof Way];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Way = {
@@ -5677,7 +5717,8 @@ export const Way = {
 /**
  * transportation type. First one if many
  */
-export type TransportationType = (typeof TransportationType)[keyof typeof TransportationType];
+export type TransportationType = typeof TransportationType[keyof typeof TransportationType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TransportationType = {
@@ -5690,8 +5731,8 @@ export const TransportationType = {
 /**
  * used to determine which cancellation policy is to be applied to this travel
  */
-export type CancellationPolicyTypeModel =
-  (typeof CancellationPolicyTypeModel)[keyof typeof CancellationPolicyTypeModel];
+export type CancellationPolicyTypeModel = typeof CancellationPolicyTypeModel[keyof typeof CancellationPolicyTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CancellationPolicyTypeModel = {
@@ -5699,6 +5740,7 @@ export const CancellationPolicyTypeModel = {
   THEO: 'THEO',
   WEBTHEO: 'WEBTHEO',
   NDC: 'NDC',
+  NDCx: 'NDCx',
 } as const;
 
 /**
@@ -5793,6 +5835,29 @@ export interface ProposalResponseModelV1 {
   vendor?: ProposalResponseVendorModel;
 }
 
+export interface BookingAttendee {
+  id: string;
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id?: string;
+  gm_number?: string;
+  civility?: string;
+  first_name?: string;
+  unicode_first_name?: string;
+  last_name?: string;
+  unicode_last_name?: string;
+  birthdate?: string;
+  email?: string;
+  identity_number?: string;
+  main_contact: boolean;
+  phones?: PhonesModel;
+  _links?: LinksModel;
+}
+
+export type BookingAttendeesModel = BookingAttendee[];
+
 export interface BookingInterventionAssetModel {
   /** The asset code */
   code: string;
@@ -5805,8 +5870,8 @@ export type BookingInterventionAssetsModel = BookingInterventionAssetModel[];
 /**
  * The intervention status
  */
-export type BookingRoomInterventionsStatusModel =
-  (typeof BookingRoomInterventionsStatusModel)[keyof typeof BookingRoomInterventionsStatusModel];
+export type BookingRoomInterventionsStatusModel = typeof BookingRoomInterventionsStatusModel[keyof typeof BookingRoomInterventionsStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingRoomInterventionsStatusModel = {
@@ -5839,29 +5904,6 @@ export interface BookingRoomInterventionModel {
 }
 
 export type BookingRoomInterventionsModel = BookingRoomInterventionModel[];
-
-export interface BookingAttendee {
-  id: string;
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id?: string;
-  gm_number?: string;
-  civility?: string;
-  first_name?: string;
-  unicode_first_name?: string;
-  last_name?: string;
-  unicode_last_name?: string;
-  birthdate?: string;
-  email?: string;
-  identity_number?: string;
-  main_contact: boolean;
-  phones?: PhonesModel;
-  _links?: LinksModel;
-}
-
-export type BookingAttendeesModel = BookingAttendee[];
 
 /**
  * TTL
@@ -6168,8 +6210,8 @@ export type Birthdates = string[];
 /**
  * indicates the type of proposal that has been saved on the customer account
  */
-export type ProposalSummaryTypeModel =
-  (typeof ProposalSummaryTypeModel)[keyof typeof ProposalSummaryTypeModel];
+export type ProposalSummaryTypeModel = typeof ProposalSummaryTypeModel[keyof typeof ProposalSummaryTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalSummaryTypeModel = {
@@ -6267,8 +6309,8 @@ export interface CreateBookmarkPriceModel {
 /**
  * adult attendees number
  */
-export type BookmarkModelAdultsCount =
-  (typeof BookmarkModelAdultsCount)[keyof typeof BookmarkModelAdultsCount];
+export type BookmarkModelAdultsCount = typeof BookmarkModelAdultsCount[keyof typeof BookmarkModelAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookmarkModelAdultsCount = {
@@ -7004,7 +7046,8 @@ export interface LoyaltyProgramSimulationModel {
   points: number;
 }
 
-export type ChannelCode = (typeof ChannelCode)[keyof typeof ChannelCode];
+export type ChannelCode = typeof ChannelCode[keyof typeof ChannelCode];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ChannelCode = {
@@ -7074,7 +7117,8 @@ export type PaymentMethodListModel = PaymentMethodModel4[];
 /**
  * What is paid : booking, upsale, option,...
  */
-export type ActionCode = (typeof ActionCode)[keyof typeof ActionCode];
+export type ActionCode = typeof ActionCode[keyof typeof ActionCode];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActionCode = {
@@ -7082,19 +7126,20 @@ export const ActionCode = {
   CALL_CENTER: 'CALL_CENTER',
   PAYMENT_BOOKING: 'PAYMENT_BOOKING',
   PAYMENT_OPTION: 'PAYMENT_OPTION',
-  PAYMENT_CV: 'PAYMENT_CV',
   PAYMENT_SOLDE: 'PAYMENT_SOLDE',
   REFUND: 'REFUND',
   PAYMENT_UPGRADE_PACKAGE: 'PAYMENT_UPGRADE_PACKAGE',
   PAYMENT_UPGRADE_ACCOMODATION: 'PAYMENT_UPGRADE_ACCOMODATION',
   PAYMENT_UPGRADE_SERVICE: 'PAYMENT_UPGRADE_SERVICE',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
   PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
 } as const;
 
 /**
  * Payment status
  */
-export type StatutPaiement = (typeof StatutPaiement)[keyof typeof StatutPaiement];
+export type StatutPaiement = typeof StatutPaiement[keyof typeof StatutPaiement];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StatutPaiement = {
@@ -7240,7 +7285,8 @@ export type MediaListModel = string[];
 /**
  * Station's period status
  */
-export type StationStatuses = (typeof StationStatuses)[keyof typeof StationStatuses];
+export type StationStatuses = typeof StationStatuses[keyof typeof StationStatuses];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StationStatuses = {
@@ -7280,7 +7326,8 @@ export type SectorsModel = SectorModel[];
 /**
  * Snow quality
  */
-export type SnowQuality = (typeof SnowQuality)[keyof typeof SnowQuality];
+export type SnowQuality = typeof SnowQuality[keyof typeof SnowQuality];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SnowQuality = {
@@ -7304,7 +7351,8 @@ export type ValueUnitModel = ValueUnitModelAnyOf | null;
 /**
  * Avalanche risk level
  */
-export type AvalancheRiskLevel = (typeof AvalancheRiskLevel)[keyof typeof AvalancheRiskLevel];
+export type AvalancheRiskLevel = typeof AvalancheRiskLevel[keyof typeof AvalancheRiskLevel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AvalancheRiskLevel = {
@@ -7319,8 +7367,8 @@ export const AvalancheRiskLevel = {
 /**
  * Thunderstorm risk level
  */
-export type ThunderstormRiskLevel =
-  (typeof ThunderstormRiskLevel)[keyof typeof ThunderstormRiskLevel];
+export type ThunderstormRiskLevel = typeof ThunderstormRiskLevel[keyof typeof ThunderstormRiskLevel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ThunderstormRiskLevel = {
@@ -7334,7 +7382,8 @@ export const ThunderstormRiskLevel = {
 /**
  * Morning sky type
  */
-export type SkyType = (typeof SkyType)[keyof typeof SkyType];
+export type SkyType = typeof SkyType[keyof typeof SkyType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SkyType = {
@@ -7363,8 +7412,8 @@ export interface Morning {
 /**
  * Afternoon sky type
  */
-export type ProductWinterSportInformationForeCastModel =
-  (typeof ProductWinterSportInformationForeCastModel)[keyof typeof ProductWinterSportInformationForeCastModel];
+export type ProductWinterSportInformationForeCastModel = typeof ProductWinterSportInformationForeCastModel[keyof typeof ProductWinterSportInformationForeCastModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductWinterSportInformationForeCastModel = {
@@ -7393,16 +7442,7 @@ export interface Afternoon {
 /**
  * Wind's direction
  */
-export type Direction =
-  | 'NORTH'
-  | 'WEST'
-  | 'EAST'
-  | 'SOUTH'
-  | 'NORTH_EAST'
-  | 'NORTH_WEST'
-  | 'SOUTH_EAST'
-  | 'SOUTH_WEST'
-  | null;
+export type Direction = 'NORTH' | 'WEST' | 'EAST' | 'SOUTH' | 'NORTH_EAST' | 'NORTH_WEST' | 'SOUTH_EAST' | 'SOUTH_WEST' | null;
 
 export interface Wind {
   strength?: ValueUnitModel;
@@ -7442,8 +7482,8 @@ export type SectorIds = number[];
 /**
  * Period's status
  */
-export type ProductWinterSportInformationStationStatePeriodsStatusModel =
-  (typeof ProductWinterSportInformationStationStatePeriodsStatusModel)[keyof typeof ProductWinterSportInformationStationStatePeriodsStatusModel];
+export type ProductWinterSportInformationStationStatePeriodsStatusModel = typeof ProductWinterSportInformationStationStatePeriodsStatusModel[keyof typeof ProductWinterSportInformationStationStatePeriodsStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductWinterSportInformationStationStatePeriodsStatusModel = {
@@ -7465,7 +7505,8 @@ export interface Periods {
 /**
  * Track's type
  */
-export type TrackTypes = (typeof TrackTypes)[keyof typeof TrackTypes];
+export type TrackTypes = typeof TrackTypes[keyof typeof TrackTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TrackTypes = {
@@ -7493,7 +7534,8 @@ export const TrackTypes = {
 /**
  * Track's level
  */
-export type Level = (typeof Level)[keyof typeof Level];
+export type Level = typeof Level[keyof typeof Level];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Level = {
@@ -7523,8 +7565,8 @@ export const Level = {
 /**
  * Track's snow quality
  */
-export type TrackSnowQualityTypes =
-  (typeof TrackSnowQualityTypes)[keyof typeof TrackSnowQualityTypes];
+export type TrackSnowQualityTypes = typeof TrackSnowQualityTypes[keyof typeof TrackSnowQualityTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TrackSnowQualityTypes = {
@@ -7563,7 +7605,8 @@ export type TracksModel = TrackModel[];
 /**
  * Ski lift's type
  */
-export type SkiLiftTypes = (typeof SkiLiftTypes)[keyof typeof SkiLiftTypes];
+export type SkiLiftTypes = typeof SkiLiftTypes[keyof typeof SkiLiftTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SkiLiftTypes = {
@@ -7630,7 +7673,8 @@ export type ConnectionsModel = ConnectionModel[];
 /**
  * Type
  */
-export type WebcamTypes = (typeof WebcamTypes)[keyof typeof WebcamTypes];
+export type WebcamTypes = typeof WebcamTypes[keyof typeof WebcamTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WebcamTypes = {
@@ -7644,7 +7688,8 @@ export const WebcamTypes = {
 /**
  * Format
  */
-export type Format = (typeof Format)[keyof typeof Format];
+export type Format = typeof Format[keyof typeof Format];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Format = {
@@ -7658,7 +7703,8 @@ export const Format = {
 /**
  * Resolution
  */
-export type Resolution = (typeof Resolution)[keyof typeof Resolution];
+export type Resolution = typeof Resolution[keyof typeof Resolution];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Resolution = {
@@ -7836,8 +7882,7 @@ export interface TourSpecificityDefaultIncludedCountryModel {
   label: string;
 }
 
-export type TourSpecificityDefaultIncludedCountriesModel =
-  TourSpecificityDefaultIncludedCountryModel[];
+export type TourSpecificityDefaultIncludedCountriesModel = TourSpecificityDefaultIncludedCountryModel[];
 
 export interface TourSpecificityModel {
   board_types?: TourSpecificyBoardTypesModel;
@@ -7957,7 +8002,8 @@ export type StopoversModel = StopoverModel[];
 /**
  * size unit of the room
  */
-export type RoomAreaUnitModel = (typeof RoomAreaUnitModel)[keyof typeof RoomAreaUnitModel];
+export type RoomAreaUnitModel = typeof RoomAreaUnitModel[keyof typeof RoomAreaUnitModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RoomAreaUnitModel = {
@@ -8028,7 +8074,8 @@ export type RoomsList = RoomsItem[];
 /**
  * The event type (ACTIVITY, DRESSCODE)
  */
-export type TimeslotsTypeModel = (typeof TimeslotsTypeModel)[keyof typeof TimeslotsTypeModel];
+export type TimeslotsTypeModel = typeof TimeslotsTypeModel[keyof typeof TimeslotsTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TimeslotsTypeModel = {
@@ -8153,7 +8200,8 @@ export type Strengths = string[];
 /**
  * Product season. Deprecated: use seasons instead.
  */
-export type Season = (typeof Season)[keyof typeof Season];
+export type Season = typeof Season[keyof typeof Season];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Season = {
@@ -8162,8 +8210,8 @@ export const Season = {
   ALL_YEAR: 'ALL_YEAR',
 } as const;
 
-export type ProductLightModelValidSeasons =
-  (typeof ProductLightModelValidSeasons)[keyof typeof ProductLightModelValidSeasons];
+export type ProductLightModelValidSeasons = typeof ProductLightModelValidSeasons[keyof typeof ProductLightModelValidSeasons];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductLightModelValidSeasons = {
@@ -8256,18 +8304,12 @@ export interface ProductList {
  */
 export type Product = ProductList[];
 
-export interface ProductMustTryExperience {
-  /** Experience id */
-  id: string;
-  /** Experience title in few words */
-  title: string;
-  /** Experience description in few word */
-  description: string;
-  /** Experience immersive picture */
-  image: string;
+export interface Period {
+  opening?: string;
+  closing?: string;
 }
 
-export type ProductMustTryExperiences = ProductMustTryExperience[];
+export type OpeningDateListModel = Period[];
 
 export interface MonthlyWeatherModel {
   /** month of the year (starting from 1) */
@@ -8587,8 +8629,8 @@ export interface ActivitiesThematic {
 
 export type ActivitiesThematics = ActivitiesThematic[];
 
-export type AccommodationCategoryModelRanking =
-  (typeof AccommodationCategoryModelRanking)[keyof typeof AccommodationCategoryModelRanking];
+export type AccommodationCategoryModelRanking = typeof AccommodationCategoryModelRanking[keyof typeof AccommodationCategoryModelRanking];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationCategoryModelRanking = {
@@ -8675,7 +8717,8 @@ export interface PspOfResortModel {
 /**
  * External service type
  */
-export type ExternalServiceType = (typeof ExternalServiceType)[keyof typeof ExternalServiceType];
+export type ExternalServiceType = typeof ExternalServiceType[keyof typeof ExternalServiceType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ExternalServiceType = {
@@ -8686,8 +8729,8 @@ export const ExternalServiceType = {
 /**
  * white label service subtype
  */
-export type ExternalServiceSubtype =
-  (typeof ExternalServiceSubtype)[keyof typeof ExternalServiceSubtype];
+export type ExternalServiceSubtype = typeof ExternalServiceSubtype[keyof typeof ExternalServiceSubtype];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ExternalServiceSubtype = {
@@ -8731,7 +8774,8 @@ export type AccommodationCodes = AccommodationCodeModel[];
 /**
  * Catalog type indicate if the category comes from standard Clubmed catalog or from Resort catalog.
  */
-export type CatalogType = (typeof CatalogType)[keyof typeof CatalogType];
+export type CatalogType = typeof CatalogType[keyof typeof CatalogType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CatalogType = {
@@ -8758,8 +8802,8 @@ export type ChildrenActivityIdsModel = string[];
 /**
  * activity ranking to be used to sort a product activity list.
  */
-export type ProductActivityCategoryRankingModel =
-  (typeof ProductActivityCategoryRankingModel)[keyof typeof ProductActivityCategoryRankingModel];
+export type ProductActivityCategoryRankingModel = typeof ProductActivityCategoryRankingModel[keyof typeof ProductActivityCategoryRankingModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductActivityCategoryRankingModel = {
@@ -8791,8 +8835,8 @@ export type ActivityKeywordsModel = ActivityKeywordModel[];
 /**
  * slot in the day for this activity
  */
-export type ActivityPriceTimeslotModel =
-  (typeof ActivityPriceTimeslotModel)[keyof typeof ActivityPriceTimeslotModel];
+export type ActivityPriceTimeslotModel = typeof ActivityPriceTimeslotModel[keyof typeof ActivityPriceTimeslotModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivityPriceTimeslotModel = {
@@ -8902,8 +8946,7 @@ export type ProductActivityCategoryGpsCoordinatesAnyOf = {
   longitude: string;
 };
 
-export type ProductActivityCategoryGpsCoordinates =
-  ProductActivityCategoryGpsCoordinatesAnyOf | null;
+export type ProductActivityCategoryGpsCoordinates = ProductActivityCategoryGpsCoordinatesAnyOf | null;
 
 export interface ProductActivityCategory {
   /** id of this category */
@@ -8967,8 +9010,8 @@ export type ProductAreaComfortV0 = ProductAreaComfortV0AnyOf | null;
 /**
  * Area ranking to be used to sort a area list
  */
-export type ProductAreasRankingModelV0 =
-  (typeof ProductAreasRankingModelV0)[keyof typeof ProductAreasRankingModelV0];
+export type ProductAreasRankingModelV0 = typeof ProductAreasRankingModelV0[keyof typeof ProductAreasRankingModelV0];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductAreasRankingModelV0 = {
@@ -9043,8 +9086,8 @@ export type ProductAreasV0 = ProductAreaV0[];
 /**
  * Availability status of the product at this date
  */
-export type BookableDatesCalenderAvailabilityStatusModelV0 =
-  (typeof BookableDatesCalenderAvailabilityStatusModelV0)[keyof typeof BookableDatesCalenderAvailabilityStatusModelV0];
+export type BookableDatesCalenderAvailabilityStatusModelV0 = typeof BookableDatesCalenderAvailabilityStatusModelV0[keyof typeof BookableDatesCalenderAvailabilityStatusModelV0];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookableDatesCalenderAvailabilityStatusModelV0 = {
@@ -9273,7 +9316,8 @@ export interface GeoData {
 /**
  * Highlight type
  */
-export type HighlightTypeModel = (typeof HighlightTypeModel)[keyof typeof HighlightTypeModel];
+export type HighlightTypeModel = typeof HighlightTypeModel[keyof typeof HighlightTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const HighlightTypeModel = {
@@ -9343,8 +9387,8 @@ export type MiceStrengths = string[];
 /**
  * Price per night or per trip
  */
-export type MiceBestPriceTypeModel =
-  (typeof MiceBestPriceTypeModel)[keyof typeof MiceBestPriceTypeModel];
+export type MiceBestPriceTypeModel = typeof MiceBestPriceTypeModel[keyof typeof MiceBestPriceTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MiceBestPriceTypeModel = {
@@ -9379,18 +9423,24 @@ export interface MiceModel {
   best_price?: MiceBestPriceModel;
 }
 
-export interface Period {
-  opening?: string;
-  closing?: string;
+export interface ProductMustTryExperience {
+  /** Experience id */
+  id: string;
+  /** Experience title in few words */
+  title: string;
+  /** Experience description in few word */
+  description: string;
+  /** Experience immersive picture */
+  image: string;
 }
 
-export type OpeningDateListModel = Period[];
+export type ProductMustTryExperiences = ProductMustTryExperience[];
 
 /**
  * season on which the price is valid
  */
-export type ProductPackageInformativePriceSeasonModel =
-  (typeof ProductPackageInformativePriceSeasonModel)[keyof typeof ProductPackageInformativePriceSeasonModel];
+export type ProductPackageInformativePriceSeasonModel = typeof ProductPackageInformativePriceSeasonModel[keyof typeof ProductPackageInformativePriceSeasonModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductPackageInformativePriceSeasonModel = {
@@ -9459,13 +9509,7 @@ export type Packages = ProductPackage[];
 /**
  * type of the period, can be one of the opening or closing period types
  */
-export type PeriodsInfoTypeModel =
-  | 'SELLABLE_DATES'
-  | 'EXCLUSIVITY'
-  | 'UNAVAILABLE'
-  | 'EVENTS'
-  | 'EXPLOITATION_DATES'
-  | null;
+export type PeriodsInfoTypeModel = 'SELLABLE_DATES' | 'EXCLUSIVITY' | 'UNAVAILABLE' | 'EVENTS' | 'EXPLOITATION_DATES' | null;
 
 /**
  * inclusive start date
@@ -9603,6 +9647,10 @@ export interface PracticalInformationModel {
   health_formalities: string;
   passport_and_visas: string;
   checks_information?: ChecksInformationModel;
+  /** Provides information about the mandatory safety briefing held on embarkation day. 
+
+This helps guests understand safety procedures and ensures compliance with maritime regulations. */
+  safety_information?: string;
   additional_information_categories: AdditionalInformationCategories;
   safe_together: PracticalInfoSafeTogetherModel;
 }
@@ -10028,7 +10076,8 @@ export interface TripAdvisorExtendedModel {
 /**
  * temperature unit code
  */
-export type Unit = (typeof Unit)[keyof typeof Unit];
+export type Unit = typeof Unit[keyof typeof Unit];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Unit = {
@@ -10084,7 +10133,8 @@ export interface ProductWeatherForecastTemperatureModel {
 /**
  * code for the weather description. Can be used to display a weather icon
  */
-export type Code = (typeof Code)[keyof typeof Code];
+export type Code = typeof Code[keyof typeof Code];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Code = {
@@ -10233,10 +10283,284 @@ export interface SpaInformationModel {
   cancellation_hours_limit: SpaInformationModelCancellationHoursLimit;
 }
 
+export interface TransportAxisModel {
+  /** Departure city code */
+  departure_city_code: string;
+  /** Arrival city code */
+  arrival_city_code: string;
+}
+
+export type GetProposalTransportAxesModel = TransportAxisModel[];
+
+export interface SellerCommissionModel {
+  /** earnings for a sale */
+  total: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+/**
+ * The type of rate
+ */
+export type RateType = typeof RateType[keyof typeof RateType];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const RateType = {
+  STANDARD_RATE: 'STANDARD_RATE',
+  FLEXIBLE_RATE: 'FLEXIBLE_RATE',
+  NON_REFUNDABLE_RATE: 'NON_REFUNDABLE_RATE',
+} as const;
+
+export interface ProposalGetAlternativeRateModel {
+  type: RateType;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  /** Indicates the price difference between the applicable rate and the already applied rate of the given proposal */
+  price_difference: number;
+}
+
+export type ProposalAlternativeRatesModel = ProposalGetAlternativeRateModel[];
+
+/**
+ * Attendee type [MAIN, KID, ADULT]
+ */
+export type AccommodationsArrangementAttendeeTypeModel = typeof AccommodationsArrangementAttendeeTypeModel[keyof typeof AccommodationsArrangementAttendeeTypeModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AccommodationsArrangementAttendeeTypeModel = {
+  MAIN: 'MAIN',
+  ADULT: 'ADULT',
+  KID: 'KID',
+} as const;
+
+/**
+ *  
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
+ */
+export type AccommodationsArrangementAttendeeModelBirthdate = string | null;
+
+export interface AccommodationsArrangementAttendeeModel {
+  /** Attendee id in this proposal */
+  id: string;
+  type: AccommodationsArrangementAttendeeTypeModel;
+  /**  
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  birthdate: AccommodationsArrangementAttendeeModelBirthdate;
+  /** Customer id */
+  customer_id?: string;
+  /** Room id */
+  room_id?: string;
+}
+
+export type AccommodationsArrangementAttendeesModel = AccommodationsArrangementAttendeeModel[];
+
+export interface AccommodationCategoryWithLinkModel {
+  /** id of the category */
+  id: string;
+  /** label of the category */
+  label: string;
+  _links?: LinksModel;
+}
+
+export type AccommodationCategoriesWithLinksModel = AccommodationCategoryWithLinkModel[];
+
+export interface AccommodationArrangementResponseV0Model {
+  /** id of the accommodation */
+  accommodation_id: string;
+  /** label of the accommodation */
+  label: string;
+  /** number of accommodations where the attendees will be allocated */
+  quantity: number;
+  /** Indicate if the room is sharable */
+  shared_room: boolean;
+  attendees: AccommodationsArrangementAttendeesModel;
+  accommodation_categories?: AccommodationCategoriesWithLinksModel;
+  _links?: LinksModel;
+}
+
+export type AccommodationsArrangementResponseListV0Model = AccommodationArrangementResponseV0Model[];
+
+export interface ProposalPackageDifferentialPriceModel {
+  /** Indicates the price difference between the applicable package and the already applied package of the given proposal. */
+  amount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
+export interface ProposalPackageModel {
+  /** a package_id from /products/{product_id}/packages resource */
+  id: string;
+  differential_price?: ProposalPackageDifferentialPriceModel;
+  _links?: LinksModel;
+}
+
+export type ProposalPackagesModel = ProposalPackageModel[];
+
+export interface AvailableRoomModel {
+  /** Id of the room */
+  id: string;
+  /** Id of the accommodation  */
+  accommodation_id: string;
+  /** Number of occupants in the accommodation */
+  occupancy?: number;
+  _links?: LinksModel;
+}
+
+export type AvailableRoomsModel = AvailableRoomModel[];
+
+/**
+ * Indicates the way of the journey (outbound / inbound)
+ */
+export type TransportConfigurationJourneyWayType = typeof TransportConfigurationJourneyWayType[keyof typeof TransportConfigurationJourneyWayType];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TransportConfigurationJourneyWayType = {
+  INBOUND: 'INBOUND',
+  OUTBOUND: 'OUTBOUND',
+  WITHIN_TOUR: 'WITHIN_TOUR',
+} as const;
+
+/**
+ * Full name of the city
+ */
+export type TravelSectionCityLabel = string | null;
+
+export interface TravelSectionCity {
+  /** City code, on three letters */
+  id?: string;
+  /** Full name of the city */
+  label?: TravelSectionCityLabel;
+}
+
+export type TravelSectionStepTimeModelAnyOf = {
+  /** Indicates the journey's minimum time */
+  min?: string;
+  /** Indicates the journey's minimum time */
+  max?: string;
+};
+
+export type TravelSectionStepTimeModel = TravelSectionStepTimeModelAnyOf | null;
+
+export interface TravelSectionStepWithTimeObjectModel {
+  city?: TravelSectionCity;
+  /** date */
+  date?: string;
+  time?: TravelSectionStepTimeModel;
+}
+
+export interface TransportConfigurationJourneyModel {
+  way: TransportConfigurationJourneyWayType;
+  departure?: TravelSectionStepWithTimeObjectModel;
+  arrival?: TravelSectionStepWithTimeObjectModel;
+}
+
+export type TransportConfigurationJourneysModel = TransportConfigurationJourneyModel[];
+
+/**
+ * Transport information indicating its class. [ PLANE_ECONOMY, PLANE_ECONOMY_PLUS, PLANE_BUSINESS, PLANE_PREMIUM, PLANE_FIRST, TRAIN_FIRST, TRAIN_SECOND ]
+ */
+export type TransportConfigurationTransportClassModel = typeof TransportConfigurationTransportClassModel[keyof typeof TransportConfigurationTransportClassModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TransportConfigurationTransportClassModel = {
+  PLANE_ECONOMY: 'PLANE_ECONOMY',
+  PLANE_ECONOMY_PLUS: 'PLANE_ECONOMY_PLUS',
+  PLANE_BUSINESS: 'PLANE_BUSINESS',
+  PLANE_PREMIUM: 'PLANE_PREMIUM',
+  PLANE_FIRST: 'PLANE_FIRST',
+  TRAIN_FIRST: 'TRAIN_FIRST',
+  TRAIN_SECOND: 'TRAIN_SECOND',
+} as const;
+
+export type TransportConfigurationConnectionDurationModelAnyOf = {
+  /** Indicates the proposal's transport connection minimum duration (in minutes) */
+  min: number;
+  /** Indicates the proposal's transport connection maximum duration (in minutes) */
+  max: number;
+};
+
+export type TransportConfigurationConnectionDurationModel = TransportConfigurationConnectionDurationModelAnyOf | null;
+
+export type TransportConfigurationIsTransportStationsChangedAllowedModelAnyOf = {
+  /** Indicates if the airport change between connections is allowed or not. For exemple, if allowed, an attendee might have a connection in Paris Orly, and go to CDG to take his next flight. */
+  on_connection: boolean;
+  /** Indicates if the airport change between inbound and outbound is allowed or not. For exemple, if allowed, an attendee can leave from Paris Orly and come back at Paris CDG. */
+  along_roundtrip: boolean;
+};
+
+export type TransportConfigurationIsTransportStationsChangedAllowedModel = TransportConfigurationIsTransportStationsChangedAllowedModelAnyOf | null;
+
+/**
+ * Indicates the list of imposed companies
+ */
+export type TransportConfigurationImposedCompaniesModel = string[];
+
+/**
+ * Indicates the list of imposed connection cities
+ */
+export type TransportConfigurationImposedConnectionCitiesModel = string[];
+
+/**
+ * Indicates the list of excluded companies
+ */
+export type TransportConfigurationExcludedCompaniesModel = string[];
+
+/**
+ * Indicates the list of Clubmed blacklisted companies for the concerned transport axe.
+ */
+export type TransportConfigurationForbiddenCompaniesModel = string[];
+
+/**
+ * Indicates the list of excluded connection cities
+ */
+export type TransportConfigurationExcludedConnectionCitiesModel = string[];
+
+/**
+ * Indicates the proposal's max connections
+ */
+export type TransportConfigurationModelMaxConnections = number | null;
+
+export interface TransportConfigurationModel {
+  journeys?: TransportConfigurationJourneysModel;
+  transport_class?: TransportConfigurationTransportClassModel;
+  /** Indicates if the proposal's default transportation is a direct flight only */
+  is_direct_flight_only: boolean;
+  /** Indicates the proposal's max connections */
+  max_connections: TransportConfigurationModelMaxConnections;
+  transport_connection_duration?: TransportConfigurationConnectionDurationModel;
+  is_transport_stations_changes_allowed?: TransportConfigurationIsTransportStationsChangedAllowedModel;
+  /** Indicates if cabin mixing is allowed or not */
+  is_cabin_mixing_allowed: boolean;
+  /** Indicates if flight companies mixing is allowed or not */
+  is_companies_mixing_allowed: boolean;
+  imposed_companies?: TransportConfigurationImposedCompaniesModel;
+  imposed_connection_cities?: TransportConfigurationImposedConnectionCitiesModel;
+  excluded_companies?: TransportConfigurationExcludedCompaniesModel;
+  forbidden_companies?: TransportConfigurationForbiddenCompaniesModel;
+  excluded_connection_cities?: TransportConfigurationExcludedConnectionCitiesModel;
+}
+
 /**
  * slot in the day for this service
  */
-export type TimeSlot = (typeof TimeSlot)[keyof typeof TimeSlot];
+export type TimeSlot = typeof TimeSlot[keyof typeof TimeSlot];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TimeSlot = {
@@ -10254,8 +10578,8 @@ export const TimeSlot = {
 /**
  * type of the service
  */
-export type ValidProposalServiceTypesModel =
-  (typeof ValidProposalServiceTypesModel)[keyof typeof ValidProposalServiceTypesModel];
+export type ValidProposalServiceTypesModel = typeof ValidProposalServiceTypesModel[keyof typeof ValidProposalServiceTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidProposalServiceTypesModel = {
@@ -10303,6 +10627,128 @@ export interface ServiceAttendee {
 export type ProposalServiceScheduleAttendees = ServiceAttendee[];
 
 /**
+ * Direction of transfer
+ */
+export type ValidServiceTransferInformationWaysV2Model = 'INBOUND' | 'OUTBOUND' | 'WITHIN_TOUR' | null;
+
+/**
+ * travel company id (IATA)
+ * @maxLength 3
+ */
+export type ProposalTransferTravelCompanyModelAnyOfId = string | null;
+
+/**
+ * travel company label
+ */
+export type ProposalTransferTravelCompanyModelAnyOfLabel = string | null;
+
+/**
+ * travel company information
+ */
+export type ProposalTransferTravelCompanyModelAnyOf = {
+  /**
+   * travel company id (IATA)
+   * @maxLength 3
+   */
+  id?: ProposalTransferTravelCompanyModelAnyOfId;
+  /** travel company label */
+  label?: ProposalTransferTravelCompanyModelAnyOfLabel;
+};
+
+/**
+ * travel company information
+ */
+export type ProposalTransferTravelCompanyModel = ProposalTransferTravelCompanyModelAnyOf | null;
+
+/**
+ * arrival or departure travel time
+ * @pattern ^\d+:\d+:\d+.\d+$
+ */
+export type ProposalcustomerTravelingInformationModelAnyOfTime = string | null;
+
+/**
+ * arrival or departure travel reference
+ * @maxLength 6
+ */
+export type ProposalcustomerTravelingInformationModelAnyOfTravelReference = string | null;
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type ProposalcustomerTravelingInformationModelAnyOf = {
+  /**
+   * arrival or departure travel time
+   * @pattern ^\d+:\d+:\d+.\d+$
+   */
+  time?: ProposalcustomerTravelingInformationModelAnyOfTime;
+  /**
+   * arrival or departure travel reference
+   * @maxLength 6
+   */
+  travel_reference?: ProposalcustomerTravelingInformationModelAnyOfTravelReference;
+  travel_company?: ProposalTransferTravelCompanyModel;
+};
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type ProposalcustomerTravelingInformationModel = ProposalcustomerTravelingInformationModelAnyOf | null;
+
+export type ProposalTransfersBookingFromV2AnyOfId = string | null;
+
+export type ProposalTransfersBookingFromV2AnyOfLabel = string | null;
+
+/**
+ * transfer pickup place
+ */
+export type ProposalTransfersBookingFromV2AnyOf = {
+  id?: ProposalTransfersBookingFromV2AnyOfId;
+  label?: ProposalTransfersBookingFromV2AnyOfLabel;
+};
+
+/**
+ * transfer pickup place
+ */
+export type ProposalTransfersBookingFromV2 = ProposalTransfersBookingFromV2AnyOf | null;
+
+export type ProposalTransfersBookingToV2AnyOfId = string | null;
+
+export type ProposalTransfersBookingToV2AnyOfLabel = string | null;
+
+/**
+ * transfer drop off place
+ */
+export type ProposalTransfersBookingToV2AnyOf = {
+  id?: ProposalTransfersBookingToV2AnyOfId;
+  label?: ProposalTransfersBookingToV2AnyOfLabel;
+};
+
+/**
+ * transfer drop off place
+ */
+export type ProposalTransfersBookingToV2 = ProposalTransfersBookingToV2AnyOf | null;
+
+/**
+ * Any special comment regarding the transfer
+ * @maxLength 30
+ */
+export type ProposalTransferInformationModelComment = string | null;
+
+export interface ProposalTransferInformationModel {
+  way: ValidServiceTransferInformationWaysV2Model;
+  customer_traveling_information: ProposalcustomerTravelingInformationModel;
+  from?: ProposalTransfersBookingFromV2;
+  to?: ProposalTransfersBookingToV2;
+  /**
+   * Any special comment regarding the transfer
+   * @maxLength 30
+   */
+  comment?: ProposalTransferInformationModelComment;
+}
+
+export type ProposalTransferInformationsModel = ProposalTransferInformationModel[] | null;
+
+/**
  * service start date
  */
 export type ProposalServiceScheduleStartDate = string | null;
@@ -10318,6 +10764,7 @@ export interface ProposalServiceSchedule {
   /** service end date */
   end_date: ProposalServiceScheduleEndDate;
   attendees?: ProposalServiceScheduleAttendees;
+  transfer_information?: ProposalTransferInformationsModel;
 }
 
 export type ProposalServiceSchedules = ProposalServiceSchedule[];
@@ -10373,281 +10820,6 @@ export interface ProposalService {
 }
 
 export type ProposalServices = ProposalService[];
-
-export interface SellerCommissionModel {
-  /** earnings for a sale */
-  total: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-/**
- * The type of rate
- */
-export type RateType = (typeof RateType)[keyof typeof RateType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const RateType = {
-  STANDARD_RATE: 'STANDARD_RATE',
-  FLEXIBLE_RATE: 'FLEXIBLE_RATE',
-  NON_REFUNDABLE_RATE: 'NON_REFUNDABLE_RATE',
-} as const;
-
-export interface ProposalGetAlternativeRateModel {
-  type: RateType;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  /** Indicates the price difference between the applicable rate and the already applied rate of the given proposal */
-  price_difference: number;
-}
-
-export type ProposalAlternativeRatesModel = ProposalGetAlternativeRateModel[];
-
-/**
- * Attendee type [MAIN, KID, ADULT]
- */
-export type AccommodationsArrangementAttendeeTypeModel =
-  (typeof AccommodationsArrangementAttendeeTypeModel)[keyof typeof AccommodationsArrangementAttendeeTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AccommodationsArrangementAttendeeTypeModel = {
-  MAIN: 'MAIN',
-  ADULT: 'ADULT',
-  KID: 'KID',
-} as const;
-
-/**
- *  
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
- */
-export type AccommodationsArrangementAttendeeModelBirthdate = string | null;
-
-export interface AccommodationsArrangementAttendeeModel {
-  /** Attendee id in this proposal */
-  id: string;
-  type: AccommodationsArrangementAttendeeTypeModel;
-  /**  
-Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
-  birthdate: AccommodationsArrangementAttendeeModelBirthdate;
-  /** Customer id */
-  customer_id?: string;
-  /** Room id */
-  room_id?: string;
-}
-
-export type AccommodationsArrangementAttendeesModel = AccommodationsArrangementAttendeeModel[];
-
-export interface AccommodationCategoryWithLinkModel {
-  /** id of the category */
-  id: string;
-  /** label of the category */
-  label: string;
-  _links?: LinksModel;
-}
-
-export type AccommodationCategoriesWithLinksModel = AccommodationCategoryWithLinkModel[];
-
-export interface AccommodationArrangementResponseV0Model {
-  /** id of the accommodation */
-  accommodation_id: string;
-  /** label of the accommodation */
-  label: string;
-  /** number of accommodations where the attendees will be allocated */
-  quantity: number;
-  /** Indicate if the room is sharable */
-  shared_room: boolean;
-  attendees: AccommodationsArrangementAttendeesModel;
-  accommodation_categories?: AccommodationCategoriesWithLinksModel;
-  _links?: LinksModel;
-}
-
-export type AccommodationsArrangementResponseListV0Model =
-  AccommodationArrangementResponseV0Model[];
-
-export interface ProposalPackageDifferentialPriceModel {
-  /** Indicates the price difference between the applicable package and the already applied package of the given proposal. */
-  amount: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-export interface ProposalPackageModel {
-  /** a package_id from /products/{product_id}/packages resource */
-  id: string;
-  differential_price?: ProposalPackageDifferentialPriceModel;
-  _links?: LinksModel;
-}
-
-export type ProposalPackagesModel = ProposalPackageModel[];
-
-export interface AvailableRoomModel {
-  /** Id of the room */
-  id: string;
-  /** Id of the accommodation  */
-  accommodation_id: string;
-  /** Number of occupants in the accommodation */
-  occupancy?: number;
-  _links?: LinksModel;
-}
-
-export type AvailableRoomsModel = AvailableRoomModel[];
-
-/**
- * Indicates the way of the journey (outbound / inbound)
- */
-export type TransportConfigurationJourneyWayType =
-  (typeof TransportConfigurationJourneyWayType)[keyof typeof TransportConfigurationJourneyWayType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TransportConfigurationJourneyWayType = {
-  INBOUND: 'INBOUND',
-  OUTBOUND: 'OUTBOUND',
-  WITHIN_TOUR: 'WITHIN_TOUR',
-} as const;
-
-/**
- * Full name of the city
- */
-export type TravelSectionCityLabel = string | null;
-
-export interface TravelSectionCity {
-  /** City code, on three letters */
-  id?: string;
-  /** Full name of the city */
-  label?: TravelSectionCityLabel;
-}
-
-export type TravelSectionStepTimeModelAnyOf = {
-  /** Indicates the journey's minimum time */
-  min?: string;
-  /** Indicates the journey's minimum time */
-  max?: string;
-};
-
-export type TravelSectionStepTimeModel = TravelSectionStepTimeModelAnyOf | null;
-
-export interface TravelSectionStepWithTimeObjectModel {
-  city?: TravelSectionCity;
-  /** date */
-  date?: string;
-  time?: TravelSectionStepTimeModel;
-}
-
-export interface TransportConfigurationJourneyModel {
-  way: TransportConfigurationJourneyWayType;
-  departure?: TravelSectionStepWithTimeObjectModel;
-  arrival?: TravelSectionStepWithTimeObjectModel;
-}
-
-export type TransportConfigurationJourneysModel = TransportConfigurationJourneyModel[];
-
-/**
- * Transport information indicating its class. [ PLANE_ECONOMY, PLANE_ECONOMY_PLUS, PLANE_BUSINESS, PLANE_PREMIUM, PLANE_FIRST, TRAIN_FIRST, TRAIN_SECOND ]
- */
-export type TransportConfigurationTransportClassModel =
-  (typeof TransportConfigurationTransportClassModel)[keyof typeof TransportConfigurationTransportClassModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TransportConfigurationTransportClassModel = {
-  PLANE_ECONOMY: 'PLANE_ECONOMY',
-  PLANE_ECONOMY_PLUS: 'PLANE_ECONOMY_PLUS',
-  PLANE_BUSINESS: 'PLANE_BUSINESS',
-  PLANE_PREMIUM: 'PLANE_PREMIUM',
-  PLANE_FIRST: 'PLANE_FIRST',
-  TRAIN_FIRST: 'TRAIN_FIRST',
-  TRAIN_SECOND: 'TRAIN_SECOND',
-} as const;
-
-export type TransportConfigurationConnectionDurationModelAnyOf = {
-  /** Indicates the proposal's transport connection minimum duration (in minutes) */
-  min: number;
-  /** Indicates the proposal's transport connection maximum duration (in minutes) */
-  max: number;
-};
-
-export type TransportConfigurationConnectionDurationModel =
-  TransportConfigurationConnectionDurationModelAnyOf | null;
-
-export type TransportConfigurationIsTransportStationsChangedAllowedModelAnyOf = {
-  /** Indicates if the airport change between connections is allowed or not. For exemple, if allowed, an attendee might have a connection in Paris Orly, and go to CDG to take his next flight. */
-  on_connection: boolean;
-  /** Indicates if the airport change between inbound and outbound is allowed or not. For exemple, if allowed, an attendee can leave from Paris Orly and come back at Paris CDG. */
-  along_roundtrip: boolean;
-};
-
-export type TransportConfigurationIsTransportStationsChangedAllowedModel =
-  TransportConfigurationIsTransportStationsChangedAllowedModelAnyOf | null;
-
-/**
- * Indicates the list of imposed companies
- */
-export type TransportConfigurationImposedCompaniesModel = string[];
-
-/**
- * Indicates the list of imposed connection cities
- */
-export type TransportConfigurationImposedConnectionCitiesModel = string[];
-
-/**
- * Indicates the list of excluded companies
- */
-export type TransportConfigurationExcludedCompaniesModel = string[];
-
-/**
- * Indicates the list of Clubmed blacklisted companies for the concerned transport axe.
- */
-export type TransportConfigurationForbiddenCompaniesModel = string[];
-
-/**
- * Indicates the list of excluded connection cities
- */
-export type TransportConfigurationExcludedConnectionCitiesModel = string[];
-
-/**
- * Indicates the proposal's max connections
- */
-export type TransportConfigurationModelMaxConnections = number | null;
-
-export interface TransportConfigurationModel {
-  journeys?: TransportConfigurationJourneysModel;
-  transport_class?: TransportConfigurationTransportClassModel;
-  /** Indicates if the proposal's default transportation is a direct flight only */
-  is_direct_flight_only: boolean;
-  /** Indicates the proposal's max connections */
-  max_connections: TransportConfigurationModelMaxConnections;
-  transport_connection_duration?: TransportConfigurationConnectionDurationModel;
-  is_transport_stations_changes_allowed?: TransportConfigurationIsTransportStationsChangedAllowedModel;
-  /** Indicates if cabin mixing is allowed or not */
-  is_cabin_mixing_allowed: boolean;
-  /** Indicates if flight companies mixing is allowed or not */
-  is_companies_mixing_allowed: boolean;
-  imposed_companies?: TransportConfigurationImposedCompaniesModel;
-  imposed_connection_cities?: TransportConfigurationImposedConnectionCitiesModel;
-  excluded_companies?: TransportConfigurationExcludedCompaniesModel;
-  forbidden_companies?: TransportConfigurationForbiddenCompaniesModel;
-  excluded_connection_cities?: TransportConfigurationExcludedConnectionCitiesModel;
-}
-
-export interface TransportAxisModel {
-  /** Departure city code */
-  departure_city_code: string;
-  /** Arrival city code */
-  arrival_city_code: string;
-}
-
-export type GetProposalTransportAxesModel = TransportAxisModel[];
 
 export type TravelerResponseModelUnicodeFirstName = string | null;
 
@@ -11285,10 +11457,81 @@ export interface TravelDocumentModel {
 }
 
 /**
+ * Loyalty type
+ */
+export type LoyaltyType = typeof LoyaltyType[keyof typeof LoyaltyType];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LoyaltyType = {
+  FREQUENCY: 'FREQUENCY',
+  BOOKING: 'BOOKING',
+  BIRTHDAY: 'BIRTHDAY',
+  BOOSTER: 'BOOSTER',
+  BONUS: 'BONUS',
+  ADDED: 'ADDED',
+  TRANSFER: 'TRANSFER',
+  SPONSORHSIP: 'SPONSORHSIP',
+  FLIGGY: 'FLIGGY',
+  PURCHASES_IN_RESORT: 'PURCHASES_IN_RESORT',
+  YEARLY_BONUS: 'YEARLY_BONUS',
+} as const;
+
+/**
+ * ids of the different products of the booking
+ */
+export type ProductIds = string[];
+
+/**
+ * Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate = string | null;
+
+/**
+ * Related booking info
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModelAnyOf = {
+  /**
+   * booking Id (file number)
+   * @pattern ^\d+$
+   */
+  id: string;
+  /** Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example */
+  arrival_date: CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate;
+  product_ids: ProductIds;
+};
+
+/**
+ * Related booking info
+ */
+export type CustomerLoyaltyDetailsRelatedBookingModel = CustomerLoyaltyDetailsRelatedBookingModelAnyOf | null;
+
+/**
+ * Points expiration date
+ */
+export type CustomerLoyaltyDetailsModelExpirationDate = string | null;
+
+export interface CustomerLoyaltyDetailsModel {
+  type: LoyaltyType;
+  /**
+   * Number of points
+   * @minimum 0
+   */
+  points: number;
+  /** Points expiration date */
+  expiration_date: CustomerLoyaltyDetailsModelExpirationDate;
+  /** true when points are expired */
+  expired: boolean;
+  related_booking: CustomerLoyaltyDetailsRelatedBookingModel;
+}
+
+export type CustomerLoyaltyDetailsResponseModel = CustomerLoyaltyDetailsModel[];
+
+/**
  * booking's status
  */
-export type BaseBookingStatusModel =
-  (typeof BaseBookingStatusModel)[keyof typeof BaseBookingStatusModel];
+export type BaseBookingStatusModel = typeof BaseBookingStatusModel[keyof typeof BaseBookingStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BaseBookingStatusModel = {
@@ -11312,8 +11555,8 @@ export const BaseBookingStatusModel = {
 /**
  * booking payment's status
  */
-export type BaseBookingPaymentStatusModel =
-  (typeof BaseBookingPaymentStatusModel)[keyof typeof BaseBookingPaymentStatusModel];
+export type BaseBookingPaymentStatusModel = typeof BaseBookingPaymentStatusModel[keyof typeof BaseBookingPaymentStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BaseBookingPaymentStatusModel = {
@@ -11327,8 +11570,8 @@ export const BaseBookingPaymentStatusModel = {
 /**
  * type of booking
  */
-export type CustomerBookingTypeModel =
-  (typeof CustomerBookingTypeModel)[keyof typeof CustomerBookingTypeModel];
+export type CustomerBookingTypeModel = typeof CustomerBookingTypeModel[keyof typeof CustomerBookingTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingTypeModel = {
@@ -11340,8 +11583,8 @@ export const CustomerBookingTypeModel = {
 /**
  * status of the feedback form
  */
-export type GMFeedbackStatusesModel =
-  (typeof GMFeedbackStatusesModel)[keyof typeof GMFeedbackStatusesModel];
+export type GMFeedbackStatusesModel = typeof GMFeedbackStatusesModel[keyof typeof GMFeedbackStatusesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GMFeedbackStatusesModel = {
@@ -11359,8 +11602,8 @@ export type GMFeedbackModel = GMFeedbackModelAnyOf | null;
 /**
  * adult attendees number
  */
-export type AttendeesModelAnyOfAdultsCount =
-  (typeof AttendeesModelAnyOfAdultsCount)[keyof typeof AttendeesModelAnyOfAdultsCount];
+export type AttendeesModelAnyOfAdultsCount = typeof AttendeesModelAnyOfAdultsCount[keyof typeof AttendeesModelAnyOfAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AttendeesModelAnyOfAdultsCount = {
@@ -11370,8 +11613,8 @@ export const AttendeesModelAnyOfAdultsCount = {
 /**
  * children attendees number
  */
-export type AttendeesModelAnyOfChildrenCount =
-  (typeof AttendeesModelAnyOfChildrenCount)[keyof typeof AttendeesModelAnyOfChildrenCount];
+export type AttendeesModelAnyOfChildrenCount = typeof AttendeesModelAnyOfChildrenCount[keyof typeof AttendeesModelAnyOfChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AttendeesModelAnyOfChildrenCount = {
@@ -11391,8 +11634,8 @@ export type AttendeesModel = AttendeesModelAnyOf | null;
 /**
  * Transportation mode
  */
-export type CustomerBookingStayOutwardTripTransportationModeModel =
-  (typeof CustomerBookingStayOutwardTripTransportationModeModel)[keyof typeof CustomerBookingStayOutwardTripTransportationModeModel];
+export type CustomerBookingStayOutwardTripTransportationModeModel = typeof CustomerBookingStayOutwardTripTransportationModeModel[keyof typeof CustomerBookingStayOutwardTripTransportationModeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingStayOutwardTripTransportationModeModel = {
@@ -11415,8 +11658,8 @@ export type CustomerBookingOutwardTripModelAnyOfArrivalCity = string | null;
 /**
  * number of attendees concerned by this trip
  */
-export type CustomerBookingOutwardTripModelAnyOfAttendeesCount =
-  (typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount)[keyof typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount];
+export type CustomerBookingOutwardTripModelAnyOfAttendeesCount = typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount[keyof typeof CustomerBookingOutwardTripModelAnyOfAttendeesCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingOutwardTripModelAnyOfAttendeesCount = {
@@ -11544,12 +11787,7 @@ export type CustomerBookingStaysModel = CustomerBookingStayModel[];
 /**
  * Status of the easy arrival
  */
-export type ValidEasyArrivalStatuesModel =
-  | 'UNAVAILABLE'
-  | 'AVAILABLE'
-  | 'UNEDITABLE'
-  | 'DONE'
-  | null;
+export type ValidEasyArrivalStatuesModel = 'UNAVAILABLE' | 'AVAILABLE' | 'UNEDITABLE' | 'DONE' | null;
 
 /**
  * The easy arrival service can be associated to a given booking. This service eases the arrival in the resort, by example, the skis can be directly put in your lockers or your children habits are known by the staff of the children club.<br>The GM feedback form about the stay allows the Club Med staff to improve their services
@@ -11611,77 +11849,6 @@ export interface CustomerBookingModel {
 }
 
 export type CustomerBookingsModel = CustomerBookingModel[];
-
-/**
- * Loyalty type
- */
-export type LoyaltyType = (typeof LoyaltyType)[keyof typeof LoyaltyType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const LoyaltyType = {
-  FREQUENCY: 'FREQUENCY',
-  BOOKING: 'BOOKING',
-  BIRTHDAY: 'BIRTHDAY',
-  BOOSTER: 'BOOSTER',
-  BONUS: 'BONUS',
-  ADDED: 'ADDED',
-  TRANSFER: 'TRANSFER',
-  SPONSORHSIP: 'SPONSORHSIP',
-  FLIGGY: 'FLIGGY',
-  PURCHASES_IN_RESORT: 'PURCHASES_IN_RESORT',
-  YEARLY_BONUS: 'YEARLY_BONUS',
-} as const;
-
-/**
- * ids of the different products of the booking
- */
-export type ProductIds = string[];
-
-/**
- * Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example
- */
-export type CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate = string | null;
-
-/**
- * Related booking info
- */
-export type CustomerLoyaltyDetailsRelatedBookingModelAnyOf = {
-  /**
-   * booking Id (file number)
-   * @pattern ^\d+$
-   */
-  id: string;
-  /** Booking arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example */
-  arrival_date: CustomerLoyaltyDetailsRelatedBookingModelAnyOfArrivalDate;
-  product_ids: ProductIds;
-};
-
-/**
- * Related booking info
- */
-export type CustomerLoyaltyDetailsRelatedBookingModel =
-  CustomerLoyaltyDetailsRelatedBookingModelAnyOf | null;
-
-/**
- * Points expiration date
- */
-export type CustomerLoyaltyDetailsModelExpirationDate = string | null;
-
-export interface CustomerLoyaltyDetailsModel {
-  type: LoyaltyType;
-  /**
-   * Number of points
-   * @minimum 0
-   */
-  points: number;
-  /** Points expiration date */
-  expiration_date: CustomerLoyaltyDetailsModelExpirationDate;
-  /** true when points are expired */
-  expired: boolean;
-  related_booking: CustomerLoyaltyDetailsRelatedBookingModel;
-}
-
-export type CustomerLoyaltyDetailsResponseModel = CustomerLoyaltyDetailsModel[];
 
 /**
  * email
@@ -11797,9 +11964,88 @@ export interface ProfileModelV1 {
 }
 
 /**
+ * What is paid : booking, upsale, option,...
+ */
+export type PaymentStatusActionCodeV1Model = typeof PaymentStatusActionCodeV1Model[keyof typeof PaymentStatusActionCodeV1Model];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentStatusActionCodeV1Model = {
+  TOKENIZATION_CARD: 'TOKENIZATION_CARD',
+  CALL_CENTER: 'CALL_CENTER',
+  PAYMENT_BOOKING: 'PAYMENT_BOOKING',
+  PAYMENT_OPTION: 'PAYMENT_OPTION',
+  PAYMENT_SOLDE: 'PAYMENT_SOLDE',
+  REFUND: 'REFUND',
+  PAYMENT_UPGRADE_PACKAGE: 'PAYMENT_UPGRADE_PACKAGE',
+  PAYMENT_UPGRADE_ACCOMODATION: 'PAYMENT_UPGRADE_ACCOMODATION',
+  PAYMENT_UPGRADE_SERVICE: 'PAYMENT_UPGRADE_SERVICE',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
+  PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
+} as const;
+
+/**
+ * Payment description
+ */
+export interface PaymentV1 {
+  action_code?: PaymentStatusActionCodeV1Model;
+  /** Sales channel code */
+  channel_code?: string;
+  /** payment method (VI, MC, AE, ...) */
+  payment_method: string;
+  /** Payment status */
+  payment_status: string;
+  /**
+   * Payment Service Provider name with integration mode
+   * @pattern ^[EM][0-9A-Z]+$
+   */
+  server_id: string;
+  /**
+   * Payment amount, decimal separator is "."
+   * @pattern ^[0-9]+[.][0-9]{2}$
+   */
+  amount: string;
+  /**
+   * Payment currency, three letter ISO code
+   * @pattern ^[A-Z]{3}$
+   */
+  currency_code: string;
+}
+
+/**
+ * Booking references
+ */
+export interface BookingV1 {
+  /**
+   * File number
+   * @pattern ^[0-9]+$
+   */
+  id: string;
+  /**
+   * Bulletin number
+   * @pattern ^[0-9]+$
+   */
+  bulletin_number: string;
+  /**
+   * Great Member number
+   * @pattern ^[0-9]+$
+   */
+  gm_number: string;
+}
+
+/**
+ * Current payment status
+ */
+export interface PaymentStatusV1Model {
+  payment: PaymentV1;
+  booking: BookingV1;
+}
+
+/**
  * type of the facility
  */
-export type FacilityTypeModel = (typeof FacilityTypeModel)[keyof typeof FacilityTypeModel];
+export type FacilityTypeModel = typeof FacilityTypeModel[keyof typeof FacilityTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FacilityTypeModel = {
@@ -11836,8 +12082,8 @@ export type EquipmentListModel = EquipmentModel[];
 /**
  * type of specific information
  */
-export type FacilitySpecificInformationTypeModel =
-  (typeof FacilitySpecificInformationTypeModel)[keyof typeof FacilitySpecificInformationTypeModel];
+export type FacilitySpecificInformationTypeModel = typeof FacilitySpecificInformationTypeModel[keyof typeof FacilitySpecificInformationTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FacilitySpecificInformationTypeModel = {
@@ -11875,7 +12121,8 @@ export type ProductFacilityActivityCategoryListModel = ProductFacilityActivityCa
 /**
  * importance of this facility between all facility of this product
  */
-export type FacilityRankingModel = (typeof FacilityRankingModel)[keyof typeof FacilityRankingModel];
+export type FacilityRankingModel = typeof FacilityRankingModel[keyof typeof FacilityRankingModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FacilityRankingModel = {
@@ -12039,8 +12286,8 @@ export type TagLabel = string[];
 /**
  * importance of this activity between all activities of this product
  */
-export type ActivityModelRankings =
-  (typeof ActivityModelRankings)[keyof typeof ActivityModelRankings];
+export type ActivityModelRankings = typeof ActivityModelRankings[keyof typeof ActivityModelRankings];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivityModelRankings = {
@@ -12199,8 +12446,8 @@ export type AccommodationAreaModelV1 = AccommodationAreaModelV1AnyOf | null;
 /**
  * importance of this accommodation between all accommodations of this product
  */
-export type AccommodationRankingModel =
-  (typeof AccommodationRankingModel)[keyof typeof AccommodationRankingModel];
+export type AccommodationRankingModel = typeof AccommodationRankingModel[keyof typeof AccommodationRankingModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationRankingModel = {
@@ -12288,8 +12535,8 @@ export type AccommodationStrengthsModel = AccommodationV1StrengthModel[];
 /**
  * importance of this equipment for this specific accommodation
  */
-export type AccommodationEquipmentRankingModel =
-  (typeof AccommodationEquipmentRankingModel)[keyof typeof AccommodationEquipmentRankingModel];
+export type AccommodationEquipmentRankingModel = typeof AccommodationEquipmentRankingModel[keyof typeof AccommodationEquipmentRankingModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationEquipmentRankingModel = {
@@ -12313,8 +12560,8 @@ export type AccommodationEquipmentsModel = AccommodationEquipmentModel[];
 /**
  * importance of this service for this specific accommodation
  */
-export type AccommodationV1ServiceRankingModel =
-  (typeof AccommodationV1ServiceRankingModel)[keyof typeof AccommodationV1ServiceRankingModel];
+export type AccommodationV1ServiceRankingModel = typeof AccommodationV1ServiceRankingModel[keyof typeof AccommodationV1ServiceRankingModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationV1ServiceRankingModel = {
@@ -12365,8 +12612,7 @@ export type AccommodationV1OutsideFacilityAreaModelAnyOf = {
   unit?: string;
 };
 
-export type AccommodationV1OutsideFacilityAreaModel =
-  AccommodationV1OutsideFacilityAreaModelAnyOf | null;
+export type AccommodationV1OutsideFacilityAreaModel = AccommodationV1OutsideFacilityAreaModelAnyOf | null;
 
 export interface AccommodationOutsideFacilityModel {
   /** id of the outside facility */
@@ -12477,10 +12723,176 @@ export interface PeriodsInfo {
 export type PeriodsInfoList = PeriodsInfo[];
 
 /**
+ * Images of this childcare
+ */
+export type ChildcareImageListModel = string[];
+
+/**
+ * Age range required for this childcare in months
+ */
+export interface ChildcareAgeInMonth {
+  /** Customer minimum age to benefits from this childcare in months */
+  min?: number;
+  /** Customer maximum age to benefits from this childcare in months */
+  max?: number;
+}
+
+/**
+ * Start and end opening dates
+ */
+export interface OpeningDateModel {
+  /** Opening date for this period in ISO 8601 format (YYYYMMDD). Inclusive, the childcare is opened on this date */
+  opening: string;
+  /** Closing date for this period in ISO 8601 format (YYYYMMD). Inclusive, the childcare is opened on this date */
+  closing: string;
+}
+
+/**
+ * List of opening dates
+ */
+export type OpeningDatesModel = OpeningDateModel[];
+
+/**
+ * reference price for this product
+ */
+export type ChildcarePriceV1Price = 0 | null;
+
+/**
+ * The iso 3 currency. Ex: CNY,EUR,..
+ * @minLength 3
+ * @maxLength 3
+ */
+export type ChildcarePriceV1Currency = string | null;
+
+/**
+ * last insertion date, last recalculation
+ */
+export type ChildcarePriceV1LastInsertionDate = string | null;
+
+/**
+ * Duration in day linked at the price
+ */
+export type ChildcarePriceV1DurationInDay = number | null;
+
+export interface ChildcarePriceV1 {
+  /** reference price for this product */
+  price: ChildcarePriceV1Price;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: ChildcarePriceV1Currency;
+  /** last insertion date, last recalculation */
+  last_insertion_date: ChildcarePriceV1LastInsertionDate;
+  /** Duration in day linked at the price */
+  duration_in_day?: ChildcarePriceV1DurationInDay;
+  time_slot?: ActivityPriceTimeslotModel;
+}
+
+/**
+ * Clubmed code for this service
+ */
+export type ServiceCodesModel = string[];
+
+export interface OpeningHourItemModel {
+  /** childcare starting hour for the associated weekdays (weekdays are displayed as the first 2 letters of their english names - ie MO stands for MONDAY) */
+  start?: string;
+  /** childcare ending hour for the associated weekdays (weekdays are displayed as the first 2 letters of their english names - ie MO stands for MONDAY) */
+  end?: string;
+}
+
+export type OpeningHoursModel = OpeningHourItemModel[];
+
+/**
+ * Closing weekdays are displayed as the first 2 letters of their english names - ie MO stands for MONDAY
+ */
+export type ChildcareModelClosingWeekdaysModel = typeof ChildcareModelClosingWeekdaysModel[keyof typeof ChildcareModelClosingWeekdaysModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ChildcareModelClosingWeekdaysModel = {
+  MO: 'MO',
+  TU: 'TU',
+  WE: 'WE',
+  TH: 'TH',
+  FR: 'FR',
+  SA: 'SA',
+  SU: 'SU',
+} as const;
+
+export type ClosingWeekdaysModel = ChildcareModelClosingWeekdaysModel[];
+
+/**
+ * type of the time slot for the hours indicated
+ */
+export type ChildcareTimeslotTypeModel = typeof ChildcareTimeslotTypeModel[keyof typeof ChildcareTimeslotTypeModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ChildcareTimeslotTypeModel = {
+  MORNING: 'MORNING',
+  AFTERNOON: 'AFTERNOON',
+  EVENING: 'EVENING',
+  DAY: 'DAY',
+  SPECIFIC_DAY: 'SPECIFIC_DAY',
+  SPECIFIC_MORNING: 'SPECIFIC_MORNING',
+  SPECIFIC_AFTERNOON: 'SPECIFIC_AFTERNOON',
+} as const;
+
+export interface ChildcareTimeslotModel {
+  type: ChildcareTimeslotTypeModel;
+  /** Opening time for this time slot */
+  opening?: string;
+  /** Closing time for this time slot */
+  closing?: string;
+}
+
+export type ChildcareTimeslotsModel = ChildcareTimeslotModel[];
+
+/**
+ * False if an extra cost is required to benefit from this childcare
+ */
+export type ChildcareModelV1IsIncluded = boolean | null;
+
+export interface ChildcareModelV1 {
+  /** Id of this childcare */
+  id: string;
+  /** ID of the category activity for this childcare */
+  activity_category_id?: string;
+  /** Label of this childcare */
+  label: string;
+  images?: ChildcareImageListModel;
+  /** Logo of this childcare */
+  logo?: string;
+  /** Childcare description */
+  description?: string;
+  /** Childcare additional information */
+  further_information?: string;
+  /** Philosophy of the Club for the activity */
+  philosophy?: string;
+  age_in_months?: ChildcareAgeInMonth;
+  /** Childcare duration description */
+  duration_description?: string;
+  /** False if an extra cost is required to benefit from this childcare */
+  is_included?: ChildcareModelV1IsIncluded;
+  opening_dates?: OpeningDatesModel;
+  target_price?: ChildcarePriceV1;
+  /** Additional description for village animation */
+  additional_description?: string;
+  service_codes?: ServiceCodesModel;
+  opening_hours?: OpeningHoursModel;
+  closing_weekdays?: ClosingWeekdaysModel;
+  timeslots?: ChildcareTimeslotsModel;
+}
+
+export type ProductChildcareListModelV1 = ChildcareModelV1[];
+
+/**
  * Availability status of the product at this date
  */
-export type BookableDatesCalenderAvailabilityStatusModel =
-  (typeof BookableDatesCalenderAvailabilityStatusModel)[keyof typeof BookableDatesCalenderAvailabilityStatusModel];
+export type BookableDatesCalenderAvailabilityStatusModel = typeof BookableDatesCalenderAvailabilityStatusModel[keyof typeof BookableDatesCalenderAvailabilityStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookableDatesCalenderAvailabilityStatusModel = {
@@ -12607,8 +13019,8 @@ export type ProductBarTypesModel = ProductBarTypesModelAnyOf | null;
 /**
  * importance of this bar between all the bars of this product
  */
-export type ProductBarsRankingModel =
-  (typeof ProductBarsRankingModel)[keyof typeof ProductBarsRankingModel];
+export type ProductBarsRankingModel = typeof ProductBarsRankingModel[keyof typeof ProductBarsRankingModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductBarsRankingModel = {
@@ -12870,172 +13282,6 @@ export interface CalendarModelV1 {
   months?: MonthsV1;
 }
 
-/**
- * Images of this childcare
- */
-export type ChildcareImageListModel = string[];
-
-/**
- * Age range required for this childcare in months
- */
-export interface ChildcareAgeInMonth {
-  /** Customer minimum age to benefits from this childcare in months */
-  min?: number;
-  /** Customer maximum age to benefits from this childcare in months */
-  max?: number;
-}
-
-/**
- * Start and end opening dates
- */
-export interface OpeningDateModel {
-  /** Opening date for this period in ISO 8601 format (YYYYMMDD). Inclusive, the childcare is opened on this date */
-  opening: string;
-  /** Closing date for this period in ISO 8601 format (YYYYMMD). Inclusive, the childcare is opened on this date */
-  closing: string;
-}
-
-/**
- * List of opening dates
- */
-export type OpeningDatesModel = OpeningDateModel[];
-
-/**
- * reference price for this product
- */
-export type ChildcarePriceV1Price = 0 | null;
-
-/**
- * The iso 3 currency. Ex: CNY,EUR,..
- * @minLength 3
- * @maxLength 3
- */
-export type ChildcarePriceV1Currency = string | null;
-
-/**
- * last insertion date, last recalculation
- */
-export type ChildcarePriceV1LastInsertionDate = string | null;
-
-/**
- * Duration in day linked at the price
- */
-export type ChildcarePriceV1DurationInDay = number | null;
-
-export interface ChildcarePriceV1 {
-  /** reference price for this product */
-  price: ChildcarePriceV1Price;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: ChildcarePriceV1Currency;
-  /** last insertion date, last recalculation */
-  last_insertion_date: ChildcarePriceV1LastInsertionDate;
-  /** Duration in day linked at the price */
-  duration_in_day?: ChildcarePriceV1DurationInDay;
-  time_slot?: ActivityPriceTimeslotModel;
-}
-
-/**
- * Clubmed code for this service
- */
-export type ServiceCodesModel = string[];
-
-export interface OpeningHourItemModel {
-  /** childcare starting hour for the associated weekdays (weekdays are displayed as the first 2 letters of their english names - ie MO stands for MONDAY) */
-  start?: string;
-  /** childcare ending hour for the associated weekdays (weekdays are displayed as the first 2 letters of their english names - ie MO stands for MONDAY) */
-  end?: string;
-}
-
-export type OpeningHoursModel = OpeningHourItemModel[];
-
-/**
- * Closing weekdays are displayed as the first 2 letters of their english names - ie MO stands for MONDAY
- */
-export type ChildcareModelClosingWeekdaysModel =
-  (typeof ChildcareModelClosingWeekdaysModel)[keyof typeof ChildcareModelClosingWeekdaysModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ChildcareModelClosingWeekdaysModel = {
-  MO: 'MO',
-  TU: 'TU',
-  WE: 'WE',
-  TH: 'TH',
-  FR: 'FR',
-  SA: 'SA',
-  SU: 'SU',
-} as const;
-
-export type ClosingWeekdaysModel = ChildcareModelClosingWeekdaysModel[];
-
-/**
- * type of the time slot for the hours indicated
- */
-export type ChildcareTimeslotTypeModel =
-  (typeof ChildcareTimeslotTypeModel)[keyof typeof ChildcareTimeslotTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ChildcareTimeslotTypeModel = {
-  MORNING: 'MORNING',
-  AFTERNOON: 'AFTERNOON',
-  EVENING: 'EVENING',
-  DAY: 'DAY',
-  SPECIFIC_DAY: 'SPECIFIC_DAY',
-  SPECIFIC_MORNING: 'SPECIFIC_MORNING',
-  SPECIFIC_AFTERNOON: 'SPECIFIC_AFTERNOON',
-} as const;
-
-export interface ChildcareTimeslotModel {
-  type: ChildcareTimeslotTypeModel;
-  /** Opening time for this time slot */
-  opening?: string;
-  /** Closing time for this time slot */
-  closing?: string;
-}
-
-export type ChildcareTimeslotsModel = ChildcareTimeslotModel[];
-
-/**
- * False if an extra cost is required to benefit from this childcare
- */
-export type ChildcareModelV1IsIncluded = boolean | null;
-
-export interface ChildcareModelV1 {
-  /** Id of this childcare */
-  id: string;
-  /** ID of the category activity for this childcare */
-  activity_category_id?: string;
-  /** Label of this childcare */
-  label: string;
-  images?: ChildcareImageListModel;
-  /** Logo of this childcare */
-  logo?: string;
-  /** Childcare description */
-  description?: string;
-  /** Childcare additional information */
-  further_information?: string;
-  /** Philosophy of the Club for the activity */
-  philosophy?: string;
-  age_in_months?: ChildcareAgeInMonth;
-  /** Childcare duration description */
-  duration_description?: string;
-  /** False if an extra cost is required to benefit from this childcare */
-  is_included?: ChildcareModelV1IsIncluded;
-  opening_dates?: OpeningDatesModel;
-  target_price?: ChildcarePriceV1;
-  /** Additional description for village animation */
-  additional_description?: string;
-  service_codes?: ServiceCodesModel;
-  opening_hours?: OpeningHoursModel;
-  closing_weekdays?: ClosingWeekdaysModel;
-  timeslots?: ChildcareTimeslotsModel;
-}
-
-export type ProductChildcareListModelV1 = ChildcareModelV1[];
-
 export type RestaurantImages = string[];
 
 export interface RestaurantOpeningHourModel {
@@ -13118,7 +13364,8 @@ export type RestaurantMealsSpecialityModel = RestaurantMealSpecialityModel[];
 /**
  * importance of this restaurant between all the restaurants of this product
  */
-export type FacilityRankings = (typeof FacilityRankings)[keyof typeof FacilityRankings];
+export type FacilityRankings = typeof FacilityRankings[keyof typeof FacilityRankings];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FacilityRankings = {
@@ -13247,7 +13494,8 @@ export type ThematicChildrenModel = string[];
 /**
  * Thematic's type
  */
-export type ThematicTypeModel = (typeof ThematicTypeModel)[keyof typeof ThematicTypeModel];
+export type ThematicTypeModel = typeof ThematicTypeModel[keyof typeof ThematicTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ThematicTypeModel = {
@@ -13351,8 +13599,7 @@ export interface ProposalPriceDetailsResponseHouseholdModel {
   attendees_prices?: AttendeesPricesModel;
 }
 
-export type ProposalPriceDetailsResponseHouseholdsModel =
-  ProposalPriceDetailsResponseHouseholdModel[];
+export type ProposalPriceDetailsResponseHouseholdsModel = ProposalPriceDetailsResponseHouseholdModel[];
 
 export interface ProposalPriceDetailsPerHouseholdResponseModel {
   /**
@@ -13367,8 +13614,8 @@ export interface ProposalPriceDetailsPerHouseholdResponseModel {
 /**
  * Remaining stock for this arrangement
  */
-export type AlternativeAccommodationModelRemainingStock =
-  (typeof AlternativeAccommodationModelRemainingStock)[keyof typeof AlternativeAccommodationModelRemainingStock];
+export type AlternativeAccommodationModelRemainingStock = typeof AlternativeAccommodationModelRemainingStock[keyof typeof AlternativeAccommodationModelRemainingStock];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AlternativeAccommodationModelRemainingStock = {
@@ -13426,6 +13673,46 @@ export interface BestAccommodationModel {
 
 export type BestAccommodationsModel = BestAccommodationModel[];
 
+/**
+ * Maximum age (included) for room occupancy without a waiver
+ */
+export type AccommodationsArrangementAttendeesWaiverModelAnyOfAgeCondition = number | null;
+
+/**
+ * specifies all info regarding room waiver
+ */
+export type AccommodationsArrangementAttendeesWaiverModelAnyOf = {
+  /** Maximum age (included) for room occupancy without a waiver */
+  age_condition?: AccommodationsArrangementAttendeesWaiverModelAnyOfAgeCondition;
+};
+
+/**
+ * specifies all info regarding room waiver
+ */
+export type AccommodationsArrangementAttendeesWaiverModel = AccommodationsArrangementAttendeesWaiverModelAnyOf | null;
+
+/**
+ *  
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM`
+ */
+export type AccommodationsArrangementAttendeeAllowWaiverModelBirthdate = string | null;
+
+export interface AccommodationsArrangementAttendeeAllowWaiverModel {
+  /** Attendee id in this proposal */
+  id: string;
+  type: AccommodationsArrangementAttendeeTypeModel;
+  /**  
+Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
+  birthdate: AccommodationsArrangementAttendeeAllowWaiverModelBirthdate;
+  /** Customer id */
+  customer_id?: string;
+  /** Room id */
+  room_id?: string;
+  waiver?: AccommodationsArrangementAttendeesWaiverModel;
+}
+
+export type AccommodationsArrangementAttendeesAllowWaiverModel = AccommodationsArrangementAttendeeAllowWaiverModel[];
+
 export interface AccommodationsCategoryResponseWithLinksModel {
   /** id of the category */
   id: string;
@@ -13434,8 +13721,7 @@ export interface AccommodationsCategoryResponseWithLinksModel {
   _links?: LinksModel;
 }
 
-export type AccommodationsCategoriesResponseWithLinksModel =
-  AccommodationsCategoryResponseWithLinksModel[];
+export type AccommodationsCategoriesResponseWithLinksModel = AccommodationsCategoryResponseWithLinksModel[];
 
 export interface AccommodationArrangementResponseModel {
   /** id of the accommodation */
@@ -13448,7 +13734,7 @@ export interface AccommodationArrangementResponseModel {
   quantity: number;
   /** Indicate if the room is sharable */
   shared_room: boolean;
-  attendees: AccommodationsArrangementAttendeesModel;
+  attendees: AccommodationsArrangementAttendeesAllowWaiverModel;
   accommodation_categories?: AccommodationsCategoriesResponseWithLinksModel;
   _links?: LinksModel;
 }
@@ -13458,7 +13744,8 @@ export type GetAccommodtionsArrangementResponseModel = AccommodationArrangementR
 /**
  * direction of the transport, INBOUND or OUTBOUND
  */
-export type JourneyWayTypeModel = (typeof JourneyWayTypeModel)[keyof typeof JourneyWayTypeModel];
+export type JourneyWayTypeModel = typeof JourneyWayTypeModel[keyof typeof JourneyWayTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const JourneyWayTypeModel = {
@@ -13507,8 +13794,8 @@ export interface TravelSectionStepArrival {
   location?: TravelSectionLocationModel;
 }
 
-export type TravelSectionTransportTypeModel =
-  (typeof TravelSectionTransportTypeModel)[keyof typeof TravelSectionTransportTypeModel];
+export type TravelSectionTransportTypeModel = typeof TravelSectionTransportTypeModel[keyof typeof TravelSectionTransportTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TravelSectionTransportTypeModel = {
@@ -13544,8 +13831,7 @@ export type TravelSectionTransportCompanyOperatorAnyOf = {
 /**
  * The value can sometimes be "null". It means that we currently don't have the information. The flight company is unknown at the time being.
  */
-export type TravelSectionTransportCompanyOperator =
-  TravelSectionTransportCompanyOperatorAnyOf | null;
+export type TravelSectionTransportCompanyOperator = TravelSectionTransportCompanyOperatorAnyOf | null;
 
 export interface TravelSectionTransportCompanies {
   operator?: TravelSectionTransportCompanyOperator;
@@ -13731,8 +14017,8 @@ export interface ClientSchemaModel {
 /**
  * INBOUND, OUTBOUND or WITHIN_TOUR
  */
-export type BookingTransportDetailsTripWayModel =
-  (typeof BookingTransportDetailsTripWayModel)[keyof typeof BookingTransportDetailsTripWayModel];
+export type BookingTransportDetailsTripWayModel = typeof BookingTransportDetailsTripWayModel[keyof typeof BookingTransportDetailsTripWayModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingTransportDetailsTripWayModel = {
@@ -13765,8 +14051,8 @@ export interface NewTravelSectionTransportModel {
   fare_class?: string;
 }
 
-export type TransportDetailsBookingServiceStatusModel =
-  (typeof TransportDetailsBookingServiceStatusModel)[keyof typeof TransportDetailsBookingServiceStatusModel];
+export type TransportDetailsBookingServiceStatusModel = typeof TransportDetailsBookingServiceStatusModel[keyof typeof TransportDetailsBookingServiceStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TransportDetailsBookingServiceStatusModel = {
@@ -13863,8 +14149,8 @@ export type BookingTransportDetailsListV2Model = BookingTransportDetailsV2Model[
 /**
  * Customer loyalty program status (not editable)
  */
-export type CustomerLoyaltyProgramStatusV2Model =
-  (typeof CustomerLoyaltyProgramStatusV2Model)[keyof typeof CustomerLoyaltyProgramStatusV2Model];
+export type CustomerLoyaltyProgramStatusV2Model = typeof CustomerLoyaltyProgramStatusV2Model[keyof typeof CustomerLoyaltyProgramStatusV2Model];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerLoyaltyProgramStatusV2Model = {
@@ -13881,8 +14167,8 @@ export const CustomerLoyaltyProgramStatusV2Model = {
 /**
  * Indicates the status of the GM before the overhaul of the loyalty program (not editable)
  */
-export type CustomerLoyaltyProgramPreviousStatusModel =
-  (typeof CustomerLoyaltyProgramPreviousStatusModel)[keyof typeof CustomerLoyaltyProgramPreviousStatusModel];
+export type CustomerLoyaltyProgramPreviousStatusModel = typeof CustomerLoyaltyProgramPreviousStatusModel[keyof typeof CustomerLoyaltyProgramPreviousStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerLoyaltyProgramPreviousStatusModel = {
@@ -14239,8 +14525,8 @@ export interface ProfileModelV2 {
 /**
  * type of the commercial offer
  */
-export type CommercialOfferModelType =
-  (typeof CommercialOfferModelType)[keyof typeof CommercialOfferModelType];
+export type CommercialOfferModelType = typeof CommercialOfferModelType[keyof typeof CommercialOfferModelType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CommercialOfferModelType = {
@@ -14253,8 +14539,8 @@ export const CommercialOfferModelType = {
 /**
  * unit
  */
-export type CommercialOfferModelUnit =
-  (typeof CommercialOfferModelUnit)[keyof typeof CommercialOfferModelUnit];
+export type CommercialOfferModelUnit = typeof CommercialOfferModelUnit[keyof typeof CommercialOfferModelUnit];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CommercialOfferModelUnit = {
@@ -14265,8 +14551,8 @@ export const CommercialOfferModelUnit = {
 /**
  * status of the offer
  */
-export type CommercialOfferStatusModel =
-  (typeof CommercialOfferStatusModel)[keyof typeof CommercialOfferStatusModel];
+export type CommercialOfferStatusModel = typeof CommercialOfferStatusModel[keyof typeof CommercialOfferStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CommercialOfferStatusModel = {
@@ -14418,9 +14704,47 @@ Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
 export type CommercialOffersV2Model = CommercialOfferV2Model[];
 
 /**
+ * Customer loyalty program status at the time of the earned points
+ */
+export type LoyaltyProgramStatus = typeof LoyaltyProgramStatus[keyof typeof LoyaltyProgramStatus];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LoyaltyProgramStatus = {
+  NONE: 'NONE',
+  TURQUOISE: 'TURQUOISE',
+  SILVER: 'SILVER',
+  GOLD: 'GOLD',
+  PLATINUM: 'PLATINUM',
+} as const;
+
+/**
+ * Points expiration date
+ */
+export type CustomerLoyaltyDetailsV2ModelExpirationDate = string | null;
+
+export interface CustomerLoyaltyDetailsV2Model {
+  type: LoyaltyType;
+  /**
+   * Number of points
+   * @minimum 0
+   */
+  points: number;
+  /** Points expiration date */
+  expiration_date: CustomerLoyaltyDetailsV2ModelExpirationDate;
+  /** true when points are expired */
+  expired: boolean;
+  related_booking: CustomerLoyaltyDetailsRelatedBookingModel;
+  loyalty_program_status?: LoyaltyProgramStatus;
+}
+
+export type CustomerLoyaltyDetailsResponseV2Model = CustomerLoyaltyDetailsV2Model[];
+
+/**
  * Thematic's type
  */
-export type ThematicTypeV2Model = (typeof ThematicTypeV2Model)[keyof typeof ThematicTypeV2Model];
+export type ThematicTypeV2Model = typeof ThematicTypeV2Model[keyof typeof ThematicTypeV2Model];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ThematicTypeV2Model = {
@@ -14434,8 +14758,8 @@ export const ThematicTypeV2Model = {
 /**
  * MAIN for the main type of pictures illustrating this theme / COMMON for the pictures illustrating this theme
  */
-export type ThematicImageTypeModel =
-  (typeof ThematicImageTypeModel)[keyof typeof ThematicImageTypeModel];
+export type ThematicImageTypeModel = typeof ThematicImageTypeModel[keyof typeof ThematicImageTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ThematicImageTypeModel = {
@@ -14484,8 +14808,7 @@ export type ThematicsBusinessSocialResponsibilityModelAnyOf = {
   description?: string;
 };
 
-export type ThematicsBusinessSocialResponsibilityModel =
-  ThematicsBusinessSocialResponsibilityModelAnyOf | null;
+export type ThematicsBusinessSocialResponsibilityModel = ThematicsBusinessSocialResponsibilityModelAnyOf | null;
 
 /**
  * Indicates if this item is specific to a product or not
@@ -14547,8 +14870,8 @@ export type AccommodationAreaModel = AccommodationAreaModelAnyOf | null;
 /**
  * importance of this responsibility for this specific accommodation
  */
-export type AccommodationBSRRankingModel =
-  (typeof AccommodationBSRRankingModel)[keyof typeof AccommodationBSRRankingModel];
+export type AccommodationBSRRankingModel = typeof AccommodationBSRRankingModel[keyof typeof AccommodationBSRRankingModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationBSRRankingModel = {
@@ -14567,8 +14890,7 @@ export interface AccommodationBusinessSocialResponsibilityModel {
   ranking: AccommodationBSRRankingModel;
 }
 
-export type AccommodationBusinessSocialResponsibilitiesModel =
-  AccommodationBusinessSocialResponsibilityModel[];
+export type AccommodationBusinessSocialResponsibilitiesModel = AccommodationBusinessSocialResponsibilityModel[];
 
 export type AccommodationPlansModel = string[];
 
@@ -14645,89 +14967,10 @@ export interface AccommodationModelV2 {
 export type AccommodationsModelV2 = AccommodationModelV2[];
 
 /**
- * reference price for this product
- */
-export type ChildcarePriceV2AnyOfPrice = 0 | null;
-
-/**
- * The iso 3 currency. Ex: CNY,EUR,..
- * @minLength 3
- * @maxLength 3
- */
-export type ChildcarePriceV2AnyOfCurrency = string | null;
-
-/**
- * last insertion date, last recalculation
- */
-export type ChildcarePriceV2AnyOfLastInsertionDate = string | null;
-
-/**
- * Duration in day linked at the price
- */
-export type ChildcarePriceV2AnyOfDurationInDay = number | null;
-
-export type ChildcarePriceV2AnyOf = {
-  /** reference price for this product */
-  price: ChildcarePriceV2AnyOfPrice;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: ChildcarePriceV2AnyOfCurrency;
-  /** last insertion date, last recalculation */
-  last_insertion_date: ChildcarePriceV2AnyOfLastInsertionDate;
-  /** Duration in day linked at the price */
-  duration_in_day?: ChildcarePriceV2AnyOfDurationInDay;
-  time_slot?: ActivityPriceTimeslotModel;
-};
-
-export type ChildcarePriceV2 = ChildcarePriceV2AnyOf | null;
-
-/**
- * False if an extra cost is required to benefit from this childcare
- */
-export type ChildcareModelV2IsIncluded = boolean | null;
-
-export interface ChildcareModelV2 {
-  /** Id of this childcare */
-  id: string;
-  /** ID of the category activity for this childcare */
-  activity_category_id?: string;
-  /** Label of this childcare */
-  label: string;
-  images?: ChildcareImageListModel;
-  /** Logo of this childcare */
-  logo?: string;
-  /** Childcare description */
-  description?: string;
-  /** Childcare additional information */
-  further_information?: string;
-  /** Philosophy of the Club for the activity */
-  philosophy?: string;
-  age_in_months?: ChildcareAgeInMonth;
-  /** Childcare duration description */
-  duration_description?: string;
-  /** False if an extra cost is required to benefit from this childcare */
-  is_included?: ChildcareModelV2IsIncluded;
-  opening_dates?: OpeningDatesModel;
-  /** Additional description for village animation */
-  additional_description?: string;
-  service_codes?: ServiceCodesModel;
-  opening_hours?: OpeningHoursModel;
-  closing_weekdays?: ClosingWeekdaysModel;
-  timeslots?: ChildcareTimeslotsModel;
-  target_price?: ChildcarePriceV2;
-  /** True if the childcare is available in the product */
-  is_available?: boolean;
-}
-
-export type ProductChildcareListModelV2 = ChildcareModelV2[];
-
-/**
  * give the availability of the product in that date. Ex: "CLOSED: the product is closed ", "NO_FLIGHT: No flight has been found ", "NO_DEPARTURE: the product is not for sale", "FULL: The product is full ", "OPEN: the product can be booked" , "EXCLUSIVITY : The product cannot be book for exclusivity clause" , "PRE_BOOKABLE : This status means that the product is not yet available for booking, but will be in the near future" , "SIBLING_OPEN : the sibling product from another season is open"
  */
-export type Availability = (typeof Availability)[keyof typeof Availability];
+export type Availability = typeof Availability[keyof typeof Availability];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Availability = {
@@ -14895,9 +15138,90 @@ export interface CalendarModelV2 {
 }
 
 /**
+ * reference price for this product
+ */
+export type ChildcarePriceV2AnyOfPrice = 0 | null;
+
+/**
+ * The iso 3 currency. Ex: CNY,EUR,..
+ * @minLength 3
+ * @maxLength 3
+ */
+export type ChildcarePriceV2AnyOfCurrency = string | null;
+
+/**
+ * last insertion date, last recalculation
+ */
+export type ChildcarePriceV2AnyOfLastInsertionDate = string | null;
+
+/**
+ * Duration in day linked at the price
+ */
+export type ChildcarePriceV2AnyOfDurationInDay = number | null;
+
+export type ChildcarePriceV2AnyOf = {
+  /** reference price for this product */
+  price: ChildcarePriceV2AnyOfPrice;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: ChildcarePriceV2AnyOfCurrency;
+  /** last insertion date, last recalculation */
+  last_insertion_date: ChildcarePriceV2AnyOfLastInsertionDate;
+  /** Duration in day linked at the price */
+  duration_in_day?: ChildcarePriceV2AnyOfDurationInDay;
+  time_slot?: ActivityPriceTimeslotModel;
+};
+
+export type ChildcarePriceV2 = ChildcarePriceV2AnyOf | null;
+
+/**
+ * False if an extra cost is required to benefit from this childcare
+ */
+export type ChildcareModelV2IsIncluded = boolean | null;
+
+export interface ChildcareModelV2 {
+  /** Id of this childcare */
+  id: string;
+  /** ID of the category activity for this childcare */
+  activity_category_id?: string;
+  /** Label of this childcare */
+  label: string;
+  images?: ChildcareImageListModel;
+  /** Logo of this childcare */
+  logo?: string;
+  /** Childcare description */
+  description?: string;
+  /** Childcare additional information */
+  further_information?: string;
+  /** Philosophy of the Club for the activity */
+  philosophy?: string;
+  age_in_months?: ChildcareAgeInMonth;
+  /** Childcare duration description */
+  duration_description?: string;
+  /** False if an extra cost is required to benefit from this childcare */
+  is_included?: ChildcareModelV2IsIncluded;
+  opening_dates?: OpeningDatesModel;
+  /** Additional description for village animation */
+  additional_description?: string;
+  service_codes?: ServiceCodesModel;
+  opening_hours?: OpeningHoursModel;
+  closing_weekdays?: ClosingWeekdaysModel;
+  timeslots?: ChildcareTimeslotsModel;
+  target_price?: ChildcarePriceV2;
+  /** True if the childcare is available in the product */
+  is_available?: boolean;
+}
+
+export type ProductChildcareListModelV2 = ChildcareModelV2[];
+
+/**
  * Define the information's source - STANDARD = Quable - EXTENDED = CMS Drupal
  */
-export type ActivityCatalogTypes = (typeof ActivityCatalogTypes)[keyof typeof ActivityCatalogTypes];
+export type ActivityCatalogTypes = typeof ActivityCatalogTypes[keyof typeof ActivityCatalogTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivityCatalogTypes = {
@@ -14908,7 +15232,8 @@ export const ActivityCatalogTypes = {
 /**
  * importance of this activity between all activities of this product
  */
-export type ActivityRankingModel = (typeof ActivityRankingModel)[keyof typeof ActivityRankingModel];
+export type ActivityRankingModel = typeof ActivityRankingModel[keyof typeof ActivityRankingModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActivityRankingModel = {
@@ -15093,13 +15418,13 @@ export type TechnicalSpecificitiesModelV1AllowNullAnyOf = {
 /**
  * Technical details of the facility area
  */
-export type TechnicalSpecificitiesModelV1AllowNull =
-  TechnicalSpecificitiesModelV1AllowNullAnyOf | null;
+export type TechnicalSpecificitiesModelV1AllowNull = TechnicalSpecificitiesModelV1AllowNullAnyOf | null;
 
 /**
  * day of the week
  */
-export type OpeningDayTypesModel = (typeof OpeningDayTypesModel)[keyof typeof OpeningDayTypesModel];
+export type OpeningDayTypesModel = typeof OpeningDayTypesModel[keyof typeof OpeningDayTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OpeningDayTypesModel = {
@@ -15402,64 +15727,10 @@ export interface NewJourneyModel {
 
 export type NewTransportJourneysModel = NewJourneyModel[];
 
-export interface _Raw {
-  [key: string]: unknown;
-}
+export interface RawProposalResponse { [key: string]: unknown }
 
-export type RawProposalResponseBookingId = number | null;
+export type TravelSectionAttendeeStatusModel = typeof TravelSectionAttendeeStatusModel[keyof typeof TravelSectionAttendeeStatusModel];
 
-/**
- * Locale with ISO 639-1 language and ISO 3166-1 country
- */
-export type RawProposalResponseLocale = string | null;
-
-export interface RawProposalResponse {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  id: string;
-  /** ClubMed Product identifier */
-  product_id: string;
-  booking_id?: RawProposalResponseBookingId;
-  /** a package_id from /products/{product_id}/packages resource */
-  package_id: string;
-  label: string;
-  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
-  resort_arrival_date: string;
-  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
-  resort_departure_date: string;
-  price?: ProposalPriceModelV1;
-  /** Journey duration */
-  duration?: number;
-  alternative_price?: ProposalPriceModel;
-  accommodations: AccommodationsModel;
-  /**
-   * count of remaining stock. Can be usefull for stress marketing
-   * @minimum 0
-   */
-  remaining_stock: number;
-  /** true if the associated booking can be created with OPTION status */
-  option_available: boolean;
-  option_durability?: ProposalOptionDurationModelV1;
-  households?: ProposalHouseholdsModelV1;
-  /** Locale with ISO 639-1 language and ISO 3166-1 country */
-  locale: RawProposalResponseLocale;
-  _links?: LinksModel;
-  transportation_summary?: ProposalTransportationSummaryModelV1;
-  /** if true means that the proposal will exist during 6 months (15 days if false) */
-  extend_persistence?: boolean;
-  auto_optionable_status: AutoOptionableStatus;
-  /** Indicates wether the proposal can be transformed into a booking or not. Always displayed as false when attendees are not added. */
-  is_bookable: boolean;
-  /** proposal creation date time */
-  creation_date_time?: string;
-  vendor?: ProposalResponseVendorModel;
-  _raw: _Raw;
-}
-
-export type TravelSectionAttendeeStatusModel =
-  (typeof TravelSectionAttendeeStatusModel)[keyof typeof TravelSectionAttendeeStatusModel];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TravelSectionAttendeeStatusModel = {
@@ -15546,7 +15817,8 @@ Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
 /**
  * Transport information indicating its class
  */
-export type Class = (typeof Class)[keyof typeof Class];
+export type Class = typeof Class[keyof typeof Class];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Class = {
@@ -15567,7 +15839,8 @@ export interface TravelSectionTransportCompaniesV2 {
 /**
  * unit of the weight
  */
-export type BaggageUnitModel = (typeof BaggageUnitModel)[keyof typeof BaggageUnitModel];
+export type BaggageUnitModel = typeof BaggageUnitModel[keyof typeof BaggageUnitModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BaggageUnitModel = {
@@ -15630,7 +15903,7 @@ export interface TravelSectionTransportModelV3 {
 /**
  * used to determine which cancellation policy is to be applied to this travel
  */
-export type FlightCodeTravelSectionModelV2ForBooking = 'AUCUN' | 'THEO' | 'WEBTHEO' | 'NDC' | null;
+export type FlightCodeTravelSectionModelV2ForBooking = 'AUCUN' | 'THEO' | 'WEBTHEO' | 'NDC' | 'NDCx' | null;
 
 /**
  * true if the transport has been purchased by ClubMed
@@ -15731,8 +16004,8 @@ export type CustomerBookingRenewalModel = CustomerBookingRenewalModelAnyOf | nul
 /**
  * booking payment's status
  */
-export type CustomerBookingPaymentStatusModel =
-  (typeof CustomerBookingPaymentStatusModel)[keyof typeof CustomerBookingPaymentStatusModel];
+export type CustomerBookingPaymentStatusModel = typeof CustomerBookingPaymentStatusModel[keyof typeof CustomerBookingPaymentStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingPaymentStatusModel = {
@@ -15761,8 +16034,8 @@ export type StayAttendeeIdsModel = string[];
 /**
  * adult attendees number
  */
-export type BookingStayAttendeeAdultsCount =
-  (typeof BookingStayAttendeeAdultsCount)[keyof typeof BookingStayAttendeeAdultsCount];
+export type BookingStayAttendeeAdultsCount = typeof BookingStayAttendeeAdultsCount[keyof typeof BookingStayAttendeeAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingStayAttendeeAdultsCount = {
@@ -15772,8 +16045,8 @@ export const BookingStayAttendeeAdultsCount = {
 /**
  * children attendees number
  */
-export type BookingStayAttendeeChildrenCount =
-  (typeof BookingStayAttendeeChildrenCount)[keyof typeof BookingStayAttendeeChildrenCount];
+export type BookingStayAttendeeChildrenCount = typeof BookingStayAttendeeChildrenCount[keyof typeof BookingStayAttendeeChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingStayAttendeeChildrenCount = {
@@ -15808,8 +16081,8 @@ export type BookingStayAttendees = BookingStayAttendee[];
 /**
  * Transportation mode
  */
-export type CustomerBookingStayOutwardTripTransportationModeModelV2 =
-  (typeof CustomerBookingStayOutwardTripTransportationModeModelV2)[keyof typeof CustomerBookingStayOutwardTripTransportationModeModelV2];
+export type CustomerBookingStayOutwardTripTransportationModeModelV2 = typeof CustomerBookingStayOutwardTripTransportationModeModelV2[keyof typeof CustomerBookingStayOutwardTripTransportationModeModelV2];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingStayOutwardTripTransportationModeModelV2 = {
@@ -15854,8 +16127,8 @@ export type CustomerBookingStayModelV2ResortLeavingDate = string | null;
 /**
  * Total number of adults for the stay
  */
-export type CustomerBookingStayModelV2TotalAdultsCount =
-  (typeof CustomerBookingStayModelV2TotalAdultsCount)[keyof typeof CustomerBookingStayModelV2TotalAdultsCount];
+export type CustomerBookingStayModelV2TotalAdultsCount = typeof CustomerBookingStayModelV2TotalAdultsCount[keyof typeof CustomerBookingStayModelV2TotalAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingStayModelV2TotalAdultsCount = {
@@ -15865,8 +16138,8 @@ export const CustomerBookingStayModelV2TotalAdultsCount = {
 /**
  * Total number of children for the stay
  */
-export type CustomerBookingStayModelV2TotalChildrenCount =
-  (typeof CustomerBookingStayModelV2TotalChildrenCount)[keyof typeof CustomerBookingStayModelV2TotalChildrenCount];
+export type CustomerBookingStayModelV2TotalChildrenCount = typeof CustomerBookingStayModelV2TotalChildrenCount[keyof typeof CustomerBookingStayModelV2TotalChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingStayModelV2TotalChildrenCount = {
@@ -15993,8 +16266,8 @@ export type CustomerBookingsModelV3 = CustomerBookingModelV3[];
 /**
  * direction of the transport, INBOUND or OUTBOUND
  */
-export type JourneyWayTypeV3Model =
-  (typeof JourneyWayTypeV3Model)[keyof typeof JourneyWayTypeV3Model];
+export type JourneyWayTypeV3Model = typeof JourneyWayTypeV3Model[keyof typeof JourneyWayTypeV3Model];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const JourneyWayTypeV3Model = {
@@ -16029,8 +16302,8 @@ export interface TravelSectionStepArrivalV3Model {
   location?: TravelSectionLocationModel;
 }
 
-export type TravelSectionTransportTypeV3Model =
-  (typeof TravelSectionTransportTypeV3Model)[keyof typeof TravelSectionTransportTypeV3Model];
+export type TravelSectionTransportTypeV3Model = typeof TravelSectionTransportTypeV3Model[keyof typeof TravelSectionTransportTypeV3Model];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TravelSectionTransportTypeV3Model = {
@@ -16130,8 +16403,8 @@ export type TransportJourneysV3Model = TransportJourneyV3Model[];
 /**
  * INBOUND, OUTBOUND or WITHIN_TOUR
  */
-export type ProposalTransportDetailsTripWayModel =
-  (typeof ProposalTransportDetailsTripWayModel)[keyof typeof ProposalTransportDetailsTripWayModel];
+export type ProposalTransportDetailsTripWayModel = typeof ProposalTransportDetailsTripWayModel[keyof typeof ProposalTransportDetailsTripWayModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalTransportDetailsTripWayModel = {
@@ -16335,7 +16608,8 @@ export interface LoyaltyProgramSimulationCurrencyModel {
   currency: string;
 }
 
-export type Ranking = (typeof Ranking)[keyof typeof Ranking];
+export type Ranking = typeof Ranking[keyof typeof Ranking];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Ranking = {
@@ -16549,8 +16823,8 @@ export interface SpaBookingAppointmentPriceModel {
 /**
  * Spa booking's status
  */
-export type ValidSpaBookingAppointmentStatusesModel =
-  (typeof ValidSpaBookingAppointmentStatusesModel)[keyof typeof ValidSpaBookingAppointmentStatusesModel];
+export type ValidSpaBookingAppointmentStatusesModel = typeof ValidSpaBookingAppointmentStatusesModel[keyof typeof ValidSpaBookingAppointmentStatusesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidSpaBookingAppointmentStatusesModel = {
@@ -16568,7 +16842,8 @@ export const ValidSpaBookingAppointmentStatusesModel = {
 /**
  * Spa upsell's type
  */
-export type Spa = (typeof Spa)[keyof typeof Spa];
+export type Spa = typeof Spa[keyof typeof Spa];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Spa = {
@@ -16631,87 +16906,93 @@ Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMD
 
 export type SpaBookingsModel = SpaBookingModel[];
 
+export type ExpensesConsumerProfileModelCustomerId = number | null;
+
+export interface ExpensesConsumerProfileModel {
+  /** name */
+  last_name: string;
+  /** surname */
+  first_name: string;
+  customer_id?: ExpensesConsumerProfileModelCustomerId;
+}
+
+export interface ExpensesPurchasePriceModel {
+  /** amount of the purchase without any discount */
+  amount_without_discount: number;
+  /** amount of the discount */
+  discount_amount: number;
+  /** amount payed with gift pass */
+  gift_pass_amount: number;
+  /** payroll amount */
+  amount_with_discount: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+}
+
 /**
- * Sell Contract that meta description, use its id to download it.
+ * date on time of this purchase
  */
-export interface Sellcontract {
-  /** id of the document */
-  id: string;
-  /** A document type to be able to filter: ie TCS for terms and conditions of service */
-  type: string;
-  /** a label the customer would see to identify the document */
+export type ExpensesConsumerPurchaseModelOperationDate = string | null;
+
+/**
+ * purchase quantity of this item
+ */
+export type ExpensesConsumerPurchaseModelQuantity = typeof ExpensesConsumerPurchaseModelQuantity[keyof typeof ExpensesConsumerPurchaseModelQuantity];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExpensesConsumerPurchaseModelQuantity = {
+  NUMBER_0: 0,
+} as const;
+
+export interface ExpensesConsumerPurchaseModel {
+  /** category code of the purchased product */
+  category_code: string;
+  /** category label of the purchased product */
+  category_label: string;
+  /** label of the purchased product */
   label: string;
-  _links?: LinksModel;
+  /** operation type */
+  operation_type: string;
+  /** date on time of this purchase */
+  operation_date: ExpensesConsumerPurchaseModelOperationDate;
+  /** Codified value, looking like a bank card brand, required by accountant department. */
+  payment_method: string;
+  /** purchase quantity of this item */
+  quantity: ExpensesConsumerPurchaseModelQuantity;
+  price?: ExpensesPurchasePriceModel;
 }
 
-/**
- * Sell Contracts : documents customer receives when he/she books a travel
- */
-export type Sellcontractlist = Sellcontract[];
+export type ExpensesConsumerPurchasesModel = ExpensesConsumerPurchaseModel[];
 
-export interface CustomerBookingPaymentSchedule {
-  /** amount to pay before the deadline */
-  amount?: number;
-  /** deadline for payment of the amount */
-  deadline?: string;
+export interface ExpensesConsumerModel {
+  profile?: ExpensesConsumerProfileModel;
+  purchases: ExpensesConsumerPurchasesModel;
 }
 
-export type PaymentSchedules = CustomerBookingPaymentSchedule[];
+export type ExpensesConsumersModel = ExpensesConsumerModel[];
+
+export type CustomerBookingExpensesItemModelBookingId = number | null;
 
 /**
- * Payment schedule of a booking
+ * date on time of the last modified of this information
  */
-export interface CustomerBookingPaymentScheduleModel {
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  /** amount already paid */
-  paid?: number;
-  /** total amount to pay */
-  total?: number;
-  payment_schedules?: PaymentSchedules;
+export type CustomerBookingExpensesItemModelLastModifiedDate = string | null;
+
+export interface CustomerBookingExpensesItemModel {
+  booking_id?: CustomerBookingExpensesItemModelBookingId;
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** date on time of the last modified of this information */
+  last_modified_date?: CustomerBookingExpensesItemModelLastModifiedDate;
+  consumers: ExpensesConsumersModel;
 }
 
-/**
- * Package price per attendee
- */
-export interface AttendeePackageModel {
-  /** Package id */
-  id: string;
-  /** Price per attendee */
-  price_per_attendee: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-}
-
-/**
- * list of possible package upgrades for this attendee
- */
-export type AttendeePackagesModel = AttendeePackageModel[];
-
-/**
- * ids of the attendees who must also upgrade their package
- */
-export type LinkedAttendeeIds = string[];
-
-export interface AttendeePackageUpgradeModel {
-  /** Attendee id */
-  id: string;
-  packages?: AttendeePackagesModel;
-  linked_attendee_ids?: LinkedAttendeeIds;
-}
-
-/**
- * List of childcare services fof the booking
- */
-export type AttendeesPackageUpgradeModel = AttendeePackageUpgradeModel[];
+export type CustomerBookingExpensesModel = CustomerBookingExpensesItemModel[];
 
 export interface CustomerBookingCrmHistoryItemModel {
   /** Sub-division of a booking. A booking_id can have severals bulletin_ids */
@@ -16770,25 +17051,14 @@ export interface SupportRequestAttachedDocumentV0 {
 
 export type AttachedDocuments = SupportRequestAttachedDocumentV0[];
 
-export type ExpensesConsumerProfileModelCustomerId = number | null;
-
-export interface ExpensesConsumerProfileModel {
-  /** name */
-  last_name: string;
-  /** surname */
-  first_name: string;
-  customer_id?: ExpensesConsumerProfileModelCustomerId;
-}
-
-export interface ExpensesPurchasePriceModel {
-  /** amount of the purchase without any discount */
-  amount_without_discount: number;
-  /** amount of the discount */
-  discount_amount: number;
-  /** amount payed with gift pass */
-  gift_pass_amount: number;
-  /** payroll amount */
-  amount_with_discount: number;
+/**
+ * Package price per attendee
+ */
+export interface AttendeePackageModel {
+  /** Package id */
+  id: string;
+  /** Price per attendee */
+  price_per_attendee: number;
   /**
    * The iso 3 currency. Ex: CNY,EUR,..
    * @minLength 3
@@ -16798,70 +17068,76 @@ export interface ExpensesPurchasePriceModel {
 }
 
 /**
- * date on time of this purchase
+ * list of possible package upgrades for this attendee
  */
-export type ExpensesConsumerPurchaseModelOperationDate = string | null;
+export type AttendeePackagesModel = AttendeePackageModel[];
 
 /**
- * purchase quantity of this item
+ * ids of the attendees who must also upgrade their package
  */
-export type ExpensesConsumerPurchaseModelQuantity =
-  (typeof ExpensesConsumerPurchaseModelQuantity)[keyof typeof ExpensesConsumerPurchaseModelQuantity];
+export type LinkedAttendeeIds = string[];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ExpensesConsumerPurchaseModelQuantity = {
-  NUMBER_0: 0,
-} as const;
+export interface AttendeePackageUpgradeModel {
+  /** Attendee id */
+  id: string;
+  packages?: AttendeePackagesModel;
+  linked_attendee_ids?: LinkedAttendeeIds;
+}
 
-export interface ExpensesConsumerPurchaseModel {
-  /** category code of the purchased product */
-  category_code: string;
-  /** category label of the purchased product */
-  category_label: string;
-  /** label of the purchased product */
+/**
+ * List of childcare services fof the booking
+ */
+export type AttendeesPackageUpgradeModel = AttendeePackageUpgradeModel[];
+
+export interface CustomerBookingPaymentSchedule {
+  /** amount to pay before the deadline */
+  amount?: number;
+  /** deadline for payment of the amount */
+  deadline?: string;
+}
+
+export type PaymentSchedules = CustomerBookingPaymentSchedule[];
+
+/**
+ * Payment schedule of a booking
+ */
+export interface CustomerBookingPaymentScheduleModel {
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  /** amount already paid */
+  paid?: number;
+  /** total amount to pay */
+  total?: number;
+  payment_schedules?: PaymentSchedules;
+}
+
+/**
+ * Sell Contract that meta description, use its id to download it.
+ */
+export interface Sellcontract {
+  /** id of the document */
+  id: string;
+  /** A document type to be able to filter: ie TCS for terms and conditions of service */
+  type: string;
+  /** a label the customer would see to identify the document */
   label: string;
-  /** operation type */
-  operation_type: string;
-  /** date on time of this purchase */
-  operation_date: ExpensesConsumerPurchaseModelOperationDate;
-  /** Codified value, looking like a bank card brand, required by accountant department. */
-  payment_method: string;
-  /** purchase quantity of this item */
-  quantity: ExpensesConsumerPurchaseModelQuantity;
-  price?: ExpensesPurchasePriceModel;
+  _links?: LinksModel;
 }
-
-export type ExpensesConsumerPurchasesModel = ExpensesConsumerPurchaseModel[];
-
-export interface ExpensesConsumerModel {
-  profile?: ExpensesConsumerProfileModel;
-  purchases: ExpensesConsumerPurchasesModel;
-}
-
-export type ExpensesConsumersModel = ExpensesConsumerModel[];
-
-export type CustomerBookingExpensesItemModelBookingId = number | null;
 
 /**
- * date on time of the last modified of this information
+ * Sell Contracts : documents customer receives when he/she books a travel
  */
-export type CustomerBookingExpensesItemModelLastModifiedDate = string | null;
-
-export interface CustomerBookingExpensesItemModel {
-  booking_id?: CustomerBookingExpensesItemModelBookingId;
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** date on time of the last modified of this information */
-  last_modified_date?: CustomerBookingExpensesItemModelLastModifiedDate;
-  consumers: ExpensesConsumersModel;
-}
-
-export type CustomerBookingExpensesModel = CustomerBookingExpensesItemModel[];
+export type Sellcontractlist = Sellcontract[];
 
 /**
  * Employee's gender
  */
-export type Gender = (typeof Gender)[keyof typeof Gender];
+export type Gender = typeof Gender[keyof typeof Gender];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Gender = {
@@ -16927,196 +17203,6 @@ export interface Occupancy {
  */
 export type Occupancies = Occupancy[];
 
-/**
- * Pre check in availability. Possible values : AVAILABLE, UNAVAILABLE, NOT_YET, UNEDITABLE
- */
-export type CreditCardCheckInStatusesModel =
-  (typeof CreditCardCheckInStatusesModel)[keyof typeof CreditCardCheckInStatusesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreditCardCheckInStatusesModel = {
-  AVAILABLE: 'AVAILABLE',
-  UNAVAILABLE: 'UNAVAILABLE',
-  NOT_YET: 'NOT_YET',
-  UNEDITABLE: 'UNEDITABLE',
-} as const;
-
-/**
- * Pre check in
- */
-export type CreditCardCheckInAnyOf = {
-  status?: CreditCardCheckInStatusesModel;
-  /** Codified value, looking like a bank card brand, required by accountant department. */
-  payment_method?: string;
-  /** Pre check in activated */
-  activated?: boolean;
-  /** Unique Id given by a PSP to identify a previously registered bank card or payment instrument. */
-  token?: string;
-  _links?: LinksModel;
-};
-
-/**
- * Pre check in
- */
-export type CreditCardCheckIn = CreditCardCheckInAnyOf | null;
-
-/**
- * Payment check out availability. Possible values : AVAILABLE, UNAVAILABLE, NOT_YET, UNEDITABLE
- */
-export type PaymentCheckoutStayFormalitiesStatus =
-  (typeof PaymentCheckoutStayFormalitiesStatus)[keyof typeof PaymentCheckoutStayFormalitiesStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PaymentCheckoutStayFormalitiesStatus = {
-  UNAVAILABLE: 'UNAVAILABLE',
-  NOT_YET: 'NOT_YET',
-  AVAILABLE: 'AVAILABLE',
-  UNEDITABLE: 'UNEDITABLE',
-} as const;
-
-export type StayFormalitiesPaymentCheckoutAnyOf = {
-  status?: PaymentCheckoutStayFormalitiesStatus;
-  /** Payment check out activated */
-  activated?: boolean;
-};
-
-export type StayFormalitiesPaymentCheckout = StayFormalitiesPaymentCheckoutAnyOf | null;
-
-/**
- * GM feedback form availability.
- */
-export type ValidGMFeedbackStatuesModel =
-  (typeof ValidGMFeedbackStatuesModel)[keyof typeof ValidGMFeedbackStatuesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ValidGMFeedbackStatuesModel = {
-  UNAVAILABLE: 'UNAVAILABLE',
-  AVAILABLE: 'AVAILABLE',
-  UNEDITABLE: 'UNEDITABLE',
-} as const;
-
-export type GMFeedbackV1AnyOf = {
-  status: ValidGMFeedbackStatuesModel;
-  _links?: LinksModel;
-};
-
-export type GMFeedbackV1 = GMFeedbackV1AnyOf | null;
-
-/**
- * Status of the easy arrival
- */
-export type ValidEasyArrivalStatusesModel =
-  (typeof ValidEasyArrivalStatusesModel)[keyof typeof ValidEasyArrivalStatusesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ValidEasyArrivalStatusesModel = {
-  UNAVAILABLE: 'UNAVAILABLE',
-  AVAILABLE: 'AVAILABLE',
-  UNEDITABLE: 'UNEDITABLE',
-  DONE: 'DONE',
-} as const;
-
-export interface EasyArrivalV1 {
-  status: ValidEasyArrivalStatusesModel;
-  _links?: LinksModel;
-}
-
-export interface EsfWidget {
-  /** ESF information system code */
-  catalog_code?: string;
-  /** Station's code for ESF  */
-  station_code?: string;
-}
-
-/**
- * Transfer service availability
- */
-export type ServiceStatus = (typeof ServiceStatus)[keyof typeof ServiceStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ServiceStatus = {
-  VALIDATED: 'VALIDATED',
-  OPTION: 'OPTION',
-  UPSELL_AVAILABLE: 'UPSELL_AVAILABLE',
-  UNAVAILABLE: 'UNAVAILABLE',
-} as const;
-
-/**
- * Editable if the customers still need to fill information regarding his transfer to the resorts.
- */
-export type TravelingInformationStatus =
-  (typeof TravelingInformationStatus)[keyof typeof TravelingInformationStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TravelingInformationStatus = {
-  VALIDATED: 'VALIDATED',
-  EDITABLE: 'EDITABLE',
-  UNEDITABLE: 'UNEDITABLE',
-  UNAVAILABLE: 'UNAVAILABLE',
-} as const;
-
-export interface StayFormalitiesTransferV1 {
-  service_status: ServiceStatus;
-  traveling_information_status: TravelingInformationStatus;
-  _links?: LinksModel;
-}
-
-/**
- * Room selection status availability
- */
-export type RoomSelectionStatusesModel =
-  (typeof RoomSelectionStatusesModel)[keyof typeof RoomSelectionStatusesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const RoomSelectionStatusesModel = {
-  UNAVAILABLE: 'UNAVAILABLE',
-  NOT_YET: 'NOT_YET',
-  AVAILABLE: 'AVAILABLE',
-  UNEDITABLE: 'UNEDITABLE',
-  VALIDATED: 'VALIDATED',
-  OPTION: 'OPTION',
-  RESORT_ONLY: 'RESORT_ONLY',
-  RESORT_ONLY_FORM_SENT: 'RESORT_ONLY_FORM_SENT',
-} as const;
-
-export interface StayFormalitiesRoomSelection {
-  status: RoomSelectionStatusesModel;
-  _links?: LinksModel;
-}
-
-/**
- * Status of the police form
- */
-export type PoliceFormStatusesModel =
-  (typeof PoliceFormStatusesModel)[keyof typeof PoliceFormStatusesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PoliceFormStatusesModel = {
-  UNAVAILABLE: 'UNAVAILABLE',
-  AVAILABLE: 'AVAILABLE',
-  DONE: 'DONE',
-} as const;
-
-export interface StayFormalitiesPoliceForm {
-  status: PoliceFormStatusesModel;
-  _links?: LinksModel;
-}
-
-export interface StayFormalitiesV1 {
-  /** id of the stay. the stay is described in the ressource customers/id/booking/id */
-  stay_id: string;
-  credit_card_check_in: CreditCardCheckIn;
-  payment_check_out: StayFormalitiesPaymentCheckout;
-  gm_feedback: GMFeedbackV1;
-  easy_arrival?: EasyArrivalV1;
-  esf_widget?: EsfWidget;
-  transfer?: StayFormalitiesTransferV1;
-  room_selection?: StayFormalitiesRoomSelection;
-  police_form?: StayFormalitiesPoliceForm;
-}
-
-export type StayFormalitiesList = StayFormalitiesV1[];
-
 export interface CustomerBookingPriceDetailsFee {
   /** amount of the fee */
   amount: number;
@@ -17130,7 +17216,8 @@ export type CustomerBookingPriceDetailsFees = CustomerBookingPriceDetailsFee[];
 /**
  * Option type
  */
-export type BookingServiceType = (typeof BookingServiceType)[keyof typeof BookingServiceType];
+export type BookingServiceType = typeof BookingServiceType[keyof typeof BookingServiceType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingServiceType = {
@@ -17205,10 +17292,201 @@ export interface CustomerBookingPriceDetails {
 }
 
 /**
+ * Pre check in availability. Possible values : AVAILABLE, UNAVAILABLE, NOT_YET, UNEDITABLE
+ */
+export type CreditCardCheckInStatusesModel = typeof CreditCardCheckInStatusesModel[keyof typeof CreditCardCheckInStatusesModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CreditCardCheckInStatusesModel = {
+  AVAILABLE: 'AVAILABLE',
+  UNAVAILABLE: 'UNAVAILABLE',
+  NOT_YET: 'NOT_YET',
+  UNEDITABLE: 'UNEDITABLE',
+} as const;
+
+/**
+ * Pre check in
+ */
+export type CreditCardCheckInAnyOf = {
+  status?: CreditCardCheckInStatusesModel;
+  /** Codified value, looking like a bank card brand, required by accountant department. */
+  payment_method?: string;
+  /** Pre check in activated */
+  activated?: boolean;
+  /** Unique Id given by a PSP to identify a previously registered bank card or payment instrument. */
+  token?: string;
+  _links?: LinksModel;
+};
+
+/**
+ * Pre check in
+ */
+export type CreditCardCheckIn = CreditCardCheckInAnyOf | null;
+
+/**
+ * Payment check out availability. Possible values : AVAILABLE, UNAVAILABLE, NOT_YET, UNEDITABLE
+ */
+export type PaymentCheckoutStayFormalitiesStatus = typeof PaymentCheckoutStayFormalitiesStatus[keyof typeof PaymentCheckoutStayFormalitiesStatus];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentCheckoutStayFormalitiesStatus = {
+  UNAVAILABLE: 'UNAVAILABLE',
+  NOT_YET: 'NOT_YET',
+  AVAILABLE: 'AVAILABLE',
+  UNEDITABLE: 'UNEDITABLE',
+} as const;
+
+export type StayFormalitiesPaymentCheckoutAnyOf = {
+  status?: PaymentCheckoutStayFormalitiesStatus;
+  /** Payment check out activated */
+  activated?: boolean;
+};
+
+export type StayFormalitiesPaymentCheckout = StayFormalitiesPaymentCheckoutAnyOf | null;
+
+/**
+ * GM feedback form availability.
+ */
+export type ValidGMFeedbackStatuesModel = typeof ValidGMFeedbackStatuesModel[keyof typeof ValidGMFeedbackStatuesModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ValidGMFeedbackStatuesModel = {
+  UNAVAILABLE: 'UNAVAILABLE',
+  AVAILABLE: 'AVAILABLE',
+  UNEDITABLE: 'UNEDITABLE',
+} as const;
+
+export type GMFeedbackV1AnyOf = {
+  status: ValidGMFeedbackStatuesModel;
+  _links?: LinksModel;
+};
+
+export type GMFeedbackV1 = GMFeedbackV1AnyOf | null;
+
+/**
+ * Status of the easy arrival
+ */
+export type ValidEasyArrivalStatusesModel = typeof ValidEasyArrivalStatusesModel[keyof typeof ValidEasyArrivalStatusesModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ValidEasyArrivalStatusesModel = {
+  UNAVAILABLE: 'UNAVAILABLE',
+  AVAILABLE: 'AVAILABLE',
+  UNEDITABLE: 'UNEDITABLE',
+  DONE: 'DONE',
+} as const;
+
+export interface EasyArrivalV1 {
+  status: ValidEasyArrivalStatusesModel;
+  _links?: LinksModel;
+}
+
+export interface EsfWidget {
+  /** ESF information system code */
+  catalog_code?: string;
+  /** Station's code for ESF  */
+  station_code?: string;
+}
+
+/**
+ * Transfer service availability
+ */
+export type ServiceStatus = typeof ServiceStatus[keyof typeof ServiceStatus];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ServiceStatus = {
+  VALIDATED: 'VALIDATED',
+  OPTION: 'OPTION',
+  UPSELL_AVAILABLE: 'UPSELL_AVAILABLE',
+  UNAVAILABLE: 'UNAVAILABLE',
+} as const;
+
+/**
+ * Editable if the customers still need to fill information regarding his transfer to the resorts.
+ */
+export type TravelingInformationStatus = typeof TravelingInformationStatus[keyof typeof TravelingInformationStatus];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TravelingInformationStatus = {
+  VALIDATED: 'VALIDATED',
+  EDITABLE: 'EDITABLE',
+  UNEDITABLE: 'UNEDITABLE',
+  UNAVAILABLE: 'UNAVAILABLE',
+} as const;
+
+export interface StayFormalitiesTransferV1 {
+  service_status: ServiceStatus;
+  traveling_information_status: TravelingInformationStatus;
+  _links?: LinksModel;
+}
+
+/**
+ * Room selection status availability
+ */
+export type RoomSelectionStatusesModel = typeof RoomSelectionStatusesModel[keyof typeof RoomSelectionStatusesModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const RoomSelectionStatusesModel = {
+  UNAVAILABLE: 'UNAVAILABLE',
+  NOT_YET: 'NOT_YET',
+  AVAILABLE: 'AVAILABLE',
+  UNEDITABLE: 'UNEDITABLE',
+  VALIDATED: 'VALIDATED',
+  OPTION: 'OPTION',
+  RESORT_ONLY: 'RESORT_ONLY',
+  RESORT_ONLY_FORM_SENT: 'RESORT_ONLY_FORM_SENT',
+} as const;
+
+export interface StayFormalitiesRoomSelection {
+  status: RoomSelectionStatusesModel;
+  _links?: LinksModel;
+}
+
+/**
+ * Status of the police form
+ */
+export type PoliceFormStatusesModel = typeof PoliceFormStatusesModel[keyof typeof PoliceFormStatusesModel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PoliceFormStatusesModel = {
+  UNAVAILABLE: 'UNAVAILABLE',
+  AVAILABLE: 'AVAILABLE',
+  DONE: 'DONE',
+} as const;
+
+export interface StayFormalitiesPoliceForm {
+  status: PoliceFormStatusesModel;
+  _links?: LinksModel;
+}
+
+export interface StayFormalitiesV1 {
+  /** id of the stay. the stay is described in the ressource customers/id/booking/id */
+  stay_id: string;
+  credit_card_check_in: CreditCardCheckIn;
+  payment_check_out: StayFormalitiesPaymentCheckout;
+  gm_feedback: GMFeedbackV1;
+  easy_arrival?: EasyArrivalV1;
+  esf_widget?: EsfWidget;
+  transfer?: StayFormalitiesTransferV1;
+  room_selection?: StayFormalitiesRoomSelection;
+  police_form?: StayFormalitiesPoliceForm;
+}
+
+export type StayFormalitiesList = StayFormalitiesV1[];
+
+/**
  * type of the service
  */
-export type CartPriceDetailModelTypes =
-  (typeof CartPriceDetailModelTypes)[keyof typeof CartPriceDetailModelTypes];
+export type CartPriceDetailModelTypes = typeof CartPriceDetailModelTypes[keyof typeof CartPriceDetailModelTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CartPriceDetailModelTypes = {
@@ -17248,7 +17526,8 @@ export interface CartPrice {
   detail?: CartPriceDetails;
 }
 
-export type CartServiceTypeModel = (typeof CartServiceTypeModel)[keyof typeof CartServiceTypeModel];
+export type CartServiceTypeModel = typeof CartServiceTypeModel[keyof typeof CartServiceTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CartServiceTypeModel = {
@@ -17331,7 +17610,8 @@ export interface CartModel {
 /**
  * type of the service
  */
-export type ServiceTypesV1Model = (typeof ServiceTypesV1Model)[keyof typeof ServiceTypesV1Model];
+export type ServiceTypesV1Model = typeof ServiceTypesV1Model[keyof typeof ServiceTypesV1Model];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ServiceTypesV1Model = {
@@ -17386,16 +17666,12 @@ export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTime = st
  * arrival or departure travel reference
  * @maxLength 6
  */
-export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelReference =
-  | string
-  | null;
+export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelReference = string | null;
 
 /**
  * travel company label
  */
-export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelCompany =
-  | string
-  | null;
+export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelCompany = string | null;
 
 /**
  * information provided by the customer to insure the service delivery
@@ -17418,8 +17694,7 @@ export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOf = {
 /**
  * information provided by the customer to insure the service delivery
  */
-export type BookingTransferInfoCustomerTravelingInformationV1Model =
-  BookingTransferInfoCustomerTravelingInformationV1ModelAnyOf | null;
+export type BookingTransferInfoCustomerTravelingInformationV1Model = BookingTransferInfoCustomerTravelingInformationV1ModelAnyOf | null;
 
 export type TransfersBookingFromV1ModelAnyOfLabel = string | null;
 
@@ -17507,7 +17782,8 @@ export type ServicesV1Model = ServiceV1Model[];
 /**
  * type of the service
  */
-export type ServiceTypesV2Model = (typeof ServiceTypesV2Model)[keyof typeof ServiceTypesV2Model];
+export type ServiceTypesV2Model = typeof ServiceTypesV2Model[keyof typeof ServiceTypesV2Model];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ServiceTypesV2Model = {
@@ -17540,7 +17816,8 @@ export const ServiceTypesV2Model = {
 /**
  * the service's status
  */
-export type ServiceV2StatusModel = (typeof ServiceV2StatusModel)[keyof typeof ServiceV2StatusModel];
+export type ServiceV2StatusModel = typeof ServiceV2StatusModel[keyof typeof ServiceV2StatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ServiceV2StatusModel = {
@@ -17566,15 +17843,6 @@ export interface ServiceAttendeeV2Model {
 }
 
 export type ServiceV2Attendees = ServiceAttendeeV2Model[];
-
-/**
- * Direction of transfer
- */
-export type ValidServiceTransferInformationWaysV2Model =
-  | 'INBOUND'
-  | 'OUTBOUND'
-  | 'WITHIN_TOUR'
-  | null;
 
 /**
  * arrival or departure travel time
@@ -17614,8 +17882,7 @@ export type BookingTransferInfoCustomerTravelingInformationV2AnyOf = {
 /**
  * information provided by the customer to insure the service delivery
  */
-export type BookingTransferInfoCustomerTravelingInformationV2 =
-  BookingTransferInfoCustomerTravelingInformationV2AnyOf | null;
+export type BookingTransferInfoCustomerTravelingInformationV2 = BookingTransferInfoCustomerTravelingInformationV2AnyOf | null;
 
 export type TransfersBookingFromV2AnyOfLabel = string | null;
 
@@ -17776,7 +18043,8 @@ export type CustomerBookingTransportDetailsModelV2 = NewTransportDetailsTripMode
 /**
  * type of the service
  */
-export type ServiceTypesModel = (typeof ServiceTypesModel)[keyof typeof ServiceTypesModel];
+export type ServiceTypesModel = typeof ServiceTypesModel[keyof typeof ServiceTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ServiceTypesModel = {
@@ -17809,7 +18077,8 @@ export const ServiceTypesModel = {
 /**
  * the service's status for a given schedule and attendee
  */
-export type ServiceV3StatusModel = (typeof ServiceV3StatusModel)[keyof typeof ServiceV3StatusModel];
+export type ServiceV3StatusModel = typeof ServiceV3StatusModel[keyof typeof ServiceV3StatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ServiceV3StatusModel = {
@@ -17861,11 +18130,7 @@ export type ServiceTransferInformationConcernedAttendees = string[];
 /**
  * Direction of transfer
  */
-export type ValidServiceTransferInformationWaysModel =
-  | 'INBOUND'
-  | 'OUTBOUND'
-  | 'WITHIN_TOUR'
-  | null;
+export type ValidServiceTransferInformationWaysModel = 'INBOUND' | 'OUTBOUND' | 'WITHIN_TOUR' | null;
 
 /**
  * indicates the travel company code, on two letters.
@@ -17884,8 +18149,7 @@ export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf = 
   label?: BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfLabel;
 };
 
-export type BookingTransferInfoCustomerTravelingInformationTravelCompany =
-  BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf | null;
+export type BookingTransferInfoCustomerTravelingInformationTravelCompany = BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf | null;
 
 /**
  * arrival or departure travel time
@@ -17919,8 +18183,7 @@ export type BookingTransferInfoCustomerTravelingInformationAnyOf = {
 /**
  * information provided by the customer to insure the service delivery
  */
-export type BookingTransferInfoCustomerTravelingInformation =
-  BookingTransferInfoCustomerTravelingInformationAnyOf | null;
+export type BookingTransferInfoCustomerTravelingInformation = BookingTransferInfoCustomerTravelingInformationAnyOf | null;
 
 export type TransfersBookingFromAnyOfId = string | null;
 
@@ -17962,6 +18225,11 @@ export type ServiceTransferInformationV3ModelAnyOf = {
   customer_traveling_information: BookingTransferInfoCustomerTravelingInformation;
   from?: TransfersBookingFrom;
   to?: TransfersBookingTo;
+  /**
+   * Any special comment regarding the transfer
+   * @maxLength 30
+   */
+  comment: string;
 };
 
 export type ServiceTransferInformationV3Model = ServiceTransferInformationV3ModelAnyOf | null;
@@ -18019,8 +18287,8 @@ export type ServicesV3Model = ServiceV3Model[];
 /**
  * Eligible services status
  */
-export type ValidEligibleServiceStatusesModel =
-  (typeof ValidEligibleServiceStatusesModel)[keyof typeof ValidEligibleServiceStatusesModel];
+export type ValidEligibleServiceStatusesModel = typeof ValidEligibleServiceStatusesModel[keyof typeof ValidEligibleServiceStatusesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidEligibleServiceStatusesModel = {
@@ -18305,7 +18573,8 @@ export interface AddressValidationInput {
 /**
  * OK if the address is valid, KO if not.
  */
-export type ValidationStatus = (typeof ValidationStatus)[keyof typeof ValidationStatus];
+export type ValidationStatus = typeof ValidationStatus[keyof typeof ValidationStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidationStatus = {
@@ -18489,7 +18758,8 @@ export interface ApiWebhookModel {
 /**
  * call type
  */
-export type LineCalledType = (typeof LineCalledType)[keyof typeof LineCalledType];
+export type LineCalledType = typeof LineCalledType[keyof typeof LineCalledType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LineCalledType = {
@@ -18522,8 +18792,8 @@ export interface InboundContactLineCalledModel {
 /**
  * Type of incoming communication used
  */
-export type InboundContactCallerChannelModel =
-  (typeof InboundContactCallerChannelModel)[keyof typeof InboundContactCallerChannelModel];
+export type InboundContactCallerChannelModel = typeof InboundContactCallerChannelModel[keyof typeof InboundContactCallerChannelModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InboundContactCallerChannelModel = {
@@ -18560,8 +18830,8 @@ export interface InboundContactModel {
 /**
  * Type of incoming communication used
  */
-export type InboundContactsResponseChannelModel =
-  (typeof InboundContactsResponseChannelModel)[keyof typeof InboundContactsResponseChannelModel];
+export type InboundContactsResponseChannelModel = typeof InboundContactsResponseChannelModel[keyof typeof InboundContactsResponseChannelModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InboundContactsResponseChannelModel = {
@@ -18572,7 +18842,8 @@ export const InboundContactsResponseChannelModel = {
 /**
  * Gives identification information about the caller
  */
-export type IdentificationStatus = (typeof IdentificationStatus)[keyof typeof IdentificationStatus];
+export type IdentificationStatus = typeof IdentificationStatus[keyof typeof IdentificationStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const IdentificationStatus = {
@@ -18603,8 +18874,8 @@ export const IdentificationStatus = {
 /**
  * Customer Type
  */
-export type InboundPhoneCallCustomerTypesModel =
-  (typeof InboundPhoneCallCustomerTypesModel)[keyof typeof InboundPhoneCallCustomerTypesModel];
+export type InboundPhoneCallCustomerTypesModel = typeof InboundPhoneCallCustomerTypesModel[keyof typeof InboundPhoneCallCustomerTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InboundPhoneCallCustomerTypesModel = {
@@ -18629,7 +18900,8 @@ export const InboundPhoneCallCustomerTypesModel = {
 /**
  * ClubMed interest level of a customer
  */
-export type Interest = (typeof Interest)[keyof typeof Interest];
+export type Interest = typeof Interest[keyof typeof Interest];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Interest = {
@@ -18651,7 +18923,8 @@ export type LeadScoringModel = LeadScoringModelAnyOf | null;
 /**
  * call status
  */
-export type CallStatusModel = (typeof CallStatusModel)[keyof typeof CallStatusModel];
+export type CallStatusModel = typeof CallStatusModel[keyof typeof CallStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CallStatusModel = {
@@ -18667,7 +18940,8 @@ export const CallStatusModel = {
 /**
  * Defines the last interaction type
  */
-export type CallTypeModel = (typeof CallTypeModel)[keyof typeof CallTypeModel];
+export type CallTypeModel = typeof CallTypeModel[keyof typeof CallTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CallTypeModel = {
@@ -18708,8 +18982,8 @@ export type CallEventsModel = CallEventModel[];
 /**
  * Commercial offer type
  */
-export type ValidInboundPhoneCallCustomerCommercialOfferTypesModel =
-  (typeof ValidInboundPhoneCallCustomerCommercialOfferTypesModel)[keyof typeof ValidInboundPhoneCallCustomerCommercialOfferTypesModel];
+export type ValidInboundPhoneCallCustomerCommercialOfferTypesModel = typeof ValidInboundPhoneCallCustomerCommercialOfferTypesModel[keyof typeof ValidInboundPhoneCallCustomerCommercialOfferTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidInboundPhoneCallCustomerCommercialOfferTypesModel = {
@@ -18720,7 +18994,8 @@ export const ValidInboundPhoneCallCustomerCommercialOfferTypesModel = {
 /**
  * Commercial offer origin type
  */
-export type OriginType = (typeof OriginType)[keyof typeof OriginType];
+export type OriginType = typeof OriginType[keyof typeof OriginType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OriginType = {
@@ -18760,7 +19035,8 @@ export type CommercialOffers = InboundPhoneCallCommercialOfferModel[];
 /**
  * Booking status
  */
-export type StayStatuses = (typeof StayStatuses)[keyof typeof StayStatuses];
+export type StayStatuses = typeof StayStatuses[keyof typeof StayStatuses];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StayStatuses = {
@@ -18800,8 +19076,8 @@ export type CustomerBookingsInformations = CustomerBookingInformation[];
 /**
  * The importance of the alert
  */
-export type InboundPhoneCallCustomerLevel =
-  (typeof InboundPhoneCallCustomerLevel)[keyof typeof InboundPhoneCallCustomerLevel];
+export type InboundPhoneCallCustomerLevel = typeof InboundPhoneCallCustomerLevel[keyof typeof InboundPhoneCallCustomerLevel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InboundPhoneCallCustomerLevel = {
@@ -18813,8 +19089,8 @@ export const InboundPhoneCallCustomerLevel = {
 /**
  * The alert type
  */
-export type InboundPhoneCallCustomerAlertTypes =
-  (typeof InboundPhoneCallCustomerAlertTypes)[keyof typeof InboundPhoneCallCustomerAlertTypes];
+export type InboundPhoneCallCustomerAlertTypes = typeof InboundPhoneCallCustomerAlertTypes[keyof typeof InboundPhoneCallCustomerAlertTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InboundPhoneCallCustomerAlertTypes = {
@@ -19063,6 +19339,13 @@ export interface OutboundPhoneCallInput {
   skill_name: string;
   /** identifier linking outbound phone calls to cxo opportunities */
   campaign_call_id?: string;
+  /**
+   * Customer id calling or concerned by the call
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id?: string;
+  /** Identifier referencing the associated business opportunity in Club Med CRM, linking the call or lead to a potential booking for tracking and conversion. */
+  opportunity_id?: string;
 }
 
 export interface OutboundPhoneCallCustomerCaller {
@@ -19159,8 +19442,8 @@ export type AdditionalActivitiesLabels = string[];
 /**
  * Attendee type [CHILDREN, ADULT]
  */
-export type ValidProductRequestCreationTypesModel =
-  (typeof ValidProductRequestCreationTypesModel)[keyof typeof ValidProductRequestCreationTypesModel];
+export type ValidProductRequestCreationTypesModel = typeof ValidProductRequestCreationTypesModel[keyof typeof ValidProductRequestCreationTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidProductRequestCreationTypesModel = {
@@ -19204,8 +19487,8 @@ export interface ContactProductRequestModel {
 /**
  * Communication channel
  */
-export type ValidProductRequestCreationChannelModel =
-  (typeof ValidProductRequestCreationChannelModel)[keyof typeof ValidProductRequestCreationChannelModel];
+export type ValidProductRequestCreationChannelModel = typeof ValidProductRequestCreationChannelModel[keyof typeof ValidProductRequestCreationChannelModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidProductRequestCreationChannelModel = {
@@ -19299,7 +19582,8 @@ export interface ProductRequestCreationModel {
 /**
  * code of event
  */
-export type QuableEvents = (typeof QuableEvents)[keyof typeof QuableEvents];
+export type QuableEvents = typeof QuableEvents[keyof typeof QuableEvents];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const QuableEvents = {
@@ -19313,8 +19597,8 @@ export const QuableEvents = {
 /**
  * Type of the resource impacted by the event
  */
-export type DocumentResourceTypeModel =
-  (typeof DocumentResourceTypeModel)[keyof typeof DocumentResourceTypeModel];
+export type DocumentResourceTypeModel = typeof DocumentResourceTypeModel[keyof typeof DocumentResourceTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DocumentResourceTypeModel = {
@@ -19414,8 +19698,8 @@ Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
 /**
  * give the status availability of the childcare in the arrival date (AVAILABLE/PARTIAL/UNAVAILABLE/UNKNOWN)
  */
-export type SearchChildCareAvailabilityModel =
-  (typeof SearchChildCareAvailabilityModel)[keyof typeof SearchChildCareAvailabilityModel];
+export type SearchChildCareAvailabilityModel = typeof SearchChildCareAvailabilityModel[keyof typeof SearchChildCareAvailabilityModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SearchChildCareAvailabilityModel = {
@@ -19443,7 +19727,7 @@ export interface BirthDateModel {
 export type ConcernedAttendeesModel = BirthDateModel[];
 
 /**
- * number of places initially allocated for this childcare
+ * number of places initially allocated for this childcare 
  */
 export type SearchChildCareV1ModelInitialStock = 0 | null;
 
@@ -19622,8 +19906,8 @@ export type BaseCustomerAddressModel = BaseCustomerAddressModelAnyOf | null;
 /**
  * define the status in which the client must be created
  */
-export type CreateCustomerTypeModel =
-  (typeof CreateCustomerTypeModel)[keyof typeof CreateCustomerTypeModel];
+export type CreateCustomerTypeModel = typeof CreateCustomerTypeModel[keyof typeof CreateCustomerTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateCustomerTypeModel = {
@@ -19662,8 +19946,8 @@ export interface CreateCustomerModel {
 /**
  * CLIENT or PROSPECT
  */
-export type CreateCustomerResponseCustomerTypeModel =
-  (typeof CreateCustomerResponseCustomerTypeModel)[keyof typeof CreateCustomerResponseCustomerTypeModel];
+export type CreateCustomerResponseCustomerTypeModel = typeof CreateCustomerResponseCustomerTypeModel[keyof typeof CreateCustomerResponseCustomerTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateCustomerResponseCustomerTypeModel = {
@@ -19721,7 +20005,8 @@ export interface CreateCustomerResponseModel {
 /**
  * Payment reason
  */
-export type Action = (typeof Action)[keyof typeof Action];
+export type Action = typeof Action[keyof typeof Action];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Action = {
@@ -19731,6 +20016,7 @@ export const Action = {
   PAYMENT_SOLDE: 'PAYMENT_SOLDE',
   PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
   PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
 } as const;
 
 /**
@@ -19803,7 +20089,8 @@ export type TopicInteractionListModel = TopicInteractionModel[];
 /**
  * Way of reaching the partner
  */
-export type RoutingCode = (typeof RoutingCode)[keyof typeof RoutingCode];
+export type RoutingCode = typeof RoutingCode[keyof typeof RoutingCode];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RoutingCode = {
@@ -19814,8 +20101,8 @@ export const RoutingCode = {
 /**
  * Type of the call
  */
-export type InputPhoneSaleInteractionsWaysModel =
-  (typeof InputPhoneSaleInteractionsWaysModel)[keyof typeof InputPhoneSaleInteractionsWaysModel];
+export type InputPhoneSaleInteractionsWaysModel = typeof InputPhoneSaleInteractionsWaysModel[keyof typeof InputPhoneSaleInteractionsWaysModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const InputPhoneSaleInteractionsWaysModel = {
@@ -19864,8 +20151,8 @@ export interface PhoneSaleInteractionModel {
   qualification_code?: string;
 }
 
-export type PreBookingsAttendeeTypesModel =
-  (typeof PreBookingsAttendeeTypesModel)[keyof typeof PreBookingsAttendeeTypesModel];
+export type PreBookingsAttendeeTypesModel = typeof PreBookingsAttendeeTypesModel[keyof typeof PreBookingsAttendeeTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PreBookingsAttendeeTypesModel = {
@@ -19972,8 +20259,8 @@ export type SubscriptionsV1CreationGenderModel = 'M' | 'F' | null;
 /**
  * Communication channel
  */
-export type ValidOptinChannelModelV1 =
-  (typeof ValidOptinChannelModelV1)[keyof typeof ValidOptinChannelModelV1];
+export type ValidOptinChannelModelV1 = typeof ValidOptinChannelModelV1[keyof typeof ValidOptinChannelModelV1];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidOptinChannelModelV1 = {
@@ -19998,14 +20285,7 @@ export type SubscriptionsV1CreationOptinsModel = SubscriptionV1OptinModel[];
 /**
  * Describe the origin page from which the newsletter was subscribed.
  */
-export type OriginCodeV1 =
-  | 'CUSTOMER_ACCOUNT'
-  | 'FILE_INTEGRATION'
-  | 'NEWSLETTER'
-  | 'PARTICIPANT_PAGE'
-  | 'POPIN'
-  | 'WEBNA'
-  | null;
+export type OriginCodeV1 = 'CUSTOMER_ACCOUNT' | 'FILE_INTEGRATION' | 'NEWSLETTER' | 'PARTICIPANT_PAGE' | 'POPIN' | 'WEBNA' | null;
 
 /**
  * The list of newsletters the customer wants to subscribe to. Retrieve the list of available newsletters using GET /v0/newsletters.
@@ -20107,7 +20387,8 @@ export interface NewsletterSubscriptionResponseModel {
 /**
  * Communication channel
  */
-export type Channel = (typeof Channel)[keyof typeof Channel];
+export type Channel = typeof Channel[keyof typeof Channel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Channel = {
@@ -20121,8 +20402,7 @@ export interface WifiConnectionCustomerInformationOptinModel {
   optin?: boolean;
 }
 
-export type WifiConnectionCustomerInformationOptinsModel =
-  WifiConnectionCustomerInformationOptinModel[];
+export type WifiConnectionCustomerInformationOptinsModel = WifiConnectionCustomerInformationOptinModel[];
 
 export interface WifiConnectionCustomerInformationV1Model {
   /** First name */
@@ -20158,8 +20438,8 @@ export interface WifiAccessRequestResponseModel {
 /**
  * Booking status. If not provided, the booking status will be PENDING_PAYMENT for GM
  */
-export type CreateBookingRequestBookingStatusModel =
-  (typeof CreateBookingRequestBookingStatusModel)[keyof typeof CreateBookingRequestBookingStatusModel];
+export type CreateBookingRequestBookingStatusModel = typeof CreateBookingRequestBookingStatusModel[keyof typeof CreateBookingRequestBookingStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateBookingRequestBookingStatusModel = {
@@ -20194,7 +20474,7 @@ export interface CreateBookingRequestV2Model {
    * @pattern ^\d+$
    */
   proposal_id: string;
-  /** Proposal identifier */
+  /** Identifier referencing the associated business opportunity in Club Med CRM, linking the call or lead to a potential booking for tracking and conversion. */
   opportunity_id?: string;
   /** Allows the sending of the e-mail summarizing the booking information */
   sending_option_information?: boolean;
@@ -20217,8 +20497,8 @@ export interface CreateBookingRequestV2Model {
 /**
  * Attendee type
  */
-export type CreateBookingResponseTypesModel =
-  (typeof CreateBookingResponseTypesModel)[keyof typeof CreateBookingResponseTypesModel];
+export type CreateBookingResponseTypesModel = typeof CreateBookingResponseTypesModel[keyof typeof CreateBookingResponseTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateBookingResponseTypesModel = {
@@ -20247,8 +20527,8 @@ export interface CreateBookingResponseModelV2 {
 /**
  * give the status availability of the childcare in the arrival date
  */
-export type SearchChildCareAvailabilityV2Model =
-  (typeof SearchChildCareAvailabilityV2Model)[keyof typeof SearchChildCareAvailabilityV2Model];
+export type SearchChildCareAvailabilityV2Model = typeof SearchChildCareAvailabilityV2Model[keyof typeof SearchChildCareAvailabilityV2Model];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SearchChildCareAvailabilityV2Model = {
@@ -20260,7 +20540,7 @@ export const SearchChildCareAvailabilityV2Model = {
 } as const;
 
 /**
- * number of places initially allocated for this childcare
+ * number of places initially allocated for this childcare 
  */
 export type SearchChildCareV2ModelInitialStock = 0 | null;
 
@@ -20447,8 +20727,7 @@ export interface ProposalAttendeeInputTravelDocumentV2Model {
   authority?: string;
 }
 
-export type ProposalAttendeeInputTravelDocumentsModel =
-  ProposalAttendeeInputTravelDocumentV2Model[];
+export type ProposalAttendeeInputTravelDocumentsModel = ProposalAttendeeInputTravelDocumentV2Model[];
 
 export interface ProposalAttendeeInputOptin {
   channel: ValidOptinChanelModel;
@@ -20565,7 +20844,7 @@ export interface CreateDirectBookingRequestModel {
   /** Accommodation id */
   accommodation_id?: string;
   households?: PutProposalAttendeesV1PayloadModel;
-  /** Proposal identifier */
+  /** Identifier referencing the associated business opportunity in Club Med CRM, linking the call or lead to a potential booking for tracking and conversion. */
   opportunity_id?: string;
   /** Allows the sending of the e-mail summarizing the booking information */
   sending_option_information?: boolean;
@@ -20629,8 +20908,7 @@ export interface AccommodationArrangementCheckPayloadV0Model {
   attendees: AccommodationArrangementCheckAttendeesModelV0;
 }
 
-export type AccommodationsArrangementCheckPayloadV0Model =
-  AccommodationArrangementCheckPayloadV0Model[];
+export type AccommodationsArrangementCheckPayloadV0Model = AccommodationArrangementCheckPayloadV0Model[];
 
 export interface AccommodationsArrangementCheckDifferentialPriceModel {
   /** Additional price to pay if this accommodation arrangement is selected (can be negative) */
@@ -20643,8 +20921,7 @@ export interface AccommodationsArrangementCheckDifferentialPriceModel {
   currency: string;
 }
 
-export type AccommodationsArrangementCheckDifferentialPricesModel =
-  AccommodationsArrangementCheckDifferentialPriceModel[];
+export type AccommodationsArrangementCheckDifferentialPricesModel = AccommodationsArrangementCheckDifferentialPriceModel[];
 
 export interface AccommodationsArrangementCheckArrangementV0Model {
   /** Id of the accommodation */
@@ -20656,14 +20933,13 @@ export interface AccommodationsArrangementCheckArrangementV0Model {
   attendees: AccommodationsArrangementAttendeesModel;
 }
 
-export type AccommodationsArrangementCheckArrangementsV0Model =
-  AccommodationsArrangementCheckArrangementV0Model[];
+export type AccommodationsArrangementCheckArrangementsV0Model = AccommodationsArrangementCheckArrangementV0Model[];
 
 /**
  * Remaining stock for this arrangement
  */
-export type AccommodationsArrangementCheckV0ModelRemainingStock =
-  (typeof AccommodationsArrangementCheckV0ModelRemainingStock)[keyof typeof AccommodationsArrangementCheckV0ModelRemainingStock];
+export type AccommodationsArrangementCheckV0ModelRemainingStock = typeof AccommodationsArrangementCheckV0ModelRemainingStock[keyof typeof AccommodationsArrangementCheckV0ModelRemainingStock];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationsArrangementCheckV0ModelRemainingStock = {
@@ -20684,8 +20960,7 @@ export interface AccommodationsArrangementSearchPayloadAttendeeModel {
   id: string;
 }
 
-export type AccommodationArrangementSearchPayloadAttendeesModel =
-  AccommodationsArrangementSearchPayloadAttendeeModel[];
+export type AccommodationArrangementSearchPayloadAttendeesModel = AccommodationsArrangementSearchPayloadAttendeeModel[];
 
 /**
  * Id of the wished accommodation for the associated attendees
@@ -20703,9 +20978,7 @@ export interface AccommodationArrangementSearchPayloadModel {
   accommodation_category_ids?: AccommodationArrangementSearchPayloadAccommodationCategoriesModel;
 }
 
-export type AccommodationsArrangementSearchPayloadModel =
-  | AccommodationArrangementSearchPayloadModel[]
-  | null;
+export type AccommodationsArrangementSearchPayloadModel = AccommodationArrangementSearchPayloadModel[] | null;
 
 export interface AccommodationsArrangementSearchArrangementModel {
   /** Id of the accommodation */
@@ -20721,8 +20994,7 @@ export interface AccommodationsArrangementSearchArrangementModel {
   _links?: LinksModel;
 }
 
-export type AccommodationsArrangementSearchArrangementsModel =
-  AccommodationsArrangementSearchArrangementModel[];
+export type AccommodationsArrangementSearchArrangementsModel = AccommodationsArrangementSearchArrangementModel[];
 
 /**
  * Ids of the offer types applied for this offer
@@ -20741,14 +21013,13 @@ export interface AccommodationsArrangementSearchDifferentialPriceModelV0 {
   currency: string;
 }
 
-export type AccommodationsArrangementSearchDifferentialPricesModelV0 =
-  AccommodationsArrangementSearchDifferentialPriceModelV0[];
+export type AccommodationsArrangementSearchDifferentialPricesModelV0 = AccommodationsArrangementSearchDifferentialPriceModelV0[];
 
 /**
  * Remaining stock for this arrangement
  */
-export type AccommodationsArrangementSearchModelV0RemainingStock =
-  (typeof AccommodationsArrangementSearchModelV0RemainingStock)[keyof typeof AccommodationsArrangementSearchModelV0RemainingStock];
+export type AccommodationsArrangementSearchModelV0RemainingStock = typeof AccommodationsArrangementSearchModelV0RemainingStock[keyof typeof AccommodationsArrangementSearchModelV0RemainingStock];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationsArrangementSearchModelV0RemainingStock = {
@@ -20764,8 +21035,7 @@ export interface AccommodationsArrangementSearchModelV0 {
   differential_prices?: AccommodationsArrangementSearchDifferentialPricesModelV0;
 }
 
-export type AccommodationsArrangementSearchResponseModelV0 =
-  AccommodationsArrangementSearchModelV0[];
+export type AccommodationsArrangementSearchResponseModelV0 = AccommodationsArrangementSearchModelV0[];
 
 export interface CreateGroupBookingOperationModel {
   /** Meetings and events operation identifier */
@@ -20783,8 +21053,8 @@ export interface CreateGroupBookingOperationModel {
 /**
  * Subgroup attendees age unit
  */
-export type GroupBookingAttendeesAgeUnit =
-  (typeof GroupBookingAttendeesAgeUnit)[keyof typeof GroupBookingAttendeesAgeUnit];
+export type GroupBookingAttendeesAgeUnit = typeof GroupBookingAttendeesAgeUnit[keyof typeof GroupBookingAttendeesAgeUnit];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GroupBookingAttendeesAgeUnit = {
@@ -20818,8 +21088,7 @@ export interface GroupBookingAccommodationArrangementModel {
   attendees_groups?: GroupBookingAttendeesGroupsModel;
 }
 
-export type GroupBookingAccommodationArrangementsModel =
-  GroupBookingAccommodationArrangementModel[];
+export type GroupBookingAccommodationArrangementsModel = GroupBookingAccommodationArrangementModel[];
 
 export interface CreateGroupBookingRequestModel {
   operation?: CreateGroupBookingOperationModel;
@@ -20843,8 +21112,8 @@ export interface CreateGroupBookingResponseModel {
 /**
  * The room status
  */
-export type BookingRoomInterventionStatuses =
-  (typeof BookingRoomInterventionStatuses)[keyof typeof BookingRoomInterventionStatuses];
+export type BookingRoomInterventionStatuses = typeof BookingRoomInterventionStatuses[keyof typeof BookingRoomInterventionStatuses];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingRoomInterventionStatuses = {
@@ -20863,7 +21132,8 @@ export interface BookingRoomInterventionPayloadModel {
 /**
  * Status OK
  */
-export type StatusOkStatusModel = (typeof StatusOkStatusModel)[keyof typeof StatusOkStatusModel];
+export type StatusOkStatusModel = typeof StatusOkStatusModel[keyof typeof StatusOkStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StatusOkStatusModel = {
@@ -20887,13 +21157,13 @@ export interface NotificationPayloadModel {
 /**
  * Target memoize layers to reload, they will be reordered by hierarchy. But the parents nor subsequent dependencies will not be reloaded if not mentioned. Beware of the quantity of data being reloaded.
  */
-export type NotifyMemoizeFilterModel =
-  (typeof NotifyMemoizeFilterModel)[keyof typeof NotifyMemoizeFilterModel];
+export type NotifyMemoizeFilterModel = typeof NotifyMemoizeFilterModel[keyof typeof NotifyMemoizeFilterModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NotifyMemoizeFilterModel = {
   ACCOMMODATIONS: 'ACCOMMODATIONS',
-  ACCOMMODATION_CATEGORIES_V2: 'ACCOMMODATION_CATEGORIES_V2',
+  ACCOMMODATION_CATEGORIES: 'ACCOMMODATION_CATEGORIES',
   ACCOMMODATION_CATEGORY_VIRTUAL_VISIT: 'ACCOMMODATION_CATEGORY_VIRTUAL_VISIT',
   ACCOMMODATION_IDS: 'ACCOMMODATION_IDS',
   ACCOMMODATION_LABELS: 'ACCOMMODATION_LABELS',
@@ -20903,7 +21173,7 @@ export const NotifyMemoizeFilterModel = {
   ALL_THEMATICS_OF_THEMATICS: 'ALL_THEMATICS_OF_THEMATICS',
   AREAS: 'AREAS',
   CRUISE_THEMATICS: 'CRUISE_THEMATICS',
-  FACILITIES_V2: 'FACILITIES_V2',
+  FACILITIES: 'FACILITIES',
   HIGHLIGHTS_HTC: 'HIGHLIGHTS_HTC',
   HIGHLIGHTS: 'HIGHLIGHTS',
   INSPIRATIONAL_PICTURES: 'INSPIRATIONAL_PICTURES',
@@ -20911,19 +21181,20 @@ export const NotifyMemoizeFilterModel = {
   MICE: 'MICE',
   PRACTICAL_INFORMATION: 'PRACTICAL_INFORMATION',
   PREDEFINED_VALUE: 'PREDEFINED_VALUE',
-  PRODUCT_ACTIVITIES_2: 'PRODUCT_ACTIVITIES_2',
+  PRODUCT_ACTIVITIES: 'PRODUCT_ACTIVITIES',
   PRODUCT_ACTIVITIES_WITH_PRICES: 'PRODUCT_ACTIVITIES_WITH_PRICES',
   PRODUCT_CHILDCARE: 'PRODUCT_CHILDCARE',
   PRODUCT_CHILDCARE_PRICE: 'PRODUCT_CHILDCARE_PRICE',
   PRODUCT_PICTURES: 'PRODUCT_PICTURES',
   PRODUCT_TRANSFERS: 'PRODUCT_TRANSFERS',
-  PRODUCT_WITH_PRICES_V3: 'PRODUCT_WITH_PRICES_V3',
-  PRODUCT_WITHOUT_PRICE_V2: 'PRODUCT_WITHOUT_PRICE_V2',
+  PRODUCT_WITH_PRICES: 'PRODUCT_WITH_PRICES',
+  PRODUCT_WITHOUT_PRICE: 'PRODUCT_WITHOUT_PRICE',
   PRODUCTS_IDS: 'PRODUCTS_IDS',
-  PRODUCT_OPENING_DATES_V3: 'PRODUCT_OPENING_DATES_V3',
-  PRODUCTS_WITH_PRICES_V8: 'PRODUCTS_WITH_PRICES_V8',
-  PRODUCTS_WITHOUT_PRICES_V2: 'PRODUCTS_WITHOUT_PRICES_V2',
+  PRODUCT_OPENING_DATES: 'PRODUCT_OPENING_DATES',
+  PRODUCTS_WITH_PRICES: 'PRODUCTS_WITH_PRICES',
+  PRODUCTS_WITHOUT_PRICES: 'PRODUCTS_WITHOUT_PRICES',
   QUABLE_V5_ACTIVITY: 'QUABLE_V5_ACTIVITY',
+  QUABLE_V5_ACTIVITY_CATEGORY: 'QUABLE_V5_ACTIVITY_CATEGORY',
   QUABLE_V5_ACTIVITY_FACILITIES: 'QUABLE_V5_ACTIVITY_FACILITIES',
   QUABLE_V5_ACTIVITES_SURROUNDINGS: 'QUABLE_V5_ACTIVITES_SURROUNDINGS',
   QUABLE_V5_AREA_FACILITIES: 'QUABLE_V5_AREA_FACILITIES',
@@ -21026,8 +21297,8 @@ export interface PaymentCheckoutRequestModel {
 /**
  * SUCCESS if the payment was effectively done, FAILURE otherwise
  */
-export type PaymentCheckoutStatus =
-  (typeof PaymentCheckoutStatus)[keyof typeof PaymentCheckoutStatus];
+export type PaymentCheckoutStatus = typeof PaymentCheckoutStatus[keyof typeof PaymentCheckoutStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PaymentCheckoutStatus = {
@@ -21045,6 +21316,49 @@ export interface PaymentCheckoutResponseModel {
   message?: string;
   /** Codified value, looking like a bank card brand, required by accountant department. */
   payment_method?: string;
+}
+
+/**
+ * Specifies the communication channel used to send the generated payment link to the customer
+ */
+export type PaymentLinkChannel = typeof PaymentLinkChannel[keyof typeof PaymentLinkChannel];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentLinkChannel = {
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+} as const;
+
+export interface PaymentLinkRequestModel {
+  /** Attendee customer identifier */
+  customer_id?: string;
+  /** Booking identifier */
+  booking_id?: string;
+  /** Customer first name */
+  first_name: string;
+  /** Customer last name */
+  last_name: string;
+  /** Link expiration date */
+  expiration_date_time: string;
+  /** Customer email */
+  email: string;
+  /** Phone number */
+  phone: string;
+  channel: PaymentLinkChannel;
+  /** Payment amount */
+  amount: number;
+  /** Club Med product unique id */
+  product_id: string;
+}
+
+export interface PaymentLinkResponseModel {
+  /** URL used to process remote payments */
+  url: string;
+  /** Payment redirect method */
+  method: string;
+  /** Payment id */
+  payment_id: string;
 }
 
 /**
@@ -21153,8 +21467,7 @@ export interface AccommodationArrangementCheckPayloadAttendeeModelV1 {
   room_id?: string;
 }
 
-export type AccommodationArrangementCheckPayloadAttendeesModelV1 =
-  AccommodationArrangementCheckPayloadAttendeeModelV1[];
+export type AccommodationArrangementCheckPayloadAttendeesModelV1 = AccommodationArrangementCheckPayloadAttendeeModelV1[];
 
 export interface AccommodationArrangementCheckPayloadModel {
   /** Accommodation Identifier */
@@ -21164,8 +21477,7 @@ export interface AccommodationArrangementCheckPayloadModel {
   attendees?: AccommodationArrangementCheckPayloadAttendeesModelV1;
 }
 
-export type AccommodationsArrangementCheckPayloadModel =
-  AccommodationArrangementCheckPayloadModel[];
+export type AccommodationsArrangementCheckPayloadModel = AccommodationArrangementCheckPayloadModel[];
 
 export interface AccommodationsArrangementCheckArrangementModel {
   /** Id of the accommodation */
@@ -21174,17 +21486,16 @@ export interface AccommodationsArrangementCheckArrangementModel {
   quantity: number;
   /** Number of occupants in the accommodation */
   occupancy: number;
-  attendees: AccommodationsArrangementAttendeesModel;
+  attendees: AccommodationsArrangementAttendeesAllowWaiverModel;
 }
 
-export type AccommodationsArrangementCheckArrangementsModel =
-  AccommodationsArrangementCheckArrangementModel[];
+export type AccommodationsArrangementCheckArrangementsModel = AccommodationsArrangementCheckArrangementModel[];
 
 /**
  * Remaining stock for this arrangement
  */
-export type AccommodationsArrangementCheckModelRemainingStock =
-  (typeof AccommodationsArrangementCheckModelRemainingStock)[keyof typeof AccommodationsArrangementCheckModelRemainingStock];
+export type AccommodationsArrangementCheckModelRemainingStock = typeof AccommodationsArrangementCheckModelRemainingStock[keyof typeof AccommodationsArrangementCheckModelRemainingStock];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationsArrangementCheckModelRemainingStock = {
@@ -21225,14 +21536,13 @@ export interface AccommodationsArrangementSearchDifferentialPriceModel {
   currency: string;
 }
 
-export type AccommodationsArrangementSearchDifferentialPrices =
-  AccommodationsArrangementSearchDifferentialPriceModel[];
+export type AccommodationsArrangementSearchDifferentialPrices = AccommodationsArrangementSearchDifferentialPriceModel[];
 
 /**
  * Remaining stock for this arrangement
  */
-export type AccommodationsArrangementSearchModelRemainingStock =
-  (typeof AccommodationsArrangementSearchModelRemainingStock)[keyof typeof AccommodationsArrangementSearchModelRemainingStock];
+export type AccommodationsArrangementSearchModelRemainingStock = typeof AccommodationsArrangementSearchModelRemainingStock[keyof typeof AccommodationsArrangementSearchModelRemainingStock];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AccommodationsArrangementSearchModelRemainingStock = {
@@ -21279,7 +21589,8 @@ export type KnownAttendeesInformationList = KnownAttendeesInformationModel[];
 /**
  * Transport information indicating its class
  */
-export type TransportClass = (typeof TransportClass)[keyof typeof TransportClass];
+export type TransportClass = typeof TransportClass[keyof typeof TransportClass];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TransportClass = {
@@ -21300,7 +21611,8 @@ export type ProposalSearchAccommodationIds = string[];
 /**
  * Defines the transport journey type for which you want to create a proposal.
  */
-export type JourneyType = (typeof JourneyType)[keyof typeof JourneyType];
+export type JourneyType = typeof JourneyType[keyof typeof JourneyType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const JourneyType = {
@@ -21387,12 +21699,18 @@ export interface RoomStatusEventPayload {
   status: Status;
 }
 
-export interface PostBookingRenewalPayloadModel {
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id: string;
+export interface CreateBookingRoomInterventionModel {
+  /** The intervention category code */
+  code: string;
+  /** The concerned room the current intervention */
+  room_id: string;
+  assets: BookingInterventionAssetsModel;
+  /** The phone number to contact the GM */
+  contact: string;
+  /** The e-mail to contact the GM */
+  email: string;
+  /** The customer id (only for GO connection) */
+  customer_id?: string;
 }
 
 export interface BookingCommentRequest {
@@ -21451,18 +21769,12 @@ export interface BookingCommentResponse {
   last_update?: BookingCommentLastUpdate;
 }
 
-export interface CreateBookingRoomInterventionModel {
-  /** The intervention category code */
-  code: string;
-  /** The concerned room the current intervention */
-  room_id: string;
-  assets: BookingInterventionAssetsModel;
-  /** The phone number to contact the GM */
-  contact: string;
-  /** The e-mail to contact the GM */
-  email: string;
-  /** The customer id (only for GO connection) */
-  customer_id?: string;
+export interface PostBookingRenewalPayloadModel {
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id: string;
 }
 
 export type BookingShareOptinListModel = OptinModel[];
@@ -21483,8 +21795,8 @@ export type BookingShareAttendees = BookingShareAttendee[];
 /**
  * Determine the nature of the call
  */
-export type ValidBookingShareTypesModel =
-  (typeof ValidBookingShareTypesModel)[keyof typeof ValidBookingShareTypesModel];
+export type ValidBookingShareTypesModel = typeof ValidBookingShareTypesModel[keyof typeof ValidBookingShareTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidBookingShareTypesModel = {
@@ -21506,7 +21818,8 @@ export interface BookingShareModel {
   type?: ValidBookingShareTypesModel;
 }
 
-export type ContactEventWayModel = (typeof ContactEventWayModel)[keyof typeof ContactEventWayModel];
+export type ContactEventWayModel = typeof ContactEventWayModel[keyof typeof ContactEventWayModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ContactEventWayModel = {
@@ -21517,7 +21830,8 @@ export const ContactEventWayModel = {
 /**
  * Customer language code (lowercase)
  */
-export type LanguageCode = (typeof LanguageCode)[keyof typeof LanguageCode];
+export type LanguageCode = typeof LanguageCode[keyof typeof LanguageCode];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LanguageCode = {
@@ -21552,8 +21866,8 @@ export const LanguageCode = {
 /**
  * Type of incoming communication used
  */
-export type ContactEventChannelModel =
-  (typeof ContactEventChannelModel)[keyof typeof ContactEventChannelModel];
+export type ContactEventChannelModel = typeof ContactEventChannelModel[keyof typeof ContactEventChannelModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ContactEventChannelModel = {
@@ -21571,7 +21885,8 @@ export interface MotiveModel {
 /**
  * Customer phone path
  */
-export type PhonePathValues = (typeof PhonePathValues)[keyof typeof PhonePathValues];
+export type PhonePathValues = typeof PhonePathValues[keyof typeof PhonePathValues];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PhonePathValues = {
@@ -21667,11 +21982,63 @@ export interface ContactEventModel {
   prioritization?: PrioritizationModel;
 }
 
+export interface AssignCustomerToProposalsSummaryElement {
+  /**
+   * Proposal identifier
+   * @pattern ^\d+$
+   */
+  proposal_id: string;
+  /** Identifier referencing the associated business opportunity in Club Med CRM, linking the call or lead to a potential booking for tracking and conversion. */
+  opportunity_id?: string;
+}
+
+export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
+
+/**
+ * adult attendees number
+ */
+export type CreateBookmarkModelAdultsCount = typeof CreateBookmarkModelAdultsCount[keyof typeof CreateBookmarkModelAdultsCount];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CreateBookmarkModelAdultsCount = {
+  NUMBER_0: 0,
+} as const;
+
+/**
+ * children attendees number
+ */
+export type CreateBookmarkModelChildrenCount = 0 | null;
+
+export interface CreateBookmarkModel {
+  /** ClubMed Product identifier */
+  product_id: string;
+  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
+  resort_departure_date?: string;
+  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
+  resort_arrival_date?: string;
+  /** Total number of journey attendees. */
+  number_attendees?: number;
+  /** adult attendees number */
+  adults_count: CreateBookmarkModelAdultsCount;
+  /** children attendees number */
+  children_count?: CreateBookmarkModelChildrenCount;
+  birthdates?: CreateBookmarksBirthdatesModel;
+  /** The departure option id from product/id booking criteria. */
+  departure_option_id?: string;
+  price?: CreateBookmarkPriceModel;
+}
+
+/**
+ * List of bookmarks
+ */
+export type CreateBookmarksModel = CreateBookmarkModel[];
+
 /**
  * PHONE/CHAT
  */
-export type PostSalesInteractionTypesModel =
-  (typeof PostSalesInteractionTypesModel)[keyof typeof PostSalesInteractionTypesModel];
+export type PostSalesInteractionTypesModel = typeof PostSalesInteractionTypesModel[keyof typeof PostSalesInteractionTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PostSalesInteractionTypesModel = {
@@ -21682,7 +22049,8 @@ export const PostSalesInteractionTypesModel = {
 /**
  * INBOUND/OUTBOUND/DIRECT/TICKET
  */
-export type SubType = (typeof SubType)[keyof typeof SubType];
+export type SubType = typeof SubType[keyof typeof SubType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SubType = {
@@ -21695,8 +22063,8 @@ export const SubType = {
 /**
  * Indicate the interaction status
  */
-export type ValidPostSalesInteractionStatusModel =
-  (typeof ValidPostSalesInteractionStatusModel)[keyof typeof ValidPostSalesInteractionStatusModel];
+export type ValidPostSalesInteractionStatusModel = typeof ValidPostSalesInteractionStatusModel[keyof typeof ValidPostSalesInteractionStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidPostSalesInteractionStatusModel = {
@@ -21779,58 +22147,6 @@ export interface ResponseSaleInteractionsModelV0 {
   interaction: ResponseSaleInteractionModel;
 }
 
-/**
- * adult attendees number
- */
-export type CreateBookmarkModelAdultsCount =
-  (typeof CreateBookmarkModelAdultsCount)[keyof typeof CreateBookmarkModelAdultsCount];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateBookmarkModelAdultsCount = {
-  NUMBER_0: 0,
-} as const;
-
-/**
- * children attendees number
- */
-export type CreateBookmarkModelChildrenCount = 0 | null;
-
-export interface CreateBookmarkModel {
-  /** ClubMed Product identifier */
-  product_id: string;
-  /** Resort departure date. Ex: 20160123. Date format YYYYMMDD */
-  resort_departure_date?: string;
-  /** Resort arrival date. Ex: 20160117. Date format YYYYMMDD */
-  resort_arrival_date?: string;
-  /** Total number of journey attendees. */
-  number_attendees?: number;
-  /** adult attendees number */
-  adults_count: CreateBookmarkModelAdultsCount;
-  /** children attendees number */
-  children_count?: CreateBookmarkModelChildrenCount;
-  birthdates?: CreateBookmarksBirthdatesModel;
-  /** The departure option id from product/id booking criteria. */
-  departure_option_id?: string;
-  price?: CreateBookmarkPriceModel;
-}
-
-/**
- * List of bookmarks
- */
-export type CreateBookmarksModel = CreateBookmarkModel[];
-
-export interface AssignCustomerToProposalsSummaryElement {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  proposal_id: string;
-  /** proposal identifier */
-  opportunity_id?: string;
-}
-
-export type AssignCustomerToProposalsSummaryList = AssignCustomerToProposalsSummaryElement[];
-
 export interface SponsorshipsPostModel {
   /**
    * A valid email adress
@@ -21872,36 +22188,6 @@ export interface PostSurveyModel {
 
 export type PostSurveysModel = PostSurveyModel[];
 
-export interface ProposalsSummaryElement {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  proposal_id: string;
-  /** ID of the proposal identifier */
-  opportunity_id?: string;
-}
-
-export type ProposalsSummaryList = ProposalsSummaryElement[];
-
-export interface ProposalsSummarySeller {
-  name?: string;
-  /** phone number of the seller */
-  phone?: string;
-  /** email of the seller */
-  email?: string;
-}
-
-export interface AssignPartnerToProposalsSummaryModel {
-  /**
-   * Customer ID (neolid clic)
-   * @pattern ^[1-9][0-9]*$
-   */
-  customer_id?: string;
-  proposals?: ProposalsSummaryList;
-  seller?: ProposalsSummarySeller;
-}
-
 export type CreationContactModelJobTitle = string | null;
 
 export type CreationContactModelEmail = string | null;
@@ -21933,6 +22219,36 @@ export interface PartnerContactModel {
   preferred_language?: PartnerContactModelPreferredLanguage;
   phones?: PhonesModel;
   id: string;
+}
+
+export interface ProposalsSummaryElement {
+  /**
+   * Proposal identifier
+   * @pattern ^\d+$
+   */
+  proposal_id: string;
+  /** Identifier referencing the associated business opportunity in Club Med CRM, linking the call or lead to a potential booking for tracking and conversion. */
+  opportunity_id?: string;
+}
+
+export type ProposalsSummaryList = ProposalsSummaryElement[];
+
+export interface ProposalsSummarySeller {
+  name?: string;
+  /** phone number of the seller */
+  phone?: string;
+  /** email of the seller */
+  email?: string;
+}
+
+export interface AssignPartnerToProposalsSummaryModel {
+  /**
+   * Customer ID (neolid clic)
+   * @pattern ^[1-9][0-9]*$
+   */
+  customer_id?: string;
+  proposals?: ProposalsSummaryList;
+  seller?: ProposalsSummarySeller;
 }
 
 export interface PaymentAuthorizationInput {
@@ -22013,9 +22329,7 @@ export interface PostPaymentAliasModel {
 /**
  * ad-hoc registry of values, as needed by the provider (ask the payment team).
  */
-export interface Params {
-  [key: string]: unknown;
-}
+export interface Params { [key: string]: unknown }
 
 /**
  * Supplemental parameters needed by the provider.
@@ -22035,9 +22349,50 @@ export interface TokenHolderModel {
 }
 
 /**
+ * A Payment Provider dependant value to specify where the identification frame would be displayed
+ */
+export type ProviderPaymentAuthorizationInputTarget = string | null;
+
+/**
+ * Url to get back when approvement had been processed
+ */
+export type ProviderPaymentAuthorizationInputCallbackUrl = string | null;
+
+export interface ProviderPaymentAuthorizationInput {
+  /** The user agent content-type capability */
+  http_accept?: string;
+  /** Customer User Agent */
+  http_user_agent?: string;
+  /** Response parameters from the Payment Provider */
+  provider_response: string;
+  /** A Payment Provider dependant value to specify where the identification frame would be displayed */
+  target?: ProviderPaymentAuthorizationInputTarget;
+  /** Url to get back when approvement had been processed */
+  callback_url?: ProviderPaymentAuthorizationInputCallbackUrl;
+}
+
+/**
+ * Anwser from the provider to notify
+ */
+export type ProviderPaymentAuthorizationResponseProviderResponse = string | null;
+
+/**
+ * A Base64 encoded html to execute
+ */
+export type ProviderPaymentAuthorizationResponseHtmlAnswer = string | null;
+
+export interface ProviderPaymentAuthorizationResponse {
+  /** Anwser from the provider to notify */
+  provider_response?: ProviderPaymentAuthorizationResponseProviderResponse;
+  /** A Base64 encoded html to execute */
+  html_answer?: ProviderPaymentAuthorizationResponseHtmlAnswer;
+}
+
+/**
  * device type
  */
-export type Device = (typeof Device)[keyof typeof Device];
+export type Device = typeof Device[keyof typeof Device];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Device = {
@@ -22121,9 +22476,7 @@ export type BillingDetailsModel = BillingDetailsModelAnyOf | null;
 /**
  * Map of values, browser information transmitted to PSP (PSD2)
  */
-export interface BrowserInfo {
-  [key: string]: unknown;
-}
+export interface BrowserInfo { [key: string]: unknown }
 
 export interface PaymentRedirectRequestModel {
   device?: Device;
@@ -22176,46 +22529,6 @@ export interface ProviderParametersModel {
 }
 
 /**
- * A Payment Provider dependant value to specify where the identification frame would be displayed
- */
-export type ProviderPaymentAuthorizationInputTarget = string | null;
-
-/**
- * Url to get back when approvement had been processed
- */
-export type ProviderPaymentAuthorizationInputCallbackUrl = string | null;
-
-export interface ProviderPaymentAuthorizationInput {
-  /** The user agent content-type capability */
-  http_accept?: string;
-  /** Customer User Agent */
-  http_user_agent?: string;
-  /** Response parameters from the Payment Provider */
-  provider_response: string;
-  /** A Payment Provider dependant value to specify where the identification frame would be displayed */
-  target?: ProviderPaymentAuthorizationInputTarget;
-  /** Url to get back when approvement had been processed */
-  callback_url?: ProviderPaymentAuthorizationInputCallbackUrl;
-}
-
-/**
- * Anwser from the provider to notify
- */
-export type ProviderPaymentAuthorizationResponseProviderResponse = string | null;
-
-/**
- * A Base64 encoded html to execute
- */
-export type ProviderPaymentAuthorizationResponseHtmlAnswer = string | null;
-
-export interface ProviderPaymentAuthorizationResponse {
-  /** Anwser from the provider to notify */
-  provider_response?: ProviderPaymentAuthorizationResponseProviderResponse;
-  /** A Base64 encoded html to execute */
-  html_answer?: ProviderPaymentAuthorizationResponseHtmlAnswer;
-}
-
-/**
  * Customer ID (neolid clic)
  * @pattern ^[1-9][0-9]*$
  */
@@ -22241,8 +22554,7 @@ Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
 /**
  * The attendees order will be stored as provided
  */
-export type ProposalSearchBestKnownAttendeesInformationList =
-  ProposalSearchBestKnownAttendeesInformationModel[];
+export type ProposalSearchBestKnownAttendeesInformationList = ProposalSearchBestKnownAttendeesInformationModel[];
 
 export interface ProposalSearchBestFlexibilityModel {
   /** Allow to check other arrival dates if we can't find a proposal for the given parameters (false by default) */
@@ -22430,8 +22742,7 @@ export interface SingleProposalResponseTransportationSummaryModel {
 /**
  * list of transportation summaries
  */
-export type SingleProposalTransportationSummaryModel =
-  SingleProposalResponseTransportationSummaryModel[];
+export type SingleProposalTransportationSummaryModel = SingleProposalResponseTransportationSummaryModel[];
 
 export interface SingleProposalResponseVendorModel {
   /** Salesman id number */
@@ -22492,8 +22803,8 @@ export interface Arrival {
 /**
  * Allows to choose a specific flight/train class
  */
-export type AlternativeTransportsParamsFlightClassModel =
-  (typeof AlternativeTransportsParamsFlightClassModel)[keyof typeof AlternativeTransportsParamsFlightClassModel];
+export type AlternativeTransportsParamsFlightClassModel = typeof AlternativeTransportsParamsFlightClassModel[keyof typeof AlternativeTransportsParamsFlightClassModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AlternativeTransportsParamsFlightClassModel = {
@@ -22561,8 +22872,8 @@ export type AlternativeTransportsModelV0 = AlternativeTransportModelV0[];
 /**
  * Indicates the way of the journey (outbound / inbound)
  */
-export type AvailableTransportInputWayModel =
-  (typeof AvailableTransportInputWayModel)[keyof typeof AvailableTransportInputWayModel];
+export type AvailableTransportInputWayModel = typeof AvailableTransportInputWayModel[keyof typeof AvailableTransportInputWayModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AvailableTransportInputWayModel = {
@@ -22602,8 +22913,7 @@ export interface AvailableTransportInputTravelSectionModel {
   arrival: AvailableTransportInputTravelSectionsArrivalV0Model;
 }
 
-export type AvailableTransportInputTravelSectionsModel =
-  AvailableTransportInputTravelSectionModel[];
+export type AvailableTransportInputTravelSectionsModel = AvailableTransportInputTravelSectionModel[];
 
 export interface AvailableTransportsJourneyInputModel {
   way: AvailableTransportInputWayModel;
@@ -22629,8 +22939,7 @@ export type TransportConfigurationConnectionDurationV0InputModelAnyOf = {
   max?: TransportConfigurationConnectionDurationV0InputModelAnyOfMax;
 };
 
-export type TransportConfigurationConnectionDurationV0InputModel =
-  TransportConfigurationConnectionDurationV0InputModelAnyOf | null;
+export type TransportConfigurationConnectionDurationV0InputModel = TransportConfigurationConnectionDurationV0InputModelAnyOf | null;
 
 export type TransportConfigurationIsTransportStationsChangedAllowedV2InputModelAnyOf = {
   /** Indicates if the airport change between connections is allowed or not. For exemple, if allowed, an attendee might have a connection in Paris Orly, and go to CDG to take his next flight. */
@@ -22639,8 +22948,7 @@ export type TransportConfigurationIsTransportStationsChangedAllowedV2InputModelA
   along_roundtrip?: boolean;
 };
 
-export type TransportConfigurationIsTransportStationsChangedAllowedV2InputModel =
-  TransportConfigurationIsTransportStationsChangedAllowedV2InputModelAnyOf | null;
+export type TransportConfigurationIsTransportStationsChangedAllowedV2InputModel = TransportConfigurationIsTransportStationsChangedAllowedV2InputModelAnyOf | null;
 
 /**
  * Indicates the list of imposed companies
@@ -22716,8 +23024,8 @@ export interface AvailableTransportTotalDifferentialPriceModel {
 /**
  * direction of the transport, INBOUND or OUTBOUND
  */
-export type AvailableTransportWayModel =
-  (typeof AvailableTransportWayModel)[keyof typeof AvailableTransportWayModel];
+export type AvailableTransportWayModel = typeof AvailableTransportWayModel[keyof typeof AvailableTransportWayModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AvailableTransportWayModel = {
@@ -22985,8 +23293,8 @@ export interface TravelerCreationModel {
 /**
  * CLIENT or PROSPECT
  */
-export type TravelerCreationResponseCustomerTypeModel =
-  (typeof TravelerCreationResponseCustomerTypeModel)[keyof typeof TravelerCreationResponseCustomerTypeModel];
+export type TravelerCreationResponseCustomerTypeModel = typeof TravelerCreationResponseCustomerTypeModel[keyof typeof TravelerCreationResponseCustomerTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TravelerCreationResponseCustomerTypeModel = {
@@ -23080,7 +23388,8 @@ export interface PaymentOrderNotificationModel {
 /**
  * Payment status
  */
-export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
+export type PaymentStatus = typeof PaymentStatus[keyof typeof PaymentStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PaymentStatus = {
@@ -23170,8 +23479,7 @@ export interface AvailableTransportInputTravelSectionModelV1 {
   arrival: AvailableTransportInputTravelSectionsArrivalModel;
 }
 
-export type AvailableTransportInputTravelSectionsModelV1 =
-  AvailableTransportInputTravelSectionModelV1[];
+export type AvailableTransportInputTravelSectionsModelV1 = AvailableTransportInputTravelSectionModelV1[];
 
 export interface AvailableTransportsJourneyPayloadModelV1 {
   way: AvailableTransportInputWayModel;
@@ -23197,8 +23505,7 @@ export type TransportConfigurationConnectionDurationV1InputModelAnyOf = {
   max?: TransportConfigurationConnectionDurationV1InputModelAnyOfMax;
 };
 
-export type TransportConfigurationConnectionDurationV1InputModel =
-  TransportConfigurationConnectionDurationV1InputModelAnyOf | null;
+export type TransportConfigurationConnectionDurationV1InputModel = TransportConfigurationConnectionDurationV1InputModelAnyOf | null;
 
 /**
  * Indicates the proposal"s max connections
@@ -23224,8 +23531,8 @@ export interface AvailableTransportsInputModel {
   excluded_connection_cities?: TransportConfigurationExcludedConnectionCitiesV2InputModel;
 }
 
-export type TransportAttendeeStatusModel =
-  (typeof TransportAttendeeStatusModel)[keyof typeof TransportAttendeeStatusModel];
+export type TransportAttendeeStatusModel = typeof TransportAttendeeStatusModel[keyof typeof TransportAttendeeStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TransportAttendeeStatusModel = {
@@ -23269,8 +23576,7 @@ export interface AvailableTransportTravelSectionAttendeeModelV1 {
   pnr?: AvailableTransportTravelSectionAttendeeModelV1Pnr;
 }
 
-export type AvailableTransportTravelSectionAttendeesModelV1 =
-  AvailableTransportTravelSectionAttendeeModelV1[];
+export type AvailableTransportTravelSectionAttendeesModelV1 = AvailableTransportTravelSectionAttendeeModelV1[];
 
 /**
  * technical_stops
@@ -23365,8 +23671,8 @@ export interface UpdateProposalTransportModelV1 {
 /**
  * Allows to choose a specific flight/train class
  */
-export type AlternativeTransportsParamsTransportClassesModel =
-  (typeof AlternativeTransportsParamsTransportClassesModel)[keyof typeof AlternativeTransportsParamsTransportClassesModel];
+export type AlternativeTransportsParamsTransportClassesModel = typeof AlternativeTransportsParamsTransportClassesModel[keyof typeof AlternativeTransportsParamsTransportClassesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AlternativeTransportsParamsTransportClassesModel = {
@@ -23571,8 +23877,8 @@ export type CustomersTypeConversionBodyModel = CustomerTypeConversionBodyModel[]
 /**
  * Defines the status of the CLIENT in the database. CLIENT OR PROSPECT (not editable)
  */
-export type CustomerTypeResponseModel =
-  (typeof CustomerTypeResponseModel)[keyof typeof CustomerTypeResponseModel];
+export type CustomerTypeResponseModel = typeof CustomerTypeResponseModel[keyof typeof CustomerTypeResponseModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerTypeResponseModel = {
@@ -23592,8 +23898,7 @@ export interface CustomerTypeConversionAttendeeResponseModel {
   filiation_number?: number;
 }
 
-export type CustomerTypeConversionAttendeesResponseModel =
-  CustomerTypeConversionAttendeeResponseModel[];
+export type CustomerTypeConversionAttendeesResponseModel = CustomerTypeConversionAttendeeResponseModel[];
 
 export interface CustomerTypeConversionResponseModel {
   attendees?: CustomerTypeConversionAttendeesResponseModel;
@@ -23604,8 +23909,8 @@ export type CustomersTypeConversionResponseModel = CustomerTypeConversionRespons
 /**
  * The rate is a more or less advantageous price condition that you can chose to apply to a proposal. Select the rate type you want to apply from the list.
  */
-export type ProposalRatesInputModelTypes =
-  (typeof ProposalRatesInputModelTypes)[keyof typeof ProposalRatesInputModelTypes];
+export type ProposalRatesInputModelTypes = typeof ProposalRatesInputModelTypes[keyof typeof ProposalRatesInputModelTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalRatesInputModelTypes = {
@@ -23668,8 +23973,8 @@ export type ProposalServicesList = AProposalService[];
 /**
  * customer's status
  */
-export type PutProposalAttendeesV1ResponseCustomerTypeModel =
-  (typeof PutProposalAttendeesV1ResponseCustomerTypeModel)[keyof typeof PutProposalAttendeesV1ResponseCustomerTypeModel];
+export type PutProposalAttendeesV1ResponseCustomerTypeModel = typeof PutProposalAttendeesV1ResponseCustomerTypeModel[keyof typeof PutProposalAttendeesV1ResponseCustomerTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PutProposalAttendeesV1ResponseCustomerTypeModel = {
@@ -23682,7 +23987,8 @@ export const PutProposalAttendeesV1ResponseCustomerTypeModel = {
 /**
  * Customer loyalty program status (not editable)
  */
-export type LoyaltyStatus = (typeof LoyaltyStatus)[keyof typeof LoyaltyStatus];
+export type LoyaltyStatus = typeof LoyaltyStatus[keyof typeof LoyaltyStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LoyaltyStatus = {
@@ -23708,8 +24014,7 @@ export interface PutProposalAttendeesV1ResponseAttendeeModel {
   loyalty_status?: LoyaltyStatus;
 }
 
-export type PutProposalAttendeesResponseAttendeesModel =
-  PutProposalAttendeesV1ResponseAttendeeModel[];
+export type PutProposalAttendeesResponseAttendeesModel = PutProposalAttendeesV1ResponseAttendeeModel[];
 
 export interface PutProposalAttendeesResponseHouseholdModel {
   /** Household id */
@@ -23874,8 +24179,8 @@ export type PutProposalAttendeesPayloadV2Model = ProposalHouseholdV2Model[];
 /**
  * Defines the client's status at the time of the call
  */
-export type PutProposalAttendeesResponseCustomerStatusModel =
-  (typeof PutProposalAttendeesResponseCustomerStatusModel)[keyof typeof PutProposalAttendeesResponseCustomerStatusModel];
+export type PutProposalAttendeesResponseCustomerStatusModel = typeof PutProposalAttendeesResponseCustomerStatusModel[keyof typeof PutProposalAttendeesResponseCustomerStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PutProposalAttendeesResponseCustomerStatusModel = {
@@ -23897,8 +24202,7 @@ export interface PutProposalAttendeesResponseAttendeeModel {
   loyalty_status?: LoyaltyStatus;
 }
 
-export type PutProposalAttendeesV2ResponseAttendeesModel =
-  PutProposalAttendeesResponseAttendeeModel[];
+export type PutProposalAttendeesV2ResponseAttendeesModel = PutProposalAttendeesResponseAttendeeModel[];
 
 export interface PutProposalAttendeesV2ResponseHouseholdModel {
   attendees?: PutProposalAttendeesV2ResponseAttendeesModel;
@@ -24080,7 +24384,8 @@ export interface ProposalAttendeeInputIdCardV3Model {
   birth_city?: string;
 }
 
-export type Category = (typeof Category)[keyof typeof Category];
+export type Category = typeof Category[keyof typeof Category];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Category = {
@@ -24176,8 +24481,8 @@ export type PutProposalAttendeesPayloadModel = ProposalHouseholdModel[];
 /**
  * type of the commercial offer
  */
-export type CommercialOfferPUTTypeModel =
-  (typeof CommercialOfferPUTTypeModel)[keyof typeof CommercialOfferPUTTypeModel];
+export type CommercialOfferPUTTypeModel = typeof CommercialOfferPUTTypeModel[keyof typeof CommercialOfferPUTTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CommercialOfferPUTTypeModel = {
@@ -24213,7 +24518,8 @@ Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
 /**
  * indicates whether it is a claim or a webform
  */
-export type RequestType = (typeof RequestType)[keyof typeof RequestType];
+export type RequestType = typeof RequestType[keyof typeof RequestType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const RequestType = {
@@ -24224,8 +24530,8 @@ export const RequestType = {
 /**
  * Indicates the request status
  */
-export type SupportRequestStatusModel =
-  (typeof SupportRequestStatusModel)[keyof typeof SupportRequestStatusModel];
+export type SupportRequestStatusModel = typeof SupportRequestStatusModel[keyof typeof SupportRequestStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SupportRequestStatusModel = {
@@ -24242,8 +24548,8 @@ export const SupportRequestStatusModel = {
 /**
  * channel code used by the customer to create the request
  */
-export type PutSupportRequestChannelCodeModel =
-  (typeof PutSupportRequestChannelCodeModel)[keyof typeof PutSupportRequestChannelCodeModel];
+export type PutSupportRequestChannelCodeModel = typeof PutSupportRequestChannelCodeModel[keyof typeof PutSupportRequestChannelCodeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PutSupportRequestChannelCodeModel = {
@@ -24264,7 +24570,8 @@ export const PutSupportRequestChannelCodeModel = {
 /**
  * code defining the subject of the request
  */
-export type SubjectCode = (typeof SubjectCode)[keyof typeof SubjectCode];
+export type SubjectCode = typeof SubjectCode[keyof typeof SubjectCode];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SubjectCode = {
@@ -24279,7 +24586,8 @@ export const SubjectCode = {
 /**
  * indicates if the request is created by a TED or a TA
  */
-export type CreatedBy = (typeof CreatedBy)[keyof typeof CreatedBy];
+export type CreatedBy = typeof CreatedBy[keyof typeof CreatedBy];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreatedBy = {
@@ -24290,8 +24598,8 @@ export const CreatedBy = {
 /**
  * code identifying the reason for the request
  */
-export type SupportRequestReasonCodeModel =
-  (typeof SupportRequestReasonCodeModel)[keyof typeof SupportRequestReasonCodeModel];
+export type SupportRequestReasonCodeModel = typeof SupportRequestReasonCodeModel[keyof typeof SupportRequestReasonCodeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SupportRequestReasonCodeModel = {
@@ -24321,7 +24629,8 @@ export const SupportRequestReasonCodeModel = {
 /**
  * sub code identifying the reason for the request
  */
-export type SubReasonCode = (typeof SubReasonCode)[keyof typeof SubReasonCode];
+export type SubReasonCode = typeof SubReasonCode[keyof typeof SubReasonCode];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SubReasonCode = {
@@ -24560,7 +24869,8 @@ export interface PatchApiWebhookModel {
 /**
  * Functional action to be applied on proposal. Ex: apply_promo_code)
  */
-export type Operation = (typeof Operation)[keyof typeof Operation];
+export type Operation = typeof Operation[keyof typeof Operation];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Operation = {
@@ -24579,8 +24889,8 @@ export interface ProposalReferenceInput {
 /**
  * Functional action to be applied on the subscription. Ex: subscribe
  */
-export type SubscriptionUpdateOperationModel =
-  (typeof SubscriptionUpdateOperationModel)[keyof typeof SubscriptionUpdateOperationModel];
+export type SubscriptionUpdateOperationModel = typeof SubscriptionUpdateOperationModel[keyof typeof SubscriptionUpdateOperationModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SubscriptionUpdateOperationModel = {
@@ -24596,8 +24906,8 @@ export interface SubscriptionsUpdateV1Model {
 /**
  * Booking status.
  */
-export type ValidPatchBookingRequestBookingStatusModel =
-  (typeof ValidPatchBookingRequestBookingStatusModel)[keyof typeof ValidPatchBookingRequestBookingStatusModel];
+export type ValidPatchBookingRequestBookingStatusModel = typeof ValidPatchBookingRequestBookingStatusModel[keyof typeof ValidPatchBookingRequestBookingStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidPatchBookingRequestBookingStatusModel = {
@@ -24821,37 +25131,6 @@ export interface ProfilePatchModelV0 {
 }
 
 /**
- * value to apply
- */
-export type Op = (typeof Op)[keyof typeof Op];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Op = {
-  add: 'add',
-  remove: 'remove',
-  replace: 'replace',
-  move: 'move',
-  copy: 'copy',
-} as const;
-
-export type JsonPatchElementValue = string | null;
-
-export interface JsonPatchElement {
-  op: Op;
-  /** 
-    Path to modify (separated by /). For example, to change passeport's expiration date : path = "/passport/expiration_date".
-    Refer to GET v1/customers/{customer_id}/travel_documents to know the order of visas documents.
-    If you want to add a visa no matter its position in the list, path should be "/visas/-".
-    If you want to add a visa at the first position in the list, path should be "/visas/0".
-    If you want to update the expiration_date of the second visa, path should be "/visas/1/expiration_date".
-   */
-  path: string;
-  value?: JsonPatchElementValue;
-}
-
-export type JsonPatchModel = JsonPatchElement[];
-
-/**
  * email
  */
 export type ProfilePatchModelV1Email = string | null;
@@ -24907,6 +25186,113 @@ export interface ProfilePatchModelV1 {
   /** true if the customer allows the use of its personal data by Club Med */
   personal_data_usage_allowed?: boolean;
   identity?: NationalIdentifierCodeModel;
+}
+
+/**
+ * value to apply
+ */
+export type Op = typeof Op[keyof typeof Op];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Op = {
+  add: 'add',
+  remove: 'remove',
+  replace: 'replace',
+  move: 'move',
+  copy: 'copy',
+} as const;
+
+export type JsonPatchElementValue = string | null;
+
+export interface JsonPatchElement {
+  op: Op;
+  /** 
+    Path to modify (separated by /). For example, to change passeport's expiration date : path = "/passport/expiration_date".
+    Refer to GET v1/customers/{customer_id}/travel_documents to know the order of visas documents.
+    If you want to add a visa no matter its position in the list, path should be "/visas/-".
+    If you want to add a visa at the first position in the list, path should be "/visas/0".
+    If you want to update the expiration_date of the second visa, path should be "/visas/1/expiration_date".
+   */
+  path: string;
+  value?: JsonPatchElementValue;
+}
+
+export type JsonPatchModel = JsonPatchElement[];
+
+/**
+ * travel company id (IATA)
+ * @maxLength 3
+ */
+export type TravelCompanyAnyOfId = string | null;
+
+export type TravelCompanyAnyOf = {
+  /**
+   * travel company id (IATA)
+   * @maxLength 3
+   */
+  id?: TravelCompanyAnyOfId;
+};
+
+export type TravelCompany = TravelCompanyAnyOf | null;
+
+/**
+ * arrival or departure travel time
+ * @pattern ^\d{2}:\d{2}:\d{2}(\.\d{3})?$
+ */
+export type PatchTransferProposalV0CustomerTravelingInformationAnyOfTime = string | null;
+
+/**
+ * arrival or departure travel reference
+ * @maxLength 6
+ */
+export type PatchTransferProposalV0CustomerTravelingInformationAnyOfTravelReference = string | null;
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type PatchTransferProposalV0CustomerTravelingInformationAnyOf = {
+  /**
+   * arrival or departure travel time
+   * @pattern ^\d{2}:\d{2}:\d{2}(\.\d{3})?$
+   */
+  time?: PatchTransferProposalV0CustomerTravelingInformationAnyOfTime;
+  /**
+   * arrival or departure travel reference
+   * @maxLength 6
+   */
+  travel_reference?: PatchTransferProposalV0CustomerTravelingInformationAnyOfTravelReference;
+  travel_company?: TravelCompany;
+};
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type PatchTransferProposalV0CustomerTravelingInformation = PatchTransferProposalV0CustomerTravelingInformationAnyOf | null;
+
+/**
+ * Any special comment regarding the transfer
+ * @maxLength 30
+ */
+export type PatchTransferProposalV0ScheduleComment = string | null;
+
+export interface PatchTransferProposalV0Schedule {
+  /** Indicates the transfer's start date */
+  start_date: string;
+  /** Indicates the transfer's end date */
+  end_date: string;
+  customer_traveling_information?: PatchTransferProposalV0CustomerTravelingInformation;
+  /**
+   * Any special comment regarding the transfer
+   * @maxLength 30
+   */
+  comment?: PatchTransferProposalV0ScheduleComment;
+}
+
+export type PatchTransferProposalV0Schedules = PatchTransferProposalV0Schedule[];
+
+export interface PatchTransferProposalV0Payload {
+  schedules: PatchTransferProposalV0Schedules;
 }
 
 export interface PaymentCheckoutStayFormalitiesInput {
@@ -24972,8 +25358,7 @@ export type PatchTransferCustomerTravelingInformationAnyOf = {
 /**
  * information provided by the customer to insure the service delivery
  */
-export type PatchTransferCustomerTravelingInformation =
-  PatchTransferCustomerTravelingInformationAnyOf | null;
+export type PatchTransferCustomerTravelingInformation = PatchTransferCustomerTravelingInformationAnyOf | null;
 
 /**
  * Indicate the transfer's start date
@@ -25004,8 +25389,8 @@ export interface PatchTransfer {
 /**
  * Language/Country, as returned by <code>GET&nbsp;/v0/locales</code> ; e.g. "en-US", "fr-FR", "ja-JP"
  */
-export type AcceptLanguageParamModel =
-  (typeof AcceptLanguageParamModel)[keyof typeof AcceptLanguageParamModel];
+export type AcceptLanguageParamModel = typeof AcceptLanguageParamModel[keyof typeof AcceptLanguageParamModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AcceptLanguageParamModel = {
@@ -25247,8 +25632,8 @@ export const AcceptLanguageParamModel = {
   'en-GE': 'en-GE',
   'en-AZ': 'en-AZ',
   'fr-TN': 'fr-TN',
-  'fr-TM': 'fr-TM',
   'es-DO': 'es-DO',
+  'fr-TM': 'fr-TM',
   'sk-SK': 'sk-SK',
 } as const;
 
@@ -25280,15 +25665,16 @@ export type ProductIdParamModel = string;
 export type ProductIdArrayParamModel = ProductIdParamModel[];
 
 export type GetV0CountriesParams = {
-  /**
-   * string composed of a field name (can be a path), a comparison operator (>, >=, <=, <, ==, !=) and a value. Logical operator AND applies between filters
-   */
-  filter?: FilterArrayParamModel;
+/**
+ * string composed of a field name (can be a path), a comparison operator (>, >=, <=, <, ==, !=) and a value. Logical operator AND applies between filters
+ */
+filter?: FilterArrayParamModel;
 };
 
 export type PostV3BookingsParams = {
-  /**
-   * Technical information provided, if needed, by Club Med to the partner
-   */
-  partner_type?: string;
+/**
+ * Technical information provided, if needed, by Club Med to the partner
+ */
+partner_type?: string;
 };
+

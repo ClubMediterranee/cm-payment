@@ -1,12 +1,14 @@
 import { getPaymentConfig } from '../providers/PaymentConfigProvider';
 
 export const fetcher = async <T>({
+  baseUrl,
   url,
   method,
   params = {},
   headers,
   data,
 }: {
+  baseUrl?: string;
   url: string;
   method: string;
   headers?: Record<string, string>;
@@ -16,7 +18,8 @@ export const fetcher = async <T>({
   const {
     locale,
     oidc: { accessToken },
-    api: { url: apiUrl, apiKey },
+    api: { apiKey },
+    paymentGatewayUrl,
   } = getPaymentConfig();
 
   const queryParams = new URLSearchParams();
@@ -27,7 +30,7 @@ export const fetcher = async <T>({
     }
   });
 
-  const endpoint = `${apiUrl}${url}?${queryParams.toString()}`;
+  const endpoint = `${baseUrl || paymentGatewayUrl || ''}${url}?${queryParams.toString()}`;
 
   const opts = {
     method,

@@ -57,6 +57,7 @@ The application uses `dotenv-flow` to load environment configurations from the `
 - `config/.env.integration` - Integration environment
 
 **Available Environment Variables:**
+
 - `HOST` - Configure the development server host (default: payment-starter)
 
 ### OIDC Providers
@@ -64,7 +65,7 @@ The application uses `dotenv-flow` to load environment configurations from the `
 The application supports the following OIDC issuer types:
 
 - **GM**: Club Med GM provider
-- **GO**: Club Med GO provider  
+- **GO**: Club Med GO provider
 - **PARTNER**: Partner provider
 
 ### Supported Locales
@@ -89,7 +90,7 @@ The application supports the following OIDC issuer types:
 
 - **@clubmed/trident-ui**: Club Med's UI component library
 - **@clubmed/trident-icons**: Club Med's icon library
-- **@clubmed/payment-sdk**: Club Med's payment SDK
+- **@clubmed/caps**: Club Med's payment SDK
 - **react**: React framework (v18.3.1)
 - **react-dom**: React DOM renderer
 - **react-hook-form**: Form handling library
@@ -121,11 +122,13 @@ src/
 Before running the project, you need to configure your system's hosts file to properly access the application:
 
 1. **Edit your `/etc/hosts` file** (requires administrator privileges):
+
    ```bash
    sudo nano /etc/hosts
    ```
 
 2. **Add the following line** to the file:
+
    ```
    127.0.0.1 payment-starter
    ```

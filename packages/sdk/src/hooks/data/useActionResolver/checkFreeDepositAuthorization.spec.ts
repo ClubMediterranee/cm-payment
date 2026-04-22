@@ -128,11 +128,12 @@ describe('checkFreeDepositAuthorization', () => {
     });
 
     expect(result).toBe(true);
-    expect(mockPaymentScheduleQueryOptions).toHaveBeenCalledWith('booking-123');
-    expect(mockFetchQuery).toHaveBeenCalledWith({
-      queryKey: mockQueryOptions.queryKey,
-      queryFn: mockQueryOptions.queryFn,
-    });
+    expect(mockPaymentScheduleQueryOptions).toHaveBeenCalledWith(
+      'booking-123',
+      'booking',
+      'customer-456',
+    );
+    expect(mockFetchQuery).toHaveBeenCalledWith(mockQueryOptions);
     expect(mockParseApiDate).toHaveBeenCalledWith('20260215');
   });
 

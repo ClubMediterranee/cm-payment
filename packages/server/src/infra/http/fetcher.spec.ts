@@ -30,6 +30,7 @@ describe('fetcher', () => {
       request: {
         headers: {
           'accept-language': 'en-US',
+          'x-api-key': 'test-api-key',
         },
       } as any,
     };
@@ -98,36 +99,13 @@ describe('fetcher', () => {
     });
   });
 
-  it('should merge custom headers with default headers', async () => {
-    // WHEN
-    await fetcher({
-      url: '/test',
-      method: 'GET',
-      headers: {
-        'Custom-Header': 'custom-value',
-        'Content-Type': 'application/json',
-      },
-    });
-
-    // THEN
-    expect(mockHttpClient.fetch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        headers: {
-          'x-api-key': 'test-api-key',
-          caller: 'X-CLUBMED-CALLER',
-          'Accept-Language': 'en-US',
-          'Custom-Header': 'custom-value',
-          'Content-Type': 'application/json',
-        },
-      }),
-    );
-  });
-
   it('should not include Accept-Language header when not present in context', async () => {
     // GIVEN
     vi.mocked(context).mockReturnValue({
       request: {
-        headers: {},
+        headers: {
+          'x-api-key': 'test-api-key',
+        },
       },
     } as any);
 
@@ -162,7 +140,7 @@ describe('fetcher', () => {
     expect(mockHttpClient.fetch).toHaveBeenCalledWith(
       expect.objectContaining({
         headers: {
-          'x-api-key': 'test-api-key',
+          'x-api-key': undefined,
           caller: 'X-CLUBMED-CALLER',
         },
       }),

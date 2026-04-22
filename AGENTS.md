@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-- `packages/sdk` exposes the reusable `@clubmed/payment-sdk`; source lives in `src/`, shared styles in `public/` and
+- `packages/sdk` exposes the reusable `@clubmed/caps`; source lives in `src/`, shared styles in `public/` and
   build scripts under `scripts/`.
 - `packages/app` is the full-featured demo/acceptance app; UI assets live in `src/assets`, config and environment
   samples are under `config/`.
@@ -16,7 +16,7 @@
 - `pnpm install` — bootstrap the workspace (Node 20+, PNPM 9+ per `.nvmrc`).
 - `pnpm dev:app | dev:sdk | dev:starter | dev:storybook` — run the respective package in watch/dev mode.
 - `pnpm build` — type-check and bundle every package (use `--filter` to scope, e.g.,
-  `pnpm --filter @clubmed/payment-sdk run build`).
+  `pnpm --filter @clubmed/caps run build`).
 - `pnpm lint` / `pnpm lint:fix` — run ESLint with the shared config; fixes formatting/lint issues.
 - `pnpm test` — execute Vitest across packages, including Storybook interaction tests via `@storybook/addon-vitest`.
 - `pnpm release` / `pnpm release:dry:run` — semantic-release via `@cmflow/cli`.
