@@ -46,7 +46,10 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
     const isProviderId = isNaN(Number(selectedValue));
 
     field.onChange(isProviderId ? stayAmount : selectedValue);
-    setValue('provider_id', isProviderId ? selectedValue : paymentProviders[0]?.id);
+    setValue(
+      'provider_id',
+      isProviderId ? selectedValue : isBnpl ? paymentProviders[0]?.id : watchedProvider?.id || '',
+    );
   };
 
   return (

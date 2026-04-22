@@ -1,9 +1,9 @@
-import { GLOBAL_CAPS_SETTINGS } from '../../../config';
 import { OidcIssuerTypes } from '../../../types/CapsSettings';
 import {
   FeatureFlipsConfig,
   PaymentConfig,
   PaymentProviderConfig,
+  PaymentProviderDisplayType,
   PaymentSettings,
 } from '../../../types/PaymentConfig';
 import { LegacyCmsFeatureFlipResponse } from './LegacyCms';
@@ -110,9 +110,8 @@ const mapProvidersConfig = ({
       acc[providerUpper] = {
         is_active: value,
         display_type:
-          GLOBAL_CAPS_SETTINGS.providersDisplayMode[
-            providerUpper as keyof typeof GLOBAL_CAPS_SETTINGS.providersDisplayMode
-          ] || 'redirect',
+          (providersSettings[providerUpper]?.display_type as PaymentProviderDisplayType) ||
+          'redirect',
         settings: providersSettings[providerUpper] || {},
       };
 

@@ -7,9 +7,9 @@ import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useDisclosure } from '../../utils/useDisclosure';
 import { useFormContext, useWatch } from '../../utils/useForm';
 import { useScriptLoader } from '../../utils/useScriptLoader';
-import { createHipayHostedFields, mapHipayErrorsToObject } from './hipay';
+import { createHipayClient, mapHipayErrorsToObject } from './hipay';
 
-type UseHipayParams = {
+type UseHipayHostedFieldsParams = {
   fieldSelectors: {
     cardHolder: string;
     cardNumber: string;
@@ -18,7 +18,7 @@ type UseHipayParams = {
   };
 };
 
-export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
+export const useHipayHostedFields = ({ fieldSelectors }: UseHipayHostedFieldsParams) => {
   const { content } = useCapsConfigContext();
   const { formState, setValue } = useFormContext();
   const { isSubmitting } = formState;
@@ -36,7 +36,7 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
   const generationIdRef = useRef(0);
 
   const generateToken = useCallback(() => {
-    if (!instance.current) return;
+    if (!instance.current?.getPaymentData) return;
 
     const generationId = generationIdRef.current;
 
@@ -71,9 +71,13 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
     });
   };
 
-  const initializeHipay = () => {
-    instance.current = createHipayHostedFields(
-      {
+  useEffect(() => {
+    if (!isLoaded || instance.current) return;
+
+    instance.current = createHipayClient({
+      type: 'card',
+      config: hipayConfig,
+      options: {
         cardHolder: {
           placeholder: content.creditCardForm.fullName,
           selector: fieldSelectors.cardHolder,
@@ -91,24 +95,21 @@ export const useHipay = ({ fieldSelectors }: UseHipayParams) => {
           selector: fieldSelectors.expiryDate,
         },
       },
-      hipayConfig,
-    );
-
-    instance.current?.on('ready', onHipayReady);
-
-    instance.current?.on('inputChange', onHipayInputChange);
-
-    instance.current.on('change', ({ valid }) => {
-      if (valid) {
-        return generateToken();
-      }
-      setValue('token.value', '');
+      events: {
+        ready: onHipayReady,
+        inputChange: onHipayInputChange,
+        change: ({ valid }) => {
+          if (valid) {
+            return generateToken();
+          }
+          setValue('token.value', '');
+        },
+      },
     });
-  };
 
-  useEffect(() => {
-    if (!isLoaded) return;
-    initializeHipay();
+    return () => {
+      instance.current?.destroy();
+    };
   }, [isLoaded]);
 
   useEffect(() => {

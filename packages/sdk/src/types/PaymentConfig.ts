@@ -15,6 +15,7 @@ export interface PaymentProviderConfig {
 
 export interface FeatureFlipsConfig {
   isFreeDepositEnabled?: boolean;
+  isPaypalButtonEnabled?: boolean;
 }
 
 export interface PaymentSettings {

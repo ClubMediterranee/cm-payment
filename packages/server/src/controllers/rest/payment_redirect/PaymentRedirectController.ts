@@ -69,8 +69,6 @@ export class PaymentRedirectController {
       return html;
     }
 
-    console.log(redirectUrl);
-
     return ctx.response.redirect(302, redirectUrl);
   }
 }

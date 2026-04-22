@@ -140,7 +140,7 @@ describe('fetcher', () => {
     expect(mockHttpClient.fetch).toHaveBeenCalledWith(
       expect.objectContaining({
         headers: {
-          'x-api-key': undefined,
+          'x-api-key': '',
           caller: 'X-CLUBMED-CALLER',
         },
       }),
