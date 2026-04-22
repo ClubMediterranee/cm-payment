@@ -10,6 +10,9 @@ export const GLOBAL_CAPS_SETTINGS = Object.freeze({
     mobilePhone: '4',
     call: '1',
   } as const,
+  donation: {
+    presetAmounts: [5, 20, 50],
+  } as const,
   components: {
     [OidcIssuerTypes.GM]: [
       TOKENS.PaymentSchedule,

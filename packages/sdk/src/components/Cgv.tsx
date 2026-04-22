@@ -1,45 +1,41 @@
-import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
-import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
-import { Controller } from 'react-hook-form';
-
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
-import { useFormContext } from '../hooks/utils/useForm';
+import { useWatch } from '../hooks/utils/useForm';
 import { TOKENS } from '../types/Tokens';
+import { CheckboxField } from './ui/Form/CheckboxField';
 import { FormPanel } from './ui/FormPanel';
 import { CheckboxSkeleton, TitleSkeleton } from './ui/skeletons';
 
 export const Cgv = () => {
   const { content } = useCapsConfigContext();
-  const { control, trigger } = useFormContext();
+  const donationAmount = useWatch('donation_amount');
+  const hasDonation = (donationAmount || 0) > 0;
 
   return (
-    <div className="w-full">
-      <h2 className="text-h5 mb-16 font-serif">{content.cgv.title}</h2>
+    <FormPanel className="w-full">
+      <div className="flex flex-col gap-20">
+        <CheckboxField name="cgv">
+          <span className="text-b4 font-bold">{content.cgv.content}</span>
+        </CheckboxField>
 
-      <Controller
-        name="cgv"
-        control={control}
-        render={({ field: { onChange }, fieldState: { error, isTouched } }) => {
-          const validationStatus = isTouched && !error ? 'success' : error ? 'error' : 'default';
-          return (
-            <FormControl errorMessage={error?.message} validationStatus={validationStatus}>
-              <FormPanel>
-                <Checkbox
-                  validationStatus={validationStatus}
-                  aria-invalid={!!error}
-                  onChange={async (_, newValue) => {
-                    onChange(newValue ?? false);
-                    await trigger('cgv');
-                  }}
+        {hasDonation && (
+          <CheckboxField name="cgv_donation">
+            <span className="text-b4 font-bold">
+              {content.donation.acceptCGU}{' '}
+              {content.donation.linkDonationTerms && (
+                <a
+                  href={content.donation.linkDonationTerms}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-primary"
                 >
-                  <span className="text-b4 font-bold">{content.cgv.content}</span>
-                </Checkbox>
-              </FormPanel>
-            </FormControl>
-          );
-        }}
-      />
-    </div>
+                  {content.donation.donationTerms}
+                </a>
+              )}
+            </span>
+          </CheckboxField>
+        )}
+      </div>
+    </FormPanel>
   );
 };
 

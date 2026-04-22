@@ -19,6 +19,7 @@ type ScheduleOptionsFieldProps = {
 
 export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
   const watchedAmount = useWatch('amount');
+  const watchedDonationAmount = useWatch('donation_amount');
   const watchedProvider = useWatchedPaymentProvider();
   const { paymentSchedule } = usePaymentSchedule();
 
@@ -62,7 +63,7 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
       >
         {paymentSchedule.map(({ amount, currency, deadline = null, balance }) => {
           const formattedCurrency = formatCurrency({
-            amount: Number(amount),
+            amount: Number(amount) + Number(watchedDonationAmount || 0),
             currency,
             locale,
           });
@@ -75,7 +76,7 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
                     balance: (
                       <span className="font-bold text-sienna">
                         {formatCurrency({
-                          amount: Number(balance),
+                          amount: Number(balance) + Number(watchedDonationAmount || 0),
                           currency,
                           locale,
                         })}

@@ -5,6 +5,7 @@ import { Action } from '../types';
 import { CapsFormConfig } from '../types/CapsFormConfig';
 import { LocaleOrCountry } from '../types/LocaleOrCountry';
 import { validateBillingAddress } from './validations/validateBillingAddress';
+import { validateDonation } from './validations/validateDonation';
 import { validateEmail } from './validations/validateEmail';
 import { validateExpiryDate } from './validations/validateExpiryDate';
 import { validateMobilePhone } from './validations/validateMobilePhone';
@@ -55,6 +56,8 @@ export const capsFormSchema = ({
       cgv: z.boolean().refine((val) => val === true, {
         message: content.cgv.validation.mustAccept,
       }),
+      cgv_donation: z.boolean().optional(),
+      donation_amount: z.number().nonnegative().optional(),
       payment_condition_id: z.string().optional(),
       billing_details: z.object({
         email: z.string().nullable().optional(),
@@ -100,6 +103,7 @@ export const capsFormSchema = ({
         validateEmail,
         validateMobilePhone,
         validateBillingAddress,
+        validateDonation,
       ];
       validations.forEach((validate) => {
         const result = validate(data, config);

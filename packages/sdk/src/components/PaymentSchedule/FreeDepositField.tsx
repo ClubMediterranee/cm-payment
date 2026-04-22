@@ -22,10 +22,11 @@ export const FreeDepositField = ({ field, error, isValid }: FreeDepositFieldProp
 
   const amount = paymentSchedule[0]?.amount;
   const currency = useWatch('currency');
+  const donationAmount = useWatch('donation_amount');
   const deadline = paymentSchedule[0]?.deadline;
 
   const formattedAmount = formatCurrency({
-    amount: Number(amount),
+    amount: Number(amount) + Number(donationAmount || 0),
     currency,
     locale,
   });
