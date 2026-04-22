@@ -22,7 +22,7 @@ export const fetcher = async <T>({
   const $ctx = context<PlatformContext>();
   const acceptLanguage = $ctx?.request.headers['accept-language'];
   const authorization = $ctx?.request.headers.authorization;
-  const apiKey = $ctx?.request.headers['x-api-key'];
+  const apiKey = $ctx?.request.headers['x-api-key'] || constant<string>('CLUBMED_API_KEY', '');
 
   return httpClient.fetch({
     callee,

@@ -13,7 +13,7 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
@@ -21,7 +21,9 @@ describe('mapPaymentConfig', () => {
       expect(result.providers.EVOXPAY).toEqual({
         is_active: true,
         display_type: 'redirect',
-        settings: {},
+        settings: {
+          display_type: 'redirect',
+        },
       });
       expect(result.providers.MHIPAY.is_active).toBe(false);
       expect(result.providers.MHIPAY.display_type).toBe('hosted_field');
@@ -38,13 +40,17 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GO,
         locale: 'fr-FR',
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
+        EVOXPAY: {
+          is_active: true,
+          display_type: 'redirect',
+          settings: { display_type: 'redirect' },
+        },
         PAYPAL: { is_active: false, display_type: 'redirect', settings: {} },
       });
     });
@@ -56,7 +62,7 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.PARTNERS,
         locale: 'fr-FR',
       });
@@ -77,13 +83,17 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
+        EVOXPAY: {
+          is_active: true,
+          display_type: 'redirect',
+          settings: { display_type: 'redirect' },
+        },
       });
     });
 
@@ -98,13 +108,17 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
+        EVOXPAY: {
+          is_active: true,
+          display_type: 'redirect',
+          settings: { display_type: 'redirect' },
+        },
       });
     });
   });
@@ -117,13 +131,14 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
     });
 
@@ -134,13 +149,14 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GO,
         locale: 'fr-FR',
       });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
     });
 
@@ -151,13 +167,14 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.PARTNERS,
         locale: 'fr-FR',
       });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: false,
+        isPaypalButtonEnabled: false,
       });
     });
 
@@ -171,6 +188,27 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
+        settings: { paypal_button_enabled: false },
+        issuerType: OidcIssuerTypes.GM,
+        locale: 'fr-FR',
+      });
+
+      expect(result.featureFlip).toEqual({
+        isFreeDepositEnabled: false,
+        isPaypalButtonEnabled: false,
+      });
+    });
+
+    it('should set isPaypalButtonEnabled to true when enabled in featureFlip', () => {
+      const featureFlip = {
+        keys: [
+          { key: 'featureFlipping.booking.banking.enableFreeDeposit', value: false },
+          { key: 'featureFlipping.psp.paypal.enable_button', value: true },
+        ],
+      };
+
+      const result = mapPaymentConfig({
+        featureFlip,
         settings: {},
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
@@ -178,6 +216,7 @@ describe('mapPaymentConfig', () => {
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: false,
+        isPaypalButtonEnabled: true,
       });
     });
   });
@@ -193,13 +232,14 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
     });
 
@@ -216,13 +256,14 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GO,
         locale: 'fr-FR',
       });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
     });
 
@@ -236,13 +277,14 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
 
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: false,
+        isPaypalButtonEnabled: false,
       });
     });
 
@@ -256,13 +298,17 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
 
       expect(result.providers).toEqual({
-        EVOXPAY: { is_active: true, display_type: 'redirect', settings: {} },
+        EVOXPAY: {
+          is_active: true,
+          display_type: 'redirect',
+          settings: { display_type: 'redirect' },
+        },
       });
     });
   });
@@ -279,7 +325,7 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
@@ -287,13 +333,16 @@ describe('mapPaymentConfig', () => {
       expect(result.providers.EVOXPAY).toEqual({
         is_active: true,
         display_type: 'redirect',
-        settings: {},
+        settings: {
+          display_type: 'redirect',
+        },
       });
       expect(result.providers.MHIPAY.is_active).toBe(false);
       expect(result.providers.MHIPAY.display_type).toBe('hosted_field');
       expect(result.providers.MHIPAY.settings).toHaveProperty('environment', 'stage');
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: true,
+        isPaypalButtonEnabled: false,
       });
       expect(result.settings).toEqual({});
     });
@@ -303,7 +352,7 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
@@ -311,6 +360,7 @@ describe('mapPaymentConfig', () => {
       expect(result.providers).toEqual({});
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: false,
+        isPaypalButtonEnabled: false,
       });
       expect(result.settings).toEqual({});
     });
@@ -320,7 +370,7 @@ describe('mapPaymentConfig', () => {
 
       const result = mapPaymentConfig({
         featureFlip,
-        settings: {},
+        settings: { paypal_button_enabled: false },
         issuerType: OidcIssuerTypes.GM,
         locale: 'fr-FR',
       });
@@ -328,6 +378,7 @@ describe('mapPaymentConfig', () => {
       expect(result.providers).toEqual({});
       expect(result.featureFlip).toEqual({
         isFreeDepositEnabled: false,
+        isPaypalButtonEnabled: false,
       });
       expect(result.settings).toEqual({});
     });

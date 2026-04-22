@@ -1,5 +1,5 @@
 import type { Hipay, HipayError, HipayInstance, HipaySDK } from '../../../types/Hipay';
-import { createHipayHostedFields, mapHipayErrorsToObject } from './hipay';
+import { createHipayClient, mapHipayErrorsToObject } from './hipay';
 
 describe('hipay utilities', () => {
   describe('createHipayHostedFields', () => {
@@ -25,7 +25,7 @@ describe('hipay utilities', () => {
     });
 
     it('should initialize Hipay SDK with config and create instance with fields', () => {
-      const fields = {
+      const cardOptions = {
         cardHolder: { placeholder: 'Nom complet', selector: '#card-holder' },
         cardNumber: { placeholder: 'Numéro de carte', selector: '#card-number' },
         cvc: { placeholder: 'CVV', selector: '#cvc' },
@@ -40,10 +40,14 @@ describe('hipay utilities', () => {
         min_days_before_departure: null,
       };
 
-      const result = createHipayHostedFields(fields, mockConfig);
+      const result = createHipayClient({
+        type: 'card',
+        config: mockConfig,
+        options: cardOptions,
+      });
 
       expect(mockHiPay).toHaveBeenCalledWith(mockConfig);
-      expect(mockHipaySDK.create).toHaveBeenCalledWith('card', { fields });
+      expect(mockHipaySDK.create).toHaveBeenCalledWith('card', { fields: cardOptions });
       expect(result).toBe(mockHipayInstance);
     });
   });

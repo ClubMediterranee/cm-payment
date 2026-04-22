@@ -29,7 +29,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=redirect&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
       });
       expect(result).not.toHaveProperty('callback_url_seller');
     });
@@ -49,7 +49,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fclient%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=redirect&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fclient%2Fconfirmation',
       });
       expect(result).not.toHaveProperty('callback_url_seller');
     });
@@ -71,7 +71,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=redirect&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
       });
       expect(result).not.toHaveProperty('callback_url_seller');
     });
@@ -91,9 +91,9 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fclient%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=redirect&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fclient%2Fconfirmation',
         callback_url_seller:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fseller%2Fdashboard',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=redirect&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fseller%2Fdashboard',
       });
     });
   });
@@ -114,7 +114,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=redirect&callback_url=https%3A%2F%2Fpartner.com%2Fconfirmation',
       });
       expect(result).not.toHaveProperty('callback_url_seller');
     });
@@ -134,9 +134,9 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fclient%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=redirect&callback_url=https%3A%2F%2Fpartner.com%2Fclient%2Fconfirmation',
         callback_url_seller:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=undefined&callback_url=https%3A%2F%2Fpartner.com%2Fseller%2Fdashboard',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-777?locale=fr-FR&provider_id=PROVIDER-888&proposal_id=proposal-999&mode=redirect&callback_url=https%3A%2F%2Fpartner.com%2Fseller%2Fdashboard',
       });
     });
   });
@@ -157,7 +157,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=undefined&callback_url=',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&provider_id=PROVIDER-789&mode=redirect&callback_url=',
       });
     });
 
@@ -176,9 +176,9 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
       expect(result).toEqual({
         callback_url:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&mode=redirect&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fconfirmation',
         callback_url_seller:
-          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&mode=undefined&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fseller',
+          'https://payment.clubmed.com/rest/payment_redirect/payment-456?locale=fr-FR&mode=redirect&callback_url=https%3A%2F%2Fapp.clubmed.com%2Fseller',
       });
     });
 
