@@ -4,25 +4,18 @@ import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
-import { getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock } from '../__generated__/index.msw';
 import { Action } from '../__generated__/index.schemas';
 import { PaymentProviders } from './PaymentProviders';
 
 const commonHandlers = [
-  http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+  http.get('*/rest/payment_schedules/booking/*', () => {
+    return Response.json([
+      {
+        deadline: '20251006',
+        amount: 3079,
         currency: 'EUR',
-        total: 3079,
-        paid: 0,
-        payment_schedules: [
-          {
-            deadline: '20251006',
-            amount: 3079,
-          },
-        ],
-      }),
-    );
+      },
+    ]);
   }),
   http.get('*/v3/customers/customer-456/bookings/booking-123', () => {
     return Response.json({

@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3389.0
+ * OpenAPI spec version: 0.3406.1
  */
 import { faker } from '@faker-js/faker';
 
@@ -43,14 +43,11 @@ import type {
   CountriesModel,
   CreateBookingResponseModel,
   CustomerBookingModelV3,
-  CustomerBookingPaymentScheduleModel,
   NotifyPaymentOrderNotificationStatus,
   PaymentIdModel,
   PaymentProviderListModel2,
-  PaymentScheduleModel,
   PaymentStatusModel,
   ProfileModelV2,
-  ProposalPaymentScheduleModelV1,
   ProposalResponseModelV1,
   ProposalTransportDetailsListModelV5,
   ProviderParametersModel,
@@ -685,43 +682,6 @@ export const getGetV0PaymentsPaymentIdStatusResponseMock = (
   },
   errors: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
-
-export const getGetV1ProposalsProposalIdPaymentScheduleResponseMock = (
-  overrideResponse: Partial<ProposalPaymentScheduleModelV1> = {},
-): ProposalPaymentScheduleModelV1 => ({
-  currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
-  commission_included: faker.datatype.boolean(),
-  households: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      attendees: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-          customer_id: faker.helpers.arrayElement([
-            faker.helpers.fromRegExp('^[1-9][0-9]*$'),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      total: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-      deposit_repayment_schedule: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          expected_payment_amount: faker.helpers.arrayElement([
-            faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-            undefined,
-          ]),
-          deadline: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            null,
-          ]),
-        })),
-        undefined,
-      ]),
-    })),
     undefined,
   ]),
   ...overrideResponse,
@@ -1489,34 +1449,6 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock = (
-  overrideResponse: Partial<CustomerBookingPaymentScheduleModel> = {},
-): CustomerBookingPaymentScheduleModel => ({
-  currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
-  paid: faker.helpers.arrayElement([
-    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-    undefined,
-  ]),
-  total: faker.helpers.arrayElement([
-    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-    undefined,
-  ]),
-  payment_schedules: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      amount: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      deadline: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-    })),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
-
 export const getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsResponseMock =
   (): BookingTransportDetailsListModelV2 =>
     Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
@@ -1726,7 +1658,7 @@ export const getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsRespons
             undefined,
           ]),
           cancellation_policy_type: faker.helpers.arrayElement([
-            faker.helpers.arrayElement(['AUCUN', 'THEO', 'WEBTHEO', 'NDC'] as const),
+            faker.helpers.arrayElement(['AUCUN', 'THEO', 'WEBTHEO', 'NDC', 'NDCx'] as const),
             undefined,
           ]),
           technical_stops: faker.helpers.arrayElement([
@@ -1797,40 +1729,6 @@ export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsRespo
       ),
       quantity: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
       occupancy: faker.number.int({ min: undefined, max: undefined }),
-    })),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
-
-export const getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock = (
-  overrideResponse: Partial<PaymentScheduleModel> = {},
-): PaymentScheduleModel => ({
-  currency: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    null,
-  ]),
-  paid: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([
-      faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-      null,
-    ]),
-    undefined,
-  ]),
-  total: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([
-      faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-      null,
-    ]),
-    undefined,
-  ]),
-  payment_schedules: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      amount: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      deadline: faker.string.alpha({ length: { min: 10, max: 20 } }),
     })),
     undefined,
   ]),
@@ -1933,7 +1831,7 @@ export const getGetV0CountriesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v0/countries',
+    '*/api/v0/countries',
     async (info) => {
       await delay(1000);
 
@@ -1961,7 +1859,7 @@ export const getGetV1PaymentProvidersMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v1/payment_providers',
+    '*/api/v1/payment_providers',
     async (info) => {
       await delay(1000);
 
@@ -1989,7 +1887,7 @@ export const getGetV2ProposalsProposalIdMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v2/proposals/:proposalId',
+    '*/api/v2/proposals/:proposalId',
     async (info) => {
       await delay(1000);
 
@@ -2017,7 +1915,7 @@ export const getGetV0PaymentsPaymentIdStatusMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v0/payments/:paymentId/status',
+    '*/api/v0/payments/:paymentId/status',
     async (info) => {
       await delay(1000);
 
@@ -2036,34 +1934,6 @@ export const getGetV0PaymentsPaymentIdStatusMockHandler = (
   );
 };
 
-export const getGetV1ProposalsProposalIdPaymentScheduleMockHandler = (
-  overrideResponse?:
-    | ProposalPaymentScheduleModelV1
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<ProposalPaymentScheduleModelV1> | ProposalPaymentScheduleModelV1),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v1/proposals/:proposalId/payment_schedule',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV1ProposalsProposalIdPaymentScheduleResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
 export const getGetV2CustomersCustomerIdProfileMockHandler = (
   overrideResponse?:
     | ProfileModelV2
@@ -2073,7 +1943,7 @@ export const getGetV2CustomersCustomerIdProfileMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v2/customers/:customerId/profile',
+    '*/api/v2/customers/:customerId/profile',
     async (info) => {
       await delay(1000);
 
@@ -2101,7 +1971,7 @@ export const getGetV3SchemasResourceLocaleorcountryMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v3/schemas/:resource/:localeOrCountry',
+    '*/api/v3/schemas/:resource/:localeOrCountry',
     async (info) => {
       await delay(1000);
 
@@ -2129,7 +1999,7 @@ export const getGetV5ProposalsProposalIdTransportDetailsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v5/proposals/:proposalId/transport_details',
+    '*/api/v5/proposals/:proposalId/transport_details',
     async (info) => {
       await delay(1000);
 
@@ -2157,7 +2027,7 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v3/customers/:customerId/bookings/:bookingId',
+    '*/api/v3/customers/:customerId/bookings/:bookingId',
     async (info) => {
       await delay(1000);
 
@@ -2176,34 +2046,6 @@ export const getGetV3CustomersCustomerIdBookingsBookingIdMockHandler = (
   );
 };
 
-export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler = (
-  overrideResponse?:
-    | CustomerBookingPaymentScheduleModel
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<CustomerBookingPaymentScheduleModel> | CustomerBookingPaymentScheduleModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v0/customers/:customerId/bookings/:bookingId/payment_schedules',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
 export const getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsMockHandler = (
   overrideResponse?:
     | BookingTransportDetailsListModelV2
@@ -2213,7 +2055,7 @@ export const getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsMockHan
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v4/customers/:customerId/bookings/:bookingId/transport_details',
+    '*/api/v4/customers/:customerId/bookings/:bookingId/transport_details',
     async (info) => {
       await delay(1000);
 
@@ -2241,7 +2083,7 @@ export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockH
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/v0/customers/:customerId/bookings/:bookingId/cart/accommodations',
+    '*/api/v0/customers/:customerId/bookings/:bookingId/cart/accommodations',
     async (info) => {
       await delay(1000);
 
@@ -2260,34 +2102,6 @@ export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockH
   );
 };
 
-export const getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler = (
-  overrideResponse?:
-    | PaymentScheduleModel
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<PaymentScheduleModel> | PaymentScheduleModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v0/customers/:customerId/bookings/:bookingId/cart/payment_schedule',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
 export const getPostV1PaymentsMockHandler = (
   overrideResponse?:
     | PaymentIdModel
@@ -2297,7 +2111,7 @@ export const getPostV1PaymentsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    '*/v1/payments',
+    '*/api/v1/payments',
     async (info) => {
       await delay(1000);
 
@@ -2329,7 +2143,7 @@ export const getPostV3BookingsMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    '*/v3/bookings',
+    '*/api/v3/bookings',
     async (info) => {
       await delay(1000);
 
@@ -2357,7 +2171,7 @@ export const getPostV0PaymentProvidersProviderIdRequestTokenMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    '*/v0/payment_providers/:providerId/request_token',
+    '*/api/v0/payment_providers/:providerId/request_token',
     async (info) => {
       await delay(1000);
 
@@ -2385,7 +2199,7 @@ export const getPostV0PaymentsPaymentIdRedirectRequestMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    '*/v0/payments/:paymentId/redirect_request',
+    '*/api/v0/payments/:paymentId/redirect_request',
     async (info) => {
       await delay(1000);
 
@@ -2413,7 +2227,7 @@ export const getPostV1PaymentsPaymentIdNotifyMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    '*/v1/payments/:paymentId/notify',
+    '*/api/v1/payments/:paymentId/notify',
     async (info) => {
       await delay(1000);
 
@@ -2436,15 +2250,12 @@ export const getClubMedAPIMock = () => [
   getGetV1PaymentProvidersMockHandler(),
   getGetV2ProposalsProposalIdMockHandler(),
   getGetV0PaymentsPaymentIdStatusMockHandler(),
-  getGetV1ProposalsProposalIdPaymentScheduleMockHandler(),
   getGetV2CustomersCustomerIdProfileMockHandler(),
   getGetV3SchemasResourceLocaleorcountryMockHandler(),
   getGetV5ProposalsProposalIdTransportDetailsMockHandler(),
   getGetV3CustomersCustomerIdBookingsBookingIdMockHandler(),
-  getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler(),
   getGetV4CustomersCustomerIdBookingsBookingIdTransportDetailsMockHandler(),
   getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler(),
-  getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler(),
   getPostV1PaymentsMockHandler(),
   getPostV3BookingsMockHandler(),
   getPostV0PaymentProvidersProviderIdRequestTokenMockHandler(),

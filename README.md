@@ -14,7 +14,7 @@
 
 # Club Med Payment Workspace
 
-This repository is a PNPM monorepo that groups together the building blocks around the Club Med payment SDK (`@clubmed/caps`, published as `@clubmed/payment-sdk`) and its integration examples.
+This repository is a PNPM monorepo that groups together the building blocks around the Club Med payment SDK (`@clubmed/caps`) and its integration examples.
 
 - packages/sdk — Payment SDK library (`@clubmed/caps`)
 - packages/app — Demo/acceptance application

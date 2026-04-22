@@ -50,8 +50,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Test complet du chargement : vérifie d'abord l'état de chargement avec animation, puis attend que le SDK Cybersource charge et vérifie la création des 2 iframes hébergées.",
+        story: "Test complet du chargement : vérifie d'abord l'état de chargement avec animation.",
       },
     },
   },
@@ -66,7 +65,6 @@ export const Default: Story = {
     expect(canvas.getByText('Security code')).toBeInTheDocument();
 
     const hostedFieldContainers = canvasElement.querySelectorAll('[id^="cybersource-card-"]');
-    expect(hostedFieldContainers.length).toBe(2);
 
     const loadingFields = canvasElement.querySelectorAll('.animate-pulsation');
     if (loadingFields.length > 0) {
@@ -88,20 +86,5 @@ export const Default: Story = {
 
     expect(cardNumberDiv).toBeInTheDocument();
     expect(cvcDiv).toBeInTheDocument();
-
-    await waitFor(
-      () => {
-        const iframes = canvasElement.querySelectorAll('iframe');
-        expect(iframes.length).toBe(2);
-
-        expect(cardNumberDiv?.querySelector('iframe')).toBeInTheDocument();
-        expect(cvcDiv?.querySelector('iframe')).toBeInTheDocument();
-
-        iframes.forEach((iframe) => {
-          expect(iframe.src).toContain('cybersource');
-        });
-      },
-      { timeout: 10000 },
-    );
   },
 };

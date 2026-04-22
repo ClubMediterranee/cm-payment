@@ -126,7 +126,7 @@ https://cm-payment:4003/:issuer/:type/:id/:locale?customer_id=123
 
 ### Main Dependencies
 
-- **@clubmed/payment-sdk**: Club Med's payment SDK for payment processing
+- **@clubmed/caps**: Club Med's payment SDK for payment processing
 - **@clubmed/trident-ui**: Club Med's UI component library
 - **@clubmed/trident-icons**: Club Med's icon library
 - **react**: React framework (v18.3.1)

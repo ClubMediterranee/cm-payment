@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-   <h1>@clubmed/payment-sdk</h1>
+   <h1>@clubmed/caps</h1>
    <hr />
 
 [![npm version](https://badge.fury.io/js/%40clubmed%2Fpayment-sdk.svg)](https://badge.fury.io/js/%40clubmed%2Fpayment-sdk)

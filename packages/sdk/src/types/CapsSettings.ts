@@ -18,7 +18,6 @@ export type OidcSettings = {
 };
 
 export type ClubMedApiSettings = {
-  url: string;
   apiKey: string;
 };
 

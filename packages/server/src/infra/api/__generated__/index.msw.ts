@@ -3,29 +3,21 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3386.2
+ * OpenAPI spec version: 0.3406.1
  */
-import { faker } from '@faker-js/faker';
+import {
+  faker
+} from '@faker-js/faker';
 
-import type { RequestHandlerOptions } from 'msw';
-import { HttpResponse, delay, http } from 'msw';
-
+import {
+  HttpResponse,
+  delay,
+  http
+} from 'msw';
 import type {
-  CartUpgradeRoomModel,
-  CountriesModel,
-  CreateBookingResponseModel,
-  CustomerBookingModelV3,
-  CustomerBookingPaymentScheduleModel,
-  NotifyPaymentOrderNotificationStatus,
-  PaymentIdModel,
-  PaymentProviderListModel2,
-  PaymentScheduleModel,
-  PaymentStatusModel,
-  ProfileModelV2,
-  ProposalPaymentScheduleModelV1,
-  ProposalResponseModelV1,
-  ProviderParametersModel,
-} from './index.schemas';
+  RequestHandlerOptions
+} from 'msw';
+
 import {
   ActionCode,
   AutoOptionableStatus,
@@ -45,1731 +37,222 @@ import {
   StatutPaiement,
   TransportationType,
   ValidOptinChanelModel,
-  Way,
+  Way
+} from './index.schemas';
+import type {
+  CartUpgradeRoomModel,
+  CountriesModel,
+  CreateBookingResponseModel,
+  CustomerBookingModelV3,
+  CustomerBookingPaymentScheduleModel,
+  NotifyPaymentOrderNotificationStatus,
+  PaymentIdModel,
+  PaymentProviderListModel2,
+  PaymentScheduleModel,
+  PaymentStatusModel,
+  ProfileModelV2,
+  ProposalPaymentScheduleModelV1,
+  ProposalResponseModelV1,
+  ProviderParametersModel
 } from './index.schemas';
 
-export const getGetV0CountriesResponseMock = (): CountriesModel =>
-  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-    id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    label: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    languages: faker.helpers.arrayElement([
-      {
-        default: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          null,
-        ]),
-        values: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-          () => ({
-            value: faker.helpers.arrayElement([
-              faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                null,
-              ]),
-              undefined,
-            ]),
-            label: faker.helpers.arrayElement([
-              faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                null,
-              ]),
-              undefined,
-            ]),
-            locale: faker.helpers.arrayElement([
-              faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                null,
-              ]),
-              undefined,
-            ]),
-          }),
-        ),
-      },
-      undefined,
-    ]),
-  }));
 
-export const getGetV1PaymentProvidersResponseMock = (): PaymentProviderListModel2 =>
-  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-    id: faker.helpers.fromRegExp('^([EMS][0-9A-Z]+)$'),
-    label: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    connection_type: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    logo: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-    required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
-    category_payment_method: faker.helpers.arrayElement([
-      'CreditCard',
-      'BankTransfer',
-      'DirectDebit',
-      'BuyNowPayLater',
-      'Cheque',
-      'Paypal',
-      '',
-    ] as const),
-    billing_address_form: faker.datatype.boolean(),
-    description: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-    payment_methods: faker.helpers.arrayElement([
-      Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-        id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        label: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        image: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
-        category: faker.helpers.arrayElement([
-          faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-          undefined,
-        ]),
-        time_payment_conditions: faker.helpers.arrayElement([
-          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-            () => ({
-              id: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              payment_count: faker.helpers.arrayElement([
-                faker.helpers.arrayElement([
-                  faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                  null,
-                ]),
-                undefined,
-              ]),
-              charge_percentage: faker.helpers.arrayElement([
-                faker.helpers.arrayElement([
-                  faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                  null,
-                ]),
-                undefined,
-              ]),
-              required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
-              charge_amount: faker.helpers.arrayElement([
-                faker.helpers.arrayElement([
-                  faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                  null,
-                ]),
-                undefined,
-              ]),
-            }),
-          ),
-          undefined,
-        ]),
-      })),
-      undefined,
-    ]),
-  }));
+export const getGetV0CountriesResponseMock = (): CountriesModel => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), label: faker.string.alpha({length: {min: 10, max: 20}}), languages: faker.helpers.arrayElement([{default: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), values: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({value: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), label: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), locale: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined])}))}, undefined])})))
 
-export const getGetV2ProposalsProposalIdResponseMock = (
-  overrideResponse: Partial<ProposalResponseModelV1> = {},
-): ProposalResponseModelV1 => ({
-  id: faker.helpers.fromRegExp('^\d+$'),
-  product_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  booking_id: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), null]),
-    undefined,
-  ]),
-  package_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  label: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  resort_arrival_date: faker.date.past().toISOString().split('T')[0],
-  resort_departure_date: faker.date.past().toISOString().split('T')[0],
-  price: faker.helpers.arrayElement([
-    {
-      total: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      total_without_discount: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      trip: faker.helpers.arrayElement([
-        {
-          initial_price: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-          initial_price_with_fees: faker.number.float({
-            min: undefined,
-            max: undefined,
-            fractionDigits: 2,
-          }),
-          fees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-            () => ({
-              type: faker.helpers.arrayElement(Object.values(ProposalPriceFeeModel)),
-              amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-            }),
-          ),
-        },
-        undefined,
-      ]),
-      included_services: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-          amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-          link: faker.helpers.arrayElement([
-            {
-              rel: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-              external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-              method: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              href: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              label: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-            },
-            undefined,
-          ]),
-          _links: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-              () => ({
-                rel: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                method: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                href: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                label: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-              }),
-            ),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      package_options: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          type: faker.helpers.arrayElement(Object.values(ProposalServiceTypes)),
-          amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-          amount_without_discount: faker.number.float({
-            min: 0,
-            max: undefined,
-            fractionDigits: 2,
-          }),
-        })),
-        undefined,
-      ]),
-      total_without_fees: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      currency: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 3, max: 3 } }),
-        undefined,
-      ]),
-      total_without_transport: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      yield_pricing_variation: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      discounts: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          type: faker.helpers.arrayElement(Object.values(DiscountTypeModel)),
-          amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-          code: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          offer_id: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          service_id: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          _links: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-              () => ({
-                rel: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                method: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                href: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                label: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-              }),
-            ),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      is_transfer_included: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-    },
-    undefined,
-  ]),
-  duration: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
-    undefined,
-  ]),
-  alternative_price: faker.helpers.arrayElement([
-    {
-      total: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      total_without_discount: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      discounts: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          type: faker.helpers.arrayElement(Object.values(ProposalPriceDiscountModel)),
-          amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-          offer_id: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          service_id: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          code: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          _links: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-              () => ({
-                rel: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                method: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                href: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                label: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-              }),
-            ),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      trip: faker.helpers.arrayElement([
-        {
-          initial_price: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-          initial_price_with_fees: faker.number.float({
-            min: undefined,
-            max: undefined,
-            fractionDigits: 2,
-          }),
-          fees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-            () => ({
-              type: faker.helpers.arrayElement(Object.values(ProposalPriceFeeModel)),
-              amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-            }),
-          ),
-        },
-        undefined,
-      ]),
-      included_services: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-          amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-          link: faker.helpers.arrayElement([
-            {
-              rel: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-              external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-              method: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              href: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              label: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-            },
-            undefined,
-          ]),
-          _links: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-              () => ({
-                rel: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                method: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                href: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                label: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-              }),
-            ),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      package_options: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          type: faker.helpers.arrayElement(Object.values(ProposalServiceTypes)),
-          amount: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-          amount_without_discount: faker.number.float({
-            min: 0,
-            max: undefined,
-            fractionDigits: 2,
-          }),
-        })),
-        undefined,
-      ]),
-      total_without_fees: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      currency: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 3, max: 3 } }),
-        undefined,
-      ]),
-      total_without_transport: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      yield_pricing_variation: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-    },
-    undefined,
-  ]),
-  accommodations: Array.from(
-    { length: faker.number.int({ min: 1, max: 10 }) },
-    (_, i) => i + 1,
-  ).map(() => ({
-    id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    quantity: faker.helpers.arrayElement([faker.number.int({ min: 1, max: undefined }), undefined]),
-    shared_room: faker.datatype.boolean(),
-    link: faker.helpers.arrayElement([
-      {
-        rel: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-        external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-        method: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        href: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        label: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-      },
-      undefined,
-    ]),
-    _links: faker.helpers.arrayElement([
-      Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-        rel: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-        external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-        method: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        href: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        label: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-      })),
-      undefined,
-    ]),
-  })),
-  remaining_stock: faker.number.int({ min: 0, max: undefined }),
-  option_available: faker.datatype.boolean(),
-  option_durability: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  households: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      attendees: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          id: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          birthdate: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([
-              faker.string.alpha({ length: { min: 10, max: 20 } }),
-              null,
-            ]),
-            undefined,
-          ]),
-          customer_id: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          customer_type: faker.helpers.arrayElement([
-            faker.helpers.arrayElement(Object.values(ProposalResponseCustomerTypeModel)),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-    })),
-    undefined,
-  ]),
-  locale: faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-  _links: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      rel: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-      external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-      method: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      href: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      label: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-    })),
-    undefined,
-  ]),
-  transportation_summary: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      way: faker.helpers.arrayElement(Object.values(Way)),
-      departure_city: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      arrival_city: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      transportation_type: faker.helpers.arrayElement(Object.values(TransportationType)),
-      cancellation_policy_type: faker.helpers.arrayElement(
-        Object.values(CancellationPolicyTypeModel),
-      ),
-      is_transfer_included: faker.datatype.boolean(),
-      clubmed_transport: faker.datatype.boolean(),
-      departure_date: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        null,
-      ]),
-      arrival_date: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        null,
-      ]),
-    })),
-    undefined,
-  ]),
-  extend_persistence: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-  auto_optionable_status: faker.helpers.arrayElement(Object.values(AutoOptionableStatus)),
-  is_bookable: faker.datatype.boolean(),
-  creation_date_time: faker.helpers.arrayElement([
-    faker.date.past().toISOString().split('T')[0],
-    undefined,
-  ]),
-  vendor: faker.helpers.arrayElement([
-    {
-      salesman_id: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-    },
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getGetV1PaymentProvidersResponseMock = (): PaymentProviderListModel2 => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.fromRegExp('^([EMS][0-9A-Z]+)$'), label: faker.string.alpha({length: {min: 10, max: 20}}), connection_type: faker.string.alpha({length: {min: 10, max: 20}}), logo: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), required_delay_before_departure: faker.number.int({min: 0, max: undefined}), category_payment_method: faker.helpers.arrayElement(['CreditCard','BankTransfer','DirectDebit','BuyNowPayLater','Cheque','Paypal',''] as const), billing_address_form: faker.datatype.boolean(), description: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), payment_methods: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), image: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), currency: faker.string.alpha({length: {min: 3, max: 3}}), category: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), time_payment_conditions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), payment_count: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}),null,]), undefined]), charge_percentage: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}),null,]), undefined]), required_delay_before_departure: faker.number.int({min: 0, max: undefined}), charge_amount: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}),null,]), undefined])})), undefined])})), undefined])})))
 
-export const getGetV0PaymentsPaymentIdStatusResponseMock = (
-  overrideResponse: Partial<PaymentStatusModel> = {},
-): PaymentStatusModel => ({
-  finalisePaymentResponse: {
-    paiement: {
-      action_code: faker.helpers.arrayElement([
-        faker.helpers.arrayElement(Object.values(ActionCode)),
-        undefined,
-      ]),
-      channel_code: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      statutPaiement: faker.helpers.arrayElement(Object.values(StatutPaiement)),
-      serveurId: faker.helpers.fromRegExp('^[EM][0-9A-Z]+$'),
-      montantVersement: faker.helpers.fromRegExp('^[0-9]+[.][0-9]{2}$'),
-      codeDevise: faker.helpers.fromRegExp('^[A-Z]{3}$'),
-    },
-    dossier: {
-      numeroDossier: faker.helpers.fromRegExp('^[0-9]+$'),
-      numeroContrat: faker.helpers.fromRegExp('^[0-9]+$'),
-      numeroClient: faker.helpers.fromRegExp('^[0-9]+$'),
-    },
-    error: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  },
-  errors: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getGetV2ProposalsProposalIdResponseMock = (overrideResponse: Partial< ProposalResponseModelV1 > = {}): ProposalResponseModelV1 => ({id: faker.helpers.fromRegExp('^\d+$'), product_id: faker.string.alpha({length: {min: 10, max: 20}}), booking_id: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}),null,]), undefined]), package_id: faker.string.alpha({length: {min: 10, max: 20}}), label: faker.string.alpha({length: {min: 10, max: 20}}), resort_arrival_date: faker.date.past().toISOString().split('T')[0], resort_departure_date: faker.date.past().toISOString().split('T')[0], price: faker.helpers.arrayElement([{total: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), total_without_discount: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), trip: faker.helpers.arrayElement([{initial_price: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), initial_price_with_fees: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), fees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({type: faker.helpers.arrayElement(Object.values(ProposalPriceFeeModel)), amount: faker.number.float({min: 0, max: undefined, fractionDigits: 2})}))}, undefined]), included_services: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), amount: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), link: faker.helpers.arrayElement([{rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])}, undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined])})), undefined]), package_options: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({type: faker.helpers.arrayElement(Object.values(ProposalServiceTypes)), amount: faker.number.float({min: 0, max: undefined, fractionDigits: 2}), amount_without_discount: faker.number.float({min: 0, max: undefined, fractionDigits: 2})})), undefined]), total_without_fees: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), currency: faker.helpers.arrayElement([faker.string.alpha({length: {min: 3, max: 3}}), undefined]), total_without_transport: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), yield_pricing_variation: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), discounts: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({type: faker.helpers.arrayElement(Object.values(DiscountTypeModel)), amount: faker.number.float({min: 0, max: undefined, fractionDigits: 2}), code: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), offer_id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), service_id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined])})), undefined]), is_transfer_included: faker.helpers.arrayElement([faker.datatype.boolean(), undefined])}, undefined]), duration: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), alternative_price: faker.helpers.arrayElement([{total: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), total_without_discount: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), discounts: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({type: faker.helpers.arrayElement(Object.values(ProposalPriceDiscountModel)), amount: faker.number.float({min: 0, max: undefined, fractionDigits: 2}), offer_id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), service_id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), code: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined])})), undefined]), trip: faker.helpers.arrayElement([{initial_price: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), initial_price_with_fees: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), fees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({type: faker.helpers.arrayElement(Object.values(ProposalPriceFeeModel)), amount: faker.number.float({min: 0, max: undefined, fractionDigits: 2})}))}, undefined]), included_services: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), amount: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), link: faker.helpers.arrayElement([{rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])}, undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined])})), undefined]), package_options: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({type: faker.helpers.arrayElement(Object.values(ProposalServiceTypes)), amount: faker.number.float({min: 0, max: undefined, fractionDigits: 2}), amount_without_discount: faker.number.float({min: 0, max: undefined, fractionDigits: 2})})), undefined]), total_without_fees: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), currency: faker.helpers.arrayElement([faker.string.alpha({length: {min: 3, max: 3}}), undefined]), total_without_transport: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), yield_pricing_variation: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined])}, undefined]), accommodations: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), quantity: faker.helpers.arrayElement([faker.number.int({min: 1, max: undefined}), undefined]), shared_room: faker.datatype.boolean(), link: faker.helpers.arrayElement([{rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])}, undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined])})), remaining_stock: faker.number.int({min: 0, max: undefined}), option_available: faker.datatype.boolean(), option_durability: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), households: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({attendees: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), birthdate: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), customer_id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), customer_type: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(ProposalResponseCustomerTypeModel)), undefined])})), undefined])})), undefined]), locale: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined]), transportation_summary: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({way: faker.helpers.arrayElement(Object.values(Way)), departure_city: faker.string.alpha({length: {min: 10, max: 20}}), arrival_city: faker.string.alpha({length: {min: 10, max: 20}}), transportation_type: faker.helpers.arrayElement(Object.values(TransportationType)), cancellation_policy_type: faker.helpers.arrayElement(Object.values(CancellationPolicyTypeModel)), is_transfer_included: faker.datatype.boolean(), clubmed_transport: faker.datatype.boolean(), departure_date: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), arrival_date: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,])})), undefined]), extend_persistence: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), auto_optionable_status: faker.helpers.arrayElement(Object.values(AutoOptionableStatus)), is_bookable: faker.datatype.boolean(), creation_date_time: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), vendor: faker.helpers.arrayElement([{salesman_id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])}, undefined]), ...overrideResponse})
 
-export const getGetV1ProposalsProposalIdPaymentScheduleResponseMock = (
-  overrideResponse: Partial<ProposalPaymentScheduleModelV1> = {},
-): ProposalPaymentScheduleModelV1 => ({
-  currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
-  commission_included: faker.datatype.boolean(),
-  households: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      attendees: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-          customer_id: faker.helpers.arrayElement([
-            faker.helpers.fromRegExp('^[1-9][0-9]*$'),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      total: faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-      deposit_repayment_schedule: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          expected_payment_amount: faker.helpers.arrayElement([
-            faker.number.float({ min: 0, max: undefined, fractionDigits: 2 }),
-            undefined,
-          ]),
-          deadline: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            null,
-          ]),
-        })),
-        undefined,
-      ]),
-    })),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getGetV0PaymentsPaymentIdStatusResponseMock = (overrideResponse: Partial< PaymentStatusModel > = {}): PaymentStatusModel => ({finalisePaymentResponse: {paiement: {action_code: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(ActionCode)), undefined]), channel_code: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), statutPaiement: faker.helpers.arrayElement(Object.values(StatutPaiement)), serveurId: faker.helpers.fromRegExp('^[EM][0-9A-Z]+$'), montantVersement: faker.helpers.fromRegExp('^[0-9]+[.][0-9]{2}$'), codeDevise: faker.helpers.fromRegExp('^[A-Z]{3}$')}, dossier: {numeroDossier: faker.helpers.fromRegExp('^[0-9]+$'), numeroContrat: faker.helpers.fromRegExp('^[0-9]+$'), numeroClient: faker.helpers.fromRegExp('^[0-9]+$')}, error: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined])}, errors: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), ...overrideResponse})
 
-export const getGetV2CustomersCustomerIdProfileResponseMock = (
-  overrideResponse: Partial<ProfileModelV2> = {},
-): ProfileModelV2 => ({
-  email: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  gm_number: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  gender: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  civility: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  unicode_civility: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  first_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  unicode_first_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  second_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  unicode_second_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  third_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  unicode_third_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  fourth_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  unicode_fourth_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  last_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  unicode_last_name: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  health_pass_id: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  customer_type: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  customer_status: faker.helpers.arrayElement([
-    faker.helpers.arrayElement(['NEW_CUSTOMER', 'UNAVAILABLE', 'PROSPECT', 'CLIENT'] as const),
-    undefined,
-  ]),
-  birthday: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  birthdate: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  birth_country_code: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  birth_city: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  language_code: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  phones: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      number: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      type: faker.helpers.arrayElement([
-        faker.helpers.arrayElement(Object.values(PhoneTypeModel)),
-        undefined,
-      ]),
-    })),
-    undefined,
-  ]),
-  loyalty_program: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  address: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  optins: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      channel: faker.helpers.arrayElement(Object.values(ValidOptinChanelModel)),
-      optin: faker.datatype.boolean(),
-      optin_partners: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-    })),
-    undefined,
-  ]),
-  personal_data_usage_allowed: faker.datatype.boolean(),
-  blacklisted: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.datatype.boolean(), null]),
-    undefined,
-  ]),
-  filiation_number: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  identity: faker.helpers.arrayElement([null]),
-  locale: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  _links: faker.helpers.arrayElement([faker.helpers.arrayElement([[], null]), undefined]),
-  ...overrideResponse,
-});
+export const getGetV1ProposalsProposalIdPaymentScheduleResponseMock = (overrideResponse: Partial< ProposalPaymentScheduleModelV1 > = {}): ProposalPaymentScheduleModelV1 => ({currency: faker.string.alpha({length: {min: 3, max: 3}}), commission_included: faker.datatype.boolean(), households: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({attendees: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), customer_id: faker.helpers.arrayElement([faker.helpers.fromRegExp('^[1-9][0-9]*$'), undefined])})), undefined]), total: faker.number.float({min: 0, max: undefined, fractionDigits: 2}), deposit_repayment_schedule: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({expected_payment_amount: faker.helpers.arrayElement([faker.number.float({min: 0, max: undefined, fractionDigits: 2}), undefined]), deadline: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,])})), undefined])})), undefined]), ...overrideResponse})
 
-export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (
-  overrideResponse: Partial<CustomerBookingModelV3> = {},
-): CustomerBookingModelV3 => ({
-  id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  creation_date: faker.helpers.arrayElement([
-    faker.date.past().toISOString().split('T')[0],
-    undefined,
-  ]),
-  departure_date: faker.helpers.arrayElement([
-    faker.date.past().toISOString().split('T')[0],
-    undefined,
-  ]),
-  return_date: faker.helpers.arrayElement([
-    faker.date.past().toISOString().split('T')[0],
-    undefined,
-  ]),
-  multiple_sale_contracts: faker.helpers.arrayElement([faker.datatype.boolean(), null]),
-  option_durability: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  booking_status: faker.helpers.arrayElement([
-    faker.helpers.arrayElement(Object.values(BookingStatus)),
-    undefined,
-  ]),
-  is_renewed_option: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.datatype.boolean(), null]),
-    undefined,
-  ]),
-  booking_renewal: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  payment_status: faker.helpers.arrayElement([
-    faker.helpers.arrayElement(Object.values(CustomerBookingPaymentStatusModel)),
-    undefined,
-  ]),
-  allowed_to_pay: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.datatype.boolean(), null]),
-    undefined,
-  ]),
-  total_price: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  discounts: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
-    undefined,
-  ]),
-  locale: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-    undefined,
-  ]),
-  vendor: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  stays: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      id: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      product_id: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      label: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      product_type: faker.helpers.arrayElement([
-        faker.helpers.arrayElement(Object.values(ProductTypeModel)),
-        undefined,
-      ]),
-      resort_arrival_date: faker.helpers.arrayElement([
-        faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-        undefined,
-      ]),
-      resort_leaving_date: faker.helpers.arrayElement([
-        faker.helpers.arrayElement([faker.string.alpha({ length: { min: 10, max: 20 } }), null]),
-        undefined,
-      ]),
-      duration: faker.helpers.arrayElement([
-        faker.number.int({ min: undefined, max: undefined }),
-        undefined,
-      ]),
-      attendees: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          adults_count: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([0] as const),
-            undefined,
-          ]),
-          children_count: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([0] as const),
-            undefined,
-          ]),
-          _links: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-              () => ({
-                rel: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                method: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                href: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                label: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-              }),
-            ),
-            undefined,
-          ]),
-          start_date: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([
-              faker.string.alpha({ length: { min: 10, max: 20 } }),
-              null,
-            ]),
-            undefined,
-          ]),
-          end_date: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([
-              faker.string.alpha({ length: { min: 10, max: 20 } }),
-              null,
-            ]),
-            undefined,
-          ]),
-          attendee_ids: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
-              faker.string.alpha({ length: { min: 10, max: 20 } }),
-            ),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      total_adults_count: faker.helpers.arrayElement([
-        faker.helpers.arrayElement([0] as const),
-        undefined,
-      ]),
-      total_children_count: faker.helpers.arrayElement([
-        faker.helpers.arrayElement([0] as const),
-        undefined,
-      ]),
-      outward_trip: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-      api_upsell_available: faker.helpers.arrayElement([faker.datatype.boolean(), null]),
-      accommodations: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          start_date: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([
-              faker.string.alpha({ length: { min: 10, max: 20 } }),
-              null,
-            ]),
-            undefined,
-          ]),
-          end_date: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([
-              faker.string.alpha({ length: { min: 10, max: 20 } }),
-              null,
-            ]),
-            undefined,
-          ]),
-          quantity: faker.number.int({ min: undefined, max: undefined }),
-          baby_bed: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([faker.datatype.boolean(), null]),
-            undefined,
-          ]),
-          shared_room: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([faker.datatype.boolean(), null]),
-            undefined,
-          ]),
-          occupation: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([0] as const),
-            undefined,
-          ]),
-          accommodation_id: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          rooms: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-              () => ({
-                number: faker.helpers.arrayElement([
-                  faker.helpers.arrayElement([
-                    faker.string.alpha({ length: { min: 10, max: 20 } }),
-                    null,
-                  ]),
-                  undefined,
-                ]),
-                building: faker.helpers.arrayElement([
-                  faker.helpers.arrayElement([
-                    faker.string.alpha({ length: { min: 10, max: 20 } }),
-                    null,
-                  ]),
-                  undefined,
-                ]),
-                orientation: faker.helpers.arrayElement([
-                  faker.helpers.arrayElement([
-                    faker.string.alpha({ length: { min: 10, max: 20 } }),
-                    null,
-                  ]),
-                  undefined,
-                ]),
-                floor: faker.helpers.arrayElement([
-                  faker.helpers.arrayElement([
-                    faker.string.alpha({ length: { min: 10, max: 20 } }),
-                    null,
-                  ]),
-                  undefined,
-                ]),
-                status: faker.helpers.arrayElement([
-                  faker.helpers.arrayElement(Object.values(Status)),
-                  undefined,
-                ]),
-                is_room_intervention_included: faker.helpers.arrayElement([
-                  faker.datatype.boolean(),
-                  undefined,
-                ]),
-              }),
-            ),
-            undefined,
-          ]),
-          _links: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-              () => ({
-                rel: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                method: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                href: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                label: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-              }),
-            ),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      packages: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-          label: faker.helpers.arrayElement([
-            faker.helpers.arrayElement([
-              faker.string.alpha({ length: { min: 10, max: 20 } }),
-              null,
-            ]),
-            undefined,
-          ]),
-          attendee_ids: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
-              faker.string.alpha({ length: { min: 10, max: 20 } }),
-            ),
-            undefined,
-          ]),
-          _links: faker.helpers.arrayElement([
-            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-              () => ({
-                rel: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-                method: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                href: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-                label: faker.helpers.arrayElement([
-                  faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  undefined,
-                ]),
-              }),
-            ),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-      _links: faker.helpers.arrayElement([
-        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          rel: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-          external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-          method: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          href: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-          label: faker.helpers.arrayElement([
-            faker.string.alpha({ length: { min: 10, max: 20 } }),
-            undefined,
-          ]),
-        })),
-        undefined,
-      ]),
-    })),
-    undefined,
-  ]),
-  events: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-    () => ({
-      code: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      label: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      date: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        null,
-      ]),
-    }),
-  ),
-  _links: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      rel: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-      external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-      method: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      href: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-      label: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-    })),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getGetV2CustomersCustomerIdProfileResponseMock = (overrideResponse: Partial< ProfileModelV2 > = {}): ProfileModelV2 => ({email: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), gm_number: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), gender: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), civility: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), unicode_civility: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), first_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), unicode_first_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), second_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), unicode_second_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), third_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), unicode_third_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), fourth_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), unicode_fourth_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), last_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), unicode_last_name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), health_pass_id: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), customer_type: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), customer_status: faker.helpers.arrayElement([faker.helpers.arrayElement(['NEW_CUSTOMER','UNAVAILABLE','PROSPECT','CLIENT'] as const), undefined]), birthday: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), birthdate: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), birth_country_code: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), birth_city: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), language_code: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), phones: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({number: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), type: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(PhoneTypeModel)), undefined])})), undefined]), loyalty_program: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), address: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), optins: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({channel: faker.helpers.arrayElement(Object.values(ValidOptinChanelModel)), optin: faker.datatype.boolean(), optin_partners: faker.helpers.arrayElement([faker.datatype.boolean(), undefined])})), undefined]), personal_data_usage_allowed: faker.datatype.boolean(), blacklisted: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.datatype.boolean(),null,]), undefined]), filiation_number: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), identity: faker.helpers.arrayElement([null,]), locale: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), _links: faker.helpers.arrayElement([faker.helpers.arrayElement([[],null,]), undefined]), ...overrideResponse})
 
-export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock = (
-  overrideResponse: Partial<CustomerBookingPaymentScheduleModel> = {},
-): CustomerBookingPaymentScheduleModel => ({
-  currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
-  paid: faker.helpers.arrayElement([
-    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-    undefined,
-  ]),
-  total: faker.helpers.arrayElement([
-    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-    undefined,
-  ]),
-  payment_schedules: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      amount: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      deadline: faker.helpers.arrayElement([
-        faker.string.alpha({ length: { min: 10, max: 20 } }),
-        undefined,
-      ]),
-    })),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getGetV3CustomersCustomerIdBookingsBookingIdResponseMock = (overrideResponse: Partial< CustomerBookingModelV3 > = {}): CustomerBookingModelV3 => ({id: faker.string.alpha({length: {min: 10, max: 20}}), creation_date: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), departure_date: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), return_date: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), multiple_sale_contracts: faker.helpers.arrayElement([faker.datatype.boolean(),null,]), option_durability: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), booking_status: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(BookingStatus)), undefined]), is_renewed_option: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.datatype.boolean(),null,]), undefined]), booking_renewal: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), payment_status: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(CustomerBookingPaymentStatusModel)), undefined]), allowed_to_pay: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.datatype.boolean(),null,]), undefined]), total_price: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), discounts: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}})})), undefined]), locale: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), vendor: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), stays: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), product_id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), product_type: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(ProductTypeModel)), undefined]), resort_arrival_date: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), resort_leaving_date: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), duration: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), attendees: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({adults_count: faker.helpers.arrayElement([faker.helpers.arrayElement([0] as const), undefined]), children_count: faker.helpers.arrayElement([faker.helpers.arrayElement([0] as const), undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined]), start_date: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), end_date: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), attendee_ids: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), undefined])})), undefined]), total_adults_count: faker.helpers.arrayElement([faker.helpers.arrayElement([0] as const), undefined]), total_children_count: faker.helpers.arrayElement([faker.helpers.arrayElement([0] as const), undefined]), outward_trip: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), api_upsell_available: faker.helpers.arrayElement([faker.datatype.boolean(),null,]), accommodations: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({start_date: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), end_date: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), quantity: faker.number.int({min: undefined, max: undefined}), baby_bed: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.datatype.boolean(),null,]), undefined]), shared_room: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.datatype.boolean(),null,]), undefined]), occupation: faker.helpers.arrayElement([faker.helpers.arrayElement([0] as const), undefined]), accommodation_id: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), rooms: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({number: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), building: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), orientation: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), floor: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), status: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(Status)), undefined]), is_room_intervention_included: faker.helpers.arrayElement([faker.datatype.boolean(), undefined])})), undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined])})), undefined]), packages: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), label: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), undefined]), attendee_ids: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined])})), undefined]), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined])})), undefined]), events: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({code: faker.string.alpha({length: {min: 10, max: 20}}), label: faker.string.alpha({length: {min: 10, max: 20}}), date: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,])})), _links: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({rel: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), deprecated_rel: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), external: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), href: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined]), ...overrideResponse})
 
-export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock = (
-  overrideResponse: Partial<CartUpgradeRoomModel> = {},
-): CartUpgradeRoomModel => ({
-  price: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  accommodations: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      attendees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-        () => ({
-          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-          type: faker.string.alpha({ length: { min: 10, max: 20 } }),
-          birthdate: faker.helpers.arrayElement([
-            faker.date.past().toISOString().split('T')[0],
-            undefined,
-          ]),
-        }),
-      ),
-      quantity: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-      occupancy: faker.number.int({ min: undefined, max: undefined }),
-    })),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock = (overrideResponse: Partial< CustomerBookingPaymentScheduleModel > = {}): CustomerBookingPaymentScheduleModel => ({currency: faker.string.alpha({length: {min: 3, max: 3}}), paid: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), total: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), payment_schedules: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({amount: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), deadline: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])})), undefined]), ...overrideResponse})
 
-export const getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock = (
-  overrideResponse: Partial<PaymentScheduleModel> = {},
-): PaymentScheduleModel => ({
-  currency: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    null,
-  ]),
-  paid: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([
-      faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-      null,
-    ]),
-    undefined,
-  ]),
-  total: faker.helpers.arrayElement([
-    faker.helpers.arrayElement([
-      faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-      null,
-    ]),
-    undefined,
-  ]),
-  payment_schedules: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      amount: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-      deadline: faker.string.alpha({ length: { min: 10, max: 20 } }),
-    })),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock = (overrideResponse: Partial< CartUpgradeRoomModel > = {}): CartUpgradeRoomModel => ({price: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), accommodations: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), attendees: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), type: faker.string.alpha({length: {min: 10, max: 20}}), birthdate: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined])})), quantity: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), occupancy: faker.number.int({min: undefined, max: undefined})})), undefined]), ...overrideResponse})
 
-export const getPostV1PaymentsResponseMock = (
-  overrideResponse: Partial<PaymentIdModel> = {},
-): PaymentIdModel => ({
-  id: faker.helpers.fromRegExp('^[0-9a-zA-Z]+([-_][0-9a-zA-Z]+)*$'),
-  ...overrideResponse,
-});
+export const getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock = (overrideResponse: Partial< PaymentScheduleModel > = {}): PaymentScheduleModel => ({currency: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}),null,]), paid: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}),null,]), undefined]), total: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}),null,]), undefined]), payment_schedules: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({amount: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), deadline: faker.string.alpha({length: {min: 10, max: 20}})})), undefined]), ...overrideResponse})
 
-export const getPostV3BookingsResponseMock = (
-  overrideResponse: Partial<CreateBookingResponseModel | CreateBookingResponseModel> = {},
-): CreateBookingResponseModel | CreateBookingResponseModel =>
-  faker.helpers.arrayElement([
-    {
-      booking_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      households: Array.from(
-        { length: faker.number.int({ min: 1, max: 10 }) },
-        (_, i) => i + 1,
-      ).map(() => ({
-        attendees: faker.helpers.arrayElement([
-          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-            () => ({
-              customer_id: faker.number.int({ min: undefined, max: undefined }),
-              type: faker.helpers.arrayElement(Object.values(CreateBookingResponseTypesModel)),
-            }),
-          ),
-          undefined,
-        ]),
-      })),
-      option_durability: faker.helpers.arrayElement([null]),
-      ...overrideResponse,
-    },
-    {
-      booking_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-      households: Array.from(
-        { length: faker.number.int({ min: 1, max: 10 }) },
-        (_, i) => i + 1,
-      ).map(() => ({
-        attendees: faker.helpers.arrayElement([
-          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-            () => ({
-              customer_id: faker.number.int({ min: undefined, max: undefined }),
-              type: faker.helpers.arrayElement(Object.values(CreateBookingResponseTypesModel)),
-            }),
-          ),
-          undefined,
-        ]),
-      })),
-      option_durability: faker.helpers.arrayElement([null]),
-      ...overrideResponse,
-    },
-  ]);
+export const getPostV1PaymentsResponseMock = (overrideResponse: Partial< PaymentIdModel > = {}): PaymentIdModel => ({id: faker.helpers.fromRegExp('^[0-9a-zA-Z]+([-_][0-9a-zA-Z]+)*$'), ...overrideResponse})
 
-export const getPostV0PaymentsPaymentIdRedirectRequestResponseMock = (
-  overrideResponse: Partial<ProviderParametersModel> = {},
-): ProviderParametersModel => ({
-  url: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  method: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  headers: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
-  body: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getPostV3BookingsResponseMock = (overrideResponse: Partial< CreateBookingResponseModel | CreateBookingResponseModel > = {}): CreateBookingResponseModel | CreateBookingResponseModel => (faker.helpers.arrayElement([{booking_id: faker.string.alpha({length: {min: 10, max: 20}}), households: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({attendees: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({customer_id: faker.number.int({min: undefined, max: undefined}), type: faker.helpers.arrayElement(Object.values(CreateBookingResponseTypesModel))})), undefined])})), option_durability: faker.helpers.arrayElement([null,]), ...overrideResponse}, {booking_id: faker.string.alpha({length: {min: 10, max: 20}}), households: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({attendees: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({customer_id: faker.number.int({min: undefined, max: undefined}), type: faker.helpers.arrayElement(Object.values(CreateBookingResponseTypesModel))})), undefined])})), option_durability: faker.helpers.arrayElement([null,]), ...overrideResponse}]))
 
-export const getPostV1PaymentsPaymentIdNotifyResponseMock = (
-  overrideResponse: Partial<NotifyPaymentOrderNotificationStatus> = {},
-): NotifyPaymentOrderNotificationStatus => ({
-  booking_id: faker.helpers.fromRegExp('^\d+$'),
-  payment_status: faker.helpers.arrayElement(Object.values(PaymentStatus)),
-  payment_amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-  payment_currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
-  provider_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-  payment_method: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
+export const getPostV0PaymentsPaymentIdRedirectRequestResponseMock = (overrideResponse: Partial< ProviderParametersModel > = {}): ProviderParametersModel => ({url: faker.string.alpha({length: {min: 10, max: 20}}), method: faker.string.alpha({length: {min: 10, max: 20}}), headers: faker.helpers.arrayElement([faker.helpers.arrayElement([null,]), undefined]), body: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), ...overrideResponse})
 
-export const getGetV0CountriesMockHandler = (
-  overrideResponse?:
-    | CountriesModel
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<CountriesModel> | CountriesModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v0/countries',
-    async (info) => {
-      await delay(1000);
+export const getPostV1PaymentsPaymentIdNotifyResponseMock = (overrideResponse: Partial< NotifyPaymentOrderNotificationStatus > = {}): NotifyPaymentOrderNotificationStatus => ({booking_id: faker.helpers.fromRegExp('^\d+$'), payment_status: faker.helpers.arrayElement(Object.values(PaymentStatus)), payment_amount: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), payment_currency: faker.string.alpha({length: {min: 3, max: 3}}), provider_id: faker.string.alpha({length: {min: 10, max: 20}}), payment_method: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), ...overrideResponse})
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV0CountriesResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
 
-export const getGetV1PaymentProvidersMockHandler = (
-  overrideResponse?:
-    | PaymentProviderListModel2
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<PaymentProviderListModel2> | PaymentProviderListModel2),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v1/payment_providers',
-    async (info) => {
-      await delay(1000);
+export const getGetV0CountriesMockHandler = (overrideResponse?: CountriesModel | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CountriesModel> | CountriesModel), options?: RequestHandlerOptions) => {
+  return http.get('*/v0/countries', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV0CountriesResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV1PaymentProvidersResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
+export const getGetV1PaymentProvidersMockHandler = (overrideResponse?: PaymentProviderListModel2 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PaymentProviderListModel2> | PaymentProviderListModel2), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/payment_providers', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV1PaymentProvidersResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-export const getGetV2ProposalsProposalIdMockHandler = (
-  overrideResponse?:
-    | ProposalResponseModelV1
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<ProposalResponseModelV1> | ProposalResponseModelV1),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v2/proposals/:proposalId',
-    async (info) => {
-      await delay(1000);
+export const getGetV2ProposalsProposalIdMockHandler = (overrideResponse?: ProposalResponseModelV1 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ProposalResponseModelV1> | ProposalResponseModelV1), options?: RequestHandlerOptions) => {
+  return http.get('*/v2/proposals/:proposalId', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV2ProposalsProposalIdResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV2ProposalsProposalIdResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
+export const getGetV0PaymentsPaymentIdStatusMockHandler = (overrideResponse?: PaymentStatusModel | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PaymentStatusModel> | PaymentStatusModel), options?: RequestHandlerOptions) => {
+  return http.get('*/v0/payments/:paymentId/status', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV0PaymentsPaymentIdStatusResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-export const getGetV0PaymentsPaymentIdStatusMockHandler = (
-  overrideResponse?:
-    | PaymentStatusModel
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<PaymentStatusModel> | PaymentStatusModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v0/payments/:paymentId/status',
-    async (info) => {
-      await delay(1000);
+export const getGetV1ProposalsProposalIdPaymentScheduleMockHandler = (overrideResponse?: ProposalPaymentScheduleModelV1 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ProposalPaymentScheduleModelV1> | ProposalPaymentScheduleModelV1), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/proposals/:proposalId/payment_schedule', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV1ProposalsProposalIdPaymentScheduleResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV0PaymentsPaymentIdStatusResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
+export const getGetV2CustomersCustomerIdProfileMockHandler = (overrideResponse?: ProfileModelV2 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ProfileModelV2> | ProfileModelV2), options?: RequestHandlerOptions) => {
+  return http.get('*/v2/customers/:customerId/profile', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV2CustomersCustomerIdProfileResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-export const getGetV1ProposalsProposalIdPaymentScheduleMockHandler = (
-  overrideResponse?:
-    | ProposalPaymentScheduleModelV1
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<ProposalPaymentScheduleModelV1> | ProposalPaymentScheduleModelV1),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v1/proposals/:proposalId/payment_schedule',
-    async (info) => {
-      await delay(1000);
+export const getGetV3CustomersCustomerIdBookingsBookingIdMockHandler = (overrideResponse?: CustomerBookingModelV3 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CustomerBookingModelV3> | CustomerBookingModelV3), options?: RequestHandlerOptions) => {
+  return http.get('*/v3/customers/:customerId/bookings/:bookingId', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV3CustomersCustomerIdBookingsBookingIdResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV1ProposalsProposalIdPaymentScheduleResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
+export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler = (overrideResponse?: CustomerBookingPaymentScheduleModel | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CustomerBookingPaymentScheduleModel> | CustomerBookingPaymentScheduleModel), options?: RequestHandlerOptions) => {
+  return http.get('*/v0/customers/:customerId/bookings/:bookingId/payment_schedules', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-export const getGetV2CustomersCustomerIdProfileMockHandler = (
-  overrideResponse?:
-    | ProfileModelV2
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<ProfileModelV2> | ProfileModelV2),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v2/customers/:customerId/profile',
-    async (info) => {
-      await delay(1000);
+export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler = (overrideResponse?: CartUpgradeRoomModel | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CartUpgradeRoomModel> | CartUpgradeRoomModel), options?: RequestHandlerOptions) => {
+  return http.get('*/v0/customers/:customerId/bookings/:bookingId/cart/accommodations', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV2CustomersCustomerIdProfileResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
+export const getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler = (overrideResponse?: PaymentScheduleModel | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PaymentScheduleModel> | PaymentScheduleModel), options?: RequestHandlerOptions) => {
+  return http.get('*/v0/customers/:customerId/bookings/:bookingId/cart/payment_schedule', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-export const getGetV3CustomersCustomerIdBookingsBookingIdMockHandler = (
-  overrideResponse?:
-    | CustomerBookingModelV3
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<CustomerBookingModelV3> | CustomerBookingModelV3),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v3/customers/:customerId/bookings/:bookingId',
-    async (info) => {
-      await delay(1000);
+export const getPostV1PaymentsMockHandler = (overrideResponse?: PaymentIdModel | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PaymentIdModel> | PaymentIdModel), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/payments', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPostV1PaymentsResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV3CustomersCustomerIdBookingsBookingIdResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
+export const getPostV3BookingsMockHandler = (overrideResponse?: CreateBookingResponseModel | CreateBookingResponseModel | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<CreateBookingResponseModel | CreateBookingResponseModel> | CreateBookingResponseModel | CreateBookingResponseModel), options?: RequestHandlerOptions) => {
+  return http.post('*/v3/bookings', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPostV3BookingsResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-export const getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesMockHandler = (
-  overrideResponse?:
-    | CustomerBookingPaymentScheduleModel
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<CustomerBookingPaymentScheduleModel> | CustomerBookingPaymentScheduleModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v0/customers/:customerId/bookings/:bookingId/payment_schedules',
-    async (info) => {
-      await delay(1000);
+export const getPostV0PaymentsPaymentIdRedirectRequestMockHandler = (overrideResponse?: ProviderParametersModel | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ProviderParametersModel> | ProviderParametersModel), options?: RequestHandlerOptions) => {
+  return http.post('*/v0/payments/:paymentId/redirect_request', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPostV0PaymentsPaymentIdRedirectRequestResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
-export const getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsMockHandler = (
-  overrideResponse?:
-    | CartUpgradeRoomModel
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<CartUpgradeRoomModel> | CartUpgradeRoomModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v0/customers/:customerId/bookings/:bookingId/cart/accommodations',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
-export const getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleMockHandler = (
-  overrideResponse?:
-    | PaymentScheduleModel
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<PaymentScheduleModel> | PaymentScheduleModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.get(
-    '*/v0/customers/:customerId/bookings/:bookingId/cart/payment_schedule',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
-export const getPostV1PaymentsMockHandler = (
-  overrideResponse?:
-    | PaymentIdModel
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<PaymentIdModel> | PaymentIdModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    '*/v1/payments',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getPostV1PaymentsResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
-export const getPostV3BookingsMockHandler = (
-  overrideResponse?:
-    | CreateBookingResponseModel
-    | CreateBookingResponseModel
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) =>
-        | Promise<CreateBookingResponseModel | CreateBookingResponseModel>
-        | CreateBookingResponseModel
-        | CreateBookingResponseModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    '*/v3/bookings',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getPostV3BookingsResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
-export const getPostV0PaymentsPaymentIdRedirectRequestMockHandler = (
-  overrideResponse?:
-    | ProviderParametersModel
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<ProviderParametersModel> | ProviderParametersModel),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    '*/v0/payments/:paymentId/redirect_request',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getPostV0PaymentsPaymentIdRedirectRequestResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
-
-export const getPostV1PaymentsPaymentIdNotifyMockHandler = (
-  overrideResponse?:
-    | NotifyPaymentOrderNotificationStatus
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<NotifyPaymentOrderNotificationStatus> | NotifyPaymentOrderNotificationStatus),
-  options?: RequestHandlerOptions,
-) => {
-  return http.post(
-    '*/v1/payments/:paymentId/notify',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getPostV1PaymentsPaymentIdNotifyResponseMock(),
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
-    },
-    options,
-  );
-};
+export const getPostV1PaymentsPaymentIdNotifyMockHandler = (overrideResponse?: NotifyPaymentOrderNotificationStatus | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<NotifyPaymentOrderNotificationStatus> | NotifyPaymentOrderNotificationStatus), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/payments/:paymentId/notify', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPostV1PaymentsPaymentIdNotifyResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  }, options)
+}
 export const getClubMedAPIMock = () => [
   getGetV0CountriesMockHandler(),
   getGetV1PaymentProvidersMockHandler(),
@@ -1784,5 +267,4 @@ export const getClubMedAPIMock = () => [
   getPostV1PaymentsMockHandler(),
   getPostV3BookingsMockHandler(),
   getPostV0PaymentsPaymentIdRedirectRequestMockHandler(),
-  getPostV1PaymentsPaymentIdNotifyMockHandler(),
-];
+  getPostV1PaymentsPaymentIdNotifyMockHandler()]

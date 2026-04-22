@@ -4,7 +4,6 @@ import { mswLoader } from 'msw-storybook-addon';
 import { expect, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
-import { getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock } from '../__generated__/index.msw';
 import { Action, PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import { CardInstallments } from './CardInstallments';
 
@@ -89,20 +88,14 @@ const paymentProvidersWithoutInstallments = [
 ];
 
 const defaultHandlersWithInstallments = [
-  http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+  http.get('*/rest/payment_schedules/booking/*', () => {
+    return Response.json([
+      {
+        deadline: '20251231',
+        amount: 1000,
         currency: 'EUR',
-        total: 1000,
-        paid: 0,
-        payment_schedules: [
-          {
-            deadline: '20251231',
-            amount: 1000,
-          },
-        ],
-      }),
-    );
+      },
+    ]);
   }),
   http.get('*/v3/customers/test-customer/bookings/test-booking', () => {
     return Response.json({
@@ -135,20 +128,14 @@ const defaultHandlersWithInstallments = [
 ];
 
 const defaultHandlersWithoutInstallments = [
-  http.get('*/v0/customers/*/bookings/*/payment_schedules', () => {
-    return Response.json(
-      getGetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResponseMock({
+  http.get('*/rest/payment_schedules/booking/*', () => {
+    return Response.json([
+      {
+        deadline: '20251231',
+        amount: 1000,
         currency: 'EUR',
-        total: 1000,
-        paid: 0,
-        payment_schedules: [
-          {
-            deadline: '20251231',
-            amount: 1000,
-          },
-        ],
-      }),
-    );
+      },
+    ]);
   }),
   http.get('*/v3/customers/test-customer/bookings/test-booking', () => {
     return Response.json({

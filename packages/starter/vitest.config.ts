@@ -1,6 +1,11 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig } from 'vitest/config';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -39,7 +44,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@clubmed/payment-sdk': 'src',
+      '@clubmed/caps': path.resolve(__dirname, '../sdk/src'),
     },
   },
 });

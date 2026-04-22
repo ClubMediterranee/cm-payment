@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3389.0
+ * OpenAPI spec version: 0.3406.1
  */
 import type {
   BookingTransportDetailsListModelV2,
@@ -13,7 +13,6 @@ import type {
   CreateBookingResponseModel,
   CreateDirectBookingRequestModel,
   CustomerBookingModelV3,
-  CustomerBookingPaymentScheduleModel,
   GetV0CountriesParams,
   GetV3SchemasResourceLocaleorcountryParams,
   NotifyPaymentOrderNotificationStatus,
@@ -22,11 +21,9 @@ import type {
   PaymentOrderNotificationModel,
   PaymentProviderListModel2,
   PaymentRedirectRequestModel,
-  PaymentScheduleModel,
   PaymentStatusModel,
   PostV3BookingsParams,
   ProfileModelV2,
-  ProposalPaymentScheduleModelV1,
   ProposalResponseModelV1,
   ProposalTransportDetailsListModelV5,
   ProviderParametersModel,
@@ -40,37 +37,34 @@ import { fetcher } from '../utils/fetcher';
  * @summary Get list of available countries
  */
 export const getV0Countries = (params?: GetV0CountriesParams) => {
-  return fetcher<CountriesModel>({ url: `/v0/countries`, method: 'GET', params });
+  return fetcher<CountriesModel>({ url: `/api/v0/countries`, method: 'GET', params });
 };
 
 /**
  * @summary Returns the list of payment providers for this locale (<em>accept-language</em>).
  */
 export const getV1PaymentProviders = () => {
-  return fetcher<PaymentProviderListModel2>({ url: `/v1/payment_providers`, method: 'GET' });
+  return fetcher<PaymentProviderListModel2>({ url: `/api/v1/payment_providers`, method: 'GET' });
 };
 
 /**
  * @summary Returns the proposal corresponding to the given proposal_id
  */
 export const getV2ProposalsProposalId = (proposalId: string) => {
-  return fetcher<ProposalResponseModelV1>({ url: `/v2/proposals/${proposalId}`, method: 'GET' });
+  return fetcher<ProposalResponseModelV1>({
+    url: `/api/v2/proposals/${proposalId}`,
+    method: 'GET',
+  });
 };
 
 /**
  * The response follow the model of an xmResponse with a finalisePaymentResponse.
+ * @deprecated
  * @summary Retrieves the status of a payment
  */
 export const getV0PaymentsPaymentIdStatus = (paymentId: string) => {
-  return fetcher<PaymentStatusModel>({ url: `/v0/payments/${paymentId}/status`, method: 'GET' });
-};
-
-/**
- * @summary Payment schedule for a proposal
- */
-export const getV1ProposalsProposalIdPaymentSchedule = (proposalId: string) => {
-  return fetcher<ProposalPaymentScheduleModelV1>({
-    url: `/v1/proposals/${proposalId}/payment_schedule`,
+  return fetcher<PaymentStatusModel>({
+    url: `/api/v0/payments/${paymentId}/status`,
     method: 'GET',
   });
 };
@@ -80,7 +74,7 @@ export const getV1ProposalsProposalIdPaymentSchedule = (proposalId: string) => {
  * @summary Comprehensive information about a customer
  */
 export const getV2CustomersCustomerIdProfile = (customerId: string) => {
-  return fetcher<ProfileModelV2>({ url: `/v2/customers/${customerId}/profile`, method: 'GET' });
+  return fetcher<ProfileModelV2>({ url: `/api/v2/customers/${customerId}/profile`, method: 'GET' });
 };
 
 /**
@@ -551,7 +545,7 @@ export const getV3SchemasResourceLocaleorcountry = (
   params?: GetV3SchemasResourceLocaleorcountryParams,
 ) => {
   return fetcher<ClientSchemaModel>({
-    url: `/v3/schemas/${resource}/${localeOrCountry}`,
+    url: `/api/v3/schemas/${resource}/${localeOrCountry}`,
     method: 'GET',
     params,
   });
@@ -562,7 +556,7 @@ export const getV3SchemasResourceLocaleorcountry = (
  */
 export const getV5ProposalsProposalIdTransportDetails = (proposalId: string) => {
   return fetcher<ProposalTransportDetailsListModelV5>({
-    url: `/v5/proposals/${proposalId}/transport_details`,
+    url: `/api/v5/proposals/${proposalId}/transport_details`,
     method: 'GET',
   });
 };
@@ -575,20 +569,7 @@ export const getV3CustomersCustomerIdBookingsBookingId = (
   bookingId: string,
 ) => {
   return fetcher<CustomerBookingModelV3>({
-    url: `/v3/customers/${customerId}/bookings/${bookingId}`,
-    method: 'GET',
-  });
-};
-
-/**
- * @summary payment schedules of one booking
- */
-export const getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules = (
-  customerId: string,
-  bookingId: string,
-) => {
-  return fetcher<CustomerBookingPaymentScheduleModel>({
-    url: `/v0/customers/${customerId}/bookings/${bookingId}/payment_schedules`,
+    url: `/api/v3/customers/${customerId}/bookings/${bookingId}`,
     method: 'GET',
   });
 };
@@ -601,7 +582,7 @@ export const getV4CustomersCustomerIdBookingsBookingIdTransportDetails = (
   bookingId: string,
 ) => {
   return fetcher<BookingTransportDetailsListModelV2>({
-    url: `/v4/customers/${customerId}/bookings/${bookingId}/transport_details`,
+    url: `/api/v4/customers/${customerId}/bookings/${bookingId}/transport_details`,
     method: 'GET',
   });
 };
@@ -614,20 +595,7 @@ export const getV0CustomersCustomerIdBookingsBookingIdCartAccommodations = (
   bookingId: string,
 ) => {
   return fetcher<CartUpgradeRoomModel>({
-    url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`,
-    method: 'GET',
-  });
-};
-
-/**
- * @summary Get the payment schedule for a cart that contains a given booking.
- */
-export const getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule = (
-  customerId: string,
-  bookingId: string,
-) => {
-  return fetcher<PaymentScheduleModel>({
-    url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/payment_schedule`,
+    url: `/api/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`,
     method: 'GET',
   });
 };
@@ -637,7 +605,7 @@ export const getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule = (
  */
 export const postV1Payments = (paymentOrderModel: PaymentOrderModel) => {
   return fetcher<PaymentIdModel>({
-    url: `/v1/payments`,
+    url: `/api/v1/payments`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: paymentOrderModel,
@@ -653,7 +621,7 @@ export const postV3Bookings = (
   params?: PostV3BookingsParams,
 ) => {
   return fetcher<CreateBookingResponseModel | CreateBookingResponseModel>({
-    url: `/v3/bookings`,
+    url: `/api/v3/bookings`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: createDirectBookingRequestModel,
@@ -670,7 +638,7 @@ export const postV0PaymentProvidersProviderIdRequestToken = (
   tokenRequestModel: TokenRequestModel,
 ) => {
   return fetcher<TokenHolderModel>({
-    url: `/v0/payment_providers/${providerId}/request_token`,
+    url: `/api/v0/payment_providers/${providerId}/request_token`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: tokenRequestModel,
@@ -691,7 +659,7 @@ export const postV0PaymentsPaymentIdRedirectRequest = (
   paymentRedirectRequestModel: PaymentRedirectRequestModel,
 ) => {
   return fetcher<ProviderParametersModel>({
-    url: `/v0/payments/${paymentId}/redirect_request`,
+    url: `/api/v0/payments/${paymentId}/redirect_request`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: paymentRedirectRequestModel,
@@ -706,7 +674,7 @@ export const postV1PaymentsPaymentIdNotify = (
   paymentOrderNotificationModel: PaymentOrderNotificationModel,
 ) => {
   return fetcher<NotifyPaymentOrderNotificationStatus>({
-    url: `/v1/payments/${paymentId}/notify`,
+    url: `/api/v1/payments/${paymentId}/notify`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: paymentOrderNotificationModel,
@@ -727,9 +695,6 @@ export type GetV2ProposalsProposalIdResult = NonNullable<
 export type GetV0PaymentsPaymentIdStatusResult = NonNullable<
   Awaited<ReturnType<typeof getV0PaymentsPaymentIdStatus>>
 >;
-export type GetV1ProposalsProposalIdPaymentScheduleResult = NonNullable<
-  Awaited<ReturnType<typeof getV1ProposalsProposalIdPaymentSchedule>>
->;
 export type GetV2CustomersCustomerIdProfileResult = NonNullable<
   Awaited<ReturnType<typeof getV2CustomersCustomerIdProfile>>
 >;
@@ -742,17 +707,11 @@ export type GetV5ProposalsProposalIdTransportDetailsResult = NonNullable<
 export type GetV3CustomersCustomerIdBookingsBookingIdResult = NonNullable<
   Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingId>>
 >;
-export type GetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResult = NonNullable<
-  Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules>>
->;
 export type GetV4CustomersCustomerIdBookingsBookingIdTransportDetailsResult = NonNullable<
   Awaited<ReturnType<typeof getV4CustomersCustomerIdBookingsBookingIdTransportDetails>>
 >;
 export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = NonNullable<
   Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartAccommodations>>
->;
-export type GetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResult = NonNullable<
-  Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule>>
 >;
 export type PostV1PaymentsResult = NonNullable<Awaited<ReturnType<typeof postV1Payments>>>;
 export type PostV3BookingsResult = NonNullable<Awaited<ReturnType<typeof postV3Bookings>>>;

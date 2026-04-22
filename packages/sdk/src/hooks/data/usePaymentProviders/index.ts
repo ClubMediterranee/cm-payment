@@ -16,7 +16,6 @@ export const paymentProvidersQueryOptions = ({
   id: string;
   type: 'booking' | 'proposal';
   customerId?: string;
-  amount?: string;
 }) => ({
   queryKey: ['paymentProviders', id, type],
   queryFn: () =>
