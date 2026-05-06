@@ -20,6 +20,13 @@ export const config: Partial<TsED.Configuration> = {
   version: pkg.version,
   ajv: {
     returnsCoercedValues: true,
+    loadSchema: async (uri: string) => {
+      const response = await fetch(uri);
+      if (!response.ok) {
+        throw new Error(`Unable to load schema: ${uri}`);
+      }
+      return response.json();
+    },
   },
   logger: loggerConfig,
   extends: [DotEnvsConfigSource],
@@ -28,6 +35,7 @@ export const config: Partial<TsED.Configuration> = {
   httpPort: process.env['PORT'] || 8083,
   httpsPort: false, // CHANGE
   CLUBMED_API_URL: process.env['API_TARGET'] || 'https://api.integ.clubmed.com',
+  CMS_URL: process.env['CMS_URL'] || 'https://cms.integ.clubmed.com',
   mount: {
     '/rest': [...Object.values(rest)],
   },

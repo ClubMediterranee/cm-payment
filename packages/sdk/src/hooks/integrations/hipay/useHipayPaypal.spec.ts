@@ -1,12 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
 import type { Hipay } from '../../../types/Hipay';
-import { PspProviders } from '../../../types/PspProviders';
-import * as usePaymentProviderSettings from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import * as usePaymentSubmit from '../../usePaymentSubmit';
 import * as useCapsConfigContext from '../../utils/useCapsConfigContext';
 import * as useFormContext from '../../utils/useForm';
 import * as useScriptLoader from '../../utils/useScriptLoader';
+import * as useWatchedPaymentProvider from '../../utils/useWatchedPaymentProvider';
 import { useHipayPaypal } from './useHipayPaypal';
 
 vi.mock('react-hook-form', async () => {
@@ -64,13 +63,19 @@ describe('useHipayPaypal', () => {
       isLoaded: false,
     } as any);
 
-    vi.spyOn(usePaymentProviderSettings, 'usePaymentProviderSettings').mockReturnValue({
-      script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
-      username: '94675627.stage-secure-gateway.hipay-tpp.com',
-      password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
-      environment: 'stage',
-      max_amount: null,
-      min_days_before_departure: null,
+    vi.spyOn(useWatchedPaymentProvider, 'useWatchedPaymentProvider').mockReturnValue({
+      id: 'SHYPAY_PAYPAL',
+      configuration: {
+        display_type: 'iframe',
+        settings: {
+          script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
+          username: '94675627.stage-secure-gateway.hipay-tpp.com',
+          password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
+          environment: 'stage',
+          max_amount: null,
+          min_days_before_departure: null,
+        },
+      },
     } as any);
 
     vi.spyOn(usePaymentSubmit, 'usePaymentSubmit').mockReturnValue({
@@ -83,12 +88,10 @@ describe('useHipayPaypal', () => {
     delete (window as any).HiPay;
   });
 
-  it('should use HIPAY provider settings (not duplicate config)', () => {
+  it('should use watched payment provider settings', () => {
     renderHook(() => useHipayPaypal());
 
-    expect(usePaymentProviderSettings.usePaymentProviderSettings).toHaveBeenCalledWith(
-      PspProviders.HIPAY_PAYPAL,
-    );
+    expect(useWatchedPaymentProvider.useWatchedPaymentProvider).toHaveBeenCalled();
   });
 
   it('should not initialize when script is not loaded', () => {

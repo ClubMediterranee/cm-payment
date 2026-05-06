@@ -1,13 +1,9 @@
-import { getProviderIntegrationMode } from '../../hooks/utils/useProviderIntegrationMode';
-import { PspProviders } from '../../types/PspProviders';
 import type { Validate } from '../capsFormSchema';
 
-const PROVIDERS_WITH_EXPIRY_DATE = [PspProviders.MCYBERSOURCE];
+export const validateExpiryDate: Validate = (data, { content, getProviderValidation }) => {
+  const validation = getProviderValidation(data.provider_id);
 
-export const validateExpiryDate: Validate = (data, { content, providersConfig }) => {
-  const { hostedField } = getProviderIntegrationMode(data.provider_id, providersConfig);
-
-  if (!hostedField || !PROVIDERS_WITH_EXPIRY_DATE.includes(data.provider_id as PspProviders)) {
+  if (!validation?.requires_expiry_date) {
     return undefined;
   }
 

@@ -102,9 +102,9 @@ Ce composant gère le chargement, la communication avec l'iframe via postMessage
               display_type: 'iframe',
             },
           },
-          featureFlip: {},
+          feature_flips: {},
           settings: {
-            daysBeforeTripToAllowFreeDeposit: 30,
+            days_before_trip_to_allow_free_deposit: 30,
           },
         }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
@@ -208,9 +208,9 @@ export const LoadingState: Story = {
               display_type: 'iframe',
             },
           },
-          featureFlip: {},
+          feature_flips: {},
           settings: {
-            daysBeforeTripToAllowFreeDeposit: 30,
+            days_before_trip_to_allow_free_deposit: 30,
           },
         }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}

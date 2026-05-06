@@ -1,11 +1,11 @@
 import { Service } from '@tsed/di';
 
-import { poll } from '../../config/utils/index.js';
 import {
   getV0PaymentsPaymentIdStatus,
   postV1PaymentsPaymentIdNotify,
 } from '../../infra/api/__generated__/index.js';
-import { getPaymentValidationStrategy } from '../../utils/getPaymentValidationStrategy.js';
+import { getPaymentValidationStrategy } from './utils/getPaymentValidationStrategy.js';
+import { poll } from './utils/poll.js';
 
 type PaymentData = {
   payment_status: string;

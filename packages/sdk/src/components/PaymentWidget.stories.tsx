@@ -113,9 +113,9 @@ Composant PaymentWidget qui affiche le bon composant de paiement selon le mode d
               display_type: integrationMode,
             },
           },
-          featureFlip: {},
+          feature_flips: {},
           settings: {
-            daysBeforeTripToAllowFreeDeposit: 30,
+            days_before_trip_to_allow_free_deposit: 30,
           },
         }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}

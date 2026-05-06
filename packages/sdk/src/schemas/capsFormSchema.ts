@@ -17,10 +17,15 @@ export type ValidationError = {
 
 export type Validate = (
   data: CapsFormSchema,
-  config: Pick<CapsFormConfig, 'isSeller' | 'content' | 'providersConfig'>,
+  config: Pick<CapsFormConfig, 'isSeller' | 'content' | 'getProviderValidation'>,
 ) => ValidationError | ValidationError[] | undefined;
 
-export const capsFormSchema = ({ isSeller, content, maxAmount, providersConfig }: CapsFormConfig) =>
+export const capsFormSchema = ({
+  isSeller,
+  content,
+  maxAmount,
+  getProviderValidation,
+}: CapsFormConfig) =>
   z
     .object({
       action: z.nativeEnum(Action),
@@ -87,7 +92,7 @@ export const capsFormSchema = ({ isSeller, content, maxAmount, providersConfig }
         .optional(),
     })
     .superRefine((data, ctx) => {
-      const config = { isSeller, content, providersConfig };
+      const config = { isSeller, content, getProviderValidation };
 
       const validations = [
         validateToken,

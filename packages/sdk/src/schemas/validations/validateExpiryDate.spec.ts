@@ -8,11 +8,11 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: false,
   maxAmount: 10000,
-  providersConfig: {
-    [PspProviders.MCYBERSOURCE]: {
-      is_active: true,
-      display_type: 'hosted_field',
-    },
+  getProviderValidation: (providerId: string) => {
+    if (providerId === PspProviders.MCYBERSOURCE) {
+      return { requires_expiry_date: true };
+    }
+    return undefined;
   },
 };
 
@@ -23,35 +23,24 @@ describe('validateExpiryDate', () => {
         provider_id: PspProviders.HIPAY,
         creditCard: {},
       } as unknown as CapsFormSchema,
-      {
-        ...mockConfig,
-        providersConfig: {
-          [PspProviders.HIPAY]: {
-            is_active: true,
-            display_type: 'hosted_field',
-          },
-        },
-      },
+      mockConfig,
     );
 
     expect(result).toBeUndefined();
   });
 
-  it('returns undefined when provider has no hosted field', () => {
+  it('returns undefined when provider does not require expiry date', () => {
+    const customConfig: CapsFormConfig = {
+      ...mockConfig,
+      getProviderValidation: () => ({ requires_expiry_date: false }),
+    };
+
     const result = validateExpiryDate(
       {
         provider_id: PspProviders.MCYBERSOURCE,
         creditCard: { expiryDate: '2025-12' },
       } as unknown as CapsFormSchema,
-      {
-        ...mockConfig,
-        providersConfig: {
-          [PspProviders.MCYBERSOURCE]: {
-            is_active: true,
-            display_type: 'iframe',
-          },
-        },
-      },
+      customConfig,
     );
 
     expect(result).toBeUndefined();

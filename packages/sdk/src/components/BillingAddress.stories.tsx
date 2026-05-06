@@ -4,6 +4,7 @@ import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
+import { getPaymentProvidersControllerGetPaymentProvidersMockHandler } from '../__generated__/bff/index.msw';
 import {
   getGetV0CountriesMockHandler,
   getGetV1PaymentProvidersMockHandler,
@@ -154,6 +155,15 @@ const paymentProviders = [
     category_payment_method: PaymentProvider1CategoryPaymentMethod.CreditCard,
     billing_address_form: true,
     required_delay_before_departure: 0,
+    configuration: {
+      display_type: 'redirect' as const,
+      settings: {},
+      validation: {
+        requires_token: false,
+        requires_expiry_date: false,
+      },
+    },
+    payment_conditions: {},
   },
 ];
 
@@ -181,6 +191,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const billingSchemaHandlers = [
+  http.get('*/rest/payment_config*', () => {
+    return HttpResponse.json({
+      feature_flips: {},
+      settings: {
+        days_before_trip_to_allow_free_deposit: 30,
+      },
+    });
+  }),
   http.get('*/v3/schemas/billing/:localeOrCountry', ({ params }) => {
     const { localeOrCountry } = params;
     const schema = localeOrCountry === 'US' ? US_SCHEMA : FR_SCHEMA;
@@ -188,6 +206,10 @@ const billingSchemaHandlers = [
   }),
   getGetV0CountriesMockHandler(countries),
   getGetV1PaymentProvidersMockHandler(paymentProviders),
+  getPaymentProvidersControllerGetPaymentProvidersMockHandler({
+    payment_providers: paymentProviders,
+    buy_now_pay_later_providers: [],
+  }),
 ];
 
 export const Default: Story = {
@@ -204,10 +226,6 @@ export const Default: Story = {
   render: () => (
     <MockedProvider
       bookingId="123"
-      paymentConfig={{
-        providers: { CYBERSOURCE: { is_active: true, settings: {} } },
-        featureFlip: {},
-      }}
       defaultValues={{
         provider_id: 'CYBERSOURCE',
         billing_details: {
@@ -279,10 +297,6 @@ export const WithProfilePrefill: Story = {
       bookingId="123"
       customerId="789"
       oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
-      paymentConfig={{
-        providers: { CYBERSOURCE: { is_active: true, settings: {} } },
-        featureFlip: {},
-      }}
       defaultValues={{
         provider_id: 'CYBERSOURCE',
         billing_details: {

@@ -42,8 +42,9 @@ export const useActionResolver = (action?: Action) => {
       type,
       action,
       freeDepositConfig: {
-        enabled: !!paymentConfig.featureFlip?.isFreeDepositEnabled,
-        daysBeforeTripToAllowFreeDeposit: paymentConfig.settings.daysBeforeTripToAllowFreeDeposit,
+        enabled: !!paymentConfig.feature_flips?.is_free_deposit_enabled,
+        days_before_trip_to_allow_free_deposit:
+          paymentConfig.settings?.days_before_trip_to_allow_free_deposit ?? null,
       },
     }),
   );

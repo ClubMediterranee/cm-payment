@@ -7,13 +7,11 @@ import React, { Suspense, useEffect } from 'react';
 import { Action } from '../__generated__/index.schemas';
 import { defaultContent } from '../content/default';
 import { ACTION_RESOLVER_QUERY_KEY } from '../hooks/data/useActionResolver';
-import { PAYMENT_CONFIG_QUERY_KEY } from '../hooks/data/usePaymentConfig';
 import { PaymentConfigProvider } from '../providers/PaymentConfigProvider';
 import { sdkQueryClient } from '../providers/QueryClientProvider';
 import { CapsFormSchema } from '../schemas/capsFormSchema';
 import { OidcIssuerTypes, OidcSettings } from '../types/CapsSettings';
 import { Content } from '../types/Content';
-import { PaymentConfig } from '../types/PaymentConfig';
 import { mergeFromPattern } from '../utils/mergeFromPattern';
 import { MockedFormProvider } from './MockedFormProvider';
 import { useMockedForm } from './useMockedForm';
@@ -27,7 +25,6 @@ interface MockedProviderProps {
   bookingId?: string;
   customerId?: string;
   content?: Content;
-  paymentConfig?: Partial<PaymentConfig>;
   maxAmount?: number;
   locale?: string;
 }
@@ -41,7 +38,6 @@ export const MockedProvider = ({
   action,
   oidc,
   defaultValues,
-  paymentConfig,
   maxAmount = 10000,
   locale = 'fr-FR',
 }: MockedProviderProps) => {
@@ -57,7 +53,7 @@ export const MockedProvider = ({
     content: mergeFromPattern(defaultContent, content),
     isSeller,
     maxAmount,
-    providersConfig: paymentConfig?.providers || {},
+    getProviderValidation: () => undefined,
   });
 
   useEffect(() => {
@@ -71,32 +67,6 @@ export const MockedProvider = ({
       sdkQueryClient.setQueryData(ACTION_RESOLVER_QUERY_KEY(id, type), action);
     }
   }, [proposalId, bookingId, customerId, action]);
-
-  useEffect(() => {
-    const providersWithDefaults = Object.entries(paymentConfig?.providers || {}).reduce(
-      (acc, [key, config]) => {
-        if (config) {
-          acc[key] = {
-            ...config,
-            settings: {
-              ...config.settings,
-            },
-          };
-        }
-        return acc;
-      },
-      {} as PaymentConfig['providers'],
-    );
-
-    sdkQueryClient.setQueryData(
-      PAYMENT_CONFIG_QUERY_KEY(locale, oidc?.issuerType || OidcIssuerTypes.GM),
-      {
-        ...paymentConfig,
-        providers: providersWithDefaults,
-        settings: { daysBeforeTripToAllowFreeDeposit: 0, ...paymentConfig?.settings },
-      },
-    );
-  }, [paymentConfig, locale, oidc?.issuerType]);
 
   return (
     <PaymentConfigProvider

@@ -10,42 +10,78 @@ import { PspProviders } from '../types/PspProviders';
 import { SubmitButton } from './SubmitButton';
 
 const handlers = [
-  http.get('*/v1/payment_providers', () => {
-    return Response.json([
-      {
-        id: 'MHIPAY',
-        label: 'Hipay',
-        connection_type: 'E-commerce',
-        required_delay_before_departure: 0,
-        category_payment_method: 'CreditCard',
-        billing_address_form: false,
-      },
-      {
-        id: 'EPAYGATE',
-        label: 'Epaygate',
-        connection_type: 'E-commerce',
-        required_delay_before_departure: 0,
-        category_payment_method: 'CreditCard',
-        billing_address_form: false,
-      },
-      {
-        id: 'MHIPAYPP',
-        label: 'Hipay Paypal',
-        connection_type: 'E-commerce',
-        required_delay_before_departure: 0,
-        category_payment_method: 'Paypal',
-        billing_address_form: false,
-      },
-    ]);
-  }),
-  http.get('*/v1/contents/feature-flip/locales/fr-FR/releases/live/value', () => {
+  http.get('*/rest/payment_config', () => {
     return Response.json({
-      isFreeDepositEnabled: false,
-      isPaypalButtonEnabled: false,
+      feature_flips: {
+        is_paypal_button_enabled: true,
+      },
+      settings: {
+        days_before_trip_to_allow_free_deposit: 30,
+      },
     });
   }),
-  http.get('*/v1/contents/b2c-common/locales/*/releases/live/value', () => {
-    return Response.json({});
+  http.get('*/rest/payment_providers/*', () => {
+    return Response.json({
+      payment_providers: [
+        {
+          id: 'MHIPAY',
+          label: 'Hipay',
+          connection_type: 'E-commerce',
+          required_delay_before_departure: 0,
+          category_payment_method: 'CreditCard',
+          billing_address_form: false,
+          configuration: {
+            display_type: 'hosted_field',
+            settings: {},
+            validation: {
+              requires_token: false,
+              requires_expiry_date: false,
+            },
+          },
+          payment_conditions: {},
+        },
+        {
+          id: 'EPAYGATE',
+          label: 'Epaygate',
+          connection_type: 'E-commerce',
+          required_delay_before_departure: 0,
+          category_payment_method: 'CreditCard',
+          billing_address_form: false,
+          configuration: {
+            display_type: 'redirect',
+            settings: {},
+            validation: {
+              requires_token: false,
+              requires_expiry_date: false,
+            },
+          },
+          payment_conditions: {},
+        },
+        {
+          id: 'MHIPAYPP',
+          label: 'Hipay Paypal',
+          connection_type: 'E-commerce',
+          required_delay_before_departure: 0,
+          category_payment_method: 'Paypal',
+          billing_address_form: false,
+          configuration: {
+            display_type: 'hosted_field',
+            settings: {
+              script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
+              username: '94685941.stage-secure-gateway.hipay-tpp.com',
+              password: 'Test_KDArvJ3iCVesjQj3XRriMkXs',
+              environment: 'stage',
+            },
+            validation: {
+              requires_token: false,
+              requires_expiry_date: false,
+            },
+          },
+          payment_conditions: {},
+        },
+      ],
+      buy_now_pay_later_providers: [],
+    });
   }),
 ];
 
@@ -98,27 +134,6 @@ export const Default: Story = {
           },
         }}
         proposalId="12345678"
-        paymentConfig={{
-          providers: {
-            [PspProviders.HIPAY]: {
-              is_active: true,
-              display_type: 'hosted_field',
-              settings: {},
-            },
-            [PspProviders.EPAYGATE]: {
-              is_active: true,
-              display_type: 'redirect',
-              settings: {},
-            },
-            [PspProviders.HIPAY_PAYPAL]: {
-              is_active: false,
-              display_type: 'redirect',
-              settings: {},
-            },
-          },
-          featureFlip: {},
-          settings: { daysBeforeTripToAllowFreeDeposit: 30 },
-        }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
         <SubmitButton>Payer</SubmitButton>
@@ -149,27 +164,6 @@ export const IframeMode: Story = {
           },
         }}
         proposalId="12345678"
-        paymentConfig={{
-          providers: {
-            [PspProviders.HIPAY]: {
-              is_active: true,
-              display_type: 'hosted_field',
-              settings: {},
-            },
-            [PspProviders.EPAYGATE]: {
-              is_active: true,
-              display_type: 'iframe',
-              settings: {},
-            },
-            [PspProviders.HIPAY_PAYPAL]: {
-              is_active: false,
-              display_type: 'redirect',
-              settings: {},
-            },
-          },
-          featureFlip: {},
-          settings: { daysBeforeTripToAllowFreeDeposit: 30 },
-        }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
         <SubmitButton>Payer</SubmitButton>
@@ -202,34 +196,6 @@ export const PaypalButton: Story = {
           },
         }}
         proposalId="12345678"
-        paymentConfig={{
-          providers: {
-            [PspProviders.HIPAY]: {
-              is_active: true,
-              display_type: 'hosted_field',
-              settings: {},
-            },
-            [PspProviders.EPAYGATE]: {
-              is_active: true,
-              display_type: 'redirect',
-              settings: {},
-            },
-            [PspProviders.HIPAY_PAYPAL]: {
-              is_active: true,
-              display_type: 'redirect',
-              settings: {
-                script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
-                username: '94685941.stage-secure-gateway.hipay-tpp.com',
-                password: 'Test_KDArvJ3iCVesjQj3XRriMkXs',
-                environment: 'stage',
-              },
-            },
-          },
-          featureFlip: {
-            isPaypalButtonEnabled: true,
-          },
-          settings: { daysBeforeTripToAllowFreeDeposit: 30 },
-        }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
         <SubmitButton>Payer</SubmitButton>

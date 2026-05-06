@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
+  PaymentConfig,
+  PaymentProvidersControllerGetPaymentProviders200,
+  PaymentProvidersControllerGetPaymentProvidersParams,
   PaymentScheduleControllerGetPaymentSchedulesParams,
   PaymentScheduleOutputModel,
   VersionInfo,
@@ -13,10 +16,32 @@ import type {
 import { fetcher } from '../../utils/fetcher';
 
 /**
+ * @summary Get payment configuration for a given locale and issuer type
+ */
+export const paymentConfigControllerGetPaymentConfig = () => {
+  return fetcher<PaymentConfig>({ url: `/rest/payment_config`, method: 'GET' });
+};
+
+/**
+ * @summary Get payment providers for a booking or proposal
+ */
+export const paymentProvidersControllerGetPaymentProviders = (
+  type: 'booking' | 'proposal',
+  id: string,
+  params?: PaymentProvidersControllerGetPaymentProvidersParams,
+) => {
+  return fetcher<PaymentProvidersControllerGetPaymentProviders200>({
+    url: `/rest/payment_providers/${type}/${id}`,
+    method: 'GET',
+    params,
+  });
+};
+
+/**
  * @summary Get payment schedules by type and id
  */
 export const paymentScheduleControllerGetPaymentSchedules = (
-  type: string,
+  type: 'booking' | 'proposal',
   id: string,
   params?: PaymentScheduleControllerGetPaymentSchedulesParams,
 ) => {
@@ -35,6 +60,12 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
+export type PaymentConfigControllerGetPaymentConfigResult = NonNullable<
+  Awaited<ReturnType<typeof paymentConfigControllerGetPaymentConfig>>
+>;
+export type PaymentProvidersControllerGetPaymentProvidersResult = NonNullable<
+  Awaited<ReturnType<typeof paymentProvidersControllerGetPaymentProviders>>
+>;
 export type PaymentScheduleControllerGetPaymentSchedulesResult = NonNullable<
   Awaited<ReturnType<typeof paymentScheduleControllerGetPaymentSchedules>>
 >;

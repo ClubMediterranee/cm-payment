@@ -11,17 +11,29 @@ const handlers = [
   http.get('*/v2/customers/456/profile', () => {
     return Response.json({ mobile_phone: '123456789' });
   }),
-  http.get('*/v1/payment_providers', () => {
-    return Response.json([
-      {
-        id: 'EVOXPAY',
-        label: 'Carte bancaire',
-        connection_type: 'REDIRECT',
-        category_payment_method: 'CreditCard',
-        billing_address_form: true,
-        required_delay_before_departure: 0,
-      },
-    ]);
+  http.get('*/rest/payment_providers/booking/*', () => {
+    return Response.json({
+      payment_providers: [
+        {
+          id: 'EVOXPAY',
+          label: 'Carte bancaire',
+          connection_type: 'REDIRECT',
+          category_payment_method: 'CreditCard',
+          billing_address_form: true,
+          required_delay_before_departure: 0,
+          configuration: {
+            display_type: 'redirect',
+            settings: {},
+            validation: {
+              requires_token: false,
+              requires_expiry_date: false,
+            },
+          },
+          payment_conditions: {},
+        },
+      ],
+      buy_now_pay_later_providers: [],
+    });
   }),
 ];
 
@@ -38,7 +50,7 @@ const ContactChoiceWithFormProvider = (args: any) => {
             settings: {},
           },
         },
-        featureFlip: {},
+        feature_flips: {},
       }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
     >
@@ -157,17 +169,29 @@ export const WithAdditionalInteractions: Story = {
     },
     msw: {
       handlers: [
-        http.get('*/v1/payment_providers', () => {
-          return Response.json([
-            {
-              id: 'EVOXPAY',
-              label: 'Carte bancaire',
-              connection_type: 'REDIRECT',
-              category_payment_method: 'BankTransfer',
-              billing_address_form: true,
-              required_delay_before_departure: 0,
-            },
-          ]);
+        http.get('*/rest/payment_providers/booking/*', () => {
+          return Response.json({
+            payment_providers: [
+              {
+                id: 'EVOXPAY',
+                label: 'Carte bancaire',
+                connection_type: 'REDIRECT',
+                category_payment_method: 'BankTransfer',
+                billing_address_form: true,
+                required_delay_before_departure: 0,
+                configuration: {
+                  display_type: 'redirect',
+                  settings: {},
+                  validation: {
+                    requires_token: false,
+                    requires_expiry_date: false,
+                  },
+                },
+                payment_conditions: {},
+              },
+            ],
+            buy_now_pay_later_providers: [],
+          });
         }),
         ...handlers,
       ],
@@ -185,7 +209,7 @@ export const WithAdditionalInteractions: Story = {
             settings: {},
           },
         },
-        featureFlip: {},
+        feature_flips: {},
       }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '1' }}
     >
@@ -345,7 +369,7 @@ export const AccessibilityTest: Story = {
             settings: {},
           },
         },
-        featureFlip: {},
+        feature_flips: {},
       }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
     >

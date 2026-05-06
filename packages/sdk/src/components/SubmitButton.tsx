@@ -5,15 +5,13 @@ import { useFormContext } from 'react-hook-form';
 import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import { GLOBAL_CAPS_SETTINGS } from '../config';
 import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
-import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegrationMode';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { TOKENS } from '../types/Tokens';
 import { HipayPaypalButton } from './PaymentWidget/integrations/HipayPaypalButton';
 
 export const SubmitButton = ({ children, ...props }: ComponentProps<typeof Button>) => {
-  const { iframe } = useProviderIntegrationMode();
-
   const watchedProvider = useWatchedPaymentProvider();
+  const iframe = watchedProvider?.configuration?.display_type === 'iframe';
 
   const { data: paymentConfig } = usePaymentConfig();
 
@@ -28,7 +26,7 @@ export const SubmitButton = ({ children, ...props }: ComponentProps<typeof Butto
 
   const isPaypalButtonEnabled =
     watchedProvider?.category_payment_method === PaymentProvider1CategoryPaymentMethod.Paypal &&
-    paymentConfig.featureFlip.isPaypalButtonEnabled;
+    paymentConfig.feature_flips.is_paypal_button_enabled;
 
   const isSubmitButtonDisabled = isPaypalButtonEnabled && !isValid;
 

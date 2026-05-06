@@ -47,7 +47,7 @@ describe('checkFreeDepositAuthorization', () => {
     const result = await checkFreeDepositAuthorization({
       freeDepositConfig: {
         enabled: false,
-        daysBeforeTripToAllowFreeDeposit: 30,
+        days_before_trip_to_allow_free_deposit: 30,
       },
       resortArrivalDate: '20261231',
     });
@@ -67,7 +67,7 @@ describe('checkFreeDepositAuthorization', () => {
     const result = await checkFreeDepositAuthorization({
       freeDepositConfig: {
         enabled: true,
-        daysBeforeTripToAllowFreeDeposit: 30,
+        days_before_trip_to_allow_free_deposit: 30,
       },
       resortArrivalDate: '20261231',
     });
@@ -91,7 +91,7 @@ describe('checkFreeDepositAuthorization', () => {
     const result = await checkFreeDepositAuthorization({
       freeDepositConfig: {
         enabled: true,
-        daysBeforeTripToAllowFreeDeposit: 30,
+        days_before_trip_to_allow_free_deposit: 30,
       },
       resortArrivalDate: '20260115',
     });
@@ -99,7 +99,7 @@ describe('checkFreeDepositAuthorization', () => {
     expect(result).toBe(false);
   });
 
-  it('should use payment schedule deadline when daysBeforeTripToAllowFreeDeposit is null', async () => {
+  it('should use payment schedule deadline when days_before_trip_to_allow_free_deposit is null', async () => {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + 45);
 
@@ -122,7 +122,7 @@ describe('checkFreeDepositAuthorization', () => {
     const result = await checkFreeDepositAuthorization({
       freeDepositConfig: {
         enabled: true,
-        daysBeforeTripToAllowFreeDeposit: null,
+        days_before_trip_to_allow_free_deposit: null,
       },
       resortArrivalDate: '20261231',
     });
@@ -143,7 +143,7 @@ describe('checkFreeDepositAuthorization', () => {
     const result = await checkFreeDepositAuthorization({
       freeDepositConfig: {
         enabled: true,
-        daysBeforeTripToAllowFreeDeposit: 30,
+        days_before_trip_to_allow_free_deposit: 30,
       },
       resortArrivalDate: 'invalid-date',
     });
@@ -152,7 +152,7 @@ describe('checkFreeDepositAuthorization', () => {
     expect(mockDaysUntilToday).not.toHaveBeenCalled();
   });
 
-  it('should return false when daysUntilToday equals exactly daysBeforeTripToAllowFreeDeposit', async () => {
+  it('should return false when daysUntilToday equals exactly days_before_trip_to_allow_free_deposit', async () => {
     const exactDate = new Date();
     exactDate.setDate(exactDate.getDate() + 30);
 
@@ -162,7 +162,7 @@ describe('checkFreeDepositAuthorization', () => {
     const result = await checkFreeDepositAuthorization({
       freeDepositConfig: {
         enabled: true,
-        daysBeforeTripToAllowFreeDeposit: 30,
+        days_before_trip_to_allow_free_deposit: 30,
       },
       resortArrivalDate: '20260201',
     });
@@ -170,7 +170,7 @@ describe('checkFreeDepositAuthorization', () => {
     expect(result).toBe(false);
   });
 
-  it('should handle undefined resortArrivalDate when daysBeforeTripToAllowFreeDeposit is null', async () => {
+  it('should handle undefined resortArrivalDate when days_before_trip_to_allow_free_deposit is null', async () => {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + 50);
 
@@ -190,7 +190,7 @@ describe('checkFreeDepositAuthorization', () => {
     const result = await checkFreeDepositAuthorization({
       freeDepositConfig: {
         enabled: true,
-        daysBeforeTripToAllowFreeDeposit: null,
+        days_before_trip_to_allow_free_deposit: null,
       },
     });
 
@@ -198,7 +198,7 @@ describe('checkFreeDepositAuthorization', () => {
     expect(mockParseApiDate).toHaveBeenCalledWith('20260301');
   });
 
-  it('should use daysBeforeTripToAllowFreeDeposit as 0 when it is null but not fetching payment schedule', async () => {
+  it('should use days_before_trip_to_allow_free_deposit as 0 when it is null but not fetching payment schedule', async () => {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + 1);
 
@@ -208,7 +208,7 @@ describe('checkFreeDepositAuthorization', () => {
     const result = await checkFreeDepositAuthorization({
       freeDepositConfig: {
         enabled: true,
-        daysBeforeTripToAllowFreeDeposit: 0,
+        days_before_trip_to_allow_free_deposit: 0,
       },
       resortArrivalDate: '20260103',
     });

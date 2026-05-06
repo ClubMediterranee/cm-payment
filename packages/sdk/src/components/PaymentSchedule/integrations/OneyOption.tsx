@@ -2,10 +2,8 @@ import { Icon } from '@clubmed/trident-icons';
 import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
 
 import type { PaymentProvider1 } from '../../../__generated__/index.schemas';
-import { usePaymentProviderSettings } from '../../../hooks/data/usePaymentConfig/usePaymentProviderSettings';
 import { useOneySimulationPopin } from '../../../hooks/integrations/oney/useOneySimulationPopin';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext';
-import { PspProviders } from '../../../types/PspProviders';
 import { renderTemplate } from '../../../utils/renderTemplate';
 import { Oney3x } from '../../icons/Oney3x';
 import { Oney4x } from '../../icons/Oney4x';
@@ -23,7 +21,7 @@ type OneyOptionProps = {
 
 export const OneyOption = ({ provider, name, onChange }: OneyOptionProps) => {
   const { content } = useCapsConfigContext();
-  const { payment_mode } = usePaymentProviderSettings(PspProviders.EHIPAYBNPL);
+  const payment_mode = (provider as any)?.configuration?.settings?.payment_mode;
   const { handlePopinClick } = useOneySimulationPopin();
 
   return (

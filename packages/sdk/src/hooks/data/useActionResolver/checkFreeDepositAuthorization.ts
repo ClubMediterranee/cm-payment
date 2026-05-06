@@ -8,7 +8,7 @@ import { ACTION_RESOLVER_QUERY_KEY } from './';
 export type CheckFreeDepositAuthorizationArgs = {
   freeDepositConfig: {
     enabled: boolean;
-    daysBeforeTripToAllowFreeDeposit: number | null;
+    days_before_trip_to_allow_free_deposit: number | null;
   };
   resortArrivalDate?: string;
 };
@@ -18,14 +18,14 @@ export const checkFreeDepositAuthorization = async ({
   freeDepositConfig,
 }: CheckFreeDepositAuthorizationArgs) => {
   const { id, type, customerId } = getPaymentConfig();
-  const { enabled, daysBeforeTripToAllowFreeDeposit } = freeDepositConfig;
+  const { enabled, days_before_trip_to_allow_free_deposit } = freeDepositConfig;
   if (!enabled) {
     return false;
   }
   await sdkQueryClient.setQueryData(ACTION_RESOLVER_QUERY_KEY(id, type), Action.PAYMENT_PARTIAL);
 
   let apiDeadline = resortArrivalDate;
-  if (daysBeforeTripToAllowFreeDeposit === null) {
+  if (days_before_trip_to_allow_free_deposit === null) {
     const paymentScheduleOptions = paymentScheduleQueryOptions(id, type, customerId);
     const paymentSchedule = await sdkQueryClient.fetchQuery(paymentScheduleOptions);
     apiDeadline = paymentSchedule[0]?.deadline;
@@ -33,6 +33,6 @@ export const checkFreeDepositAuthorization = async ({
 
   const deadline = parseApiDate(apiDeadline);
   const isAllowToFreeDeposit =
-    deadline && daysUntilToday(deadline) - (daysBeforeTripToAllowFreeDeposit || 0) > 0;
+    deadline && daysUntilToday(deadline) - (days_before_trip_to_allow_free_deposit || 0) > 0;
   return !!isAllowToFreeDeposit;
 };

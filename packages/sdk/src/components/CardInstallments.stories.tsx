@@ -88,6 +88,12 @@ const paymentProvidersWithoutInstallments = [
 ];
 
 const defaultHandlersWithInstallments = [
+  http.get('*/rest/payment_config*', () => {
+    return Response.json({
+      feature_flips: {},
+      settings: {},
+    });
+  }),
   http.get('*/rest/payment_schedules/booking/*', () => {
     return Response.json([
       {
@@ -122,12 +128,32 @@ const defaultHandlersWithInstallments = [
       ],
     });
   }),
-  http.get('*/v1/payment_providers', () => {
-    return Response.json(paymentProvidersWithInstallments);
+  http.get('*/rest/payment_providers/booking/*', () => {
+    return Response.json({
+      payment_providers: paymentProvidersWithInstallments.map((provider) => ({
+        ...provider,
+        configuration: {
+          display_type: 'redirect',
+          settings: {},
+          validation: {
+            requires_token: false,
+            requires_expiry_date: false,
+          },
+        },
+        payment_conditions: {},
+      })),
+      buy_now_pay_later_providers: [],
+    });
   }),
 ];
 
 const defaultHandlersWithoutInstallments = [
+  http.get('*/rest/payment_config*', () => {
+    return Response.json({
+      feature_flips: {},
+      settings: {},
+    });
+  }),
   http.get('*/rest/payment_schedules/booking/*', () => {
     return Response.json([
       {
@@ -162,8 +188,22 @@ const defaultHandlersWithoutInstallments = [
       ],
     });
   }),
-  http.get('*/v1/payment_providers', () => {
-    return Response.json(paymentProvidersWithoutInstallments);
+  http.get('*/rest/payment_providers/booking/*', () => {
+    return Response.json({
+      payment_providers: paymentProvidersWithoutInstallments.map((provider) => ({
+        ...provider,
+        configuration: {
+          display_type: 'iframe',
+          settings: {},
+          validation: {
+            requires_token: false,
+            requires_expiry_date: false,
+          },
+        },
+        payment_conditions: {},
+      })),
+      buy_now_pay_later_providers: [],
+    });
   }),
 ];
 
@@ -175,14 +215,9 @@ const CardInstallmentsWithProvider = () => {
       action={Action.PAYMENT_OPTION}
       defaultValues={{
         provider_id: 'EVOXPAY',
-        amount: 1200,
+        amount: '1200',
         payment_method_id: 'visa-001',
         payment_condition_id: 'visa-1x',
-      }}
-      paymentConfig={{
-        providers: {
-          EVOXPAY: { is_active: true },
-        },
       }}
     >
       <CardInstallments />
@@ -276,11 +311,6 @@ export const WithoutInstallments: Story = {
         action={Action.PAYMENT_OPTION}
         defaultValues={{
           provider_id: 'PAYPAL',
-        }}
-        paymentConfig={{
-          providers: {
-            PAYPAL: { is_active: true },
-          },
         }}
       >
         <CardInstallments />

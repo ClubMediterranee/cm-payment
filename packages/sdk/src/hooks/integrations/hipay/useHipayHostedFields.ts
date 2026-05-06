@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
-import { PspProviders } from '../../../types/PspProviders';
-import { usePaymentProviderSettings } from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useDisclosure } from '../../utils/useDisclosure';
 import { useFormContext, useWatch } from '../../utils/useForm';
 import { useScriptLoader } from '../../utils/useScriptLoader';
+import { useWatchedPaymentProvider } from '../../utils/useWatchedPaymentProvider';
 import { createHipayClient, mapHipayErrorsToObject } from './hipay';
 
 type UseHipayHostedFieldsParams = {
@@ -23,7 +22,8 @@ export const useHipayHostedFields = ({ fieldSelectors }: UseHipayHostedFieldsPar
   const { formState, setValue } = useFormContext();
   const { isSubmitting } = formState;
 
-  const { script_url, ...hipayConfig } = usePaymentProviderSettings(PspProviders.HIPAY);
+  const provider = useWatchedPaymentProvider();
+  const { script_url, ...hipayConfig } = provider?.configuration?.settings || {};
 
   const { isLoaded } = useScriptLoader(script_url);
   const [errors, setErrors] = useState<Record<string, string>>({});

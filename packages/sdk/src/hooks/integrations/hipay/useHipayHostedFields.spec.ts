@@ -1,10 +1,10 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 
 import type { HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
-import * as usePaymentProviderSettings from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import * as useCapsConfigContext from '../../utils/useCapsConfigContext';
 import * as useFormContext from '../../utils/useForm';
 import * as useScriptLoader from '../../utils/useScriptLoader';
+import * as useWatchedPaymentProvider from '../../utils/useWatchedPaymentProvider';
 import * as hipayHelpers from './hipay';
 import { useHipayHostedFields } from './useHipayHostedFields';
 
@@ -65,13 +65,19 @@ describe('useHipayHostedFields', () => {
       error: null,
     });
 
-    vi.spyOn(usePaymentProviderSettings, 'usePaymentProviderSettings').mockReturnValue({
-      script_url: 'https://libs.hipay.com/js/sdkjs.js',
-      username: 'test-username',
-      password: 'test-password',
-      environment: 'stage',
-      max_amount: null,
-      min_days_before_departure: null,
+    vi.spyOn(useWatchedPaymentProvider, 'useWatchedPaymentProvider').mockReturnValue({
+      id: 'SHYPAY',
+      configuration: {
+        display_type: 'hosted_field',
+        settings: {
+          script_url: 'https://libs.hipay.com/js/sdkjs.js',
+          username: 'test-username',
+          password: 'test-password',
+          environment: 'stage',
+          max_amount: null,
+          min_days_before_departure: null,
+        },
+      },
     } as any);
 
     vi.spyOn(hipayHelpers, 'createHipayClient').mockReturnValue(mockHipayInstance);

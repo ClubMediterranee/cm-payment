@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { http, HttpResponse } from 'msw';
+import { mswLoader } from 'msw-storybook-addon';
 import { expect, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../../../__fixtures__/MockedProvider';
@@ -18,6 +20,7 @@ const HipayFormWithSubmit = () => {
 const meta: Meta<typeof HipayForm> = {
   title: 'Components/PaymentWidget/HostedFields/HipayForm',
   component: HipayForm,
+  loaders: [mswLoader],
   parameters: {
     layout: 'centered',
     docs: {
@@ -27,6 +30,43 @@ Composant de formulaire Hipay qui affiche les champs hébergés pour la saisie d
         `,
       },
     },
+    msw: {
+      handlers: [
+        http.get('*/rest/payment_config*', () => {
+          return HttpResponse.json({
+            feature_flips: {},
+            settings: {},
+          });
+        }),
+        http.get('*/rest/payment_providers/*', () => {
+          return HttpResponse.json({
+            payment_providers: [
+              {
+                id: 'MHIPAY',
+                label: 'Hipay',
+                connection_type: 'HOSTED_FIELDS',
+                category_payment_method: 'CreditCard',
+                configuration: {
+                  display_type: 'hosted_fields',
+                  settings: {
+                    script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
+                    username: '94675627.stage-secure-gateway.hipay-tpp.com',
+                    password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
+                    environment: 'stage',
+                  },
+                  validation: {
+                    requires_token: false,
+                    requires_expiry_date: false,
+                  },
+                },
+                payment_conditions: {},
+              },
+            ],
+            buy_now_pay_later_providers: [],
+          });
+        }),
+      ],
+    },
   },
   render() {
     return (
@@ -35,20 +75,6 @@ Composant de formulaire Hipay qui affiche les champs hébergés pour la saisie d
           token: { value: '', status: 'idle' },
         }}
         proposalId="12345678"
-        paymentConfig={{
-          providers: {
-            MHIPAY: {
-              is_active: true,
-              settings: {
-                script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
-                username: '94675627.stage-secure-gateway.hipay-tpp.com',
-                password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
-                environment: 'stage',
-              },
-            },
-          },
-          featureFlip: {},
-        }}
       >
         <HipayForm />
       </MockedProvider>
@@ -168,20 +194,6 @@ export const ErrorTest: Story = {
           token: { value: '', status: 'idle' },
         }}
         proposalId="12345678"
-        paymentConfig={{
-          providers: {
-            MHIPAY: {
-              is_active: true,
-              settings: {
-                script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
-                username: '94675627.stage-secure-gateway.hipay-tpp.com',
-                password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
-                environment: 'stage',
-              },
-            },
-          },
-          featureFlip: {},
-        }}
       >
         <HipayFormWithSubmit />
       </MockedProvider>

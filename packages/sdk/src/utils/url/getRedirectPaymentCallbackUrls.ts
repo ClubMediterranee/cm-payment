@@ -1,13 +1,12 @@
 import { getPaymentConfig } from '../../providers/PaymentConfigProvider';
 import { OidcIssuerTypes } from '../../types/CapsSettings';
-import { PaymentProviderDisplayType } from '../../types/PaymentConfig';
 
 type CallbackUrls = { callback_url: string; callback_url_seller?: string };
 
 export function getRedirectPaymentCallbackUrls(
   paymentId: string,
   providerId: string,
-  displayType: PaymentProviderDisplayType = 'redirect',
+  displayType: string,
 ): CallbackUrls {
   const {
     paymentGatewayUrl,

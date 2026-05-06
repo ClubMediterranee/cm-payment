@@ -10,16 +10,7 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: false,
   maxAmount: 10000,
-  providersConfig: {
-    EVOXPAY: {
-      is_active: true,
-      display_type: 'redirect',
-    },
-    MHIPAY: {
-      is_active: true,
-      display_type: 'hosted_field',
-    },
-  },
+  getProviderValidation: () => undefined,
 };
 
 const createValidFormData = () => ({
