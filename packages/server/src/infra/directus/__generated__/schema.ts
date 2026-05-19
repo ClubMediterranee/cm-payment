@@ -241,7 +241,7 @@ export interface CapsProviderConfiguration {
   date_updated?: string | null;
   /** @description Locale code sourced from Club Med locales API. @required */
   locale: string;
-  display_type?: 'hosted_field' | 'iframe' | 'redirect' | 'custom' | null;
+  display_type?: 'host_fields' | 'iframe' | 'redirect' | 'custom' | null;
   provider_id?: CapsProvider | string | null;
   requires_token?: boolean | null;
   requires_expiry_date?: boolean | null;
@@ -259,7 +259,7 @@ export interface CapsProvider {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   /** @required */
-  default_display_type: 'hosted_field' | 'iframe' | 'redirect' | 'custom';
+  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom';
   image_url?: string | null;
   category_payment_method?:
     | 'credit_card'

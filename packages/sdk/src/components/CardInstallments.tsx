@@ -52,7 +52,7 @@ export const CardInstallments = () => {
     methods.setValue('payment_condition_id', selectedPaymentConditionId);
   };
 
-  if ((paymentConditions[selectedCardType] || []).length <= 1) return null;
+  if ((paymentConditions[selectedCardType] ?? []).length <= 1) return null;
 
   return (
     <FormPanel className="w-full flex flex-col md:flex-row gap-16">
@@ -84,7 +84,7 @@ export const CardInstallments = () => {
               disabled={!selectedCardType}
               errorMessage={formState.errors.payment_condition_id?.message as string}
             >
-              {(paymentConditions[selectedCardType] || []).map(
+              {(paymentConditions[selectedCardType] ?? []).map(
                 ({ payment_count: count, id: timeConditionId }) => {
                   const amountPerInstallment = Number(amount) / (count || 0);
 

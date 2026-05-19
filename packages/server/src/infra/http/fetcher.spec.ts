@@ -49,13 +49,11 @@ describe('fetcher', () => {
   });
 
   it('should make a GET request with all required headers', async () => {
-    // WHEN
     const result = await fetcher({
       url: '/test',
       method: 'GET',
     });
 
-    // THEN
     expect(mockHttpClient.fetch).toHaveBeenCalledWith({
       callee: 'API',
       url: 'https://api.clubmed.com/test',
@@ -72,11 +70,9 @@ describe('fetcher', () => {
   });
 
   it('should make a POST request with data and params', async () => {
-    // GIVEN
     const payload = { name: 'test' };
     const params = { id: '123' };
 
-    // WHEN
     await fetcher({
       url: '/users',
       method: 'POST',
@@ -84,7 +80,6 @@ describe('fetcher', () => {
       params,
     });
 
-    // THEN
     expect(mockHttpClient.fetch).toHaveBeenCalledWith({
       callee: 'API',
       url: 'https://api.clubmed.com/users',
@@ -100,7 +95,6 @@ describe('fetcher', () => {
   });
 
   it('should not include Accept-Language header when not present in context', async () => {
-    // GIVEN
     vi.mocked(context).mockReturnValue({
       request: {
         headers: {
@@ -109,13 +103,11 @@ describe('fetcher', () => {
       },
     } as any);
 
-    // WHEN
     await fetcher({
       url: '/test',
       method: 'GET',
     });
 
-    // THEN
     expect(mockHttpClient.fetch).toHaveBeenCalledWith(
       expect.objectContaining({
         headers: {
@@ -127,16 +119,13 @@ describe('fetcher', () => {
   });
 
   it('should handle missing context gracefully', async () => {
-    // GIVEN
     vi.mocked(context).mockReturnValue(undefined as any);
 
-    // WHEN
     await fetcher({
       url: '/test',
       method: 'GET',
     });
 
-    // THEN
     expect(mockHttpClient.fetch).toHaveBeenCalledWith(
       expect.objectContaining({
         headers: {
@@ -148,13 +137,11 @@ describe('fetcher', () => {
   });
 
   it('should use empty params object when params not provided', async () => {
-    // WHEN
     await fetcher({
       url: '/test',
       method: 'GET',
     });
 
-    // THEN
     expect(mockHttpClient.fetch).toHaveBeenCalledWith(
       expect.objectContaining({
         params: {},
@@ -163,14 +150,12 @@ describe('fetcher', () => {
   });
 
   it('should handle different HTTP methods', async () => {
-    // WHEN - PUT
     await fetcher({
       url: '/resource/1',
       method: 'PUT',
       data: { updated: true },
     });
 
-    // THEN
     expect(mockHttpClient.fetch).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'PUT',
@@ -178,13 +163,11 @@ describe('fetcher', () => {
       }),
     );
 
-    // WHEN - DELETE
     await fetcher({
       url: '/resource/2',
       method: 'DELETE',
     });
 
-    // THEN
     expect(mockHttpClient.fetch).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'DELETE',

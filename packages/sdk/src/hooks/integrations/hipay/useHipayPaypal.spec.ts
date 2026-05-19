@@ -34,13 +34,11 @@ describe('useHipayPaypal', () => {
 
     mockSetValue = vi.fn();
 
-    // Mock form element
     mockFormElement = document.createElement('form');
     mockFormElement.id = 'payment-form';
     mockFormElement.requestSubmit = vi.fn();
     document.body.appendChild(mockFormElement);
 
-    // Mock window.HiPay
     (window as any).HiPay = mockHiPay;
 
     vi.spyOn(useCapsConfigContext, 'useCapsConfigContext').mockReturnValue({

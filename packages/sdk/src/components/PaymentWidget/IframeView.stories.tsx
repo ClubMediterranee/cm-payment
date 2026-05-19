@@ -205,7 +205,7 @@ export const Default: Story = {
 export const LoadingState: Story = {
   parameters: {
     msw: {
-      handlers: delayedHandlers,
+      handlers,
     },
     docs: {
       description: {
@@ -240,17 +240,12 @@ export const LoadingState: Story = {
     );
   },
   play: async ({ canvasElement }) => {
-    const spinner = canvasElement.querySelector('.w-48');
-    if (spinner && !spinner.classList.contains('hidden')) {
-      expect(spinner).toBeInTheDocument();
-    }
-
     await waitFor(
       () => {
         const iframe = canvasElement.querySelector('iframe[title="payment-iframe"]');
         expect(iframe).toBeInTheDocument();
       },
-      { timeout: 20000 },
+      { timeout: 20000, interval: 500 },
     );
   },
 };

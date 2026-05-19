@@ -22,13 +22,11 @@ describe('useDisclosure', () => {
   it('should close when onClose is called', () => {
     const { result } = renderHook(() => useDisclosure());
 
-    // First open it
     act(() => {
       result.current.onOpen();
     });
     expect(result.current.isOpen).toBe(true);
 
-    // Then close it
     act(() => {
       result.current.onClose();
     });
@@ -38,10 +36,8 @@ describe('useDisclosure', () => {
   it('should work with multiple open/close cycles', () => {
     const { result } = renderHook(() => useDisclosure());
 
-    // Start closed
     expect(result.current.isOpen).toBe(false);
 
-    // Open -> Close -> Open
     act(() => {
       result.current.onOpen();
     });

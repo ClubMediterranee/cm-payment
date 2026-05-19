@@ -78,7 +78,6 @@ describe('PaymentSchedulesService', () => {
         commission_included: false,
         households: [
           {
-            // Household 1 : 2 adultes
             attendees: [
               { id: 'ps_attendee_0001', customer_id: '123456789' },
               { id: 'ps_attendee_0002', customer_id: '987654321' },
@@ -91,7 +90,6 @@ describe('PaymentSchedulesService', () => {
             ],
           },
           {
-            // Household 2 : 1 adulte + 1 enfant (ex)
             attendees: [
               { id: 'ps_attendee_0003', customer_id: '246801357' },
               { id: 'ps_attendee_0004', customer_id: '135792468' },
@@ -115,19 +113,15 @@ describe('PaymentSchedulesService', () => {
 
       expect(api.getV1ProposalsProposalIdPaymentSchedule).toHaveBeenCalledWith('123456');
       expect(Array.isArray(paymentSchedule)).toBe(true);
-      // 1) La sortie finale attendue est un tableau
       expect(Array.isArray(paymentSchedule)).toBe(true);
 
-      // 2) Comme payments.length >= 2 => on doit avoir 2 lignes (total + acompte/future balance)
       expect(paymentSchedule).toHaveLength(2);
 
-      // 3) Ligne 1: total + currency uniquement
       expect(paymentSchedule[0]).toEqual({
         amount: 2150,
         currency: 'EUR',
       });
 
-      // 4) Ligne 2: amount = payments[0].amount, deadline = payments[1].deadline, balance = payments[1].amount
       expect(paymentSchedule[1]).toEqual({
         amount: 500,
         currency: 'EUR',
@@ -135,7 +129,6 @@ describe('PaymentSchedulesService', () => {
         balance: 800,
       });
 
-      // 5) Vérifs additionnelles (types / présence)
       expect(paymentSchedule[0].deadline).toBeUndefined();
       expect(paymentSchedule[0].balance).toBeUndefined();
 
@@ -156,7 +149,6 @@ describe('PaymentSchedulesService', () => {
         commission_included: false,
         households: [
           {
-            // Household 1 : 2 adultes
             attendees: [
               { id: 'ps_attendee_0001', customer_id: '123456789' },
               { id: 'ps_attendee_0002', customer_id: '987654321' },
@@ -169,7 +161,6 @@ describe('PaymentSchedulesService', () => {
             ],
           },
           {
-            // Household 2 : 1 adulte + 1 enfant (ex)
             attendees: [
               { id: 'ps_attendee_0003', customer_id: '246801357' },
               { id: 'ps_attendee_0004', customer_id: '135792468' },
@@ -202,13 +193,10 @@ describe('PaymentSchedulesService', () => {
         paid: 1200,
         total: 3470,
         payment_schedules: [
-          // Échéance déjà passée / acompte (souvent déjà payé en pratique, mais l’API liste quand même le schedule)
           { amount: 1200, deadline: '2026-02-10' },
 
-          // Prochaine échéance
           { amount: 800, deadline: '2026-03-20' },
 
-          // Solde final
           { amount: 1470, deadline: '2026-04-20' },
         ],
       } as CustomerBookingPaymentScheduleModel);
@@ -251,7 +239,6 @@ describe('PaymentSchedulesService', () => {
 
       expect(paymentSchedule).toHaveLength(2);
 
-      // Ligne 2
       expect(paymentSchedule[1]).toMatchObject({
         amount: 1200, // payments[0].amount
         deadline: '2026-03-20', // payments[1].deadline (PAS 2026-02-10)
@@ -259,7 +246,6 @@ describe('PaymentSchedulesService', () => {
         currency: 'EUR',
       });
 
-      // On s'assure que la deadline du 1er payment n'est pas utilisée
       expect(paymentSchedule[1].deadline).not.toBe('2026-02-10');
     });
 
@@ -369,7 +355,6 @@ describe('PaymentSchedulesService', () => {
       expect(schedule[0].currency).toBe(''); // selectUpgradeSchedule: data.price?.currency || ''
       expect(schedule[0].amount).toBe(420);
 
-      // Important : pas de merge => pas de "balance", pas de ligne total sans deadline
       expect(schedule[0]).not.toHaveProperty('balance');
     });
   });

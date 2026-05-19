@@ -8,113 +8,7 @@ import { OidcIssuerTypes } from '../types/CapsSettings';
 import { PspProviders } from '../types/PspProviders';
 import { PaymentWidget } from './PaymentWidget';
 
-const createHandlers = (delayMs = 0) => [
-  http.get('*/rest/payment_config*', async () => {
-    if (delayMs) await delay(delayMs);
-    return Response.json({
-      feature_flips: {},
-      settings: {
-        days_before_trip_to_allow_free_deposit: 30,
-      },
-    });
-  }),
-  http.get('*/rest/payment_providers/proposal/*', async () => {
-    if (delayMs) await delay(delayMs);
-    return Response.json({
-      payment_providers: [
-        {
-          id: PspProviders.EPAYGATE,
-          label: 'Paygate',
-          connection_type: 'redirect',
-          category_payment_method: 'CreditCard',
-          billing_address_form: false,
-          required_delay_before_departure: 0,
-          configuration: {
-            display_type: 'iframe',
-            settings: {},
-            validation: { requires_token: false, requires_expiry_date: false },
-          },
-          payment_conditions: {},
-        },
-        {
-          id: PspProviders.HIPAY,
-          label: 'Hipay',
-          connection_type: 'HOSTED_FIELDS',
-          category_payment_method: 'CreditCard',
-          billing_address_form: false,
-          required_delay_before_departure: 0,
-          configuration: {
-            display_type: 'hosted_field',
-            settings: {
-              script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
-              username: '94675627.stage-secure-gateway.hipay-tpp.com',
-              password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
-              environment: 'stage',
-            },
-            validation: { requires_token: false, requires_expiry_date: false },
-          },
-          payment_conditions: {},
-        },
-        {
-          id: PspProviders.EVOXPAY,
-          label: 'Evoxpay',
-          connection_type: 'redirect',
-          category_payment_method: 'CreditCard',
-          billing_address_form: false,
-          required_delay_before_departure: 0,
-          configuration: {
-            display_type: 'redirect',
-            settings: {},
-            validation: { requires_token: false, requires_expiry_date: false },
-          },
-          payment_conditions: {},
-        },
-      ],
-      buy_now_pay_later_providers: [],
-    });
-  }),
-  http.get('*/v2/proposals/:proposalId', async () => {
-    if (delayMs) await delay(delayMs);
-    return Response.json({
-      households: [
-        {
-          attendees: [
-            {
-              customer_id: 'customer123',
-            },
-          ],
-        },
-      ],
-    });
-  }),
-  http.post('*/v3/bookings', async () => {
-    if (delayMs) await delay(delayMs);
-    return Response.json({
-      booking_id: 'booking123',
-    });
-  }),
-  http.post('*/v1/payments', async () => {
-    if (delayMs) await delay(delayMs);
-    return Response.json({
-      id: 'payment123',
-    });
-  }),
-  http.post('*/v0/payments/:paymentId/redirect_request', async () => {
-    if (delayMs) await delay(delayMs);
-    return Response.json({
-      url: 'https://payment.provider.com/iframe?payment_id=test123',
-      method: 'GET',
-    });
-  }),
-];
-
-const handlers = createHandlers();
-
 type IntegrationMode = 'iframe' | 'hosted_field' | 'redirect';
-
-type PaymentWidgetStoryArgs = {
-  integrationMode: IntegrationMode;
-};
 
 const getProviderByMode = (mode: IntegrationMode): PspProviders => {
   switch (mode) {
@@ -127,15 +21,85 @@ const getProviderByMode = (mode: IntegrationMode): PspProviders => {
   }
 };
 
+const createHandlers = (delayMs = 0, integrationMode: IntegrationMode = 'redirect') => {
+  const provider = getProviderByMode(integrationMode);
+
+  return [
+    http.get('*/v2/proposals/:proposalId', async () => {
+      if (delayMs) await delay(delayMs);
+      return Response.json({
+        households: [
+          {
+            attendees: [
+              {
+                customer_id: 'customer123',
+              },
+            ],
+          },
+        ],
+      });
+    }),
+    http.get('*/rest/payment_config*', () => {
+      return Response.json({
+        feature_flips: {},
+        settings: {
+          days_before_trip_to_allow_free_deposit: 30,
+        },
+      });
+    }),
+    http.get('*/rest/payment_providers/proposal/*', () => {
+      return Response.json({
+        payment_providers: [
+          {
+            id: provider,
+            label: provider,
+            category_payment_method: 'Card',
+            configuration: {
+              display_type: integrationMode,
+              settings: {},
+              validation: {
+                requires_token: integrationMode === 'hosted_field',
+                requires_expiry_date: false,
+              },
+            },
+            payment_conditions: {},
+          },
+        ],
+        buy_now_pay_later_providers: [],
+      });
+    }),
+    http.post('*/v3/bookings', async () => {
+      if (delayMs) await delay(delayMs);
+      return Response.json({
+        booking_id: 'booking123',
+      });
+    }),
+    http.post('*/v1/payments', async () => {
+      if (delayMs) await delay(delayMs);
+      return Response.json({
+        id: 'payment123',
+      });
+    }),
+    http.post('*/v0/payments/:paymentId/redirect_request', async () => {
+      if (delayMs) await delay(delayMs);
+      return Response.json({
+        url: 'https://payment.provider.com/iframe?payment_id=test123',
+        method: 'GET',
+      });
+    }),
+  ];
+};
+
+type PaymentWidgetStoryArgs = {
+  integrationMode: IntegrationMode;
+};
+
 const meta: Meta<PaymentWidgetStoryArgs> = {
   title: 'Components/PaymentWidget',
   component: PaymentWidget,
   loaders: [mswLoader],
   parameters: {
     layout: 'centered',
-    msw: {
-      handlers,
-    },
     docs: {
       description: {
         component: `
@@ -187,6 +151,9 @@ export const Default: Story = {
     integrationMode: 'redirect',
   },
   parameters: {
+    msw: {
+      handlers: createHandlers(0, 'redirect'),
+    },
     docs: {
       description: {
         story:
@@ -201,9 +168,28 @@ export const HostedField: Story = {
     integrationMode: 'hosted_field',
   },
   parameters: {
+    msw: {
+      handlers: createHandlers(0, 'hosted_field'),
+    },
     docs: {
       description: {
         story: 'PaymentWidget en mode hosted_field avec Hipay.',
+      },
+    },
+  },
+};
+
+export const Iframe: Story = {
+  args: {
+    integrationMode: 'iframe',
+  },
+  parameters: {
+    msw: {
+      handlers: createHandlers(0, 'iframe'),
+    },
+    docs: {
+      description: {
+        story: 'PaymentWidget en mode iframe avec Epaygate.',
       },
     },
   },

@@ -71,6 +71,7 @@ export const defaultContent: Content = {
     validation: {
       expiryDate: 'Expiry date is required',
       expired: 'Card is expired',
+      cardHolder: 'Cardholder name is required',
       cardNumber: 'Invalid card number',
       cardNumberRequired: 'Card number is required',
       cvc: 'Invalid security code',

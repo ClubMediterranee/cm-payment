@@ -5,6 +5,7 @@ import { Action } from '../types';
 import { CapsFormConfig } from '../types/CapsFormConfig';
 import { LocaleOrCountry } from '../types/LocaleOrCountry';
 import { validateBillingAddress } from './validations/validateBillingAddress';
+import { validateCardHolder } from './validations/validateCardHolder';
 import { validateDonation } from './validations/validateDonation';
 import { validateEmail } from './validations/validateEmail';
 import { validateExpiryDate } from './validations/validateExpiryDate';
@@ -91,6 +92,7 @@ export const capsFormSchema = ({
       creditCard: z
         .object({
           expiryDate: z.string().optional(),
+          cardHolder: z.string().optional(),
         })
         .optional(),
     })
@@ -100,6 +102,7 @@ export const capsFormSchema = ({
       const validations = [
         validateToken,
         validateExpiryDate,
+        validateCardHolder,
         validateEmail,
         validateMobilePhone,
         validateBillingAddress,

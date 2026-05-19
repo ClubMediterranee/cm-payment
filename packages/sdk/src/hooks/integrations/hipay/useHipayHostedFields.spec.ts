@@ -294,7 +294,6 @@ describe('useHipayHostedFields', () => {
       useHipayHostedFields({ fieldSelectors: mockFieldSelectors }),
     );
 
-    // Simulate form submission
     mockFormState.isSubmitting = true;
     rerender();
 
@@ -335,14 +334,12 @@ describe('useHipayHostedFields', () => {
 
     renderHook(() => useHipayHostedFields({ fieldSelectors: mockFieldSelectors }));
 
-    // Start token generation
     await act(async () => {
       changeCallback?.({ valid: true, errors: [] });
     });
 
     expect(mockSetValue).toHaveBeenCalledWith('token.status', 'pending');
 
-    // User changes input before first generation completes
     await act(async () => {
       inputChangeCallback?.({
         element: 'cardNumber',
@@ -358,7 +355,6 @@ describe('useHipayHostedFields', () => {
       });
     });
 
-    // Complete the first token generation (should be ignored)
     await act(async () => {
       resolveToken?.({ token: 'old-token-should-be-ignored' });
     });
@@ -367,7 +363,6 @@ describe('useHipayHostedFields', () => {
       expect(mockSetValue).toHaveBeenCalledWith('token.status', 'idle');
     });
 
-    // Verify the old token was not saved
     const setValueCalls = mockSetValue.mock.calls;
     const tokenSetCalls = setValueCalls.filter(
       (call) => call[0] === 'token' && typeof call[1] === 'object',

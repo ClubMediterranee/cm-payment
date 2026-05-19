@@ -67,6 +67,7 @@ export type Content = {
       cardNumber: string;
       cardNumberRequired: string;
       cvc: string;
+      cardHolder: string;
       cvcRequired: string;
     };
   };
