@@ -466,7 +466,8 @@ export const BuyNowPayLaterOney: Story = {
           const url = new URL(request.url);
           const payment_mode = url.searchParams.get('payment_mode') || '3x';
           return Response.json({
-            payment_providers: [
+            payment_providers: [],
+            buy_now_pay_later_providers: [
               {
                 id: 'EHIPAYBNPL',
                 label: 'Oney',
@@ -492,7 +493,6 @@ export const BuyNowPayLaterOney: Story = {
                 payment_conditions: {},
               },
             ],
-            buy_now_pay_later_providers: [],
           });
         }),
       ],
@@ -538,9 +538,10 @@ export const BuyNowPayLaterUplift: Story = {
             settings: {},
           });
         }),
-        http.get('*/rest/payment_providers/booking/*', () => {
+        http.get('*/rest/payment_providers/proposal/*', () => {
           return Response.json({
-            payment_providers: [
+            payment_providers: [],
+            buy_now_pay_later_providers: [
               {
                 id: 'MUPLIFT',
                 label: 'Uplift',
@@ -565,7 +566,6 @@ export const BuyNowPayLaterUplift: Story = {
                 payment_conditions: {},
               },
             ],
-            buy_now_pay_later_providers: [],
           });
         }),
       ],

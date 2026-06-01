@@ -196,6 +196,111 @@ describe('useUpliftOrder', () => {
     expect(result.current?.order_amount).toBe(123456);
   });
 
+  it('returns null when a plane transport query yields no journeys yet', () => {
+    mockUseWatch.mockReturnValue('500');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260601',
+        resortDepartureDate: '20260607',
+        transportTypes: ['PLANE'],
+        roomCount: 1,
+      },
+    } as any);
+    mockUseTransportDetails.mockReturnValue({
+      data: { tripType: 'roundtrip', journeys: [] },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current).toBeNull();
+  });
+
+  it('maps transport journeys to air_reservations when transport data is present', () => {
+    mockUseWatch.mockReturnValue('1500');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260601',
+        resortDepartureDate: '20260607',
+        transportTypes: ['PLANE'],
+        roomCount: 1,
+      },
+    } as any);
+    mockUseTransportDetails.mockReturnValue({
+      data: {
+        tripType: 'roundtrip',
+        journeys: [
+          {
+            airlineName: 'Air France',
+            originAirport: 'CDG',
+            destinationAirport: 'MRU',
+            segments: [
+              {
+                departureAirport: 'CDG',
+                departureDate: '20260601T0800',
+                arrivalAirport: 'MRU',
+                arrivalDate: '20260601T2000',
+                fareClass: 'Y',
+                carrierCode: 'AF',
+              },
+            ],
+          },
+        ],
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.air_reservations).toEqual([
+      {
+        airline_name: 'Air France',
+        origin: 'CDG',
+        destination: 'MRU',
+        trip_type: 'roundtrip',
+        itinerary: [
+          {
+            departure_apc: 'CDG',
+            departure_time: '20260601T0800',
+            arrival_apc: 'MRU',
+            arrival_time: '20260601T2000',
+            fare_class: 'Y',
+            carrier_code: 'AF',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('falls back to oneway trip_type when transport data is partially missing', () => {
+    mockUseWatch.mockReturnValue('900');
+    mockUseStay.mockReturnValue({
+      data: {
+        productId: 'PCAC',
+        resortArrivalDate: '20260601',
+        resortDepartureDate: '20260607',
+        transportTypes: [],
+        roomCount: 1,
+      },
+    } as any);
+    mockUseTransportDetails.mockReturnValue({
+      data: {
+        journeys: [
+          {
+            airlineName: 'Air France',
+            originAirport: 'CDG',
+            destinationAirport: 'MRU',
+            segments: [],
+          },
+        ],
+      },
+    } as any);
+
+    const { result } = renderHook(() => useUpliftOrder());
+
+    expect(result.current?.air_reservations[0].trip_type).toBe('oneway');
+  });
+
   it('should update order when amount changes', () => {
     mockUseWatch.mockReturnValue('500');
     mockUseStay.mockReturnValue({

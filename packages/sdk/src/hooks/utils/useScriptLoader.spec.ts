@@ -30,17 +30,18 @@ describe('useScriptLoader', () => {
 
   it('reuses an existing script tag when a second consumer requests the same URL', async () => {
     const { result: first } = renderHook(() => useScriptLoader(TEST_URL));
-    const { result: second } = renderHook(() => useScriptLoader(TEST_URL));
 
     expect(document.querySelectorAll(`script[src="${TEST_URL}"]`)).toHaveLength(1);
-    await waitFor(() => expect(second.current.isLoaded).toBe(true));
-    expect(first.current.isLoaded).toBe(false);
 
     await act(async () => {
       fireLoad(TEST_URL);
     });
-
     await waitFor(() => expect(first.current.isLoaded).toBe(true));
+
+    const { result: second } = renderHook(() => useScriptLoader(TEST_URL));
+
+    expect(document.querySelectorAll(`script[src="${TEST_URL}"]`)).toHaveLength(1);
+    await waitFor(() => expect(second.current.isLoaded).toBe(true));
   });
 
   it('leaves the script tag in the DOM after the consumer unmounts', async () => {

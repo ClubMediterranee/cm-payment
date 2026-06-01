@@ -9,6 +9,51 @@ import { OidcIssuerTypes } from '../../types/CapsSettings';
 import { IframeView } from './IframeView';
 
 const createHandlers = (delayMs = 0) => [
+  http.get('*/rest/payment_config*', async () => {
+    if (delayMs) await delay(delayMs);
+    return Response.json({
+      feature_flips: {},
+      settings: {
+        days_before_trip_to_allow_free_deposit: 30,
+      },
+    });
+  }),
+  http.get('*/rest/payment_providers/proposal/*', async () => {
+    if (delayMs) await delay(delayMs);
+    return Response.json({
+      payment_providers: [
+        {
+          id: 'EPAYGATE',
+          label: 'Paygate',
+          connection_type: 'redirect',
+          category_payment_method: 'CreditCard',
+          billing_address_form: false,
+          required_delay_before_departure: 0,
+          configuration: {
+            display_type: 'iframe',
+            settings: {},
+            validation: { requires_token: false, requires_expiry_date: false },
+          },
+          payment_conditions: {},
+        },
+        {
+          id: 'EGLOBALCOLLECT',
+          label: 'GlobalCollect',
+          connection_type: 'redirect',
+          category_payment_method: 'CreditCard',
+          billing_address_form: false,
+          required_delay_before_departure: 0,
+          configuration: {
+            display_type: 'iframe',
+            settings: {},
+            validation: { requires_token: false, requires_expiry_date: false },
+          },
+          payment_conditions: {},
+        },
+      ],
+      buy_now_pay_later_providers: [],
+    });
+  }),
   http.get('*/v2/proposals/:proposalId', async () => {
     if (delayMs) await delay(delayMs);
     return Response.json({

@@ -140,7 +140,12 @@ const defaultHandlersWithInstallments = [
             requires_expiry_date: false,
           },
         },
-        payment_conditions: {},
+        payment_conditions: Object.fromEntries(
+          (provider.payment_methods || []).map((method) => [
+            method.label,
+            method.time_payment_conditions || [],
+          ]),
+        ),
       })),
       buy_now_pay_later_providers: [],
     });
