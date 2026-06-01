@@ -1,4 +1,4 @@
-import type { PaymentProvider1 } from '../../__generated__/index.schemas';
+import type { PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem } from '../../__generated__/bff/index.schemas';
 import { PspProviders } from '../../types/PspProviders';
 import { OneyOption } from './integrations/OneyOption';
 import { UpliftOption } from './integrations/UpliftOption';
@@ -9,7 +9,7 @@ const BNPL_OPTION_COMPONENTS = {
 } as const;
 
 type BnplOptionProps = {
-  provider: PaymentProvider1;
+  provider: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem;
   name: string;
   onChange: (value: string) => void;
 };

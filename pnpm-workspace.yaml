@@ -1,6 +1,14 @@
 packages:
   - packages/*
 
+allowBuilds:
+  "@scarf/scarf": false
+  "@swc/core": false
+  core-js: false
+  core-js-pure: false
+  esbuild: false
+  msw: false
+
 onlyBuiltDependencies:
   - "@scarf/scarf"
   - "@swc/core"

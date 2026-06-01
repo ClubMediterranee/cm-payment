@@ -1,8 +1,9 @@
-import { PlatformTest } from '@tsed/common';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { InternalServerError } from '@tsed/exceptions';
+import { PlatformTest } from '@tsed/platform-http/testing';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { OidcIssuerTypes } from '../../../models/payment_config/OidcIssuerTypes.js';
 import { PaymentConfigService } from '../../../services/payment_config/PaymentConfigService.js';
+import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
 import { PaymentConfigController } from './PaymentConfigController.js';
 
 describe('PaymentConfigController', () => {
@@ -10,7 +11,10 @@ describe('PaymentConfigController', () => {
   let service: PaymentConfigService;
 
   beforeEach(async () => {
-    await PlatformTest.create();
+    await PlatformTest.create({
+      DIRECTUS_URL: 'http://localhost',
+      DIRECTUS_API_TOKEN: 'test-token',
+    });
 
     controller = await PlatformTest.invoke<PaymentConfigController>(PaymentConfigController);
     service = await PlatformTest.get<PaymentConfigService>(PaymentConfigService);
@@ -20,29 +24,16 @@ describe('PaymentConfigController', () => {
 
   describe('GET /payment_config', () => {
     const mockPaymentConfig = {
-      featureFlip: {
-        isFreeDepositEnabled: true,
-      },
-      settings: {
-        daysBeforeTripToAllowFreeDeposit: 90,
-      },
+      feature_flips: { is_free_deposit_enabled: true },
+      settings: { days_before_trip_to_allow_free_deposit: 90 },
     };
 
     beforeEach(() => {
       vi.spyOn(service, 'getPaymentConfig').mockResolvedValue(mockPaymentConfig as any);
     });
 
-    it('should return payment config for valid parameters', async () => {
-      const ctx = {
-        request: {
-          headers: {
-            'accept-language': 'fr-FR',
-            'x-issuer-type': OidcIssuerTypes.GM,
-          },
-        },
-      } as any;
-
-      const result = await controller.getPaymentConfig(ctx);
+    it('should delegate to the service with locale and issuer type', async () => {
+      const result = await controller.getPaymentConfig('fr-FR', OidcIssuerTypes.GM);
 
       expect(result).toEqual(mockPaymentConfig);
       expect(service.getPaymentConfig).toHaveBeenCalledWith({
@@ -51,58 +42,29 @@ describe('PaymentConfigController', () => {
       });
     });
 
-    it('should handle GO issuer type', async () => {
-      const ctx = {
-        request: {
-          headers: {
-            'accept-language': 'fr-FR',
-            'x-issuer-type': OidcIssuerTypes.GO,
-          },
-        },
-      } as any;
-
-      const result = await controller.getPaymentConfig(ctx);
-
-      expect(result).toEqual(mockPaymentConfig);
+    it('should pass through GO and PARTNERS issuer types', async () => {
+      await controller.getPaymentConfig('fr-FR', OidcIssuerTypes.GO);
       expect(service.getPaymentConfig).toHaveBeenCalledWith({
         locale: 'fr-FR',
         issuerType: OidcIssuerTypes.GO,
       });
-    });
 
-    it('should handle PARTNERS issuer type', async () => {
-      const ctx = {
-        request: {
-          headers: {
-            'accept-language': 'en-US',
-            'x-issuer-type': OidcIssuerTypes.PARTNERS,
-          },
-        },
-      } as any;
-
-      const result = await controller.getPaymentConfig(ctx);
-
-      expect(result).toEqual(mockPaymentConfig);
+      await controller.getPaymentConfig('en-US', OidcIssuerTypes.PARTNERS);
       expect(service.getPaymentConfig).toHaveBeenCalledWith({
         locale: 'en-US',
         issuerType: OidcIssuerTypes.PARTNERS,
       });
     });
 
-    it('should propagate service errors', async () => {
-      const error = new Error('CMS error');
-      vi.spyOn(service, 'getPaymentConfig').mockRejectedValue(error);
+    it('should wrap service errors in an InternalServerError', async () => {
+      vi.spyOn(service, 'getPaymentConfig').mockRejectedValue(new Error('Directus error'));
 
-      const ctx = {
-        request: {
-          headers: {
-            'accept-language': 'fr-FR',
-            'x-issuer-type': OidcIssuerTypes.GM,
-          },
-        },
-      } as any;
-
-      await expect(controller.getPaymentConfig(ctx)).rejects.toThrow('CMS error');
+      await expect(controller.getPaymentConfig('fr-FR', OidcIssuerTypes.GM)).rejects.toThrow(
+        InternalServerError,
+      );
+      await expect(controller.getPaymentConfig('fr-FR', OidcIssuerTypes.GM)).rejects.toThrow(
+        /Failed to fetch payment configuration/,
+      );
     });
   });
 });

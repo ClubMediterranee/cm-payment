@@ -11,8 +11,8 @@ export interface GetPaymentProvidersParams {
 
 export interface ProviderConfigMap {
   [providerId: string]: {
-    is_active: boolean;
-    display_type?: 'hosted_field' | 'iframe' | 'redirect';
-    settings?: Record<string, unknown>;
+    display_type: 'hosted_field' | 'iframe' | 'redirect';
+    settings: Record<string, unknown>;
+    [key: string]: unknown;
   };
 }

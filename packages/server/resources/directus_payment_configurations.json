@@ -1,0 +1,33 @@
+[
+  {
+    "key": "is_paypal_button_enabled",
+    "description": "Enable PayPal button in payment options",
+    "type": "boolean",
+    "value": false,
+    "overrides": [
+      {
+        "locale": "de-DE",
+        "issuer": "GM",
+        "value": true
+      }
+    ]
+  },
+  {
+    "key": "days_before_trip_to_allow_free_deposit",
+    "description": "Number of days before trip departure to allow free deposit (varies by issuer type: GM vs Seller)",
+    "type": "number",
+    "value": 999,
+    "overrides": [
+      {
+        "locale": "*",
+        "issuer": "GO",
+        "value": 3
+      },
+      {
+        "locale": "*",
+        "issuer": "PARTNERS",
+        "value": 3
+      }
+    ]
+  }
+]

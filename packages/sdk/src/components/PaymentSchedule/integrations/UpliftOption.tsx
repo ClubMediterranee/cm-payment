@@ -1,7 +1,7 @@
 import { Icon } from '@clubmed/trident-icons';
 import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
 
-import type { PaymentProvider1 } from '../../../__generated__/index.schemas';
+import type { PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem } from '../../../__generated__/bff/index.schemas';
 import { useUplift } from '../../../hooks/integrations/uplift/useUplift';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext';
 import { useWatch } from '../../../hooks/utils/useForm';
@@ -15,7 +15,7 @@ const getCurrencySymbol = (locale: string, currency: string): string => {
 };
 
 type UpliftOptionProps = {
-  provider: PaymentProvider1;
+  provider: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem;
   name: string;
   onChange: (value: string) => void;
 };

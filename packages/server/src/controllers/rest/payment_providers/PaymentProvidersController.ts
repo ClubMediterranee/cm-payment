@@ -1,8 +1,12 @@
 import { Controller, Inject } from '@tsed/di';
-import { Context, PathParams, QueryParams } from '@tsed/platform-params';
+import { BadRequest } from '@tsed/exceptions';
+import { PathParams, QueryParams } from '@tsed/platform-params';
 import { Enum, Get, Returns, Summary } from '@tsed/schema';
 
+import { IssuerType } from '../../../decorators/IssuerType.js';
+import { Locale } from '../../../decorators/Locale.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
+import { PaymentProvidersResponse } from '../../../services/payment_providers/models.js';
 import { PaymentProvidersService } from '../../../services/payment_providers/PaymentProvidersService.js';
 
 const EnrichedPaymentProviderSchema: any = {
@@ -22,16 +26,8 @@ const EnrichedPaymentProviderSchema: any = {
               type: 'object',
               additionalProperties: true,
             },
-            validation: {
-              type: 'object',
-              properties: {
-                requires_token: { type: 'boolean' },
-                requires_expiry_date: { type: 'boolean' },
-              },
-              required: ['requires_token', 'requires_expiry_date'],
-            },
           },
-          required: ['display_type', 'settings', 'validation'],
+          required: ['display_type', 'settings'],
         },
         payment_conditions: {
           type: 'object',
@@ -55,6 +51,7 @@ const PaymentProvidersResponseSchema: any = {
       items: EnrichedPaymentProviderSchema,
     },
   },
+  required: ['payment_providers', 'buy_now_pay_later_providers'],
 };
 
 @Controller('/payment_providers')
@@ -68,14 +65,12 @@ export class PaymentProvidersController {
   async getPaymentProviders(
     @Enum('booking', 'proposal') @PathParams('type') type: 'booking' | 'proposal',
     @PathParams('id') id: string,
-    @Context() ctx: Context,
+    @Locale() locale: string,
+    @IssuerType() issuerType: OidcIssuerTypes,
     @QueryParams('customer_id') customerId?: string,
-  ): Promise<any> {
-    const locale = ctx.request.headers['accept-language'] || 'fr-FR';
-    const issuerType = ctx.request.headers['x-issuer-type'] as OidcIssuerTypes;
-
+  ): Promise<PaymentProvidersResponse> {
     if (type === 'booking' && !customerId) {
-      throw new Error('customer_id is required for booking type');
+      throw new BadRequest('customer_id is required for booking type');
     }
 
     return this.paymentProvidersService.getPaymentProviders({

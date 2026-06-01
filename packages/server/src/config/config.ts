@@ -35,7 +35,8 @@ export const config: Partial<TsED.Configuration> = {
   httpPort: process.env['PORT'] || 8083,
   httpsPort: false, // CHANGE
   CLUBMED_API_URL: process.env['API_TARGET'] || 'https://api.integ.clubmed.com',
-  CMS_URL: process.env['CMS_URL'] || 'https://cms.integ.clubmed.com',
+  DIRECTUS_URL: process.env['DIRECTUS_URL'] || 'https://staging.cms.api.clubmed',
+  DIRECTUS_API_TOKEN: process.env['DIRECTUS_API_TOKEN'] || '',
   mount: {
     '/rest': [...Object.values(rest)],
   },

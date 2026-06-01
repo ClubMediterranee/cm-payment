@@ -2,13 +2,12 @@ import { Inject, Service } from '@tsed/di';
 
 import { getV1PaymentProviders } from '../../infra/api/__generated__/index.js';
 import { PaymentProvider1 } from '../../infra/api/__generated__/index.schemas.js';
+import { parseApiDate } from '../../utils/parseApiDate.js';
 import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
 import { Stay } from '../stay/models.js';
 import { StayService } from '../stay/StayService.js';
 import { PaymentProvidersResponse } from './models.js';
 import { GetPaymentProvidersParams, ProviderConfigMap } from './types.js';
-import { enrichWithConfig } from './utils/enrichWithConfig.js';
-import { enrichWithPaymentConditions } from './utils/enrichWithPaymentConditions.js';
 import { sortTimePaymentConditions } from './utils/sortTimePaymentConditions.js';
 import { splitByCategory } from './utils/splitByCategory.js';
 
@@ -29,7 +28,7 @@ export class PaymentProvidersService {
   }: GetPaymentProvidersParams): Promise<PaymentProvidersResponse> {
     const [paymentProvidersConfig, paymentProviders]: [ProviderConfigMap, PaymentProvider1[]] =
       await Promise.all([
-        this.paymentConfigService.getPaymentProvidersConfig({ locale, issuerType }),
+        this.paymentConfigService.getPaymentProvidersConfig({ locale }),
         getV1PaymentProviders(),
       ]);
 
@@ -37,22 +36,34 @@ export class PaymentProvidersService {
     const stay = shouldFetchStay ? await this.stayService.getStay({ type, id, customerId }) : null;
 
     return paymentProviders
-      .filter((provider) => this.isActiveProvider(provider, paymentProvidersConfig))
-      .filter((provider) => this.isWithinDepartureDate(provider, paymentProvidersConfig, stay))
-      .map((provider) => enrichWithConfig([provider], paymentProvidersConfig)[0])
-      .map(sortTimePaymentConditions)
-      .map(enrichWithPaymentConditions)
+      .filter((provider) => !!paymentProvidersConfig[provider.id])
+      .filter((provider) =>
+        this.isBeforeMinimumDepartureWindow(provider, paymentProvidersConfig, stay),
+      )
+      .filter((provider) => this.isValidConnectionType(provider, issuerType))
+      .map((provider) => {
+        const payment_methods = sortTimePaymentConditions(provider.payment_methods);
+        const payment_conditions = Object.fromEntries(
+          (payment_methods ?? []).map((method) => [
+            method.label || method.id,
+            method.time_payment_conditions ?? [],
+          ]),
+        );
+
+        return {
+          ...provider,
+          payment_methods,
+          configuration: paymentProvidersConfig[provider.id],
+          payment_conditions,
+        };
+      })
       .reduce(splitByCategory, {
         payment_providers: [],
         buy_now_pay_later_providers: [],
       });
   }
 
-  private isActiveProvider(provider: PaymentProvider1, config: ProviderConfigMap): boolean {
-    return config[provider.id]?.is_active === true;
-  }
-
-  private isWithinDepartureDate(
+  private isBeforeMinimumDepartureWindow(
     provider: PaymentProvider1,
     config: ProviderConfigMap,
     stay: Stay | null,
@@ -63,8 +74,15 @@ export class PaymentProvidersService {
     const minDays = providerConfig?.settings?.min_days_before_departure;
     if (!minDays) return true;
 
-    const daysUntilDeparture = this.daysUntilToday(new Date(stay.resortArrivalDate));
+    const arrival = parseApiDate(stay.resortArrivalDate);
+    if (!arrival) return true;
+
+    const daysUntilDeparture = this.daysUntilToday(arrival);
     return daysUntilDeparture < Number(minDays);
+  }
+
+  private isValidConnectionType(provider: PaymentProvider1, issuerType?: string): boolean {
+    return issuerType !== 'GM' || provider.connection_type !== 'Manual';
   }
 
   private daysUntilToday(date: Date): number {
@@ -76,7 +94,7 @@ export class PaymentProvidersService {
   private shouldFetchStay(providers: PaymentProvider1[], config: ProviderConfigMap): boolean {
     return providers.some((provider) => {
       const providerConfig = config[provider.id];
-      return providerConfig?.is_active && !!providerConfig?.settings?.min_days_before_departure;
+      return !!providerConfig?.settings?.min_days_before_departure;
     });
   }
 }
