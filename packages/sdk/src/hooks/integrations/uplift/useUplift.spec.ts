@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { UpliftStatus } from '../../../types/Uplift';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatch } from '../../utils/useForm';
-import { useWatchedPaymentProvider } from '../../utils/useWatchedPaymentProvider';
+import { usePaymentProviderSettings } from '../../utils/usePaymentProviderSettings';
 import { useUplift } from './useUplift';
 import { useUpliftOrder } from './useUpliftOrder';
 
@@ -20,8 +20,8 @@ vi.mock('react-hook-form', () => ({
   useFormContext: vi.fn(),
 }));
 
-vi.mock('../../utils/useWatchedPaymentProvider', () => ({
-  useWatchedPaymentProvider: vi.fn(),
+vi.mock('../../utils/usePaymentProviderSettings', () => ({
+  usePaymentProviderSettings: vi.fn(),
 }));
 
 vi.mock('../../utils/useCapsConfigContext', () => ({
@@ -33,7 +33,7 @@ vi.mock('../../utils/useForm', () => ({
 }));
 
 const mockUseFormContext = vi.mocked(useFormContext);
-const mockUseWatchedPaymentProvider = vi.mocked(useWatchedPaymentProvider);
+const mockUsePaymentProviderSettings = vi.mocked(usePaymentProviderSettings);
 const mockUseCapsConfigContext = vi.mocked(useCapsConfigContext);
 const mockUseWatch = vi.mocked(useWatch);
 const mockUseUpliftOrder = vi.mocked(useUpliftOrder);
@@ -81,15 +81,9 @@ describe('useUplift', () => {
       locale: 'en-US',
     } as any);
 
-    mockUseWatchedPaymentProvider.mockReturnValue({
-      id: 'MUPLIFT',
-      configuration: {
-        display_type: 'iframe',
-        settings: {
-          code: 'uplift-code-123',
-          api_key: 'test-api-key',
-        },
-      },
+    mockUsePaymentProviderSettings.mockReturnValue({
+      code: 'uplift-code-123',
+      api_key: 'test-api-key',
     } as any);
 
     mockUseWatch.mockReturnValue('USD');
@@ -114,15 +108,9 @@ describe('useUplift', () => {
   });
 
   it('should not set upReady when code is missing', () => {
-    mockUseWatchedPaymentProvider.mockReturnValue({
-      id: 'MUPLIFT',
-      configuration: {
-        display_type: 'iframe',
-        settings: {
-          code: undefined,
-          api_key: 'test-api-key',
-        },
-      },
+    mockUsePaymentProviderSettings.mockReturnValue({
+      code: undefined,
+      api_key: 'test-api-key',
     } as any);
 
     renderHook(() => useUplift());
@@ -166,10 +154,10 @@ describe('useUplift', () => {
     expect(mockUseWatch).toHaveBeenCalledWith('currency');
   });
 
-  it('should call useWatchedPaymentProvider', () => {
+  it('should call usePaymentProviderSettings with MUPLIFT', () => {
     renderHook(() => useUplift());
 
-    expect(mockUseWatchedPaymentProvider).toHaveBeenCalled();
+    expect(mockUsePaymentProviderSettings).toHaveBeenCalledWith('MUPLIFT');
   });
 
   it('initialises Uplift Payments when window.Uplift is available at upReady time', () => {

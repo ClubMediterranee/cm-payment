@@ -2,13 +2,13 @@ import { renderHook } from '@testing-library/react';
 
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatch } from '../../utils/useForm';
+import { usePaymentProviderSettings } from '../../utils/usePaymentProviderSettings';
 import { useScriptLoader } from '../../utils/useScriptLoader';
-import { useWatchedPaymentProvider } from '../../utils/useWatchedPaymentProvider';
 import { getOneyPopinOptions, loadOneySimulationPopin } from './oney';
 import { useOneySimulationPopin } from './useOneySimulationPopin';
 
-vi.mock('../../utils/useWatchedPaymentProvider', () => ({
-  useWatchedPaymentProvider: vi.fn(),
+vi.mock('../../utils/usePaymentProviderSettings', () => ({
+  usePaymentProviderSettings: vi.fn(),
 }));
 
 vi.mock('../../utils/useCapsConfigContext', () => ({
@@ -28,7 +28,7 @@ vi.mock('./oney', () => ({
   loadOneySimulationPopin: vi.fn(),
 }));
 
-const mockUseWatchedPaymentProvider = vi.mocked(useWatchedPaymentProvider);
+const mockUsePaymentProviderSettings = vi.mocked(usePaymentProviderSettings);
 const mockUseCapsConfigContext = vi.mocked(useCapsConfigContext);
 const mockUseWatch = vi.mocked(useWatch);
 const mockUseScriptLoader = vi.mocked(useScriptLoader);
@@ -46,16 +46,10 @@ describe('useOneySimulationPopin', () => {
 
     mockUseWatch.mockReturnValue('999.99');
 
-    mockUseWatchedPaymentProvider.mockReturnValue({
-      id: 'EHIPAYBNPL',
-      configuration: {
-        display_type: 'redirect',
-        settings: {
-          merchant_id: 'merchant-123',
-          payment_mode: '3x',
-          script_url: 'https://oney.com/script.js',
-        },
-      },
+    mockUsePaymentProviderSettings.mockReturnValue({
+      merchant_id: 'merchant-123',
+      payment_mode: '3x',
+      script_url: 'https://oney.com/script.js',
     } as any);
 
     mockUseScriptLoader.mockReturnValue({
@@ -128,10 +122,10 @@ describe('useOneySimulationPopin', () => {
     expect(mockUseScriptLoader).toHaveBeenCalledWith('https://oney.com/script.js');
   });
 
-  it('should call useWatchedPaymentProvider', () => {
+  it('should call usePaymentProviderSettings with EHIPAYBNPL', () => {
     renderHook(() => useOneySimulationPopin());
 
-    expect(mockUseWatchedPaymentProvider).toHaveBeenCalled();
+    expect(mockUsePaymentProviderSettings).toHaveBeenCalledWith('EHIPAYBNPL');
   });
 
   it('should watch amount from form', () => {
@@ -141,16 +135,10 @@ describe('useOneySimulationPopin', () => {
   });
 
   it('should handle 4x payment mode', () => {
-    mockUseWatchedPaymentProvider.mockReturnValue({
-      id: 'EHIPAYBNPL',
-      configuration: {
-        display_type: 'redirect',
-        settings: {
-          merchant_id: 'merchant-456',
-          payment_mode: '4x',
-          script_url: 'https://oney.com/script.js',
-        },
-      },
+    mockUsePaymentProviderSettings.mockReturnValue({
+      merchant_id: 'merchant-456',
+      payment_mode: '4x',
+      script_url: 'https://oney.com/script.js',
     } as any);
 
     const { result } = renderHook(() => useOneySimulationPopin());

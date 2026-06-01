@@ -1,16 +1,20 @@
 import { useCallback } from 'react';
 
+import { PspProviders } from '../../../types/PspProviders';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatch } from '../../utils/useForm';
+import { usePaymentProviderSettings } from '../../utils/usePaymentProviderSettings';
 import { useScriptLoader } from '../../utils/useScriptLoader';
-import { useWatchedPaymentProvider } from '../../utils/useWatchedPaymentProvider';
 import { getOneyPopinOptions, loadOneySimulationPopin } from './oney';
 
 export const useOneySimulationPopin = () => {
   const { language, country } = useCapsConfigContext();
   const watchedAmount = useWatch('amount');
-  const provider = useWatchedPaymentProvider();
-  const { merchant_id, payment_mode, script_url } = provider?.configuration?.settings || {};
+  const { merchant_id, payment_mode, script_url } = usePaymentProviderSettings<{
+    merchant_id: string;
+    payment_mode: string;
+    script_url: string;
+  }>(PspProviders.EHIPAYBNPL);
 
   const { isLoaded } = useScriptLoader(script_url);
 
