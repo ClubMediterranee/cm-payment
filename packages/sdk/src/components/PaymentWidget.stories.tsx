@@ -9,6 +9,70 @@ import { PspProviders } from '../types/PspProviders';
 import { PaymentWidget } from './PaymentWidget';
 
 const createHandlers = (delayMs = 0) => [
+  http.get('*/rest/payment_config*', async () => {
+    if (delayMs) await delay(delayMs);
+    return Response.json({
+      feature_flips: {},
+      settings: {
+        days_before_trip_to_allow_free_deposit: 30,
+      },
+    });
+  }),
+  http.get('*/rest/payment_providers/proposal/*', async () => {
+    if (delayMs) await delay(delayMs);
+    return Response.json({
+      payment_providers: [
+        {
+          id: PspProviders.EPAYGATE,
+          label: 'Paygate',
+          connection_type: 'redirect',
+          category_payment_method: 'CreditCard',
+          billing_address_form: false,
+          required_delay_before_departure: 0,
+          configuration: {
+            display_type: 'iframe',
+            settings: {},
+            validation: { requires_token: false, requires_expiry_date: false },
+          },
+          payment_conditions: {},
+        },
+        {
+          id: PspProviders.HIPAY,
+          label: 'Hipay',
+          connection_type: 'HOSTED_FIELDS',
+          category_payment_method: 'CreditCard',
+          billing_address_form: false,
+          required_delay_before_departure: 0,
+          configuration: {
+            display_type: 'hosted_field',
+            settings: {
+              script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
+              username: '94675627.stage-secure-gateway.hipay-tpp.com',
+              password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
+              environment: 'stage',
+            },
+            validation: { requires_token: false, requires_expiry_date: false },
+          },
+          payment_conditions: {},
+        },
+        {
+          id: PspProviders.EVOXPAY,
+          label: 'Evoxpay',
+          connection_type: 'redirect',
+          category_payment_method: 'CreditCard',
+          billing_address_form: false,
+          required_delay_before_departure: 0,
+          configuration: {
+            display_type: 'redirect',
+            settings: {},
+            validation: { requires_token: false, requires_expiry_date: false },
+          },
+          payment_conditions: {},
+        },
+      ],
+      buy_now_pay_later_providers: [],
+    });
+  }),
   http.get('*/v2/proposals/:proposalId', async () => {
     if (delayMs) await delay(delayMs);
     return Response.json({
@@ -106,18 +170,6 @@ Composant PaymentWidget qui affiche le bon composant de paiement selon le mode d
           },
         }}
         proposalId="12345678"
-        paymentConfig={{
-          providers: {
-            [provider]: {
-              is_active: true,
-              display_type: integrationMode,
-            },
-          },
-          feature_flips: {},
-          settings: {
-            days_before_trip_to_allow_free_deposit: 30,
-          },
-        }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
         <PaymentWidget />

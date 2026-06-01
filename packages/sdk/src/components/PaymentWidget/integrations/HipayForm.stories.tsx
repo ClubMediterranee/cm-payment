@@ -4,6 +4,7 @@ import { mswLoader } from 'msw-storybook-addon';
 import { expect, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../../../__fixtures__/MockedProvider';
+import { PspProviders } from '../../../types/PspProviders';
 import { HipayForm } from './HipayForm';
 
 const HipayFormWithSubmit = () => {
@@ -38,16 +39,16 @@ Composant de formulaire Hipay qui affiche les champs hébergés pour la saisie d
             settings: {},
           });
         }),
-        http.get('*/rest/payment_providers/*', () => {
+        http.get('*/rest/payment_providers/proposal/*', () => {
           return HttpResponse.json({
             payment_providers: [
               {
-                id: 'MHIPAY',
+                id: PspProviders.HIPAY,
                 label: 'Hipay',
                 connection_type: 'HOSTED_FIELDS',
                 category_payment_method: 'CreditCard',
                 configuration: {
-                  display_type: 'hosted_fields',
+                  display_type: 'hosted_field',
                   settings: {
                     script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
                     username: '94675627.stage-secure-gateway.hipay-tpp.com',
@@ -72,6 +73,7 @@ Composant de formulaire Hipay qui affiche les champs hébergés pour la saisie d
     return (
       <MockedProvider
         defaultValues={{
+          provider_id: PspProviders.HIPAY,
           token: { value: '', status: 'idle' },
         }}
         proposalId="12345678"
@@ -191,6 +193,7 @@ export const ErrorTest: Story = {
     return (
       <MockedProvider
         defaultValues={{
+          provider_id: PspProviders.HIPAY,
           token: { value: '', status: 'idle' },
         }}
         proposalId="12345678"

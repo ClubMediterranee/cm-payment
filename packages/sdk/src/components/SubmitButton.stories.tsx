@@ -48,7 +48,7 @@ const handlers = [
           category_payment_method: 'CreditCard',
           billing_address_form: false,
           configuration: {
-            display_type: 'redirect',
+            display_type: 'iframe',
             settings: {},
             validation: {
               requires_token: false,
