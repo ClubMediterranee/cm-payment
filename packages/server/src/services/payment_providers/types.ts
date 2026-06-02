@@ -1,3 +1,7 @@
+import {
+  PaymentProvider1,
+  TimePaymentConditionModel,
+} from '../../infra/api/__generated__/index.schemas.js';
 import { OidcIssuerTypes } from '../payment_config/types.js';
 import { StayType } from '../stay/types.js';
 
@@ -9,10 +13,23 @@ export interface GetPaymentProvidersParams {
   customerId?: string;
 }
 
+export type PaymentProviderDisplayType = 'hosted_field' | 'iframe' | 'redirect';
+
+export interface ProviderConfiguration {
+  display_type: PaymentProviderDisplayType;
+  settings: Record<string, unknown>;
+}
+
 export interface ProviderConfigMap {
-  [providerId: string]: {
-    display_type: 'hosted_field' | 'iframe' | 'redirect';
-    settings: Record<string, unknown>;
-    [key: string]: unknown;
-  };
+  [providerId: string]: ProviderConfiguration & Record<string, unknown>;
+}
+
+export interface EnrichedPaymentProvider extends PaymentProvider1 {
+  configuration: ProviderConfiguration;
+  payment_conditions: Record<string, TimePaymentConditionModel[]>;
+}
+
+export interface PaymentProvidersResponse {
+  payment_providers: EnrichedPaymentProvider[];
+  buy_now_pay_later_providers: EnrichedPaymentProvider[];
 }

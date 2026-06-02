@@ -1,14 +1,13 @@
-import { AdditionalProperties, Property } from '@tsed/schema';
+import {
+  AdditionalProperties,
+  CollectionOf,
+  Enum,
+  Nullable,
+  Property,
+  Required,
+} from '@tsed/schema';
 
-export type PaymentProviderDisplayType = 'hosted_field' | 'iframe' | 'redirect';
-
-export class PaymentProviderConfig {
-  @Property()
-  display_type?: PaymentProviderDisplayType;
-
-  @Property()
-  settings!: Record<string, unknown>;
-}
+import type { PaymentProviderDisplayType } from '../payment_providers/types.js';
 
 @AdditionalProperties(true)
 export class FeatureFlipsConfig {}
@@ -24,8 +23,65 @@ export class PaymentConfig {
   settings!: PaymentSettings;
 }
 
-export class PaymentProvidersConfig {
+export class ConfigurationOverrideModel {
+  @Required()
+  @Nullable(String)
+  locale!: string | null;
+
   @Property()
-  @AdditionalProperties(PaymentProviderConfig)
-  providers!: Record<string, PaymentProviderConfig>;
+  @Enum('GM', 'GO', 'PARTNERS')
+  issuer?: 'GM' | 'GO' | 'PARTNERS';
+
+  @Property()
+  value!: unknown;
+}
+
+export class ConfigurationModel {
+  @Required()
+  key!: string;
+
+  @Required()
+  @Enum('string', 'number', 'boolean')
+  type!: 'string' | 'number' | 'boolean';
+
+  @Property()
+  value!: unknown;
+
+  @CollectionOf(ConfigurationOverrideModel)
+  overrides!: ConfigurationOverrideModel[];
+}
+
+export class ProviderSettingModel {
+  @Required()
+  key!: string;
+
+  @Property()
+  value!: unknown;
+}
+
+export class ProviderVariantModel {
+  @Required()
+  @Nullable(String)
+  locale!: string | null;
+
+  @Required()
+  active!: boolean;
+
+  @CollectionOf(ProviderSettingModel)
+  settings!: ProviderSettingModel[];
+
+  @Property()
+  validation!: Record<string, unknown>;
+}
+
+export class ProviderModel {
+  @Required()
+  id!: string;
+
+  @Required()
+  @Enum('hosted_field', 'iframe', 'redirect')
+  default_display_type!: PaymentProviderDisplayType;
+
+  @CollectionOf(ProviderVariantModel)
+  variants!: ProviderVariantModel[];
 }

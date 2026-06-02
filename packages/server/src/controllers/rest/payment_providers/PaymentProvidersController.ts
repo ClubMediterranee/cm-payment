@@ -6,7 +6,6 @@ import { Enum, Get, Returns, Summary } from '@tsed/schema';
 import { IssuerType } from '../../../decorators/IssuerType.js';
 import { Locale } from '../../../decorators/Locale.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
-import { PaymentProvidersResponse } from '../../../services/payment_providers/models.js';
 import { PaymentProvidersService } from '../../../services/payment_providers/PaymentProvidersService.js';
 
 const EnrichedPaymentProviderSchema: any = {
@@ -68,7 +67,7 @@ export class PaymentProvidersController {
     @Locale() locale: string,
     @IssuerType() issuerType: OidcIssuerTypes,
     @QueryParams('customer_id') customerId?: string,
-  ): Promise<PaymentProvidersResponse> {
+  ) {
     if (type === 'booking' && !customerId) {
       throw new BadRequest('customer_id is required for booking type');
     }

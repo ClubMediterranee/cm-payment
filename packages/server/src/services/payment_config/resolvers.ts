@@ -1,27 +1,25 @@
-import { GLOBAL_LOCALE } from '../../infra/directus/constants.js';
-import type { IssuerScopedItem, LocalizedItem } from '../../infra/directus/types.js';
+import type { ConfigurationOverrideModel, ProviderVariantModel } from './models.js';
+import type { OidcIssuerTypes } from './types.js';
 
-export const CONFIG_MATCH_RULES = [
-  (item: IssuerScopedItem, ctx: IssuerScopedItem) =>
-    item.locale === ctx.locale && item.issuer === ctx.issuer,
-  (item: IssuerScopedItem, ctx: IssuerScopedItem) =>
-    item.locale === GLOBAL_LOCALE && item.issuer === ctx.issuer,
-  (item: IssuerScopedItem, ctx: LocalizedItem) => item.locale === ctx.locale && !item.issuer,
+export const configMatchRules = (context: { locale: string; issuer: OidcIssuerTypes }) => [
+  ({ locale, issuer }: ConfigurationOverrideModel) =>
+    locale === context.locale && issuer === context.issuer,
+  ({ locale, issuer }: ConfigurationOverrideModel) => locale === null && issuer === context.issuer,
+  ({ locale, issuer }: ConfigurationOverrideModel) => locale === context.locale && !issuer,
 ];
 
-export const PROVIDER_MATCH_RULES = [
-  (item: LocalizedItem, ctx: LocalizedItem) => item.locale === ctx.locale,
-  (item: LocalizedItem) => item.locale === GLOBAL_LOCALE,
+export const providerMatchRules = (context: { locale: string }) => [
+  ({ locale }: ProviderVariantModel) => locale === context.locale,
+  ({ locale }: ProviderVariantModel) => locale === null,
 ];
 
-export const findByRules = <T, C>(
-  items: T[] | undefined,
-  rules: ((item: T, context: C) => boolean)[],
-  context: C,
+export const findByRules = <T>(
+  items: T[] | null | undefined,
+  rules: ((item: T) => boolean)[],
 ): T | undefined => {
   if (!items?.length) return undefined;
   for (const rule of rules) {
-    const match = items.find((item) => rule(item, context));
+    const match = items.find(rule);
     if (match) return match;
   }
   return undefined;

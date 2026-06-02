@@ -1,7 +1,7 @@
 import { PlatformTest } from '@tsed/platform-http/testing';
 
-import { DirectusClient } from '../../infra/directus/DirectusClient.js';
-import type { DirectusConfiguration, DirectusProvider } from '../../infra/directus/types.js';
+import type { ConfigurationModel, ProviderModel, ProviderVariantModel } from './models.js';
+import { PaymentConfigRepository } from './PaymentConfigRepository.js';
 import { PaymentConfigService } from './PaymentConfigService.js';
 import { OidcIssuerTypes } from './types.js';
 
@@ -11,7 +11,7 @@ function getPrivateMethod<T>(service: PaymentConfigService, methodName: string):
 
 describe('PaymentConfigService', () => {
   let service: PaymentConfigService;
-  let directusClient: DirectusClient;
+  let paymentConfigRepository: PaymentConfigRepository;
 
   beforeEach(async () => {
     await PlatformTest.create({
@@ -20,18 +20,24 @@ describe('PaymentConfigService', () => {
     });
 
     service = await PlatformTest.invoke<PaymentConfigService>(PaymentConfigService);
-    directusClient = await PlatformTest.get<DirectusClient>(DirectusClient);
+    paymentConfigRepository =
+      await PlatformTest.get<PaymentConfigRepository>(PaymentConfigRepository);
   });
 
   afterEach(() => PlatformTest.reset());
 
   describe('getPaymentConfig', () => {
     it('should split boolean configs into feature_flips and the rest into settings', async () => {
-      const configurations: DirectusConfiguration[] = [
-        { key: 'is_free_deposit_enabled', type: 'boolean', value: true },
-        { key: 'days_before_trip_to_allow_free_deposit', type: 'number', value: 90 },
-      ];
-      vi.spyOn(directusClient, 'getConfigurations').mockResolvedValue(configurations);
+      const configurations = [
+        { key: 'is_free_deposit_enabled', type: 'boolean', value: true, overrides: [] },
+        {
+          key: 'days_before_trip_to_allow_free_deposit',
+          type: 'number',
+          value: 90,
+          overrides: [],
+        },
+      ] as ConfigurationModel[];
+      vi.spyOn(paymentConfigRepository, 'getConfigurations').mockResolvedValue(configurations);
 
       const result = await service.getPaymentConfig({
         locale: 'fr-FR',
@@ -43,40 +49,42 @@ describe('PaymentConfigService', () => {
     });
 
     it('should resolve override values by locale and issuer', async () => {
-      const configurations: DirectusConfiguration[] = [
+      const configurations = [
         {
           key: 'days_before_trip_to_allow_free_deposit',
           type: 'number',
           value: 90,
           overrides: [{ locale: 'en-US', issuer: 'GM', value: 30 }],
         },
-      ];
-      vi.spyOn(directusClient, 'getConfigurations').mockResolvedValue(configurations);
+      ] as ConfigurationModel[];
+      vi.spyOn(paymentConfigRepository, 'getConfigurations').mockResolvedValue(configurations);
 
       const result = await service.getPaymentConfig({
         locale: 'en-US',
         issuerType: OidcIssuerTypes.GM,
       });
 
-      expect(result.settings.days_before_trip_to_allow_free_deposit).toBe(30);
+      expect(
+        (result.settings as Record<string, unknown>).days_before_trip_to_allow_free_deposit,
+      ).toBe(30);
     });
   });
 
   describe('getPaymentProvidersConfig', () => {
     it('should exclude inactive providers and never expose is_active', async () => {
-      const providers: DirectusProvider[] = [
+      const providers = [
         {
           id: 'MCYBERSOURCE',
           default_display_type: 'hosted_field',
-          settings: [{ locale: '*', status: 'published', settings: [] }],
+          variants: [{ locale: null, active: true, settings: [], validation: {} }],
         },
         {
           id: 'MHIPAY',
           default_display_type: 'redirect',
-          settings: [{ locale: '*', status: 'archived', settings: [] }],
+          variants: [{ locale: null, active: false, settings: [], validation: {} }],
         },
-      ];
-      vi.spyOn(directusClient, 'getProviders').mockResolvedValue(providers);
+      ] as ProviderModel[];
+      vi.spyOn(paymentConfigRepository, 'getProviders').mockResolvedValue(providers);
 
       const result = await service.getPaymentProvidersConfig({ locale: 'fr-FR' });
 
@@ -86,26 +94,28 @@ describe('PaymentConfigService', () => {
       expect('is_active' in result.MCYBERSOURCE).toBe(false);
     });
 
-    it('should resolve settings from the settings[] array (global + locale)', async () => {
-      const providers: DirectusProvider[] = [
+    it('should resolve settings from the variants array (global + locale)', async () => {
+      const providers = [
         {
           id: 'MHIPAY',
           default_display_type: 'hosted_field',
-          settings: [
+          variants: [
             {
-              locale: '*',
-              status: 'published',
-              settings: [{ key: 'script_url', type: 'string', value: 'https://global/s.js' }],
+              locale: null,
+              active: true,
+              settings: [{ key: 'script_url', value: 'https://global/s.js' }],
+              validation: {},
             },
             {
               locale: 'fr-FR',
-              status: 'published',
-              settings: [{ key: 'username', type: 'string', value: 'user-fr' }],
+              active: true,
+              settings: [{ key: 'username', value: 'user-fr' }],
+              validation: {},
             },
           ],
         },
-      ];
-      vi.spyOn(directusClient, 'getProviders').mockResolvedValue(providers);
+      ] as ProviderModel[];
+      vi.spyOn(paymentConfigRepository, 'getProviders').mockResolvedValue(providers);
 
       const result = await service.getPaymentProvidersConfig({ locale: 'fr-FR' });
 
@@ -117,105 +127,100 @@ describe('PaymentConfigService', () => {
   });
 
   describe('isProviderActive (private method)', () => {
-    let isProviderActive: (provider: DirectusProvider, locale: string) => boolean;
+    let isProviderActive: (provider: ProviderModel, locale: string) => boolean;
 
     beforeEach(() => {
       isProviderActive = getPrivateMethod(service, 'isProviderActive');
     });
 
-    it('should return false when no settings', () => {
-      const provider: DirectusProvider = {
-        id: 'MHIPAY',
-        default_display_type: 'hosted_field',
-        settings: [],
-      };
-      expect(isProviderActive(provider, 'fr-FR')).toBe(false);
+    const provider = (variants: ProviderVariantModel[]): ProviderModel => ({
+      id: 'MHIPAY',
+      default_display_type: 'hosted_field',
+      variants,
     });
 
-    it('should return false when no status defined', () => {
-      const provider: DirectusProvider = {
-        id: 'MHIPAY',
-        default_display_type: 'hosted_field',
-        settings: [{ locale: '*', settings: [] }],
-      };
-      expect(isProviderActive(provider, 'fr-FR')).toBe(false);
+    it('should return false when no variants', () => {
+      expect(isProviderActive(provider([]), 'fr-FR')).toBe(false);
     });
 
-    it('should use locale-specific status over global', () => {
-      const provider: DirectusProvider = {
-        id: 'MCYBERSOURCE',
-        default_display_type: 'hosted_field',
-        settings: [
-          { locale: '*', status: 'archived', settings: [] },
-          { locale: 'en-US', status: 'published', settings: [] },
-        ],
-      };
-      expect(isProviderActive(provider, 'en-US')).toBe(true);
-      expect(isProviderActive(provider, 'fr-FR')).toBe(false);
+    it('should return false when no matching active variant', () => {
+      expect(
+        isProviderActive(
+          provider([{ locale: null, active: false, settings: [], validation: {} }]),
+          'fr-FR',
+        ),
+      ).toBe(false);
     });
 
-    it('should use global status when no locale match', () => {
-      const provider: DirectusProvider = {
-        id: 'EHIPAY',
-        default_display_type: 'redirect',
-        settings: [{ locale: '*', status: 'archived', settings: [] }],
-      };
-      expect(isProviderActive(provider, 'fr-FR')).toBe(false);
-      expect(isProviderActive(provider, 'en-US')).toBe(false);
+    it('should use locale-specific variant over global', () => {
+      expect(
+        isProviderActive(
+          provider([
+            { locale: null, active: false, settings: [], validation: {} },
+            { locale: 'en-US', active: true, settings: [], validation: {} },
+          ]),
+          'en-US',
+        ),
+      ).toBe(true);
+      expect(
+        isProviderActive(
+          provider([
+            { locale: null, active: false, settings: [], validation: {} },
+            { locale: 'en-US', active: true, settings: [], validation: {} },
+          ]),
+          'fr-FR',
+        ),
+      ).toBe(false);
     });
 
-    it('should handle archived locale override on published global', () => {
-      const provider: DirectusProvider = {
-        id: 'MHIPAYVW',
-        default_display_type: 'redirect',
-        settings: [
-          { locale: '*', status: 'published', settings: [] },
-          { locale: 'fr-CH', status: 'archived', settings: [] },
-        ],
-      };
-      expect(isProviderActive(provider, 'fr-FR')).toBe(true);
-      expect(isProviderActive(provider, 'fr-CH')).toBe(false);
-      expect(isProviderActive(provider, 'en-US')).toBe(true);
+    it('should use global variant when no locale match', () => {
+      const p = provider([{ locale: null, active: false, settings: [], validation: {} }]);
+      expect(isProviderActive(p, 'fr-FR')).toBe(false);
+      expect(isProviderActive(p, 'en-US')).toBe(false);
     });
 
-    it('should handle archived global with multiple published locales', () => {
-      const provider: DirectusProvider = {
-        id: 'EHIPAYBNPL',
-        default_display_type: 'redirect',
-        settings: [
-          { locale: '*', status: 'archived', settings: [] },
-          { locale: 'fr-FR', status: 'published', settings: [] },
-          { locale: 'fr-BE', status: 'published', settings: [] },
-          { locale: 'nl-BE', status: 'published', settings: [] },
-        ],
-      };
-      expect(isProviderActive(provider, 'fr-FR')).toBe(true);
-      expect(isProviderActive(provider, 'fr-BE')).toBe(true);
-      expect(isProviderActive(provider, 'nl-BE')).toBe(true);
-      expect(isProviderActive(provider, 'en-US')).toBe(false);
-      expect(isProviderActive(provider, 'de-DE')).toBe(false);
+    it('should handle inactive locale override on active global', () => {
+      const p = provider([
+        { locale: null, active: true, settings: [], validation: {} },
+        { locale: 'fr-CH', active: false, settings: [], validation: {} },
+      ]);
+      expect(isProviderActive(p, 'fr-FR')).toBe(true);
+      expect(isProviderActive(p, 'fr-CH')).toBe(false);
+      expect(isProviderActive(p, 'en-US')).toBe(true);
+    });
+
+    it('should handle inactive global with multiple active locales', () => {
+      const p = provider([
+        { locale: null, active: false, settings: [], validation: {} },
+        { locale: 'fr-FR', active: true, settings: [], validation: {} },
+        { locale: 'fr-BE', active: true, settings: [], validation: {} },
+        { locale: 'nl-BE', active: true, settings: [], validation: {} },
+      ]);
+      expect(isProviderActive(p, 'fr-FR')).toBe(true);
+      expect(isProviderActive(p, 'fr-BE')).toBe(true);
+      expect(isProviderActive(p, 'nl-BE')).toBe(true);
+      expect(isProviderActive(p, 'en-US')).toBe(false);
+      expect(isProviderActive(p, 'de-DE')).toBe(false);
     });
   });
 
   describe('buildProviderConfig (private method)', () => {
-    let buildProviderConfig: (
-      provider: DirectusProvider,
-      locale: string,
-    ) => Record<string, unknown>;
+    let buildProviderConfig: (provider: ProviderModel, locale: string) => Record<string, unknown>;
 
     beforeEach(() => {
       buildProviderConfig = getPrivateMethod(service, 'buildProviderConfig');
     });
 
-    it('should convert the settings[] array to an object', () => {
-      const provider: DirectusProvider = {
+    it('should convert the settings array to an object', () => {
+      const provider: ProviderModel = {
         id: 'MHIPAY',
         default_display_type: 'hosted_field',
-        settings: [
+        variants: [
           {
-            locale: '*',
-            status: 'published',
-            settings: [{ key: 'script_url', type: 'string', value: 'https://example.com/s.js' }],
+            locale: null,
+            active: true,
+            settings: [{ key: 'script_url', value: 'https://example.com/s.js' }],
+            validation: {},
           },
         ],
       };
@@ -228,22 +233,24 @@ describe('PaymentConfigService', () => {
     });
 
     it('should merge global and locale settings, locale taking precedence', () => {
-      const provider: DirectusProvider = {
+      const provider: ProviderModel = {
         id: 'MHIPAY',
         default_display_type: 'hosted_field',
-        settings: [
+        variants: [
           {
-            locale: '*',
-            status: 'published',
+            locale: null,
+            active: true,
             settings: [
-              { key: 'script_url', type: 'string', value: 'https://global/s.js' },
-              { key: 'environment', type: 'string', value: 'stage' },
+              { key: 'script_url', value: 'https://global/s.js' },
+              { key: 'environment', value: 'stage' },
             ],
+            validation: {},
           },
           {
             locale: 'fr-FR',
-            status: 'published',
-            settings: [{ key: 'script_url', type: 'string', value: 'https://fr/s.js' }],
+            active: true,
+            settings: [{ key: 'script_url', value: 'https://fr/s.js' }],
+            validation: {},
           },
         ],
       };
@@ -256,29 +263,25 @@ describe('PaymentConfigService', () => {
       });
     });
 
-    it('should not spread arbitrary top-level keys from the locale-settings object', () => {
-      const provider = {
+    it('should expose validation fields from variants', () => {
+      const provider: ProviderModel = {
         id: 'MHIPAY',
         default_display_type: 'hosted_field',
-        settings: [
+        variants: [
           {
-            locale: '*',
-            status: 'published',
-            sort: 1,
-            user_created: 'someone',
-            settings: [{ key: 'script_url', type: 'string', value: 'https://example.com/s.js' }],
+            locale: null,
+            active: true,
+            settings: [{ key: 'script_url', value: 'https://example.com/s.js' }],
+            validation: { requires_token: true },
           },
         ],
-      } as unknown as DirectusProvider;
+      };
 
       const result = buildProviderConfig(provider, 'fr-FR');
 
       expect(result.display_type).toBe('hosted_field');
-      expect(result.settings).toEqual({
-        script_url: 'https://example.com/s.js',
-      });
-      expect(result.sort).toBe(1);
-      expect(result.user_created).toBe('someone');
+      expect(result.settings).toEqual({ script_url: 'https://example.com/s.js' });
+      expect(result.requires_token).toBe(true);
     });
   });
 });
