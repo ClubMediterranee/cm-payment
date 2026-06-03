@@ -1,9 +1,9 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 
 import type { HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
-import * as usePaymentProviderSettings from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import * as useCapsConfigContext from '../../utils/useCapsConfigContext';
 import * as useFormContext from '../../utils/useForm';
+import * as usePaymentProviderSettings from '../../utils/usePaymentProviderSettings';
 import * as useScriptLoader from '../../utils/useScriptLoader';
 import * as hipayHelpers from './hipay';
 import { useHipayHostedFields } from './useHipayHostedFields';

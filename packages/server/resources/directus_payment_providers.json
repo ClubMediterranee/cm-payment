@@ -1,0 +1,673 @@
+[
+  {
+    "id": "MHIPAY",
+    "default_display_type": "hosted_field",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [
+          {
+            "key": "script_url",
+            "type": "string",
+            "value": "https://stage-libs.hipay.com/js/sdkjs.js"
+          },
+          {
+            "key": "username",
+            "type": "string",
+            "value": "94685941.stage-secure-gateway.hipay-tpp.com"
+          },
+          {
+            "key": "password",
+            "type": "string",
+            "value": "Test_KDArvJ3iCVesjQj3XRriMkXs"
+          },
+          {
+            "key": "environment",
+            "type": "string",
+            "value": "stage"
+          }
+        ],
+        "requires_token": true,
+        "requires_expiry_date": false
+      }
+    ]
+  },
+  {
+    "id": "MUPLIFT",
+    "default_display_type": "iframe",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "archived",
+        "settings": [],
+        "requires_token": true,
+        "requires_expiry_date": false
+      },
+      {
+        "locale": "en-US",
+        "status": "published",
+        "settings": [
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X"
+          },
+          {
+            "key": "code",
+            "type": "string",
+            "value": "UP-75709538-99"
+          }
+        ]
+      },
+      {
+        "locale": "en-CA",
+        "status": "published",
+        "settings": [
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X"
+          },
+          {
+            "key": "code",
+            "type": "string",
+            "value": "UP-75709538-99"
+          }
+        ]
+      },
+      {
+        "locale": "fr-CA",
+        "status": "published",
+        "settings": [
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X"
+          },
+          {
+            "key": "code",
+            "type": "string",
+            "value": "UP-75709538-99"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MHIPAYPP",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "de-DE",
+        "status": "published",
+        "settings": [
+          {
+            "key": "script_url",
+            "type": "string",
+            "value": "https://stage-libs.hipay.com/js/sdkjs.js"
+          },
+          {
+            "key": "username",
+            "type": "string",
+            "value": "94685941.stage-secure-gateway.hipay-tpp.com"
+          },
+          {
+            "key": "password",
+            "type": "string",
+            "value": "Test_KDArvJ3iCVesjQj3XRriMkXs"
+          },
+          {
+            "key": "environment",
+            "type": "string",
+            "value": "stage"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EHIPAYBNPL",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "archived",
+        "settings": [
+          {
+            "key": "merchant_id",
+            "type": "string",
+            "value": "8a3ddbfcd79c44f09882c6e39af07fca"
+          },
+          {
+            "key": "script_url",
+            "type": "string",
+            "value": "https://assets-staging.oney.io/build/loader.min.js"
+          },
+          {
+            "key": "min_days_before_departure",
+            "type": "number",
+            "value": 45
+          }
+        ]
+      },
+      {
+        "locale": "fr-FR",
+        "status": "published",
+        "settings": [
+          {
+            "key": "max_amount",
+            "type": "number",
+            "value": 20000
+          },
+          {
+            "key": "payment_mode",
+            "type": "string",
+            "value": "4x"
+          }
+        ]
+      },
+      {
+        "locale": "fr-BE",
+        "status": "published",
+        "settings": [
+          {
+            "key": "max_amount",
+            "type": "number",
+            "value": 3000
+          },
+          {
+            "key": "payment_mode",
+            "type": "string",
+            "value": "3x"
+          }
+        ]
+      },
+      {
+        "locale": "nl-BE",
+        "status": "published",
+        "settings": [
+          {
+            "key": "max_amount",
+            "type": "number",
+            "value": 3000
+          },
+          {
+            "key": "payment_mode",
+            "type": "string",
+            "value": "3x"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EGLOBALCOLLECT",
+    "default_display_type": "iframe",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EPAYGATE",
+    "default_display_type": "iframe",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "MCYBERSOURCE",
+    "default_display_type": "hosted_field",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "archived",
+        "settings": [],
+        "requires_token": true,
+        "requires_expiry_date": true
+      },
+      {
+        "locale": "en-US",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "fr-CA",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "E99BILL",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EALIPAY",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "ECYBERSOURCE",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "en-US",
+        "status": "archived",
+        "settings": []
+      },
+      {
+        "locale": "fr-CA",
+        "status": "archived",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "ECYBSSOAPI",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EHIPAY",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "archived",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EHIPAYCMTA",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EIYZICO",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "ENETPAY",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "ESBER",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "archived",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "ESSPSCT",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAY",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAY_EMAIL",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAY_PHONE",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EWECHAT",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "archived",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "M99BILLW",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAY_SMS",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "NAPAY",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "NODELCRERE_CHEQUE",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "NODELCRERE_TRANSFER",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "ECYBSPP",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "ECYBSCMTA",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYCXO",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYSCT",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYCYBS",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYGC",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "MHIPAYVW",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "fr-CH",
+        "status": "archived",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EGCPIX",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "MCLUBMED",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "archived",
+        "settings": []
+      },
+      {
+        "locale": "en-HK",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "en-SG",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "en-MY",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "en-TW",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "zh-TW",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "es-AR",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYIZC",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EIXOPAY",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EIXOPAYPP",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYPIX",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYPP",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYSTRIPE",
+    "default_display_type": "redirect",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": []
+      }
+    ]
+  }
+]

@@ -1,10 +1,10 @@
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
 
-import { PspProviders } from '../../../types/PspProviders';
-import { usePaymentProviderSettings } from '../../data/usePaymentConfig/usePaymentProviderSettings';
+import { UpliftStatus } from '../../../types/Uplift';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatch } from '../../utils/useForm';
+import { usePaymentProviderSettings } from '../../utils/usePaymentProviderSettings';
 import { useUplift } from './useUplift';
 import { useUpliftOrder } from './useUpliftOrder';
 
@@ -20,7 +20,7 @@ vi.mock('react-hook-form', () => ({
   useFormContext: vi.fn(),
 }));
 
-vi.mock('../../data/usePaymentConfig/usePaymentProviderSettings', () => ({
+vi.mock('../../utils/usePaymentProviderSettings', () => ({
   usePaymentProviderSettings: vi.fn(),
 }));
 
@@ -154,9 +154,92 @@ describe('useUplift', () => {
     expect(mockUseWatch).toHaveBeenCalledWith('currency');
   });
 
-  it('should call usePaymentProviderSettings with MUPLIFT provider', () => {
+  it('should call usePaymentProviderSettings with MUPLIFT', () => {
     renderHook(() => useUplift());
 
-    expect(mockUsePaymentProviderSettings).toHaveBeenCalledWith(PspProviders.MUPLIFT);
+    expect(mockUsePaymentProviderSettings).toHaveBeenCalledWith('MUPLIFT');
+  });
+
+  it('initialises Uplift Payments when window.Uplift is available at upReady time', () => {
+    const init = vi.fn();
+    const load = vi.fn();
+    (global.window as any).Uplift = {
+      Payments: { init, load, exit: vi.fn(), clear: vi.fn() },
+    };
+
+    renderHook(() => useUplift());
+    window.upReady?.();
+
+    expect(init).toHaveBeenCalledWith(
+      expect.objectContaining({ apiKey: 'test-api-key', locale: 'en-US', currency: 'USD' }),
+    );
+    expect(load).toHaveBeenCalledWith(mockOrderInfo);
+  });
+
+  it('does not call Uplift Payments init when window.Uplift is missing at upReady time', () => {
+    renderHook(() => useUplift());
+    expect(() => window.upReady?.()).not.toThrow();
+  });
+
+  it('calls getToken when the onChange callback reports TOKEN_AVAILABLE', () => {
+    const getToken = vi.fn();
+    (global.window as any).Uplift = {
+      Payments: { init: vi.fn(), load: vi.fn(), getToken, exit: vi.fn(), clear: vi.fn() },
+    };
+
+    let onChange: ((event: any) => void) | undefined;
+    (global.window as any).Uplift.Payments.init = (cfg: any) => {
+      onChange = cfg.onChange;
+    };
+
+    renderHook(() => useUplift());
+    window.upReady?.();
+
+    expect(onChange).toBeDefined();
+    act(() => onChange!({ status: UpliftStatus.TOKEN_AVAILABLE }));
+
+    expect(getToken).toHaveBeenCalled();
+  });
+
+  it('sets the form token when the onChange callback reports TOKEN_RETRIEVED', () => {
+    const setValue = vi.fn();
+    mockUseFormContext.mockReturnValue({ setValue } as any);
+
+    (global.window as any).Uplift = {
+      Payments: { init: vi.fn(), load: vi.fn(), getToken: vi.fn(), exit: vi.fn(), clear: vi.fn() },
+    };
+
+    let onChange: ((event: any) => void) | undefined;
+    (global.window as any).Uplift.Payments.init = (cfg: any) => {
+      onChange = cfg.onChange;
+    };
+
+    renderHook(() => useUplift());
+    window.upReady?.();
+
+    act(() =>
+      onChange!({
+        status: UpliftStatus.TOKEN_RETRIEVED,
+        token: { card_token: 'tok-123' },
+      }),
+    );
+
+    expect(setValue).toHaveBeenCalledWith(
+      'token',
+      { value: 'tok-123', status: 'success' },
+      { shouldValidate: true },
+    );
+  });
+
+  it('exits and clears Uplift Payments on unmount', () => {
+    const exit = vi.fn();
+    const clear = vi.fn();
+    (global.window as any).Uplift = { Payments: { exit, clear, init: vi.fn(), load: vi.fn() } };
+
+    const { unmount } = renderHook(() => useUplift());
+    unmount();
+
+    expect(exit).toHaveBeenCalled();
+    expect(clear).toHaveBeenCalled();
   });
 });

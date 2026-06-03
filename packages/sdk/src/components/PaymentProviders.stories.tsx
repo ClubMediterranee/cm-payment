@@ -55,99 +55,156 @@ const commonMockedProviderProps = {
       PROVIDER_3: { is_active: true, settings: {} },
       PROVIDER_4: { is_active: false, settings: {} },
     },
-    featureFlip: {},
+    feature_flips: {},
   },
 };
 const handlers = {
   creditCard: [
     ...commonHandlers,
-    http.get('*/v1/payment_providers', () => {
-      return Response.json([
-        {
-          id: 'PROVIDER_1',
-          label: 'Carte bancaire',
-          description: 'Payer par carte bancaire',
-          connection_type: 'REDIRECT',
-          category_payment_method: 'CreditCard',
-          billing_address_form: true,
-          required_delay_before_departure: 0,
-        },
-      ]);
+    http.get('*/rest/payment_providers/booking/*', () => {
+      return Response.json({
+        payment_providers: [
+          {
+            id: 'PROVIDER_1',
+            label: 'Carte bancaire',
+            description: 'Payer par carte bancaire',
+            connection_type: 'REDIRECT',
+            category_payment_method: 'CreditCard',
+            billing_address_form: true,
+            required_delay_before_departure: 0,
+            configuration: {
+              display_type: 'redirect',
+              settings: {},
+              validation: {
+                requires_token: false,
+                requires_expiry_date: false,
+              },
+            },
+            payment_conditions: {},
+          },
+        ],
+        buy_now_pay_later_providers: [],
+      });
     }),
   ],
   bankTransfer: [
     ...commonHandlers,
-    http.get('*/v1/payment_providers', () => {
-      return Response.json([
-        {
-          id: 'PROVIDER_2',
-          label: 'Virement bancaire',
-          description: 'Payer par virement bancaire',
-          connection_type: 'OFFLINE',
-          category_payment_method: 'BankTransfer',
-          billing_address_form: false,
-          required_delay_before_departure: 0,
-        },
-      ]);
+    http.get('*/rest/payment_providers/booking/*', () => {
+      return Response.json({
+        payment_providers: [
+          {
+            id: 'PROVIDER_2',
+            label: 'Virement bancaire',
+            description: 'Payer par virement bancaire',
+            connection_type: 'OFFLINE',
+            category_payment_method: 'BankTransfer',
+            billing_address_form: false,
+            required_delay_before_departure: 0,
+            configuration: {
+              display_type: 'redirect',
+              settings: {},
+              validation: {
+                requires_token: false,
+                requires_expiry_date: false,
+              },
+            },
+            payment_conditions: {},
+          },
+        ],
+        buy_now_pay_later_providers: [],
+      });
     }),
   ],
   paypal: [
     ...commonHandlers,
-    http.get('*/v1/payment_providers', () => {
-      return Response.json([
-        {
-          id: 'PROVIDER_3',
-          label: 'Paypal',
-          description: 'Payer avec Paypal',
-          connection_type: 'REDIRECT',
-          category_payment_method: 'Paypal',
-          billing_address_form: true,
-          required_delay_before_departure: 0,
-        },
-      ]);
+    http.get('*/rest/payment_providers/booking/*', () => {
+      return Response.json({
+        payment_providers: [
+          {
+            id: 'PROVIDER_3',
+            label: 'Paypal',
+            description: 'Payer avec Paypal',
+            connection_type: 'REDIRECT',
+            category_payment_method: 'Paypal',
+            billing_address_form: true,
+            required_delay_before_departure: 0,
+            configuration: {
+              display_type: 'iframe',
+              settings: {},
+              validation: {
+                requires_token: false,
+                requires_expiry_date: false,
+              },
+            },
+            payment_conditions: {},
+          },
+        ],
+        buy_now_pay_later_providers: [],
+      });
     }),
   ],
   multipleProviders: [
     ...commonHandlers,
-    http.get('*/v1/payment_providers', () => {
-      return Response.json([
-        {
-          id: 'PROVIDER_1',
-          label: 'Moyen de paiement 1',
-          description: 'Provider 1',
-          connection_type: 'REDIRECT',
-          category_payment_method: '',
-          billing_address_form: true,
-          required_delay_before_departure: 0,
-        },
-        {
-          id: 'PROVIDER_2',
-          label: 'Moyen de paiement 2',
-          description: 'Provider 2',
-          connection_type: 'OFFLINE',
-          category_payment_method: '',
-          billing_address_form: false,
-          required_delay_before_departure: 0,
-        },
-        {
-          id: 'PROVIDER_3',
-          label: 'Moyen de paiement 3',
-          description: '',
-          connection_type: 'REDIRECT',
-          category_payment_method: '',
-          billing_address_form: true,
-          required_delay_before_departure: 0,
-        },
-        {
-          id: 'PROVIDER_4',
-          label: 'Moyen de paiement 4',
-          description: 'Par autre moyen',
-          connection_type: 'REDIRECT',
-          category_payment_method: '',
-          billing_address_form: true,
-          required_delay_before_departure: 0,
-        },
-      ]);
+    http.get('*/rest/payment_providers/booking/*', () => {
+      return Response.json({
+        payment_providers: [
+          {
+            id: 'PROVIDER_1',
+            label: 'Moyen de paiement 1',
+            description: 'Provider 1',
+            connection_type: 'REDIRECT',
+            category_payment_method: '',
+            billing_address_form: true,
+            required_delay_before_departure: 0,
+            configuration: {
+              display_type: 'redirect',
+              settings: {},
+              validation: {
+                requires_token: false,
+                requires_expiry_date: false,
+              },
+            },
+            payment_conditions: {},
+          },
+          {
+            id: 'PROVIDER_2',
+            label: 'Moyen de paiement 2',
+            description: 'Provider 2',
+            connection_type: 'OFFLINE',
+            category_payment_method: '',
+            billing_address_form: false,
+            required_delay_before_departure: 0,
+            configuration: {
+              display_type: 'redirect',
+              settings: {},
+              validation: {
+                requires_token: false,
+                requires_expiry_date: false,
+              },
+            },
+            payment_conditions: {},
+          },
+          {
+            id: 'PROVIDER_3',
+            label: 'Moyen de paiement 3',
+            description: '',
+            connection_type: 'REDIRECT',
+            category_payment_method: '',
+            billing_address_form: true,
+            required_delay_before_departure: 0,
+            configuration: {
+              display_type: 'redirect',
+              settings: {},
+              validation: {
+                requires_token: false,
+                requires_expiry_date: false,
+              },
+            },
+            payment_conditions: {},
+          },
+        ],
+        buy_now_pay_later_providers: [],
+      });
     }),
   ],
 };

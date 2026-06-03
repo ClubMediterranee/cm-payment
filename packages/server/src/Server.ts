@@ -7,6 +7,7 @@ import { Configuration, configuration, constant, logger } from '@tsed/di';
 import { application, type PlatformStaticsOptions } from '@tsed/platform-http';
 
 import { config } from './config/config.js';
+import { ExternalRefResolver } from './infra/spec/ExternalRefResolver.js';
 import { requestLoggerMiddleware } from './middlewares/requestLogger.js';
 
 @Configuration(config)
@@ -43,6 +44,10 @@ export class Server {
         logger().info(`Statics files are available on ${url}${mountPath} => ${config.root}`);
       });
     }
+  }
+
+  async $alterOpenSpec(openSpec: any): Promise<any> {
+    return ExternalRefResolver.resolve(openSpec);
   }
 }
 

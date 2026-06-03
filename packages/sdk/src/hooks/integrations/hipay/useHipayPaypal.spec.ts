@@ -1,11 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
 import type { Hipay } from '../../../types/Hipay';
-import { PspProviders } from '../../../types/PspProviders';
-import * as usePaymentProviderSettings from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import * as usePaymentSubmit from '../../usePaymentSubmit';
 import * as useCapsConfigContext from '../../utils/useCapsConfigContext';
 import * as useFormContext from '../../utils/useForm';
+import * as usePaymentProviderSettings from '../../utils/usePaymentProviderSettings';
 import * as useScriptLoader from '../../utils/useScriptLoader';
 import { useHipayPaypal } from './useHipayPaypal';
 
@@ -83,12 +82,10 @@ describe('useHipayPaypal', () => {
     delete (window as any).HiPay;
   });
 
-  it('should use HIPAY provider settings (not duplicate config)', () => {
+  it('should use payment provider settings for Hipay PayPal', () => {
     renderHook(() => useHipayPaypal());
 
-    expect(usePaymentProviderSettings.usePaymentProviderSettings).toHaveBeenCalledWith(
-      PspProviders.HIPAY_PAYPAL,
-    );
+    expect(usePaymentProviderSettings.usePaymentProviderSettings).toHaveBeenCalledWith('MHIPAYPP');
   });
 
   it('should not initialize when script is not loaded', () => {

@@ -17,7 +17,7 @@ export const fetcher = async <T>({
 }): Promise<T> => {
   const {
     locale,
-    oidc: { accessToken },
+    oidc: { accessToken, issuerType },
     api: { apiKey },
     paymentGatewayUrl,
   } = getPaymentConfig();
@@ -40,6 +40,7 @@ export const fetcher = async <T>({
       'x-api-key': apiKey,
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       'accept-language': locale,
+      'x-issuer-type': issuerType,
       ...headers,
     },
     ...(data ? { body: JSON.stringify(data) } : {}),

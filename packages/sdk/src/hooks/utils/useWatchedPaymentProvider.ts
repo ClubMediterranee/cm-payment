@@ -7,7 +7,7 @@ export const useWatchedPaymentProvider = () => {
   } = usePaymentProviders();
   const watchedProviderId = useWatch('provider_id');
 
-  return [...paymentProviders, ...buyNowPayLaterProviders]?.find(
+  return [...paymentProviders, ...buyNowPayLaterProviders].find(
     (provider) => provider.id === watchedProviderId,
   );
 };

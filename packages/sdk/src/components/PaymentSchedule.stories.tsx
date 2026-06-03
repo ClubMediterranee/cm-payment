@@ -73,8 +73,11 @@ const handlers = [
       },
     ]);
   }),
-  http.get('*/v1/payment_providers', () => {
-    return Response.json([]);
+  http.get('*/rest/payment_providers/*', () => {
+    return Response.json({
+      payment_providers: [],
+      buy_now_pay_later_providers: [],
+    });
   }),
 ];
 
@@ -453,18 +456,44 @@ export const BuyNowPayLaterOney: Story = {
     msw: {
       handlers: [
         ...createBnplMswHandlers(),
-        http.get('*/v1/payment_providers', () => {
-          return Response.json([
-            {
-              id: 'EHIPAYBNPL',
-              label: 'Oney',
-              description: 'Paiement en 3x ou 4x sans frais',
-              connection_type: 'IFRAME',
-              category_payment_method: 'BuyNowPayLater',
-              billing_address_form: false,
-              required_delay_before_departure: 0,
-            },
-          ]);
+        http.get('*/rest/payment_config*', () => {
+          return Response.json({
+            feature_flips: {},
+            settings: {},
+          });
+        }),
+        http.get('*/rest/payment_providers/proposal/*', ({ request }) => {
+          const url = new URL(request.url);
+          const payment_mode = url.searchParams.get('payment_mode') || '3x';
+          return Response.json({
+            payment_providers: [],
+            buy_now_pay_later_providers: [
+              {
+                id: 'EHIPAYBNPL',
+                label: 'Oney',
+                description: 'Paiement en 3x ou 4x sans frais',
+                connection_type: 'IFRAME',
+                category_payment_method: 'BuyNowPayLater',
+                billing_address_form: false,
+                required_delay_before_departure: 0,
+                configuration: {
+                  display_type: 'iframe',
+                  settings: {
+                    max_amount: null,
+                    min_days_before_departure: null,
+                    merchant_id: '8a3ddbfcd79c44f09882c6e39af07fca',
+                    payment_mode: payment_mode,
+                    script_url: 'https://assets-staging.oney.io/build/loader.min.js',
+                  },
+                  validation: {
+                    requires_token: false,
+                    requires_expiry_date: false,
+                  },
+                },
+                payment_conditions: {},
+              },
+            ],
+          });
         }),
       ],
     },
@@ -486,21 +515,6 @@ export const BuyNowPayLaterOney: Story = {
           amount: '2808',
           currency: 'EUR',
         }}
-        paymentConfig={{
-          providers: {
-            EHIPAYBNPL: {
-              is_active: true,
-              settings: {
-                max_amount: null,
-                min_days_before_departure: null,
-                merchant_id: '8a3ddbfcd79c44f09882c6e39af07fca',
-                payment_mode: args.payment_mode || '3x',
-                script_url: 'https://assets-staging.oney.io/build/loader.min.js',
-              },
-            },
-          },
-          featureFlip: {},
-        }}
       >
         <PaymentSchedule {...args} />
       </MockedProvider>
@@ -518,18 +532,41 @@ export const BuyNowPayLaterUplift: Story = {
     msw: {
       handlers: [
         ...createBnplMswHandlers(),
-        http.get('*/v1/payment_providers', () => {
-          return Response.json([
-            {
-              id: 'MUPLIFT',
-              label: 'Uplift',
-              description: 'Paiement mensuel flexible',
-              connection_type: 'IFRAME',
-              category_payment_method: 'BuyNowPayLater',
-              billing_address_form: false,
-              required_delay_before_departure: 0,
-            },
-          ]);
+        http.get('*/rest/payment_config*', () => {
+          return Response.json({
+            feature_flips: {},
+            settings: {},
+          });
+        }),
+        http.get('*/rest/payment_providers/proposal/*', () => {
+          return Response.json({
+            payment_providers: [],
+            buy_now_pay_later_providers: [
+              {
+                id: 'MUPLIFT',
+                label: 'Uplift',
+                description: 'Paiement mensuel flexible',
+                connection_type: 'IFRAME',
+                category_payment_method: 'BuyNowPayLater',
+                billing_address_form: false,
+                required_delay_before_departure: 0,
+                configuration: {
+                  display_type: 'hosted_field',
+                  settings: {
+                    max_amount: null,
+                    min_days_before_departure: null,
+                    code: 'UP-75709538-99',
+                    api_key: 'MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X',
+                  },
+                  validation: {
+                    requires_token: false,
+                    requires_expiry_date: false,
+                  },
+                },
+                payment_conditions: {},
+              },
+            ],
+          });
         }),
       ],
     },
@@ -553,20 +590,6 @@ export const BuyNowPayLaterUplift: Story = {
         defaultValues={{
           amount: '2808',
           currency: 'USD',
-        }}
-        paymentConfig={{
-          providers: {
-            MUPLIFT: {
-              is_active: true,
-              settings: {
-                max_amount: null,
-                min_days_before_departure: null,
-                code: 'UP-75709538-99',
-                api_key: 'MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X',
-              },
-            },
-          },
-          featureFlip: {},
         }}
       >
         <PaymentSchedule {...args} />

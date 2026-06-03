@@ -11,7 +11,6 @@ import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback'
 import { GlobalFormSkeleton } from '../components/ui/fallbacks/GlobalFormSkeleton';
 import { FormCallbacks, FormCallbacksContext } from '../contexts/FormCallbacksContext';
 import { useActionResolver } from '../hooks/data/useActionResolver';
-import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
 import { paymentProvidersQueryOptions } from '../hooks/data/usePaymentProviders';
 import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
 import { useCapsForm } from '../hooks/useCapsForm';
@@ -39,8 +38,6 @@ function CapsFormProvider({
   const { id, content, locale, type, customerId } = useCapsConfigContext();
   const { isSeller } = useOidcContext();
 
-  const { data: paymentConfig } = usePaymentConfig();
-
   const resolvedAction = useActionResolver(action);
 
   const [
@@ -51,7 +48,6 @@ function CapsFormProvider({
   ] = useSuspenseQueries({
     queries: [
       paymentProvidersQueryOptions({
-        providerConfig: paymentConfig.providers,
         id,
         type,
         customerId,
@@ -65,7 +61,15 @@ function CapsFormProvider({
   const countryCode = locale.split('-')[1] || locale.toUpperCase();
 
   const methods = useCapsForm({
-    config: { content, isSeller, maxAmount, providersConfig: paymentConfig.providers },
+    config: {
+      content,
+      isSeller,
+      maxAmount,
+      getProviderValidation: (providerId: string) => {
+        const provider = paymentProviders.find((p) => p.id === providerId);
+        return provider?.configuration;
+      },
+    },
     defaultValues: {
       action: resolvedAction,
       provider_id: paymentProviders?.[0]?.id,

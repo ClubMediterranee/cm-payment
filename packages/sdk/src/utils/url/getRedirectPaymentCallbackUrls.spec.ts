@@ -25,7 +25,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: undefined,
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789');
+      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
 
       expect(result).toEqual({
         callback_url:
@@ -45,7 +45,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://app.clubmed.com/seller/dashboard',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789');
+      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
 
       expect(result).toEqual({
         callback_url:
@@ -67,7 +67,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: undefined,
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789');
+      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
 
       expect(result).toEqual({
         callback_url:
@@ -87,7 +87,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://app.clubmed.com/seller/dashboard',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789');
+      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
 
       expect(result).toEqual({
         callback_url:
@@ -110,7 +110,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: undefined,
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-777', 'PROVIDER-888');
+      const result = getRedirectPaymentCallbackUrls('payment-777', 'PROVIDER-888', 'redirect');
 
       expect(result).toEqual({
         callback_url:
@@ -130,7 +130,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://partner.com/seller/dashboard',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-777', 'PROVIDER-888');
+      const result = getRedirectPaymentCallbackUrls('payment-777', 'PROVIDER-888', 'redirect');
 
       expect(result).toEqual({
         callback_url:
@@ -153,7 +153,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: undefined,
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789');
+      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
 
       expect(result).toEqual({
         callback_url:
@@ -172,7 +172,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://app.clubmed.com/seller',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', '');
+      const result = getRedirectPaymentCallbackUrls('payment-456', '', 'redirect');
 
       expect(result).toEqual({
         callback_url:
@@ -193,7 +193,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://app.clubmed.com/seller',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789');
+      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
 
       expect(result.callback_url).toContain('proposal_id=proposal-555');
       expect(result.callback_url_seller).toContain('proposal_id=proposal-555');

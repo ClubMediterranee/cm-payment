@@ -4,6 +4,20 @@
  * Api documentation
  * OpenAPI spec version: 1.0.0
  */
+export interface PaymentConfig {
+  feature_flips?: FeatureFlipsConfig;
+  settings?: PaymentSettings;
+}
+
+export interface FeatureFlipsConfig {
+  is_free_deposit_enabled?: boolean;
+  is_paypal_button_enabled?: boolean;
+}
+
+export interface PaymentSettings {
+  days_before_trip_to_allow_free_deposit?: number;
+}
+
 export interface PaymentScheduleOutputModel {
   amount?: number;
   currency?: string;
@@ -18,7 +32,209 @@ export interface VersionInfo {
   version: string;
 }
 
-export type PaymentScheduleControllerGetPaymentSchedulesParams = {
-  action?: string;
+export interface PaymentProvider1 {
+  /**
+   * Provider id, the first letter tells the intended integration behavior : <br/>
+&rarr; <code>E</code> for a normalized integration involving a redirection or an iframe to a payment form hosted by the provider ;<br/>
+&rarr; <code>S</code> for a PSP involving a direct-link type transmission ;<br/>
+&rarr; <code>M</code> for a more involved integration with specific developments, with the exception of <code>MCLUBMED</code> that is a manual payment.
+   * @pattern ^([EMS][0-9A-Z]+)$
+   */
+  id: string;
+  /** A label for the provider */
+  label: string;
+  /** Payment processing, may be one of the following : <br/>
+&rarr; <code>E-commerce</code> when the payment process occurs directly on the partner site ;<br/>
+&rarr; <code>Direct-Link</code> when the payment process is directly managed by the Club Med (data collection and <strong>automatic</strong> transfer to the provider) ;<br/>
+&rarr; <code>Not-connected</code> when the payment process is directly managed by the Club Med (data collection and <strong>manual</strong> transfer to the provider) */
+  connection_type: string;
+  /** Url to the logo of the provider */
+  logo?: string;
+  /**
+   * Required number of days before the first day of transport when there is one, or the first day in the resort otherwise.
+   * @minimum 0
+   */
+  required_delay_before_departure: number;
+  /** Codified value, looking like a bank card brand, required by accountant department. */
+  category_payment_method: string;
+  /** A flag to hint that the billing address should be requested by the web site */
+  billing_address_form: boolean;
+  /** A text to describe the payment provider */
+  description?: string;
+  payment_methods?: PaymentMethodListModel2;
+}
+
+/**
+ * Sorted list of payment methods
+ */
+export type PaymentMethodListModel2 = PaymentMethodModel4[];
+
+/**
+ * Free form qualifier of the payment method
+ */
+export type PaymentMethodModel4Category = string | null;
+
+/**
+ * Payment method.
+ */
+export interface PaymentMethodModel4 {
+  /** Payment method id */
+  id: string;
+  /** Payment method label */
+  label?: string;
+  /** Url of the payment method logo */
+  image?: string;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  /** Free form qualifier of the payment method */
+  category?: PaymentMethodModel4Category;
+  time_payment_conditions?: TimePaymentConditionListModel;
+}
+
+/**
+ * Sorted list of installment options.
+ */
+export type TimePaymentConditionListModel = TimePaymentConditionModel[];
+
+/**
+ * Number of installements, 1 is for a full payment at once.
+ */
+export type TimePaymentConditionModelPaymentCount = number | null;
+
+/**
+ * Charge rate to apply when the customer choose this payment condition.
+ */
+export type TimePaymentConditionModelChargePercentage = number | null;
+
+/**
+ * Charge amount to apply when the customer choose this payment condition.
+ */
+export type TimePaymentConditionModelChargeAmount = number | null;
+
+/**
+ * Installment option
+ */
+export interface TimePaymentConditionModel {
+  /** Installment option id */
+  id?: string;
+  /** Number of installements, 1 is for a full payment at once. */
+  payment_count?: TimePaymentConditionModelPaymentCount;
+  /** Charge rate to apply when the customer choose this payment condition. */
+  charge_percentage?: TimePaymentConditionModelChargePercentage;
+  /**
+   * Required number of days before the first day of transport when there is one, or the first day in the resort otherwise.
+   * @minimum 0
+   */
+  required_delay_before_departure: number;
+  /** Charge amount to apply when the customer choose this payment condition. */
+  charge_amount?: TimePaymentConditionModelChargeAmount;
+}
+
+export type PaymentProvidersControllerGetPaymentProvidersParams = {
   customer_id?: string;
 };
+
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType =
+  (typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType)[keyof typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType =
+  {
+    hosted_field: 'hosted_field',
+    iframe: 'iframe',
+    redirect: 'redirect',
+  } as const;
+
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings =
+  { [key: string]: unknown };
+
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationValidation =
+  {
+    requires_token: boolean;
+    requires_expiry_date: boolean;
+  };
+
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfiguration =
+  {
+    display_type: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType;
+    settings: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings;
+    validation: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationValidation;
+  };
+
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfPaymentConditions =
+  { [key: string]: unknown };
+
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOf = {
+  configuration: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfiguration;
+  payment_conditions: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfPaymentConditions;
+};
+
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem =
+  PaymentProvider1 & PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOf;
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType =
+  (typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType)[keyof typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType =
+  {
+    hosted_field: 'hosted_field',
+    iframe: 'iframe',
+    redirect: 'redirect',
+  } as const;
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings =
+  { [key: string]: unknown };
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationValidation =
+  {
+    requires_token: boolean;
+    requires_expiry_date: boolean;
+  };
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfiguration =
+  {
+    display_type: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType;
+    settings: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings;
+    validation: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationValidation;
+  };
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfPaymentConditions =
+  { [key: string]: unknown };
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOf = {
+  configuration: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfiguration;
+  payment_conditions: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfPaymentConditions;
+};
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem =
+  PaymentProvider1 &
+    PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOf;
+
+export type PaymentProvidersControllerGetPaymentProviders200 = {
+  payment_providers?: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem[];
+  buy_now_pay_later_providers?: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem[];
+};
+
+export type PaymentScheduleControllerGetPaymentSchedulesParams = {
+  action?: PaymentScheduleControllerGetPaymentSchedulesAction;
+  customer_id?: string;
+};
+
+export type PaymentScheduleControllerGetPaymentSchedulesAction =
+  (typeof PaymentScheduleControllerGetPaymentSchedulesAction)[keyof typeof PaymentScheduleControllerGetPaymentSchedulesAction];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentScheduleControllerGetPaymentSchedulesAction = {
+  PAYMENT_CART: 'PAYMENT_CART',
+  PAYMENT_RESA: 'PAYMENT_RESA',
+  PAYMENT_OPTION: 'PAYMENT_OPTION',
+  PAYMENT_SOLDE: 'PAYMENT_SOLDE',
+  PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
+  PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
+} as const;

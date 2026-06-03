@@ -22,7 +22,7 @@
     "dev:app": "pnpm --filter @clubmed/app run dev",
     "dev:starter": "pnpm --filter @clubmed/starter run dev",
     "dev:public": "tsx packages/app/scripts/dev-public-url.ts",
-    "generate:types": "pnpm -r run generate:types",
+    "generate:types": "pnpm --filter @clubmed/server run generate:types && pnpm --filter @clubmed/caps run generate:types && pnpm --filter @clubmed/app run generate:types",
     "build": "pnpm -r run build",
     "build:storybook": "VITE_BASE_PATH=/storybook/ storybook build",
     "build-storybook": "storybook build",

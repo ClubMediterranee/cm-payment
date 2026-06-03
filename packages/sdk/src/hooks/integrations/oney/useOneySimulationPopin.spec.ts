@@ -1,14 +1,13 @@
 import { renderHook } from '@testing-library/react';
 
-import { PspProviders } from '../../../types/PspProviders';
-import { usePaymentProviderSettings } from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatch } from '../../utils/useForm';
+import { usePaymentProviderSettings } from '../../utils/usePaymentProviderSettings';
 import { useScriptLoader } from '../../utils/useScriptLoader';
 import { getOneyPopinOptions, loadOneySimulationPopin } from './oney';
 import { useOneySimulationPopin } from './useOneySimulationPopin';
 
-vi.mock('../../data/usePaymentConfig/usePaymentProviderSettings', () => ({
+vi.mock('../../utils/usePaymentProviderSettings', () => ({
   usePaymentProviderSettings: vi.fn(),
 }));
 
@@ -123,10 +122,10 @@ describe('useOneySimulationPopin', () => {
     expect(mockUseScriptLoader).toHaveBeenCalledWith('https://oney.com/script.js');
   });
 
-  it('should call usePaymentProviderSettings with EHIPAYBNPL provider', () => {
+  it('should call usePaymentProviderSettings with EHIPAYBNPL', () => {
     renderHook(() => useOneySimulationPopin());
 
-    expect(mockUsePaymentProviderSettings).toHaveBeenCalledWith(PspProviders.EHIPAYBNPL);
+    expect(mockUsePaymentProviderSettings).toHaveBeenCalledWith('EHIPAYBNPL');
   });
 
   it('should watch amount from form', () => {

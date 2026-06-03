@@ -2,17 +2,22 @@ import { useEffect, useRef } from 'react';
 
 import { HipayInstance } from '../../../types/Hipay';
 import { PspProviders } from '../../../types/PspProviders';
-import { usePaymentProviderSettings } from '../../data/usePaymentConfig/usePaymentProviderSettings';
 import { usePaymentSubmit } from '../../usePaymentSubmit';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useFormContext, useWatch } from '../../utils/useForm';
+import { usePaymentProviderSettings } from '../../utils/usePaymentProviderSettings';
 import { useScriptLoader } from '../../utils/useScriptLoader';
 import { createHipayClient } from './hipay';
 
 export const useHipayPaypal = () => {
   const { locale } = useCapsConfigContext();
   const { setValue } = useFormContext();
-  const { script_url, ...hipayConfig } = usePaymentProviderSettings(PspProviders.HIPAY_PAYPAL);
+  const { script_url, ...hipayConfig } = usePaymentProviderSettings<{
+    script_url: string;
+    environment: string;
+    username: string;
+    password: string;
+  }>(PspProviders.HIPAY_PAYPAL);
 
   const { handleSubmit } = usePaymentSubmit();
   const { isLoaded } = useScriptLoader(script_url);
