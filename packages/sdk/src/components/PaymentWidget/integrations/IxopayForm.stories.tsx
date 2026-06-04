@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { http, HttpResponse } from 'msw';
 import { expect, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../../../__fixtures__/MockedProvider';
@@ -33,6 +34,27 @@ beforeAll(() => {
   };
 });
 
+const ixopayProvider = {
+  id: 'IXOPAY',
+  label: 'Ixopay',
+  connection_type: 'hosted_field',
+  category_payment_method: 'CreditCard',
+  billing_address_form: false,
+  configuration: {
+    display_type: 'hosted_field' as const,
+    settings: {
+      script_url: 'https://mock.clubmed.com/ixopay/payment.js',
+      integration_key: 'mock-integration-key',
+    },
+    validation: {
+      requires_token: true,
+      requires_expiry_date: true,
+      requires_card_holder: true,
+    },
+  },
+  payment_conditions: {},
+};
+
 const meta: Meta<typeof IxopayForm> = {
   title: 'Components/PaymentWidget/HostedFields/IxopayForm',
   component: IxopayForm,
@@ -47,14 +69,24 @@ Composant de formulaire Ixopay qui affiche les champs hébergés pour la saisie 
         `,
       },
     },
+    msw: {
+      handlers: [
+        http.get('https://mock.clubmed.com/rest/payment_providers/:type/:id', () => {
+          return HttpResponse.json({
+            payment_providers: [ixopayProvider],
+            buy_now_pay_later_providers: [],
+          });
+        }),
+      ],
+    },
   },
   render() {
     return (
       <MockedProvider
         defaultValues={{
           token: { value: '', status: 'idle' },
-          cardHolder: '',
-          expiryDate: '',
+          provider_id: 'IXOPAY',
+          creditCard: { cardHolder: '', expiryDate: '' },
         }}
         proposalId="12345678"
       >
@@ -93,7 +125,7 @@ export const Default: Story = {
     expect(cardNumberDiv).toBeInTheDocument();
     expect(cvcDiv).toBeInTheDocument();
 
-    const cardHolderInput = canvas.getByPlaceholderText('Full name');
+    const cardHolderInput = canvas.getByPlaceholderText('Cardholder name');
     expect(cardHolderInput).toBeInTheDocument();
   },
 };
