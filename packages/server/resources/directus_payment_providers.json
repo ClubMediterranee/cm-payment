@@ -679,13 +679,27 @@
   },
   {
     "id": "EIXOPAY",
-    "default_display_type": "redirect",
+    "default_display_type": "hosted_field",
     "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [
+          {
+            "key": "script_url",
+            "type": "string",
+            "value": "https://sandbox.ixopay.com/js/integrated/payment.1.3.min.js"
+          },
+          {
+            "key": "integration_key",
+            "type": "string",
+            "value": "e9Qy2Q900KAfzf3dAuks"
+          }
+        ],
+        "requires_token": true,
+        "requires_expiry_date": true,
+        "requires_card_holder": true
       }
     ]
   },
