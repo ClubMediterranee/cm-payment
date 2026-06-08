@@ -4,37 +4,40 @@ import type { ProviderConfigMap } from '../payment_providers/types.js';
 import type { ProviderModel } from './models.js';
 import { PaymentConfigRepository } from './PaymentConfigRepository.js';
 import { configMatchRules, findByRules, providerMatchRules } from './resolvers.js';
-import { OidcIssuerTypes } from './types.js';
+import { OidcIssuerTypes, PaymentConfigSettings, PaymentFeatureFlips } from './types.js';
 
 @Service()
 export class PaymentConfigService {
   @Inject()
   protected paymentConfigRepository!: PaymentConfigRepository;
 
-  async getPaymentConfig({ issuerType, locale }: { issuerType: OidcIssuerTypes; locale: string }) {
+  async getPaymentConfig({
+    issuerType,
+    locale,
+  }: {
+    issuerType: OidcIssuerTypes;
+    locale: string;
+  }): Promise<{ feature_flips: PaymentFeatureFlips; settings: PaymentConfigSettings }> {
     const configurations = await this.paymentConfigRepository.getConfigurations();
 
-    return configurations.reduce<{
-      feature_flips: Record<string, boolean>;
-      settings: Record<string, unknown>;
-    }>(
-      (result, config) => {
-        const override = findByRules(
-          config.overrides,
-          configMatchRules({ locale, issuer: issuerType }),
-        );
-        const value = override ? override.value : config.value;
+    const feature_flips: PaymentFeatureFlips = {};
+    const settings: PaymentConfigSettings = {};
 
-        if (config.type === 'boolean') {
-          result.feature_flips[config.key] = value as boolean;
-        } else {
-          result.settings[config.key] = value;
-        }
+    for (const config of configurations) {
+      const override = findByRules(
+        config.overrides,
+        configMatchRules({ locale, issuer: issuerType }),
+      );
+      const value = override ? override.value : config.value;
 
-        return result;
-      },
-      { feature_flips: {}, settings: {} },
-    );
+      if (config.type === 'boolean') {
+        (feature_flips as Record<string, boolean>)[config.key] = value as boolean;
+      } else {
+        (settings as Record<string, unknown>)[config.key] = value;
+      }
+    }
+
+    return { feature_flips, settings };
   }
 
   async getPaymentProvidersConfig({ locale }: { locale: string }) {

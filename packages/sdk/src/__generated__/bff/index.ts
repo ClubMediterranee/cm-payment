@@ -5,15 +5,32 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
+  ActionResolverControllerResolveActionParams,
   PaymentConfig,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentProvidersControllerGetPaymentProvidersParams,
   PaymentScheduleControllerGetPaymentSchedulesParams,
   PaymentScheduleOutputModel,
+  ResolvedActionModel,
   VersionInfo,
 } from './index.schemas';
 
 import { fetcher } from '../../utils/fetcher';
+
+/**
+ * @summary Resolve the payment action for a booking or proposal
+ */
+export const actionResolverControllerResolveAction = (
+  type: 'booking' | 'proposal',
+  id: string,
+  params?: ActionResolverControllerResolveActionParams,
+) => {
+  return fetcher<ResolvedActionModel>({
+    url: `/rest/action_resolver/${type}/${id}`,
+    method: 'GET',
+    params,
+  });
+};
 
 /**
  * @summary Get payment configuration for a given locale and issuer type
@@ -60,6 +77,9 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
+export type ActionResolverControllerResolveActionResult = NonNullable<
+  Awaited<ReturnType<typeof actionResolverControllerResolveAction>>
+>;
 export type PaymentConfigControllerGetPaymentConfigResult = NonNullable<
   Awaited<ReturnType<typeof paymentConfigControllerGetPaymentConfig>>
 >;

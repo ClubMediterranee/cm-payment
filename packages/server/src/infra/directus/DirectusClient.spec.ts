@@ -31,7 +31,7 @@ describe('DirectusClient', () => {
   describe('getConfigurations', () => {
     it('fetches configurations from the caps_configurations collection', async () => {
       const configurations = [
-        { key: 'is_free_deposit_enabled', type: 'boolean' as const, value: true },
+        { key: 'is_paypal_button_enabled', type: 'boolean' as const, value: true },
       ];
       requestMock.mockResolvedValue(configurations);
 

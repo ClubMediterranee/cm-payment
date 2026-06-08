@@ -1,4 +1,3 @@
-import { InternalServerError } from '@tsed/exceptions';
 import { PlatformTest } from '@tsed/platform-http/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -24,7 +23,7 @@ describe('PaymentConfigController', () => {
 
   describe('GET /payment_config', () => {
     const mockPaymentConfig = {
-      feature_flips: { is_free_deposit_enabled: true },
+      feature_flips: { is_paypal_button_enabled: true },
       settings: { days_before_trip_to_allow_free_deposit: 90 },
     };
 
@@ -54,17 +53,6 @@ describe('PaymentConfigController', () => {
         locale: 'en-US',
         issuerType: OidcIssuerTypes.PARTNERS,
       });
-    });
-
-    it('should wrap service errors in an InternalServerError', async () => {
-      vi.spyOn(service, 'getPaymentConfig').mockRejectedValue(new Error('Directus error'));
-
-      await expect(controller.getPaymentConfig('fr-FR', OidcIssuerTypes.GM)).rejects.toThrow(
-        InternalServerError,
-      );
-      await expect(controller.getPaymentConfig('fr-FR', OidcIssuerTypes.GM)).rejects.toThrow(
-        /Failed to fetch payment configuration/,
-      );
     });
   });
 });

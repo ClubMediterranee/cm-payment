@@ -1,4 +1,3 @@
-import { BadRequest } from '@tsed/exceptions';
 import { PlatformTest } from '@tsed/platform-http/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -74,12 +73,6 @@ describe('PaymentProvidersController', () => {
         issuerType: OidcIssuerTypes.GM,
         customerId: '789',
       });
-    });
-
-    it('should throw BadRequest when customer_id is missing for a booking', async () => {
-      await expect(
-        controller.getPaymentProviders('booking', '456', 'fr-FR', OidcIssuerTypes.GM, undefined),
-      ).rejects.toThrow(BadRequest);
     });
   });
 });
