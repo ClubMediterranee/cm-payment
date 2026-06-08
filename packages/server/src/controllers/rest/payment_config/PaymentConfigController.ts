@@ -1,5 +1,4 @@
 import { Controller, Inject } from '@tsed/di';
-import { BadRequest, InternalServerError } from '@tsed/exceptions';
 import { Get, Returns, Summary } from '@tsed/schema';
 
 import { IssuerType } from '../../../decorators/IssuerType.js';
@@ -20,15 +19,6 @@ export class PaymentConfigController {
     @Locale() locale: string,
     @IssuerType() issuerType: OidcIssuerTypes,
   ): Promise<PaymentConfig> {
-    try {
-      return await this.paymentConfigService.getPaymentConfig({ locale, issuerType });
-    } catch (error) {
-      if (error instanceof BadRequest || error instanceof InternalServerError) {
-        throw error;
-      }
-
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      throw new InternalServerError(`Failed to fetch payment configuration: ${errorMessage}`);
-    }
+    return this.paymentConfigService.getPaymentConfig({ locale, issuerType });
   }
 }

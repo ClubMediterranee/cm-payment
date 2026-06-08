@@ -1,5 +1,4 @@
 import { Controller, Inject } from '@tsed/di';
-import { BadRequest } from '@tsed/exceptions';
 import { PathParams, QueryParams } from '@tsed/platform-params';
 import { Enum, Get, Returns, Summary } from '@tsed/schema';
 
@@ -24,6 +23,12 @@ const EnrichedPaymentProviderSchema: any = {
             settings: {
               type: 'object',
               additionalProperties: true,
+            },
+            requires_token: {
+              type: 'boolean',
+            },
+            requires_expiry_date: {
+              type: 'boolean',
             },
           },
           required: ['display_type', 'settings'],
@@ -68,10 +73,6 @@ export class PaymentProvidersController {
     @IssuerType() issuerType: OidcIssuerTypes,
     @QueryParams('customer_id') customerId?: string,
   ) {
-    if (type === 'booking' && !customerId) {
-      throw new BadRequest('customer_id is required for booking type');
-    }
-
     return this.paymentProvidersService.getPaymentProviders({
       type,
       id,

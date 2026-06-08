@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3419.2
+ * OpenAPI spec version: 0.3432.0
  */
 import { faker } from '@faker-js/faker';
 
@@ -58,6 +58,7 @@ export const getGetV0CountriesResponseMock = (): CountriesModel =>
   Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
     id: faker.string.alpha({ length: { min: 10, max: 20 } }),
     label: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    phones: faker.helpers.arrayElement([faker.helpers.arrayElement([null]), undefined]),
     languages: faker.helpers.arrayElement([
       {
         default: faker.helpers.arrayElement([

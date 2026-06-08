@@ -13,212 +13,206 @@ import type {
   PaymentConfig,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentScheduleOutputModel,
+  ResolvedActionModel,
   VersionInfo,
 } from './index.schemas';
+
+export const getActionResolverControllerResolveActionResponseMock = (
+  overrideResponse: Partial<ResolvedActionModel> = {},
+): ResolvedActionModel => ({
+  action: faker.helpers.arrayElement([
+    'PAYMENT_CART',
+    'PAYMENT_RESA',
+    'PAYMENT_OPTION',
+    'PAYMENT_SOLDE',
+    'PAYMENT_PARTIAL',
+    'PAYMENT_UPGRADE_ROOM',
+    'PAYMENT_SERVICES_IN_OPTION',
+  ] as const),
+  ...overrideResponse,
+});
 
 export const getPaymentConfigControllerGetPaymentConfigResponseMock = (
   overrideResponse: Partial<PaymentConfig> = {},
 ): PaymentConfig => ({
-  feature_flips: faker.helpers.arrayElement([
-    {
-      is_free_deposit_enabled: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-      is_paypal_button_enabled: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-    },
-    undefined,
-  ]),
-  settings: faker.helpers.arrayElement([
-    {
-      days_before_trip_to_allow_free_deposit: faker.helpers.arrayElement([
-        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-        undefined,
-      ]),
-    },
-    undefined,
-  ]),
+  feature_flips: faker.helpers.arrayElement([{}, undefined]),
+  settings: faker.helpers.arrayElement([{}, undefined]),
   ...overrideResponse,
 });
 
 export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
   overrideResponse: Partial<PaymentProvidersControllerGetPaymentProviders200> = {},
 ): PaymentProvidersControllerGetPaymentProviders200 => ({
-  payment_providers: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      ...{
-        id: faker.helpers.fromRegExp('^([EMS][0-9A-Z]+)$'),
-        label: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        connection_type: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        logo: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
-        category_payment_method: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        billing_address_form: faker.datatype.boolean(),
-        description: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        payment_methods: faker.helpers.arrayElement([
-          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-            () => ({
-              id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-              label: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              image: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
-              category: faker.helpers.arrayElement([
-                faker.helpers.arrayElement([
+  payment_providers: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    ...{
+      id: faker.helpers.fromRegExp('^([EMS][0-9A-Z]+)$'),
+      label: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      connection_type: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      logo: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
+      category_payment_method: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      billing_address_form: faker.datatype.boolean(),
+      description: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      payment_methods: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          label: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          image: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
+          category: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          time_payment_conditions: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                id: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  null,
+                  undefined,
                 ]),
-                undefined,
-              ]),
-              time_payment_conditions: faker.helpers.arrayElement([
-                Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-                  () => ({
-                    id: faker.helpers.arrayElement([
-                      faker.string.alpha({ length: { min: 10, max: 20 } }),
-                      undefined,
-                    ]),
-                    payment_count: faker.helpers.arrayElement([
-                      faker.helpers.arrayElement([
-                        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                        null,
-                      ]),
-                      undefined,
-                    ]),
-                    charge_percentage: faker.helpers.arrayElement([
-                      faker.helpers.arrayElement([
-                        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                        null,
-                      ]),
-                      undefined,
-                    ]),
-                    required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
-                    charge_amount: faker.helpers.arrayElement([
-                      faker.helpers.arrayElement([
-                        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                        null,
-                      ]),
-                      undefined,
-                    ]),
-                  }),
-                ),
-                undefined,
-              ]),
-            }),
-          ),
-          undefined,
-        ]),
+                payment_count: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                charge_percentage: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
+                charge_amount: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+    },
+    ...{
+      configuration: {
+        display_type: faker.helpers.arrayElement(['hosted_field', 'iframe', 'redirect'] as const),
+        settings: {},
+        requires_token: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        requires_expiry_date: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
       },
-      ...{
-        configuration: {
-          display_type: faker.helpers.arrayElement(['hosted_field', 'iframe', 'redirect'] as const),
-          settings: {},
-          validation: {
-            requires_token: faker.datatype.boolean(),
-            requires_expiry_date: faker.datatype.boolean(),
-          },
-        },
-        payment_conditions: {},
-      },
-    })),
-    undefined,
-  ]),
-  buy_now_pay_later_providers: faker.helpers.arrayElement([
-    Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-      ...{
-        id: faker.helpers.fromRegExp('^([EMS][0-9A-Z]+)$'),
-        label: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        connection_type: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        logo: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
-        category_payment_method: faker.string.alpha({ length: { min: 10, max: 20 } }),
-        billing_address_form: faker.datatype.boolean(),
-        description: faker.helpers.arrayElement([
-          faker.string.alpha({ length: { min: 10, max: 20 } }),
-          undefined,
-        ]),
-        payment_methods: faker.helpers.arrayElement([
-          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-            () => ({
-              id: faker.string.alpha({ length: { min: 10, max: 20 } }),
-              label: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              image: faker.helpers.arrayElement([
-                faker.string.alpha({ length: { min: 10, max: 20 } }),
-                undefined,
-              ]),
-              currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
-              category: faker.helpers.arrayElement([
-                faker.helpers.arrayElement([
+      payment_conditions: {},
+    },
+  })),
+  buy_now_pay_later_providers: Array.from(
+    { length: faker.number.int({ min: 1, max: 10 }) },
+    (_, i) => i + 1,
+  ).map(() => ({
+    ...{
+      id: faker.helpers.fromRegExp('^([EMS][0-9A-Z]+)$'),
+      label: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      connection_type: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      logo: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
+      category_payment_method: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      billing_address_form: faker.datatype.boolean(),
+      description: faker.helpers.arrayElement([
+        faker.string.alpha({ length: { min: 10, max: 20 } }),
+        undefined,
+      ]),
+      payment_methods: faker.helpers.arrayElement([
+        Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+          id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+          label: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          image: faker.helpers.arrayElement([
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+            undefined,
+          ]),
+          currency: faker.string.alpha({ length: { min: 3, max: 3 } }),
+          category: faker.helpers.arrayElement([
+            faker.helpers.arrayElement([
+              faker.string.alpha({ length: { min: 10, max: 20 } }),
+              null,
+            ]),
+            undefined,
+          ]),
+          time_payment_conditions: faker.helpers.arrayElement([
+            Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
+              () => ({
+                id: faker.helpers.arrayElement([
                   faker.string.alpha({ length: { min: 10, max: 20 } }),
-                  null,
+                  undefined,
                 ]),
-                undefined,
-              ]),
-              time_payment_conditions: faker.helpers.arrayElement([
-                Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(
-                  () => ({
-                    id: faker.helpers.arrayElement([
-                      faker.string.alpha({ length: { min: 10, max: 20 } }),
-                      undefined,
-                    ]),
-                    payment_count: faker.helpers.arrayElement([
-                      faker.helpers.arrayElement([
-                        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                        null,
-                      ]),
-                      undefined,
-                    ]),
-                    charge_percentage: faker.helpers.arrayElement([
-                      faker.helpers.arrayElement([
-                        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                        null,
-                      ]),
-                      undefined,
-                    ]),
-                    required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
-                    charge_amount: faker.helpers.arrayElement([
-                      faker.helpers.arrayElement([
-                        faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
-                        null,
-                      ]),
-                      undefined,
-                    ]),
-                  }),
-                ),
-                undefined,
-              ]),
-            }),
-          ),
-          undefined,
-        ]),
+                payment_count: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                charge_percentage: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+                required_delay_before_departure: faker.number.int({ min: 0, max: undefined }),
+                charge_amount: faker.helpers.arrayElement([
+                  faker.helpers.arrayElement([
+                    faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+                    null,
+                  ]),
+                  undefined,
+                ]),
+              }),
+            ),
+            undefined,
+          ]),
+        })),
+        undefined,
+      ]),
+    },
+    ...{
+      configuration: {
+        display_type: faker.helpers.arrayElement(['hosted_field', 'iframe', 'redirect'] as const),
+        settings: {},
+        requires_token: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        requires_expiry_date: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
       },
-      ...{
-        configuration: {
-          display_type: faker.helpers.arrayElement(['hosted_field', 'iframe', 'redirect'] as const),
-          settings: {},
-          validation: {
-            requires_token: faker.datatype.boolean(),
-            requires_expiry_date: faker.datatype.boolean(),
-          },
-        },
-        payment_conditions: {},
-      },
-    })),
-    undefined,
-  ]),
+      payment_conditions: {},
+    },
+  })),
   ...overrideResponse,
 });
 
@@ -250,6 +244,34 @@ export const getVersionControllerGetResponseMock = (
   version: faker.string.alpha({ length: { min: 1, max: 20 } }),
   ...overrideResponse,
 });
+
+export const getActionResolverControllerResolveActionMockHandler = (
+  overrideResponse?:
+    | ResolvedActionModel
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<ResolvedActionModel> | ResolvedActionModel),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    '*/rest/action_resolver/:type/:id',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getActionResolverControllerResolveActionResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
 
 export const getPaymentConfigControllerGetPaymentConfigMockHandler = (
   overrideResponse?:
@@ -363,6 +385,7 @@ export const getVersionControllerGetMockHandler = (
   );
 };
 export const getApiDocumentationMock = () => [
+  getActionResolverControllerResolveActionMockHandler(),
   getPaymentConfigControllerGetPaymentConfigMockHandler(),
   getPaymentProvidersControllerGetPaymentProvidersMockHandler(),
   getPaymentScheduleControllerGetPaymentSchedulesMockHandler(),

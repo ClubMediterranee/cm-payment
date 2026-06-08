@@ -29,7 +29,7 @@ describe('PaymentConfigService', () => {
   describe('getPaymentConfig', () => {
     it('should split boolean configs into feature_flips and the rest into settings', async () => {
       const configurations = [
-        { key: 'is_free_deposit_enabled', type: 'boolean', value: true, overrides: [] },
+        { key: 'is_paypal_button_enabled', type: 'boolean', value: true, overrides: [] },
         {
           key: 'days_before_trip_to_allow_free_deposit',
           type: 'number',
@@ -44,7 +44,7 @@ describe('PaymentConfigService', () => {
         issuerType: OidcIssuerTypes.GM,
       });
 
-      expect(result.feature_flips).toEqual({ is_free_deposit_enabled: true });
+      expect(result.feature_flips).toEqual({ is_paypal_button_enabled: true });
       expect(result.settings).toEqual({ days_before_trip_to_allow_free_deposit: 90 });
     });
 

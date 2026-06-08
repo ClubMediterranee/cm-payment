@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3419.2
+ * OpenAPI spec version: 0.3432.0
  */
 /**
  * Eligible attendees for this accommodation
@@ -597,6 +597,19 @@ export interface Civility {
 export type Civilities = Civility[];
 
 /**
+ * Indicates phone information for this country
+ */
+export type CountryPhonesModelAnyOf = {
+  /** Indicates the international phone calling code for this country */
+  calling_code: string;
+};
+
+/**
+ * Indicates phone information for this country
+ */
+export type CountryPhonesModel = CountryPhonesModelAnyOf | null;
+
+/**
  * Indicates the language code
  */
 export type CountryLanguageModelValue = string | null;
@@ -641,6 +654,7 @@ export interface CountryModel {
   id: string;
   /** Indicates the country label */
   label: string;
+  phones?: CountryPhonesModel;
   languages?: CountryLanguagesModel;
 }
 
@@ -1462,6 +1476,60 @@ export type NotificationLocalesModel = string[];
 
 export type NotificationFiltersModel = string[];
 
+export interface NotificationScopesModel {
+  [key: string]: unknown;
+}
+
+export type ScopeKind = 'product' | 'quable_document' | null;
+
+export type ScopeIds = string[];
+
+export type NotificationReloadModelKeyPrefix = string | null;
+
+export type NotificationReloadModelTopic = string | null;
+
+export type NotificationReloadModelState = string | null;
+
+export type NotificationReloadModelAttempts = number | null;
+
+export type NotificationReloadModelFirstSeenAt = string | null;
+
+export type NotificationReloadModelDueAt = string | null;
+
+export type NotificationReloadModelUpdatedAt = string | null;
+
+export type NotificationReloadModelRemaining = number | null;
+
+export type NotificationReloadModelWaiting = number | null;
+
+export type NotificationReloadModelRunning = number | null;
+
+export type NotificationReloadModelStaleReason = string | null;
+
+/**
+ * ClubMed Product identifier
+ */
+export type NotificationReloadModelProductId = string | null;
+
+export interface NotificationReloadModel {
+  key_prefix?: NotificationReloadModelKeyPrefix;
+  topic?: NotificationReloadModelTopic;
+  state?: NotificationReloadModelState;
+  attempts?: NotificationReloadModelAttempts;
+  first_seen_at?: NotificationReloadModelFirstSeenAt;
+  due_at?: NotificationReloadModelDueAt;
+  updated_at?: NotificationReloadModelUpdatedAt;
+  remaining?: NotificationReloadModelRemaining;
+  waiting?: NotificationReloadModelWaiting;
+  running?: NotificationReloadModelRunning;
+  stale?: boolean;
+  stale_reason?: NotificationReloadModelStaleReason;
+  /** ClubMed Product identifier */
+  product_id: NotificationReloadModelProductId;
+  scope_kind?: ScopeKind;
+  scope_ids?: ScopeIds;
+}
+
 export type NotificationModelStartDate = string | null;
 
 export type NotificationModelEndDate = string | null;
@@ -1482,6 +1550,7 @@ export interface NotificationModel {
   status?: string;
   locales?: NotificationLocalesModel;
   filters?: NotificationFiltersModel;
+  scopes?: NotificationScopesModel;
   start_date?: NotificationModelStartDate;
   end_date?: NotificationModelEndDate;
   duration_in_seconds?: NotificationModelDurationInSeconds;
@@ -1491,6 +1560,7 @@ export interface NotificationModel {
   /** ClubMed Product identifier */
   product_id: string;
   content?: string;
+  reload?: NotificationReloadModel;
   error?: NotificationModelError;
   request_id?: string;
 }
@@ -4383,6 +4453,11 @@ export type SavedProposalsModel = SavedProposalModel[];
  */
 export type SalesmanLocalesModel = string[];
 
+/**
+ * List of seller phone numbers
+ */
+export type SalesmanPhonesModel = PhoneModel[];
+
 export interface SalesmanModel {
   /** seller first name */
   first_name: string;
@@ -4401,6 +4476,7 @@ export interface SalesmanModel {
   /** indicates if this seller is his agency manager */
   agency_manager: boolean;
   locales: SalesmanLocalesModel;
+  phones: SalesmanPhonesModel;
 }
 
 export interface SponsorshipsDiscountsByLocalModel {
@@ -7747,101 +7823,82 @@ export interface StationInformationModel {
 export type ProductWinterSportsInformationModel = StationInformationModel[];
 
 /**
- * temperature unit code
+ * latitude of the preview scene
+ * @minimum -90
+ * @maximum 90
  */
-export type Unit = (typeof Unit)[keyof typeof Unit];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Unit = {
-  CELSIUS: 'CELSIUS',
-  FAHRENHEIT: 'FAHRENHEIT',
-} as const;
+export type PreviewParametersAnyOfLatitude = number | null;
 
 /**
- * day minimum temperature
+ * longitude of the preview scene
+ * @minimum -180
+ * @maximum 180
  */
-export type ProductWeatherForecastTemperatureModelMin = number | null;
+export type PreviewParametersAnyOfLongitude = number | null;
 
 /**
- * day maximum temperature
+ * compass heading of the camera at the preview scene
+ * @minimum 0
+ * @maximum 360
  */
-export type ProductWeatherForecastTemperatureModelMax = number | null;
+export type PreviewParametersAnyOfHeading = number | null;
 
 /**
- * morning temperature
+ * up or down angle of the camera at the preview scene
+ * @minimum -180
+ * @maximum 180
  */
-export type ProductWeatherForecastTemperatureModelMorning = number | null;
+export type PreviewParametersAnyOfPitch = number | null;
 
 /**
- * afternoon temperature
+ * horizontal field of view of the image at the preview scene
+ * @minimum 0
+ * @maximum 120
  */
-export type ProductWeatherForecastTemperatureModelAfternoon = number | null;
+export type PreviewParametersAnyOfFov = number | null;
 
-/**
- * evening temperature
- */
-export type ProductWeatherForecastTemperatureModelEvening = number | null;
+export type PreviewParametersAnyOf = {
+  /**
+   * latitude of the preview scene
+   * @minimum -90
+   * @maximum 90
+   */
+  latitude?: PreviewParametersAnyOfLatitude;
+  /**
+   * longitude of the preview scene
+   * @minimum -180
+   * @maximum 180
+   */
+  longitude?: PreviewParametersAnyOfLongitude;
+  /**
+   * compass heading of the camera at the preview scene
+   * @minimum 0
+   * @maximum 360
+   */
+  heading?: PreviewParametersAnyOfHeading;
+  /**
+   * up or down angle of the camera at the preview scene
+   * @minimum -180
+   * @maximum 180
+   */
+  pitch?: PreviewParametersAnyOfPitch;
+  /**
+   * horizontal field of view of the image at the preview scene
+   * @minimum 0
+   * @maximum 120
+   */
+  fov?: PreviewParametersAnyOfFov;
+};
 
-/**
- * night temperature
- */
-export type ProductWeatherForecastTemperatureModelNight = number | null;
+export type PreviewParameters = PreviewParametersAnyOf | null;
 
-export interface ProductWeatherForecastTemperatureModel {
-  /** day minimum temperature */
-  min: ProductWeatherForecastTemperatureModelMin;
-  /** day maximum temperature */
-  max: ProductWeatherForecastTemperatureModelMax;
-  /** morning temperature */
-  morning: ProductWeatherForecastTemperatureModelMorning;
-  /** afternoon temperature */
-  afternoon: ProductWeatherForecastTemperatureModelAfternoon;
-  /** evening temperature */
-  evening: ProductWeatherForecastTemperatureModelEvening;
-  /** night temperature */
-  night: ProductWeatherForecastTemperatureModelNight;
+export interface VirtualVisitModel {
+  /** google street view url */
+  url: string;
+  preview_parameters?: PreviewParameters;
 }
 
-/**
- * code for the weather description. Can be used to display a weather icon
- */
-export type Code = (typeof Code)[keyof typeof Code];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Code = {
-  RAIN: 'RAIN',
-  THUNDERSTORM: 'THUNDERSTORM',
-  SNOW: 'SNOW',
-  MIST: 'MIST',
-  CLEAR_SKY: 'CLEAR_SKY',
-  FEW_CLOUDS: 'FEW_CLOUDS',
-  SCATERRED_CLOUDS: 'SCATERRED_CLOUDS',
-  BROKEN_CLOUDS: 'BROKEN_CLOUDS',
-  SHOWER_RAIN: 'SHOWER_RAIN',
-} as const;
-
-export interface ProductWeatherForecastWeatherModel {
-  code: Code;
-  /** weather description */
-  description: string;
-}
-
-/**
- * forecast date
- */
-export type ProductWeatherForecastModelDate = string | null;
-
-export interface ProductWeatherForecastModel {
-  /** forecast id */
-  id: string;
-  /** forecast date */
-  date: ProductWeatherForecastModelDate;
-  unit: Unit;
-  temperature: ProductWeatherForecastTemperatureModel;
-  weather: ProductWeatherForecastWeatherModel;
-}
-
-export type ProductWeatherForecastListModel = ProductWeatherForecastModel[];
+export type VirtualVisitsModel = VirtualVisitModel[];
 
 export interface TourSpecificityBoardTypeModel {
   /** type of board id */
@@ -10111,84 +10168,6 @@ export interface ProposalSuggestionVilageModel {
 
 export type ProposalSuggestionVilageListModel = ProposalSuggestionVilageModel[];
 
-/**
- * latitude of the preview scene
- * @minimum -90
- * @maximum 90
- */
-export type PreviewParametersAnyOfLatitude = number | null;
-
-/**
- * longitude of the preview scene
- * @minimum -180
- * @maximum 180
- */
-export type PreviewParametersAnyOfLongitude = number | null;
-
-/**
- * compass heading of the camera at the preview scene
- * @minimum 0
- * @maximum 360
- */
-export type PreviewParametersAnyOfHeading = number | null;
-
-/**
- * up or down angle of the camera at the preview scene
- * @minimum -180
- * @maximum 180
- */
-export type PreviewParametersAnyOfPitch = number | null;
-
-/**
- * horizontal field of view of the image at the preview scene
- * @minimum 0
- * @maximum 120
- */
-export type PreviewParametersAnyOfFov = number | null;
-
-export type PreviewParametersAnyOf = {
-  /**
-   * latitude of the preview scene
-   * @minimum -90
-   * @maximum 90
-   */
-  latitude?: PreviewParametersAnyOfLatitude;
-  /**
-   * longitude of the preview scene
-   * @minimum -180
-   * @maximum 180
-   */
-  longitude?: PreviewParametersAnyOfLongitude;
-  /**
-   * compass heading of the camera at the preview scene
-   * @minimum 0
-   * @maximum 360
-   */
-  heading?: PreviewParametersAnyOfHeading;
-  /**
-   * up or down angle of the camera at the preview scene
-   * @minimum -180
-   * @maximum 180
-   */
-  pitch?: PreviewParametersAnyOfPitch;
-  /**
-   * horizontal field of view of the image at the preview scene
-   * @minimum 0
-   * @maximum 120
-   */
-  fov?: PreviewParametersAnyOfFov;
-};
-
-export type PreviewParameters = PreviewParametersAnyOf | null;
-
-export interface VirtualVisitModel {
-  /** google street view url */
-  url: string;
-  preview_parameters?: PreviewParameters;
-}
-
-export type VirtualVisitsModel = VirtualVisitModel[];
-
 export interface Subratings {
   /** image of the rating. */
   rating_image_url?: string;
@@ -10395,6 +10374,103 @@ export interface TripAdvisorExtendedModel {
   awards?: TripadvisorAwards;
   reviews?: TripadvisorReviews;
 }
+
+/**
+ * temperature unit code
+ */
+export type Unit = (typeof Unit)[keyof typeof Unit];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Unit = {
+  CELSIUS: 'CELSIUS',
+  FAHRENHEIT: 'FAHRENHEIT',
+} as const;
+
+/**
+ * day minimum temperature
+ */
+export type ProductWeatherForecastTemperatureModelMin = number | null;
+
+/**
+ * day maximum temperature
+ */
+export type ProductWeatherForecastTemperatureModelMax = number | null;
+
+/**
+ * morning temperature
+ */
+export type ProductWeatherForecastTemperatureModelMorning = number | null;
+
+/**
+ * afternoon temperature
+ */
+export type ProductWeatherForecastTemperatureModelAfternoon = number | null;
+
+/**
+ * evening temperature
+ */
+export type ProductWeatherForecastTemperatureModelEvening = number | null;
+
+/**
+ * night temperature
+ */
+export type ProductWeatherForecastTemperatureModelNight = number | null;
+
+export interface ProductWeatherForecastTemperatureModel {
+  /** day minimum temperature */
+  min: ProductWeatherForecastTemperatureModelMin;
+  /** day maximum temperature */
+  max: ProductWeatherForecastTemperatureModelMax;
+  /** morning temperature */
+  morning: ProductWeatherForecastTemperatureModelMorning;
+  /** afternoon temperature */
+  afternoon: ProductWeatherForecastTemperatureModelAfternoon;
+  /** evening temperature */
+  evening: ProductWeatherForecastTemperatureModelEvening;
+  /** night temperature */
+  night: ProductWeatherForecastTemperatureModelNight;
+}
+
+/**
+ * code for the weather description. Can be used to display a weather icon
+ */
+export type Code = (typeof Code)[keyof typeof Code];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Code = {
+  RAIN: 'RAIN',
+  THUNDERSTORM: 'THUNDERSTORM',
+  SNOW: 'SNOW',
+  MIST: 'MIST',
+  CLEAR_SKY: 'CLEAR_SKY',
+  FEW_CLOUDS: 'FEW_CLOUDS',
+  SCATERRED_CLOUDS: 'SCATERRED_CLOUDS',
+  BROKEN_CLOUDS: 'BROKEN_CLOUDS',
+  SHOWER_RAIN: 'SHOWER_RAIN',
+} as const;
+
+export interface ProductWeatherForecastWeatherModel {
+  code: Code;
+  /** weather description */
+  description: string;
+}
+
+/**
+ * forecast date
+ */
+export type ProductWeatherForecastModelDate = string | null;
+
+export interface ProductWeatherForecastModel {
+  /** forecast id */
+  id: string;
+  /** forecast date */
+  date: ProductWeatherForecastModelDate;
+  unit: Unit;
+  temperature: ProductWeatherForecastTemperatureModel;
+  weather: ProductWeatherForecastWeatherModel;
+}
+
+export type ProductWeatherForecastListModel = ProductWeatherForecastModel[];
 
 export interface Address {
   /** Spa's address's city */
@@ -12313,6 +12389,8 @@ export const FacilityTypeModel = {
   SERVICES: 'SERVICES',
   OTHERS: 'OTHERS',
   WINTER_SPORTS: 'WINTER_SPORTS',
+  INFIRMARY: 'INFIRMARY',
+  LEISURE_RELAXATION: 'LEISURE_RELAXATION',
 } as const;
 
 /**
@@ -14446,6 +14524,8 @@ export type CustomerLoyaltyProgramV2ModelAnyOf = {
   status?: CustomerLoyaltyProgramStatusV2Model;
   /** Indicates if this GM is platinum for life when he has reached platinum status for a certain number of years in a row */
   is_platinum_for_life?: boolean;
+  /** Year when Platinum for Life status was granted */
+  platinum_for_life_since?: string;
   /** Number of points accumulated (not editable) */
   points?: CustomerLoyaltyProgramV2ModelAnyOfPoints;
   previous_status?: CustomerLoyaltyProgramPreviousStatusModel;
@@ -17456,182 +17536,6 @@ export interface Occupancy {
 export type Occupancies = Occupancy[];
 
 /**
- * type of the service
- */
-export type ServiceTypesV1Model = (typeof ServiceTypesV1Model)[keyof typeof ServiceTypesV1Model];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ServiceTypesV1Model = {
-  CHILDCARE: 'CHILDCARE',
-  TRANSFER: 'TRANSFER',
-  INSURANCE: 'INSURANCE',
-  RENTAL: 'RENTAL',
-  EXCURSION: 'EXCURSION',
-  WATER_SPORT: 'WATER_SPORT',
-  LAND_SPORT: 'LAND_SPORT',
-  WINTER_SPORT: 'WINTER_SPORT',
-  WELLNESS: 'WELLNESS',
-  CONCIERGERIE: 'CONCIERGERIE',
-  PARKING: 'PARKING',
-  VISAS: 'VISAS',
-  TOURIST_TAX: 'TOURIST_TAX',
-  PORT_TAX: 'PORT_TAX',
-  UPGRADE_PACKAGE: 'UPGRADE_PACKAGE',
-  DONATION: 'DONATION',
-  ROOM_SELECTION: 'ROOM_SELECTION',
-  MISCELLANEOUS_TOUR: 'MISCELLANEOUS_TOUR',
-  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
-  HONEYMOON: 'HONEYMOON',
-  HOUSEKEEPING: 'HOUSEKEEPING',
-  FOOD_AND_BEVERAGE: 'FOOD_AND_BEVERAGE',
-  TAILORMED: 'TAILORMED',
-  ALL_INCLUSIVE: 'ALL_INCLUSIVE',
-  OTHER: 'OTHER',
-} as const;
-
-export interface ServiceAttendeeV1Model {
-  /** attendee id */
-  id: string;
-  /** price per attendee */
-  price?: number;
-}
-
-export type ServiceAttendeesV1Model = ServiceAttendeeV1Model[];
-
-/**
- * Direction of transfer
- */
-export type ValidServiceTransferInformationWaysV1Model = 'INBOUND' | 'OUTBOUND' | null;
-
-/**
- * arrival or departure travel time
- * @pattern ^\d+:\d+:\d+.\d+$
- */
-export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTime = string | null;
-
-/**
- * arrival or departure travel reference
- * @maxLength 6
- */
-export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelReference =
-  | string
-  | null;
-
-/**
- * travel company label
- */
-export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelCompany =
-  | string
-  | null;
-
-/**
- * information provided by the customer to insure the service delivery
- */
-export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOf = {
-  /**
-   * arrival or departure travel time
-   * @pattern ^\d+:\d+:\d+.\d+$
-   */
-  time?: BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTime;
-  /**
-   * arrival or departure travel reference
-   * @maxLength 6
-   */
-  travel_reference?: BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelReference;
-  /** travel company label */
-  travel_company?: BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelCompany;
-};
-
-/**
- * information provided by the customer to insure the service delivery
- */
-export type BookingTransferInfoCustomerTravelingInformationV1Model =
-  BookingTransferInfoCustomerTravelingInformationV1ModelAnyOf | null;
-
-export type TransfersBookingFromV1ModelAnyOfLabel = string | null;
-
-/**
- * transfer pickup place
- */
-export type TransfersBookingFromV1ModelAnyOf = {
-  id?: string;
-  label?: TransfersBookingFromV1ModelAnyOfLabel;
-};
-
-/**
- * transfer pickup place
- */
-export type TransfersBookingFromV1Model = TransfersBookingFromV1ModelAnyOf | null;
-
-export type TransfersBookingToV1ModelAnyOfLabel = string | null;
-
-/**
- * transfer drop off place
- */
-export type TransfersBookingToV1ModelAnyOf = {
-  id?: string;
-  label?: TransfersBookingToV1ModelAnyOfLabel;
-};
-
-/**
- * transfer drop off place
- */
-export type TransfersBookingToV1Model = TransfersBookingToV1ModelAnyOf | null;
-
-export type TransferInformationAnyOf = {
-  way: ValidServiceTransferInformationWaysV1Model;
-  customer_traveling_information: BookingTransferInfoCustomerTravelingInformationV1Model;
-  from?: TransfersBookingFromV1Model;
-  to?: TransfersBookingToV1Model;
-};
-
-export type TransferInformation = TransferInformationAnyOf | null;
-
-/**
- * service start date
- */
-export type ServiceScheduleV1ModelStartDate = string | null;
-
-/**
- * service end date
- */
-export type ServiceScheduleV1ModelEndDate = string | null;
-
-export interface ServiceScheduleV1Model {
-  /** service start date */
-  start_date: ServiceScheduleV1ModelStartDate;
-  /** service end date */
-  end_date: ServiceScheduleV1ModelEndDate;
-  attendees?: ServiceAttendeesV1Model;
-  transfer_information?: TransferInformation;
-}
-
-export type ServiceSchedulesV1Model = ServiceScheduleV1Model[];
-
-/**
- * Order of the stay this service is applied to. Counting from 0.
- * @minimum 0
- */
-export type ServiceV1ModelStayIndex = number | null;
-
-export interface ServiceV1Model {
-  /** service id */
-  id: string;
-  type: ServiceTypesV1Model;
-  /** price currency */
-  currency: string;
-  /**
-   * Order of the stay this service is applied to. Counting from 0.
-   * @minimum 0
-   */
-  stay_index: ServiceV1ModelStayIndex;
-  schedules: ServiceSchedulesV1Model;
-  _links?: LinksModel;
-}
-
-export type ServicesV1Model = ServiceV1Model[];
-
-/**
  * Pre check in availability. Possible values : AVAILABLE, UNAVAILABLE, NOT_YET, UNEDITABLE
  */
 export type CreditCardCheckInStatusesModel =
@@ -18031,6 +17935,182 @@ export interface CartModel {
   price: CartPrice;
   services?: CartServicesModel;
 }
+
+/**
+ * type of the service
+ */
+export type ServiceTypesV1Model = (typeof ServiceTypesV1Model)[keyof typeof ServiceTypesV1Model];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ServiceTypesV1Model = {
+  CHILDCARE: 'CHILDCARE',
+  TRANSFER: 'TRANSFER',
+  INSURANCE: 'INSURANCE',
+  RENTAL: 'RENTAL',
+  EXCURSION: 'EXCURSION',
+  WATER_SPORT: 'WATER_SPORT',
+  LAND_SPORT: 'LAND_SPORT',
+  WINTER_SPORT: 'WINTER_SPORT',
+  WELLNESS: 'WELLNESS',
+  CONCIERGERIE: 'CONCIERGERIE',
+  PARKING: 'PARKING',
+  VISAS: 'VISAS',
+  TOURIST_TAX: 'TOURIST_TAX',
+  PORT_TAX: 'PORT_TAX',
+  UPGRADE_PACKAGE: 'UPGRADE_PACKAGE',
+  DONATION: 'DONATION',
+  ROOM_SELECTION: 'ROOM_SELECTION',
+  MISCELLANEOUS_TOUR: 'MISCELLANEOUS_TOUR',
+  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
+  HONEYMOON: 'HONEYMOON',
+  HOUSEKEEPING: 'HOUSEKEEPING',
+  FOOD_AND_BEVERAGE: 'FOOD_AND_BEVERAGE',
+  TAILORMED: 'TAILORMED',
+  ALL_INCLUSIVE: 'ALL_INCLUSIVE',
+  OTHER: 'OTHER',
+} as const;
+
+export interface ServiceAttendeeV1Model {
+  /** attendee id */
+  id: string;
+  /** price per attendee */
+  price?: number;
+}
+
+export type ServiceAttendeesV1Model = ServiceAttendeeV1Model[];
+
+/**
+ * Direction of transfer
+ */
+export type ValidServiceTransferInformationWaysV1Model = 'INBOUND' | 'OUTBOUND' | null;
+
+/**
+ * arrival or departure travel time
+ * @pattern ^\d+:\d+:\d+.\d+$
+ */
+export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTime = string | null;
+
+/**
+ * arrival or departure travel reference
+ * @maxLength 6
+ */
+export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelReference =
+  | string
+  | null;
+
+/**
+ * travel company label
+ */
+export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelCompany =
+  | string
+  | null;
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type BookingTransferInfoCustomerTravelingInformationV1ModelAnyOf = {
+  /**
+   * arrival or departure travel time
+   * @pattern ^\d+:\d+:\d+.\d+$
+   */
+  time?: BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTime;
+  /**
+   * arrival or departure travel reference
+   * @maxLength 6
+   */
+  travel_reference?: BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelReference;
+  /** travel company label */
+  travel_company?: BookingTransferInfoCustomerTravelingInformationV1ModelAnyOfTravelCompany;
+};
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type BookingTransferInfoCustomerTravelingInformationV1Model =
+  BookingTransferInfoCustomerTravelingInformationV1ModelAnyOf | null;
+
+export type TransfersBookingFromV1ModelAnyOfLabel = string | null;
+
+/**
+ * transfer pickup place
+ */
+export type TransfersBookingFromV1ModelAnyOf = {
+  id?: string;
+  label?: TransfersBookingFromV1ModelAnyOfLabel;
+};
+
+/**
+ * transfer pickup place
+ */
+export type TransfersBookingFromV1Model = TransfersBookingFromV1ModelAnyOf | null;
+
+export type TransfersBookingToV1ModelAnyOfLabel = string | null;
+
+/**
+ * transfer drop off place
+ */
+export type TransfersBookingToV1ModelAnyOf = {
+  id?: string;
+  label?: TransfersBookingToV1ModelAnyOfLabel;
+};
+
+/**
+ * transfer drop off place
+ */
+export type TransfersBookingToV1Model = TransfersBookingToV1ModelAnyOf | null;
+
+export type TransferInformationAnyOf = {
+  way: ValidServiceTransferInformationWaysV1Model;
+  customer_traveling_information: BookingTransferInfoCustomerTravelingInformationV1Model;
+  from?: TransfersBookingFromV1Model;
+  to?: TransfersBookingToV1Model;
+};
+
+export type TransferInformation = TransferInformationAnyOf | null;
+
+/**
+ * service start date
+ */
+export type ServiceScheduleV1ModelStartDate = string | null;
+
+/**
+ * service end date
+ */
+export type ServiceScheduleV1ModelEndDate = string | null;
+
+export interface ServiceScheduleV1Model {
+  /** service start date */
+  start_date: ServiceScheduleV1ModelStartDate;
+  /** service end date */
+  end_date: ServiceScheduleV1ModelEndDate;
+  attendees?: ServiceAttendeesV1Model;
+  transfer_information?: TransferInformation;
+}
+
+export type ServiceSchedulesV1Model = ServiceScheduleV1Model[];
+
+/**
+ * Order of the stay this service is applied to. Counting from 0.
+ * @minimum 0
+ */
+export type ServiceV1ModelStayIndex = number | null;
+
+export interface ServiceV1Model {
+  /** service id */
+  id: string;
+  type: ServiceTypesV1Model;
+  /** price currency */
+  currency: string;
+  /**
+   * Order of the stay this service is applied to. Counting from 0.
+   * @minimum 0
+   */
+  stay_index: ServiceV1ModelStayIndex;
+  schedules: ServiceSchedulesV1Model;
+  _links?: LinksModel;
+}
+
+export type ServicesV1Model = ServiceV1Model[];
 
 /**
  * type of the service
@@ -21417,7 +21497,7 @@ export interface NotificationPayloadModel {
 }
 
 /**
- * Target memoize layers to reload, they will be reordered by hierarchy. But the parents nor subsequent dependencies will not be reloaded if not mentioned. Beware of the quantity of data being reloaded.
+ * Target memoize layers to reload. Existing manual callers keep using this legacy array mode.
  */
 export type NotifyMemoizeFilterModel =
   (typeof NotifyMemoizeFilterModel)[keyof typeof NotifyMemoizeFilterModel];
@@ -21508,18 +21588,24 @@ export const NotifyMemoizeFilterModel = {
 
 export type NotifyMemoizeFiltersModel = NotifyMemoizeFilterModel[];
 
-export interface MemoizeNotificationWithFiltersModel {
+export type MemoizeNotificationPayloadModelScopes =
+  | NotifyMemoizeKeyReplayScopesModel
+  | NotifyMemoizeScopesModel
+  | NotifyMemoizePathReplayFiltersModel;
+
+export interface MemoizeNotificationPayloadModel {
   locale?: string;
   locales?: Locales;
   event: string;
   /** ClubMed Product identifier */
   product_id?: string;
   filters?: NotifyMemoizeFiltersModel;
+  scopes?: MemoizeNotificationPayloadModelScopes;
 }
 
 export type NotifyProductFilterModel = string[];
 
-export interface ProductsNotificationWithFiltersModel {
+export interface ProductsNotificationPayloadModel {
   locale?: string;
   locales?: Locales;
   event: string;
@@ -21530,7 +21616,7 @@ export interface ProductsNotificationWithFiltersModel {
 
 export type NotifyProductDataFilterModel = string[];
 
-export interface ProductsDataNotificationWithFiltersModel {
+export interface ProductsDataNotificationPayloadModel {
   locale?: string;
   locales?: Locales;
   event: string;
@@ -25877,10 +25963,10 @@ export const AcceptLanguageParamModel = {
   'fr-TJ': 'fr-TJ',
   'en-GE': 'en-GE',
   'en-AZ': 'en-AZ',
-  'fr-TN': 'fr-TN',
-  'es-DO': 'es-DO',
-  'fr-TM': 'fr-TM',
   'sk-SK': 'sk-SK',
+  'fr-TM': 'fr-TM',
+  'es-DO': 'es-DO',
+  'fr-TN': 'fr-TN',
 } as const;
 
 /**

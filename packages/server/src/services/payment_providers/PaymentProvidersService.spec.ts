@@ -30,6 +30,17 @@ describe('PaymentProvidersService', () => {
   };
 
   describe('getPaymentProviders', () => {
+    it('should throw when type is booking and customerId is missing', async () => {
+      await expect(
+        service.getPaymentProviders({
+          type: 'booking',
+          id: '456',
+          locale: 'fr-FR',
+          issuerType: OidcIssuerTypes.GM,
+        }),
+      ).rejects.toThrow('customer_id is required for booking type');
+    });
+
     it('should keep only providers present in config and enrich them', async () => {
       setup(
         [

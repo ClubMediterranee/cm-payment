@@ -4,18 +4,39 @@
  * Api documentation
  * OpenAPI spec version: 1.0.0
  */
+/**
+ * @minLength 1
+ */
+export type ResolvedActionModelAction =
+  (typeof ResolvedActionModelAction)[keyof typeof ResolvedActionModelAction];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedActionModelAction = {
+  PAYMENT_CART: 'PAYMENT_CART',
+  PAYMENT_RESA: 'PAYMENT_RESA',
+  PAYMENT_OPTION: 'PAYMENT_OPTION',
+  PAYMENT_SOLDE: 'PAYMENT_SOLDE',
+  PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
+  PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
+} as const;
+
+export interface ResolvedActionModel {
+  /** @minLength 1 */
+  action: ResolvedActionModelAction;
+}
+
 export interface PaymentConfig {
   feature_flips?: FeatureFlipsConfig;
   settings?: PaymentSettings;
 }
 
 export interface FeatureFlipsConfig {
-  is_free_deposit_enabled?: boolean;
-  is_paypal_button_enabled?: boolean;
+  [key: string]: unknown;
 }
 
 export interface PaymentSettings {
-  days_before_trip_to_allow_free_deposit?: number;
+  [key: string]: unknown;
 }
 
 export interface PaymentScheduleOutputModel {
@@ -134,6 +155,25 @@ export interface TimePaymentConditionModel {
   charge_amount?: TimePaymentConditionModelChargeAmount;
 }
 
+export type ActionResolverControllerResolveActionParams = {
+  customer_id?: string;
+  action?: ActionResolverControllerResolveActionAction;
+};
+
+export type ActionResolverControllerResolveActionAction =
+  (typeof ActionResolverControllerResolveActionAction)[keyof typeof ActionResolverControllerResolveActionAction];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ActionResolverControllerResolveActionAction = {
+  PAYMENT_CART: 'PAYMENT_CART',
+  PAYMENT_RESA: 'PAYMENT_RESA',
+  PAYMENT_OPTION: 'PAYMENT_OPTION',
+  PAYMENT_SOLDE: 'PAYMENT_SOLDE',
+  PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
+  PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
+} as const;
+
 export type PaymentProvidersControllerGetPaymentProvidersParams = {
   customer_id?: string;
 };
@@ -152,17 +192,12 @@ export const PaymentProvidersControllerGetPaymentProviders200PaymentProvidersIte
 export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings =
   { [key: string]: unknown };
 
-export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationValidation =
-  {
-    requires_token: boolean;
-    requires_expiry_date: boolean;
-  };
-
 export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfiguration =
   {
     display_type: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType;
     settings: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings;
-    validation: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationValidation;
+    requires_token?: boolean;
+    requires_expiry_date?: boolean;
   };
 
 export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfPaymentConditions =
@@ -190,17 +225,12 @@ export const PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvi
 export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings =
   { [key: string]: unknown };
 
-export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationValidation =
-  {
-    requires_token: boolean;
-    requires_expiry_date: boolean;
-  };
-
 export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfiguration =
   {
     display_type: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType;
     settings: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings;
-    validation: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationValidation;
+    requires_token?: boolean;
+    requires_expiry_date?: boolean;
   };
 
 export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfPaymentConditions =
@@ -216,8 +246,8 @@ export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvid
     PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOf;
 
 export type PaymentProvidersControllerGetPaymentProviders200 = {
-  payment_providers?: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem[];
-  buy_now_pay_later_providers?: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem[];
+  payment_providers: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem[];
+  buy_now_pay_later_providers: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem[];
 };
 
 export type PaymentScheduleControllerGetPaymentSchedulesParams = {

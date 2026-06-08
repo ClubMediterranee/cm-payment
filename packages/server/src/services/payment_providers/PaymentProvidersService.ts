@@ -2,10 +2,12 @@ import { Inject, Service } from '@tsed/di';
 
 import { getV1PaymentProviders } from '../../infra/api/__generated__/index.js';
 import { PaymentProvider1 } from '../../infra/api/__generated__/index.schemas.js';
+import { daysUntilToday } from '../../utils/daysUntilToday.js';
 import { parseApiDate } from '../../utils/parseApiDate.js';
 import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
 import { Stay } from '../stay/models.js';
 import { StayService } from '../stay/StayService.js';
+import { PaymentProvidersValidationError } from './errors.js';
 import { PaymentProvidersResponse } from './models.js';
 import { GetPaymentProvidersParams, ProviderConfigMap } from './types.js';
 import { sortTimePaymentConditions } from './utils/sortTimePaymentConditions.js';
@@ -26,6 +28,10 @@ export class PaymentProvidersService {
     issuerType,
     customerId,
   }: GetPaymentProvidersParams): Promise<PaymentProvidersResponse> {
+    if (type === 'booking' && !customerId) {
+      throw new PaymentProvidersValidationError('customer_id is required for booking type');
+    }
+
     const [paymentProvidersConfig, paymentProviders]: [ProviderConfigMap, PaymentProvider1[]] =
       await Promise.all([
         this.paymentConfigService.getPaymentProvidersConfig({ locale }),
@@ -77,18 +83,12 @@ export class PaymentProvidersService {
     const arrival = parseApiDate(stay.resortArrivalDate);
     if (!arrival) return true;
 
-    const daysUntilDeparture = this.daysUntilToday(arrival);
+    const daysUntilDeparture = daysUntilToday(arrival);
     return daysUntilDeparture < Number(minDays);
   }
 
   private isValidConnectionType(provider: PaymentProvider1, issuerType?: string): boolean {
     return issuerType !== 'GM' || provider.connection_type !== 'Manual';
-  }
-
-  private daysUntilToday(date: Date): number {
-    const today = new Date();
-    const diffTime = date.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 
   private shouldFetchStay(providers: PaymentProvider1[], config: ProviderConfigMap): boolean {
