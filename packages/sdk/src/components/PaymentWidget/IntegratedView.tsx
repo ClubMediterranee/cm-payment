@@ -4,7 +4,7 @@ import { CybersourceForm } from './integrations/CybersourceForm';
 import { HipayForm } from './integrations/HipayForm';
 import { WeChatQRView } from './WeChatQRView';
 
-const providerViewRegistry = {
+const paymentProvidersRegistry = {
   [PspProviders.HIPAY]: HipayForm,
   [PspProviders.MCYBERSOURCE]: CybersourceForm,
   [PspProviders.M99BILLW]: WeChatQRView,
@@ -12,7 +12,7 @@ const providerViewRegistry = {
 
 export const IntegratedView = () => {
   const providerId = useWatch('provider_id');
-  const Component = providerViewRegistry[providerId as keyof typeof providerViewRegistry];
+  const Component = paymentProvidersRegistry[providerId as keyof typeof paymentProvidersRegistry];
 
   if (!Component) {
     return null;

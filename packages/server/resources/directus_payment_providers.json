@@ -453,7 +453,12 @@
           {
             "key": "qr_timeout_seconds",
             "type": "number",
-            "value": 120
+            "value": 300
+          },
+          {
+            "key": "poll_interval_seconds",
+            "type": "number",
+            "value": 2
           }
         ]
       },

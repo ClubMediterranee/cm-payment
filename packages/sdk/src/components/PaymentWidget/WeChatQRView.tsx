@@ -17,8 +17,6 @@ import { navigateToCallbackUrl } from '../../utils/url/navigateToCallbackUrl';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { FormPanel } from '../ui/FormPanel';
 
-const POLL_INTERVAL_MS = 2000;
-
 const formatCountdown = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
@@ -28,6 +26,7 @@ export const WeChatQRView = () => {
   const { content, locale, callbackUrl, id, type } = useCapsConfigContext();
   const provider = useWatchedPaymentProvider();
   const timeoutSeconds = Number(provider?.configuration?.settings?.qr_timeout_seconds) || 0;
+  const pollIntervalSeconds = Number(provider?.configuration?.settings?.poll_interval_seconds) || 2;
 
   const amount = useWatch('amount');
   const currency = useWatch('currency');
@@ -44,7 +43,7 @@ export const WeChatQRView = () => {
   const { secondsRemaining, expired } = useCountdown(timeoutSeconds, paymentId);
 
   const { data: paymentStatus, isSuccess } = usePaymentStatus(paymentId, {
-    pollIntervalMs: POLL_INTERVAL_MS,
+    pollIntervalMs: pollIntervalSeconds * 1000,
     enabled: !!paymentId && !expired,
   });
 
