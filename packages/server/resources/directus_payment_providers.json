@@ -438,11 +438,32 @@
   },
   {
     "id": "M99BILLW",
-    "default_display_type": "redirect",
+    "default_display_type": "custom",
     "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
+        "status": "archived",
+        "settings": [
+          {
+            "key": "blocked_user_agent_pattern",
+            "type": "string",
+            "value": "MicroMessenger"
+          },
+          {
+            "key": "qr_timeout_seconds",
+            "type": "number",
+            "value": 120
+          }
+        ]
+      },
+      {
+        "locale": "zh-CN",
+        "status": "published",
+        "settings": []
+      },
+      {
+        "locale": "en-CN",
         "status": "published",
         "settings": []
       }

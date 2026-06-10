@@ -15,13 +15,14 @@ export type UsePaymentSubmitParams = {
 export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) => {
   const { onError, onLoad, onLoadEnd } = useFormCallbacks();
   const methods = useFormContext();
-  const { iframe } = useProviderIntegrationMode();
+  const { iframe, custom } = useProviderIntegrationMode();
 
   const { mutate, ...mutationProps } = usePaymentRedirect({
     onError: (error) => {
       onError?.(error);
     },
     onSuccess: (params) => {
+      if (custom) return;
       loadPaymentProviderUrl(params, targetIframe);
     },
     onLoadEnd,

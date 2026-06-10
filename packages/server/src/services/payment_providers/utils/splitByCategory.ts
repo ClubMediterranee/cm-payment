@@ -1,5 +1,4 @@
-import { EnrichedPaymentProvider } from '../models.js';
-import { PaymentProvidersResponse } from '../models.js';
+import { EnrichedPaymentProvider, PaymentProvidersResponse } from '../types.js';
 
 export const splitByCategory = (
   acc: PaymentProvidersResponse,

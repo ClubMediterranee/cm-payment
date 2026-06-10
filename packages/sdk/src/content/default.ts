@@ -130,4 +130,14 @@ export const defaultContent: Content = {
       schemaInvalid: 'Billing address form configuration error. Please contact support.',
     },
   },
+  wechat: {
+    payLabel: 'Scan now to pay:',
+    scanLabel: 'Please scan',
+    tutorial: {
+      title: 'After you press continue',
+      subtitle: 'please scan the QRCode within the WeChat to pay scanner',
+      imageUrl: 'https://ns.clubmed.com/it/2018/be/payment/wechat.png',
+      expiredMessage: 'Transaction expired',
+    },
+  },
 };

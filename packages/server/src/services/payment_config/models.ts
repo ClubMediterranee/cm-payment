@@ -79,7 +79,7 @@ export class ProviderModel {
   id!: string;
 
   @Required()
-  @Enum('hosted_field', 'iframe', 'redirect')
+  @Enum('hosted_field', 'iframe', 'redirect', 'custom')
   default_display_type!: PaymentProviderDisplayType;
 
   @Property()

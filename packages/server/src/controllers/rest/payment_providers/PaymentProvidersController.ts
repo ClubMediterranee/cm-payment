@@ -4,6 +4,7 @@ import { Enum, Get, Returns, Summary } from '@tsed/schema';
 
 import { IssuerType } from '../../../decorators/IssuerType.js';
 import { Locale } from '../../../decorators/Locale.js';
+import { UserAgent } from '../../../decorators/UserAgent.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
 import { PaymentProvidersService } from '../../../services/payment_providers/PaymentProvidersService.js';
 
@@ -18,7 +19,7 @@ const EnrichedPaymentProviderSchema: any = {
           properties: {
             display_type: {
               type: 'string',
-              enum: ['hosted_field', 'iframe', 'redirect'],
+              enum: ['hosted_field', 'iframe', 'redirect', 'custom'],
             },
             settings: {
               type: 'object',
@@ -71,6 +72,7 @@ export class PaymentProvidersController {
     @PathParams('id') id: string,
     @Locale() locale: string,
     @IssuerType() issuerType: OidcIssuerTypes,
+    @UserAgent() userAgent: string | undefined,
     @QueryParams('customer_id') customerId?: string,
   ) {
     return this.paymentProvidersService.getPaymentProviders({
@@ -79,6 +81,7 @@ export class PaymentProvidersController {
       locale,
       issuerType,
       customerId,
+      userAgent,
     });
   }
 }

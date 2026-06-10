@@ -99,14 +99,22 @@ export const PaymentProviders = () => {
                       )}
                     </Radio>
                   </div>
-                  <Icon
-                    name={
-                      PROVIDER_ICON[
-                        provider.category_payment_method as keyof typeof PROVIDER_ICON
-                      ] || ''
-                    }
-                    width="80px"
-                  />
+                  {provider.logo ? (
+                    <img
+                      src={provider.logo}
+                      alt={provider.description || provider.label || ''}
+                      className="w-80 object-contain"
+                    />
+                  ) : (
+                    <Icon
+                      name={
+                        PROVIDER_ICON[
+                          provider.category_payment_method as keyof typeof PROVIDER_ICON
+                        ] || ''
+                      }
+                      width="80px"
+                    />
+                  )}
                 </div>
               );
             })}

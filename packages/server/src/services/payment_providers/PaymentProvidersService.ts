@@ -8,8 +8,7 @@ import { PaymentConfigService } from '../payment_config/PaymentConfigService.js'
 import { Stay } from '../stay/models.js';
 import { StayService } from '../stay/StayService.js';
 import { PaymentProvidersValidationError } from './errors.js';
-import { PaymentProvidersResponse } from './models.js';
-import { GetPaymentProvidersParams, ProviderConfigMap } from './types.js';
+import { GetPaymentProvidersParams, PaymentProvidersResponse, ProviderConfigMap } from './types.js';
 import { sortTimePaymentConditions } from './utils/sortTimePaymentConditions.js';
 import { splitByCategory } from './utils/splitByCategory.js';
 
@@ -27,6 +26,7 @@ export class PaymentProvidersService {
     locale,
     issuerType,
     customerId,
+    userAgent,
   }: GetPaymentProvidersParams): Promise<PaymentProvidersResponse> {
     if (type === 'booking' && !customerId) {
       throw new PaymentProvidersValidationError('customer_id is required for booking type');
@@ -41,12 +41,15 @@ export class PaymentProvidersService {
     const shouldFetchStay = this.shouldFetchStay(paymentProviders, paymentProvidersConfig);
     const stay = shouldFetchStay ? await this.stayService.getStay({ type, id, customerId }) : null;
 
+    const paymentProvidersEligibilityRules: Array<(provider: PaymentProvider1) => boolean> = [
+      (provider) => !!paymentProvidersConfig[provider.id],
+      (provider) => this.isBeforeMinimumDepartureWindow(provider, paymentProvidersConfig, stay),
+      (provider) => this.isValidConnectionType(provider, issuerType),
+      (provider) => this.isAllowedForUserAgent(provider, paymentProvidersConfig, userAgent),
+    ];
+
     return paymentProviders
-      .filter((provider) => !!paymentProvidersConfig[provider.id])
-      .filter((provider) =>
-        this.isBeforeMinimumDepartureWindow(provider, paymentProvidersConfig, stay),
-      )
-      .filter((provider) => this.isValidConnectionType(provider, issuerType))
+      .filter((provider) => paymentProvidersEligibilityRules.every((rule) => rule(provider)))
       .map((provider) => {
         const payment_methods = sortTimePaymentConditions(provider.payment_methods);
         const payment_conditions = Object.fromEntries(
@@ -89,6 +92,16 @@ export class PaymentProvidersService {
 
   private isValidConnectionType(provider: PaymentProvider1, issuerType?: string): boolean {
     return issuerType !== 'GM' || provider.connection_type !== 'Manual';
+  }
+
+  private isAllowedForUserAgent(
+    provider: PaymentProvider1,
+    config: ProviderConfigMap,
+    userAgent?: string,
+  ): boolean {
+    const pattern = config[provider.id]?.settings?.blocked_user_agent_pattern;
+    if (!pattern) return true;
+    return !new RegExp(String(pattern), 'i').test(userAgent ?? '');
   }
 
   private shouldFetchStay(providers: PaymentProvider1[], config: ProviderConfigMap): boolean {

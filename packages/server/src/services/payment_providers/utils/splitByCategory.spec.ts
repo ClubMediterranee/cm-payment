@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { EnrichedPaymentProvider, PaymentProvidersResponse } from '../models.js';
+import { EnrichedPaymentProvider, PaymentProvidersResponse } from '../types.js';
 import { splitByCategory } from './splitByCategory.js';
 
 describe('splitByCategory', () => {

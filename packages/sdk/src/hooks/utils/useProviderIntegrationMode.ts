@@ -8,5 +8,6 @@ export const useProviderIntegrationMode = () => {
     iframe: displayType === 'iframe',
     redirect: displayType === 'redirect',
     hostedField: displayType === 'hosted_field',
+    custom: displayType === 'custom',
   };
 };

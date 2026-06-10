@@ -187,6 +187,7 @@ export const PaymentProvidersControllerGetPaymentProviders200PaymentProvidersIte
     hosted_field: 'hosted_field',
     iframe: 'iframe',
     redirect: 'redirect',
+    custom: 'custom',
   } as const;
 
 export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings =
@@ -220,6 +221,7 @@ export const PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvi
     hosted_field: 'hosted_field',
     iframe: 'iframe',
     redirect: 'redirect',
+    custom: 'custom',
   } as const;
 
 export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings =

@@ -26,7 +26,7 @@ export const SubmitButton = ({ children, ...props }: ComponentProps<typeof Butto
 
   const isPaypalButtonEnabled =
     watchedProvider?.category_payment_method === PaymentProvider1CategoryPaymentMethod.Paypal &&
-    paymentConfig.feature_flips.is_paypal_button_enabled;
+    paymentConfig.feature_flips?.is_paypal_button_enabled;
 
   const isSubmitButtonDisabled = isPaypalButtonEnabled && !isValid;
 

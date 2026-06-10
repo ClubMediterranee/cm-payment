@@ -2,20 +2,21 @@ import { useWatch } from '../../hooks/utils/useForm';
 import { PspProviders } from '../../types/PspProviders';
 import { CybersourceForm } from './integrations/CybersourceForm';
 import { HipayForm } from './integrations/HipayForm';
+import { WeChatQRView } from './WeChatQRView';
 
-const paymentProvidersRegistry = {
+const providerViewRegistry = {
   [PspProviders.HIPAY]: HipayForm,
   [PspProviders.MCYBERSOURCE]: CybersourceForm,
+  [PspProviders.M99BILLW]: WeChatQRView,
 };
 
-export const HostedFieldView = () => {
+export const IntegratedView = () => {
   const providerId = useWatch('provider_id');
-  const HostedFieldComponent =
-    paymentProvidersRegistry[providerId as keyof typeof paymentProvidersRegistry];
+  const Component = providerViewRegistry[providerId as keyof typeof providerViewRegistry];
 
-  if (!HostedFieldComponent) {
+  if (!Component) {
     return null;
   }
 
-  return <HostedFieldComponent />;
+  return <Component />;
 };

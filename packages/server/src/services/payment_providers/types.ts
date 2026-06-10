@@ -12,9 +12,10 @@ export interface GetPaymentProvidersParams {
   locale: string;
   issuerType: OidcIssuerTypes;
   customerId?: string;
+  userAgent?: string;
 }
 
-export type PaymentProviderDisplayType = 'hosted_field' | 'iframe' | 'redirect';
+export type PaymentProviderDisplayType = 'hosted_field' | 'iframe' | 'redirect' | 'custom';
 
 export interface ProviderConfigMap {
   [providerId: string]: {

@@ -9,4 +9,5 @@ export enum PspProviders {
   MCYBERSOURCE = 'MCYBERSOURCE',
   MUPLIFT = 'MUPLIFT',
   EHIPAYBNPL = 'EHIPAYBNPL',
+  M99BILLW = 'M99BILLW',
 }

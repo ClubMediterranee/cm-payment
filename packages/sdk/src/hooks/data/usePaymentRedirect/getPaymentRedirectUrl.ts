@@ -78,5 +78,5 @@ export const getPaymentRedirectUrl = async (
     throw new Error('Payment redirect URL not found');
   }
 
-  return redirectParams;
+  return { ...redirectParams, paymentId };
 };

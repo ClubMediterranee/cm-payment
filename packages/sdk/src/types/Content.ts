@@ -123,4 +123,14 @@ export type Content = {
       schemaInvalid: string;
     };
   };
+  wechat: {
+    payLabel: string;
+    scanLabel: string;
+    tutorial: {
+      title: string;
+      subtitle: string;
+      imageUrl: string;
+      expiredMessage: string;
+    };
+  };
 };

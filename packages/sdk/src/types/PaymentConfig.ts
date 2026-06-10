@@ -1,4 +1,4 @@
-export type PaymentProviderDisplayType = 'hosted_field' | 'iframe' | 'redirect';
+export type PaymentProviderDisplayType = 'hosted_field' | 'iframe' | 'redirect' | 'custom';
 
 export type CommonProviderSettings = {
   max_amount?: string | null;
@@ -6,7 +6,6 @@ export type CommonProviderSettings = {
 };
 
 export interface PaymentProviderConfig {
-  is_active: boolean;
   display_type?: PaymentProviderDisplayType;
   category_payment_method?: string;
   billing_address_form?: boolean;

@@ -3,13 +3,13 @@ import { useEffect } from 'react';
 import { useFormContext } from '../hooks/utils/useForm';
 import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegrationMode';
 import { TOKENS } from '../types/Tokens';
-import { HostedFieldView } from './PaymentWidget/HostedFieldView';
 import { IframeView } from './PaymentWidget/IframeView';
+import { IntegratedView } from './PaymentWidget/IntegratedView';
 import { FormPanel } from './ui/FormPanel';
 import { TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
 
 export const PaymentWidget = () => {
-  const { iframe, hostedField } = useProviderIntegrationMode();
+  const { iframe, hostedField, custom } = useProviderIntegrationMode();
   const { setValue } = useFormContext();
 
   useEffect(() => {
@@ -18,12 +18,12 @@ export const PaymentWidget = () => {
     }
   }, [hostedField]);
 
-  if (iframe) {
-    return <IframeView />;
+  if (hostedField || custom) {
+    return <IntegratedView />;
   }
 
-  if (hostedField) {
-    return <HostedFieldView />;
+  if (iframe) {
+    return <IframeView />;
   }
 
   return null;

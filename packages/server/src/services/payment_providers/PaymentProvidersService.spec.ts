@@ -336,4 +336,68 @@ describe('PaymentProvidersService', () => {
       expect(result.payment_providers).toHaveLength(0);
     });
   });
+
+  describe('blocked_user_agent_pattern filtering', () => {
+    const MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15';
+    const MICROMESSENGER_UA = `${MOBILE_UA} MicroMessenger/8.0`;
+
+    const setupSingle = (settings: Record<string, unknown>) => {
+      setup(
+        [
+          {
+            id: 'M99BILLW',
+            label: 'WeChat',
+            category_payment_method: 'CreditCard',
+            connection_type: 'E-commerce',
+            payment_methods: [],
+          },
+        ],
+        {
+          M99BILLW: { display_type: 'custom', settings },
+        },
+      );
+    };
+
+    it('should filter out provider when the user agent matches blocked_user_agent_pattern', async () => {
+      setupSingle({ blocked_user_agent_pattern: 'MicroMessenger' });
+
+      const result = await service.getPaymentProviders({
+        type: 'proposal',
+        id: '123',
+        locale: 'zh-CN',
+        issuerType: OidcIssuerTypes.GM,
+        userAgent: MICROMESSENGER_UA,
+      });
+
+      expect(result.payment_providers).toHaveLength(0);
+    });
+
+    it('should keep provider when the user agent does not match the pattern', async () => {
+      setupSingle({ blocked_user_agent_pattern: 'MicroMessenger' });
+
+      const result = await service.getPaymentProviders({
+        type: 'proposal',
+        id: '123',
+        locale: 'zh-CN',
+        issuerType: OidcIssuerTypes.GM,
+        userAgent: MOBILE_UA,
+      });
+
+      expect(result.payment_providers).toHaveLength(1);
+    });
+
+    it('should keep provider when no pattern is configured', async () => {
+      setupSingle({});
+
+      const result = await service.getPaymentProviders({
+        type: 'proposal',
+        id: '123',
+        locale: 'zh-CN',
+        issuerType: OidcIssuerTypes.GM,
+        userAgent: MICROMESSENGER_UA,
+      });
+
+      expect(result.payment_providers).toHaveLength(1);
+    });
+  });
 });
