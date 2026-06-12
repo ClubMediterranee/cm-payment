@@ -89,7 +89,11 @@ describe('PaymentConfigService', () => {
       const result = await service.getPaymentProvidersConfig({ locale: 'fr-FR' });
 
       expect(Object.keys(result)).toEqual(['MCYBERSOURCE']);
-      expect(result.MCYBERSOURCE).toEqual({ display_type: 'hosted_field', settings: {} });
+      expect(result.MCYBERSOURCE).toEqual({
+        display_type: 'hosted_field',
+        confirmation_strategy: 'status',
+        settings: {},
+      });
       expect(result.MHIPAY).toBeUndefined();
       expect('is_active' in result.MCYBERSOURCE).toBe(false);
     });
@@ -226,6 +230,7 @@ describe('PaymentConfigService', () => {
       };
       expect(buildProviderConfig(provider, 'fr-FR')).toEqual({
         display_type: 'hosted_field',
+        confirmation_strategy: 'status',
         settings: {
           script_url: 'https://example.com/s.js',
         },
@@ -256,11 +261,33 @@ describe('PaymentConfigService', () => {
       };
       expect(buildProviderConfig(provider, 'fr-FR')).toEqual({
         display_type: 'hosted_field',
+        confirmation_strategy: 'status',
         settings: {
           script_url: 'https://fr/s.js',
           environment: 'stage',
         },
       });
+    });
+
+    it('should default confirmation_strategy to status when provider has none', () => {
+      const provider: ProviderModel = {
+        id: 'MHIPAY',
+        default_display_type: 'redirect',
+        variants: [{ locale: null, active: true, settings: [], validation: {} }],
+      };
+
+      expect(buildProviderConfig(provider, 'fr-FR').confirmation_strategy).toBe('status');
+    });
+
+    it('should expose confirmation_strategy from the provider', () => {
+      const provider: ProviderModel = {
+        id: 'MHIPAY',
+        default_display_type: 'redirect',
+        confirmation_strategy: 'notify',
+        variants: [{ locale: null, active: true, settings: [], validation: {} }],
+      };
+
+      expect(buildProviderConfig(provider, 'fr-FR').confirmation_strategy).toBe('notify');
     });
 
     it('should expose validation fields from variants', () => {

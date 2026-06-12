@@ -2,6 +2,7 @@
   {
     "id": "MHIPAY",
     "default_display_type": "hosted_field",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -36,6 +37,7 @@
   {
     "id": "MUPLIFT",
     "default_display_type": "iframe",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -97,6 +99,7 @@
   {
     "id": "MHIPAYPP",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -134,6 +137,7 @@
   {
     "id": "EHIPAYBNPL",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -209,6 +213,7 @@
   {
     "id": "EGLOBALCOLLECT",
     "default_display_type": "iframe",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -220,6 +225,7 @@
   {
     "id": "EPAYGATE",
     "default_display_type": "iframe",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -231,6 +237,7 @@
   {
     "id": "MCYBERSOURCE",
     "default_display_type": "hosted_field",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -254,6 +261,7 @@
   {
     "id": "E99BILL",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -265,6 +273,7 @@
   {
     "id": "EALIPAY",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -276,6 +285,7 @@
   {
     "id": "ECYBERSOURCE",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -297,6 +307,7 @@
   {
     "id": "ECYBSSOAPI",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -308,6 +319,7 @@
   {
     "id": "EHIPAY",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -319,6 +331,7 @@
   {
     "id": "EHIPAYCMTA",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -330,6 +343,7 @@
   {
     "id": "EIYZICO",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -341,6 +355,7 @@
   {
     "id": "ENETPAY",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -352,6 +367,7 @@
   {
     "id": "ESBER",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -363,6 +379,7 @@
   {
     "id": "ESSPSCT",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -374,6 +391,7 @@
   {
     "id": "EVOXPAY",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -385,6 +403,7 @@
   {
     "id": "EVOXPAY_EMAIL",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -396,6 +415,7 @@
   {
     "id": "EVOXPAY_PHONE",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -407,6 +427,7 @@
   {
     "id": "EWECHAT",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -418,6 +439,7 @@
   {
     "id": "M99BILLW",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -429,6 +451,7 @@
   {
     "id": "EVOXPAY_SMS",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -440,6 +463,7 @@
   {
     "id": "NAPAY",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -451,6 +475,7 @@
   {
     "id": "NODELCRERE_CHEQUE",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -462,6 +487,7 @@
   {
     "id": "NODELCRERE_TRANSFER",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -473,6 +499,7 @@
   {
     "id": "ECYBSPP",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -484,6 +511,7 @@
   {
     "id": "ECYBSCMTA",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -495,6 +523,7 @@
   {
     "id": "EVOXPAYCXO",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -506,6 +535,7 @@
   {
     "id": "EVOXPAYSCT",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -517,6 +547,7 @@
   {
     "id": "EVOXPAYCYBS",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -528,6 +559,7 @@
   {
     "id": "EVOXPAYGC",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -539,6 +571,7 @@
   {
     "id": "MHIPAYVW",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -555,6 +588,7 @@
   {
     "id": "EGCPIX",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -566,6 +600,7 @@
   {
     "id": "MCLUBMED",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -607,6 +642,7 @@
   {
     "id": "EVOXPAYIZC",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -618,6 +654,7 @@
   {
     "id": "EIXOPAY",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -629,6 +666,7 @@
   {
     "id": "EIXOPAYPP",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -640,6 +678,7 @@
   {
     "id": "EVOXPAYPIX",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -651,6 +690,7 @@
   {
     "id": "EVOXPAYPP",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",
@@ -662,6 +702,7 @@
   {
     "id": "EVOXPAYSTRIPE",
     "default_display_type": "redirect",
+    "confirmation_strategy": "status",
     "settings": [
       {
         "locale": "*",

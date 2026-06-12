@@ -1,10 +1,10 @@
-import { Service } from '@tsed/di';
+import { Inject, Service } from '@tsed/di';
 
 import {
   getV0PaymentsPaymentIdStatus,
   postV1PaymentsPaymentIdNotify,
 } from '../../infra/api/__generated__/index.js';
-import { getPaymentValidationStrategy } from './utils/getPaymentValidationStrategy.js';
+import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
 import { poll } from './utils/poll.js';
 
 type PaymentData = {
@@ -17,18 +17,21 @@ type PaymentData = {
 
 @Service()
 export class PaymentConfirmationService {
+  @Inject()
+  protected paymentConfigService!: PaymentConfigService;
+
   async handlePaymentRedirect(
     paymentId: string,
     queryParams: Record<string, any>,
   ): Promise<string> {
     const { callback_url, proposal_id, provider_id, locale, ...providerResponse } = queryParams;
 
-    const strategy = getPaymentValidationStrategy(provider_id);
+    const providersConfig = await this.paymentConfigService.getPaymentProvidersConfig({ locale });
 
     const paymentData =
-      strategy === 'polling'
-        ? await this.confirmPaymentWithPolling(paymentId)
-        : await this.confirmPaymentWithNotify(paymentId, providerResponse);
+      providersConfig[provider_id]?.confirmation_strategy === 'notify'
+        ? await this.confirmPaymentWithNotify(paymentId, providerResponse)
+        : await this.confirmPaymentWithPolling(paymentId);
 
     return this.buildCallbackUrl(callback_url, paymentData, proposal_id, locale);
   }

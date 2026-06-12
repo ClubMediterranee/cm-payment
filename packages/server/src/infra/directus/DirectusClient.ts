@@ -40,6 +40,7 @@ export class DirectusClient {
         fields: [
           'id',
           'default_display_type',
+          'confirmation_strategy',
           {
             settings: [
               'locale',

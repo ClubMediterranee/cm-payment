@@ -67,6 +67,7 @@ export class PaymentConfigService {
       ...local?.validation,
       settings,
       display_type: provider.default_display_type,
+      confirmation_strategy: provider.confirmation_strategy ?? 'status',
     };
   }
 }

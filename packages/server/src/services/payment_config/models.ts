@@ -82,6 +82,11 @@ export class ProviderModel {
   @Enum('hosted_field', 'iframe', 'redirect')
   default_display_type!: PaymentProviderDisplayType;
 
+  @Property()
+  @Nullable(String)
+  @Enum('status', 'notify')
+  confirmation_strategy?: 'status' | 'notify' | null;
+
   @CollectionOf(ProviderVariantModel)
   variants!: ProviderVariantModel[];
 }

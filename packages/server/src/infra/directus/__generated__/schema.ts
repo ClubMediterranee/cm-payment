@@ -225,7 +225,7 @@ export interface CapsConfiguration {
   /** @description Default value for this key. @required */
   value: 'json';
   /** @description Optional overrides of default value by locale and issuer (GM, GO, PARTNER). */
-  overrides?: Array<{ locale: string; issuer: 'GM' | 'GO' | 'PARTNERS'; value: string }> | null;
+  overrides?: Array<{ locale: string; issuer: 'GM' | 'GO' | 'PARTNER'; value: string }> | null;
   /** @description Human-readable business intent and usage context. */
   description?: string | null;
 }
@@ -241,11 +241,12 @@ export interface CapsProviderConfiguration {
   date_updated?: string | null;
   /** @description Locale code sourced from Club Med locales API. @required */
   locale: string;
-  display_type?: 'hosted_field' | 'iframe' | 'redirect' | null;
+  display_type?: 'host_fields' | 'iframe' | 'redirect' | 'custom' | null;
   provider_id?: CapsProvider | string | null;
   requires_token?: boolean | null;
   requires_expiry_date?: boolean | null;
   settings?: Array<{ key: string; type: 'boolean' | 'number' | 'string'; value: string }> | null;
+  requires_card_holder?: boolean | null;
 }
 
 export interface CapsProvider {
@@ -258,7 +259,7 @@ export interface CapsProvider {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   /** @required */
-  default_display_type: 'hosted_field' | 'iframe' | 'redirect';
+  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom';
   image_url?: string | null;
   category_payment_method?:
     | 'credit_card'
@@ -267,6 +268,7 @@ export interface CapsProvider {
     | 'paypal'
     | 'buy_now_pay_later'
     | null;
+  confirmation_strategy?: 'status' | 'notify' | null;
   settings?: CapsProviderConfiguration[] | string[];
 }
 
@@ -297,10 +299,10 @@ export interface MigrationNote {
   number?: number | null;
   image?: DirectusFile | string | null;
   tags?: MigrationNotesTag[] | string[];
-  related_routes?: MigrationNotesRoute[] | string[];
   /** @required */
   channels: MigrationNotesChannel[] | string[];
   translations?: MigrationNotesTranslation[] | null;
+  related_routes?: MigrationNotesRoute[] | string[];
 }
 
 export interface MigrationNotesChannel {
