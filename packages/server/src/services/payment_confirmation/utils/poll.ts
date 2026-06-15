@@ -7,17 +7,12 @@ type PollOptions<T> = {
 export const poll = async <T>(fn: () => Promise<T>, options: PollOptions<T>): Promise<T> => {
   const { attempts = 3, delay = 1000, continue: shouldContinue } = options;
 
-  for (let i = 0; i < attempts; i++) {
-    const result = await fn();
+  let result = await fn();
 
-    if (!shouldContinue(result)) {
-      return result;
-    }
-
-    if (i < attempts - 1) {
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
+  for (let i = 1; i < attempts && shouldContinue(result); i++) {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    result = await fn();
   }
 
-  throw new Error(`Polling timeout after ${attempts} attempts`);
+  return result;
 };

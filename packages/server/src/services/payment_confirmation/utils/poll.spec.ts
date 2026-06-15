@@ -1,5 +1,3 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import { poll } from './poll.js';
 
 describe('poll', () => {
@@ -20,17 +18,16 @@ describe('poll', () => {
     expect(fn).toHaveBeenCalledTimes(2);
   });
 
-  it('should throw error after max attempts', async () => {
+  it('should return the last result after max attempts', async () => {
     const fn = vi.fn(async () => ({ status: 'PENDING' }));
 
-    await expect(
-      poll(fn, {
-        attempts: 3,
-        delay: 10,
-        continue: (res) => res.status === 'PENDING',
-      }),
-    ).rejects.toThrow('Polling timeout after 3 attempts');
+    const result = await poll(fn, {
+      attempts: 3,
+      delay: 10,
+      continue: (res) => res.status === 'PENDING',
+    });
 
+    expect(result).toEqual({ status: 'PENDING' });
     expect(fn).toHaveBeenCalledTimes(3);
   });
 
@@ -42,7 +39,7 @@ describe('poll', () => {
       attempts: 3,
       delay: 100,
       continue: (res) => res.status === 'PENDING',
-    }).catch(() => {});
+    });
 
     const elapsed = Date.now() - startTime;
     expect(elapsed).toBeGreaterThanOrEqual(200);
@@ -53,7 +50,7 @@ describe('poll', () => {
 
     await poll(fn, {
       continue: (res) => res.status === 'PENDING',
-    }).catch(() => {});
+    });
 
     expect(fn).toHaveBeenCalledTimes(3);
   });

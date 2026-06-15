@@ -44,6 +44,7 @@ describe('PaymentProvidersController', () => {
         'fr-FR',
         OidcIssuerTypes.GM,
         undefined,
+        undefined,
       );
 
       expect(result).toEqual(mockResponse);
@@ -53,6 +54,7 @@ describe('PaymentProvidersController', () => {
         locale: 'fr-FR',
         issuerType: OidcIssuerTypes.GM,
         customerId: undefined,
+        userAgent: undefined,
       });
     });
 
@@ -62,6 +64,7 @@ describe('PaymentProvidersController', () => {
         '456',
         'fr-FR',
         OidcIssuerTypes.GM,
+        'test-user-agent',
         '789',
       );
 
@@ -72,6 +75,7 @@ describe('PaymentProvidersController', () => {
         locale: 'fr-FR',
         issuerType: OidcIssuerTypes.GM,
         customerId: '789',
+        userAgent: 'test-user-agent',
       });
     });
   });
