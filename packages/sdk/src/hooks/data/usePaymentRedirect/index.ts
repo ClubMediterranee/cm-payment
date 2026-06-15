@@ -2,11 +2,15 @@ import { noop, useMutation, useMutationState } from '@tanstack/react-query';
 
 import type { ProviderParametersModel } from '../../../__generated__/index.schemas';
 import type { CapsFormSchema } from '../../../schemas/capsFormSchema';
+import type { CallbackUrls } from '../../../utils/url/getRedirectPaymentCallbackUrls';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatchedPaymentProvider } from '../../utils/useWatchedPaymentProvider';
 import { getPaymentRedirectUrl } from './getPaymentRedirectUrl';
 
-export type PaymentRedirectResult = ProviderParametersModel & { paymentId: string };
+export type PaymentRedirectResult = {
+  redirect: ProviderParametersModel;
+  payment: { paymentId: string; callbacks: CallbackUrls };
+};
 
 const paymentRedirectMutationKey = (type: string, id: string) => ['paymentRedirect', type, id];
 

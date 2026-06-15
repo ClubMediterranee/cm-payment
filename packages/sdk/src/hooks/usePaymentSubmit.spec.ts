@@ -135,8 +135,8 @@ describe('usePaymentSubmit', () => {
 
     const paymentRedirectCall = vi.mocked(usePaymentRedirectModule.usePaymentRedirect).mock
       .calls[0][0];
-    const providerParams = { url: 'https://payment.gateway.com', method: 'GET' };
-    paymentRedirectCall.onSuccess?.(providerParams as any);
+    const redirect = { url: 'https://payment.gateway.com', method: 'GET' };
+    paymentRedirectCall.onSuccess?.({ redirect } as any);
 
     expect(window.location.href).toBe('https://payment.gateway.com');
   });

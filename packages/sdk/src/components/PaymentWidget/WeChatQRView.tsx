@@ -13,7 +13,7 @@ import { useWatchedPaymentProvider } from '../../hooks/utils/useWatchedPaymentPr
 import type { CapsFormSchema } from '../../schemas/capsFormSchema';
 import { PspProviders } from '../../types/PspProviders';
 import { formatCurrency } from '../../utils/formatCurrency';
-import { navigateToCallbackUrl } from '../../utils/url/navigateToCallbackUrl';
+import { loadPaymentProviderUrl } from '../../utils/loadPaymentProviderUrl';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { FormPanel } from '../ui/FormPanel';
 
@@ -23,7 +23,7 @@ const formatCountdown = (seconds: number) => {
 };
 
 export const WeChatQRView = () => {
-  const { content, locale, callbackUrl, id, type } = useCapsConfigContext();
+  const { content, locale } = useCapsConfigContext();
   const provider = useWatchedPaymentProvider();
   const timeoutSeconds = Number(provider?.configuration?.settings?.qr_timeout_seconds) || 0;
   const pollIntervalSeconds = Number(provider?.configuration?.settings?.poll_interval_seconds) || 2;
@@ -34,11 +34,13 @@ export const WeChatQRView = () => {
   const queryClient = useQueryClient();
   useEffect(() => queryClient.getMutationCache().clear(), [queryClient]);
 
-  const { paymentId, url } =
+  const { payment, redirect } =
     usePaymentRedirectState({
       predicate: (mutation) =>
         (mutation.state.variables as CapsFormSchema)?.provider_id === PspProviders.M99BILLW,
     }) ?? {};
+
+  const { paymentId, callbacks } = payment ?? {};
 
   const { secondsRemaining, expired } = useCountdown(timeoutSeconds, paymentId);
 
@@ -48,17 +50,13 @@ export const WeChatQRView = () => {
   });
 
   useEffect(() => {
-    if (!isSuccess || paymentStatus.payment_status === StatutPaiement.PENDING) return;
+    if (!isSuccess || paymentStatus.payment_status === StatutPaiement.PENDING || !callbacks) return;
 
-    navigateToCallbackUrl({
-      callbackUrl,
-      paymentResponse: paymentStatus,
-      proposalId: type === 'proposal' ? id : null,
-    });
-  }, [isSuccess, paymentStatus, callbackUrl, id, type]);
+    loadPaymentProviderUrl({ url: callbacks.callback_url, method: 'GET' });
+  }, [isSuccess, paymentStatus, callbacks]);
 
   const { wechat } = content;
-  const showTutorial = !url || expired;
+  const showTutorial = !redirect?.url || expired;
 
   return (
     <FormPanel className="w-full items-center text-center gap-16 py-24">
@@ -88,7 +86,7 @@ export const WeChatQRView = () => {
             {formatCountdown(secondsRemaining)}
           </p>
           <div className="p-16 bg-white border-1 border-lightGrey rounded-8">
-            <QRCodeSVG value={url} size={200} />
+            <QRCodeSVG value={redirect?.url ?? ''} size={200} />
           </div>
           <p className="text-b3">{wechat.scanLabel}</p>
         </>

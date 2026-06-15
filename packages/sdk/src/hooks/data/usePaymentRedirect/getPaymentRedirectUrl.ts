@@ -78,5 +78,8 @@ export const getPaymentRedirectUrl = async (
     throw new Error('Payment redirect URL not found');
   }
 
-  return { ...redirectParams, paymentId };
+  return {
+    redirect: redirectParams,
+    payment: { paymentId, callbacks },
+  };
 };

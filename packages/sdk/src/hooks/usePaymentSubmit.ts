@@ -21,9 +21,9 @@ export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) 
     onError: (error) => {
       onError?.(error);
     },
-    onSuccess: (params) => {
+    onSuccess: ({ redirect }) => {
       if (custom) return;
-      loadPaymentProviderUrl(params, targetIframe);
+      loadPaymentProviderUrl(redirect, targetIframe);
     },
     onLoadEnd,
   });

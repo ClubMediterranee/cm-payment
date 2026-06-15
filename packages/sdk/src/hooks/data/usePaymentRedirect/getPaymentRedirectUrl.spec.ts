@@ -119,8 +119,14 @@ describe('getPaymentRedirectUrl', () => {
       token: undefined,
     });
     expect(result).toEqual({
-      url: 'https://payment.gateway.com',
-      body: 'param1=value1&param2=value2',
+      redirect: {
+        url: 'https://payment.gateway.com',
+        body: 'param1=value1&param2=value2',
+      },
+      payment: {
+        paymentId: 'payment-123',
+        callbacks: { callback_url: 'https://callback.url/payment' },
+      },
     });
   });
 
@@ -151,8 +157,14 @@ describe('getPaymentRedirectUrl', () => {
       provider_id: 'provider-123',
     });
     expect(result).toEqual({
-      url: 'https://redirect.url',
-      body: 'data=test',
+      redirect: {
+        url: 'https://redirect.url',
+        body: 'data=test',
+      },
+      payment: {
+        paymentId: 'payment-456',
+        callbacks: { callback_url: 'https://callback.url/payment' },
+      },
     });
   });
 
@@ -267,8 +279,14 @@ describe('getPaymentRedirectUrl', () => {
       token: undefined,
     });
     expect(result).toEqual({
-      url: 'https://final.url',
-      body: 'final=body',
+      redirect: {
+        url: 'https://final.url',
+        body: 'final=body',
+      },
+      payment: {
+        paymentId: 'payment-555',
+        callbacks: { callback_url: '' },
+      },
     });
   });
 
@@ -315,8 +333,17 @@ describe('getPaymentRedirectUrl', () => {
       token: undefined,
     });
     expect(result).toEqual({
-      url: 'https://redirect.url',
-      body: 'data=test',
+      redirect: {
+        url: 'https://redirect.url',
+        body: 'data=test',
+      },
+      payment: {
+        paymentId: 'payment-999',
+        callbacks: {
+          callback_url: 'https://callback.url/client',
+          callback_url_seller: 'https://callback.url/seller',
+        },
+      },
     });
   });
 
