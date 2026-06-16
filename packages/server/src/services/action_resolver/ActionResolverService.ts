@@ -1,13 +1,17 @@
 import { Inject, Service } from '@tsed/di';
 
 import { getV3CustomersCustomerIdBookingsBookingId } from '../../infra/api/__generated__/index.js';
-import { Action, BookingStatus } from '../../infra/api/__generated__/index.schemas.js';
+import {
+  Action,
+  BookingStatus,
+  CustomerBookingStayModelV2,
+} from '../../infra/api/__generated__/index.js';
 import { daysUntilToday } from '../../utils/daysUntilToday.js';
 import { parseApiDate } from '../../utils/parseApiDate.js';
+import { ResourceRef } from '../../utils/types.js';
 import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
 import { PaymentSchedulesService } from '../payment_schedules/PaymentSchedulesService.js';
 import { ActionResolverValidationError } from './errors.js';
-import { ResolveActionParams } from './types.js';
 
 const NO_LIMIT_DAYS = 999;
 
@@ -26,7 +30,7 @@ export class ActionResolverService {
     action,
     locale,
     issuerType,
-  }: ResolveActionParams): Promise<Action> {
+  }: Pick<ResourceRef, 'type' | 'id' | 'customerId' | 'action' | 'locale' | 'issuerType'>) {
     if (!id) {
       throw new ActionResolverValidationError('id is required');
     }
@@ -50,7 +54,7 @@ export class ActionResolverService {
       const isAllowedFreeDeposit = await this.isAllowedFreeDeposit({
         id,
         customerId,
-        resortArrivalDate: booking?.stays?.[0]?.resort_arrival_date ?? undefined,
+        resortArrivalDate: booking?.stays?.[0]?.resort_arrival_date,
         locale,
         issuerType,
       });
@@ -66,13 +70,10 @@ export class ActionResolverService {
     resortArrivalDate,
     locale,
     issuerType,
-  }: {
-    id: string;
+  }: Pick<ResourceRef, 'id' | 'locale' | 'issuerType'> & {
     customerId: string;
-    resortArrivalDate?: string;
-    locale: string;
-    issuerType: ResolveActionParams['issuerType'];
-  }): Promise<boolean> {
+    resortArrivalDate?: CustomerBookingStayModelV2['resort_arrival_date'];
+  }) {
     const paymentConfig = await this.paymentConfigService.getPaymentConfig({ locale, issuerType });
 
     const daysBeforeTrip = paymentConfig.settings.days_before_trip_to_allow_free_deposit ?? null;

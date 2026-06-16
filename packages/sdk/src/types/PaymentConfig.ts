@@ -1,4 +1,4 @@
-export type PaymentProviderDisplayType = 'hosted_field' | 'iframe' | 'redirect' | 'custom';
+import { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType as PaymentProviderDisplayType } from '../__generated__/bff/index.schemas';
 
 export type CommonProviderSettings = {
   max_amount?: string | null;

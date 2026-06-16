@@ -26,7 +26,7 @@ const createPostForm = (url: string, fields: Record<string, string>): HTMLFormEl
 const handleGetRedirect = (
   url: string,
   body: string | undefined,
-  iframe?: HTMLIFrameElement,
+  iframe?: HTMLIFrameElement | null,
 ): void => {
   let finalUrl = url;
 
@@ -45,7 +45,7 @@ const handleGetRedirect = (
 const handlePostRedirect = (
   url: string,
   body: string | undefined,
-  iframe?: HTMLIFrameElement,
+  iframe?: HTMLIFrameElement | null,
 ): void => {
   if (!body) {
     throw new Error('POST redirect requires a body');
@@ -61,14 +61,14 @@ const handlePostRedirect = (
 
 export const loadPaymentProviderUrl = (
   { url, method, body }: ProviderParametersModel,
-  targetIframe?: RefObject<HTMLIFrameElement>,
+  targetIframe?: RefObject<HTMLIFrameElement | null>,
 ): void => {
   const iframe = targetIframe?.current;
   const normalizedMethod = method.toUpperCase();
 
   const handlers: Record<
     string,
-    (url: string, body: string | undefined, iframe?: HTMLIFrameElement) => void
+    (url: string, body: string | undefined, iframe?: HTMLIFrameElement | null) => void
   > = {
     GET: handleGetRedirect,
     POST: handlePostRedirect,

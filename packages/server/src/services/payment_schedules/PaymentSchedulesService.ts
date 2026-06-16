@@ -6,7 +6,7 @@ import {
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../../infra/api/__generated__/index.js';
-import { Action } from '../../infra/api/__generated__/index.schemas.js';
+import { Action } from '../../infra/api/__generated__/index.js';
 import {
   PaymentScheduleNotFoundError,
   PaymentScheduleValidationError,

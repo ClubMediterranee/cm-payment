@@ -3,7 +3,7 @@ import { Service } from '@tsed/di';
 import {
   CartUpgradeRoomModel,
   ProposalPaymentScheduleModelV1,
-} from '../../infra/api/__generated__/index.schemas.js';
+} from '../../infra/api/__generated__/index.js';
 import { ApiResponse, PaymentSchedule } from './types.js';
 
 @Service()

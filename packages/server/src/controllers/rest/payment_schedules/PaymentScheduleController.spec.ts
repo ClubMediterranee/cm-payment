@@ -1,6 +1,6 @@
 import { beforeEach, describe, it, vi } from 'vitest';
 
-import { PaymentScheduleController } from './PaymentScheduleController.ts';
+import { PaymentScheduleController } from './PaymentScheduleController.js';
 
 describe('PaymentScheduleController', () => {
   let controller: PaymentScheduleController;

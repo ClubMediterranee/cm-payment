@@ -1,7 +1,7 @@
 import {
   PaymentMethodModel4,
   TimePaymentConditionModel,
-} from '../../../infra/api/__generated__/index.schemas.js';
+} from '../../../infra/api/__generated__/index.js';
 
 export const sortTimePaymentConditions = (
   paymentMethods: PaymentMethodModel4[] | undefined,

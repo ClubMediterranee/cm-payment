@@ -1,14 +1,15 @@
 import { Inject, Service } from '@tsed/di';
 
 import { getV1PaymentProviders } from '../../infra/api/__generated__/index.js';
-import { PaymentProvider1 } from '../../infra/api/__generated__/index.schemas.js';
+import { PaymentProvider1 } from '../../infra/api/__generated__/index.js';
 import { daysUntilToday } from '../../utils/daysUntilToday.js';
 import { parseApiDate } from '../../utils/parseApiDate.js';
+import { ResourceRef } from '../../utils/types.js';
 import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
 import { Stay } from '../stay/models.js';
 import { StayService } from '../stay/StayService.js';
 import { PaymentProvidersValidationError } from './errors.js';
-import { GetPaymentProvidersParams, PaymentProvidersResponse, ProviderConfigMap } from './types.js';
+import { PaymentProvidersResponse, ProviderConfigMap } from './types.js';
 import { sortTimePaymentConditions } from './utils/sortTimePaymentConditions.js';
 import { splitByCategory } from './utils/splitByCategory.js';
 
@@ -27,7 +28,10 @@ export class PaymentProvidersService {
     issuerType,
     customerId,
     userAgent,
-  }: GetPaymentProvidersParams): Promise<PaymentProvidersResponse> {
+  }: Pick<
+    ResourceRef,
+    'type' | 'id' | 'customerId' | 'locale' | 'issuerType' | 'userAgent'
+  >): Promise<PaymentProvidersResponse> {
     if (type === 'booking' && !customerId) {
       throw new PaymentProvidersValidationError('customer_id is required for booking type');
     }

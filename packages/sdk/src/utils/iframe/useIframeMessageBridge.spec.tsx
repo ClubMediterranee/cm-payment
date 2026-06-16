@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { defaultContent } from '../../content/default';
 import { CapsConfigContext } from '../../contexts/CapsConfigContext';
@@ -7,19 +7,20 @@ import { CapsSettings, OidcIssuerTypes } from '../../types/CapsSettings';
 import { IframeMessageType } from './constants';
 import { useIframeMessageBridge } from './useIframeMessageBridge';
 
-const paymentGatewayUrl = 'https://payment.gateway.com';
+const apiUrl = 'https://payment.gateway.com';
 
 const mockConfig: CapsSettings = {
-  type: 'widget',
-  paymentGatewayUrl,
+  type: 'booking',
   id: 'test-id',
   locale: 'fr-FR',
+  country: 'FR',
+  language: 'fr',
   oidc: {
     issuerType: OidcIssuerTypes.GM,
     accessToken: 'test-token',
   },
   api: {
-    baseUrl: 'https://api.test.com',
+    url: apiUrl,
     apiKey: 'test-key',
   },
   content: defaultContent,
@@ -32,9 +33,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useIframeMessageBridge', () => {
   let mockHandlers: {
-    onRedirect: ReturnType<typeof vi.fn>;
-    onLoading: ReturnType<typeof vi.fn>;
-    onCancel: ReturnType<typeof vi.fn>;
+    onRedirect: Mock<(url: string) => void>;
+    onLoading: Mock<() => void>;
+    onCancel: Mock<() => void>;
   };
 
   beforeEach(() => {

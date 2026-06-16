@@ -132,6 +132,14 @@ MockSubmitButton.COMPONENT_KEY = TOKENS.SubmitButton;
 describe('CapsForm', () => {
   afterEach(() => {
     vi.clearAllMocks();
+    mockUseCapsConfigContext.mockImplementation(() => ({
+      id: 'PROP001',
+      content: {},
+      oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
+    }));
+    mockUseOidcContext.mockImplementation(() => ({
+      isSeller: false,
+    }));
   });
 
   it('accepte tous les composants requis pour issuer GM', () => {
@@ -158,7 +166,7 @@ describe('CapsForm', () => {
     }
 
     consoleErrorSpy.mockRestore();
-    mockUseCapsConfigContext.mockReset();
+    mockUseCapsConfigContext.mockClear();
   });
 
   it('génère une erreur si composants manquants pour issuer GM', () => {
@@ -180,7 +188,7 @@ describe('CapsForm', () => {
     }).toThrow('Missing required components');
 
     consoleErrorSpy.mockRestore();
-    mockUseCapsConfigContext.mockReset();
+    mockUseCapsConfigContext.mockClear();
   });
 
   it('accepte tous les composants requis pour issuer GO', () => {
@@ -205,7 +213,7 @@ describe('CapsForm', () => {
     }
 
     consoleErrorSpy.mockRestore();
-    mockUseCapsConfigContext.mockReset();
+    mockUseCapsConfigContext.mockClear();
   });
 
   it('génère une erreur si composants manquants pour issuer GO', () => {
@@ -226,7 +234,7 @@ describe('CapsForm', () => {
     }).toThrow('Missing required components');
 
     consoleErrorSpy.mockRestore();
-    mockUseCapsConfigContext.mockReset();
+    mockUseCapsConfigContext.mockClear();
   });
 
   it('accepte un formulaire minimal pour issuer PARTNERS', () => {
@@ -249,7 +257,7 @@ describe('CapsForm', () => {
     }
 
     consoleErrorSpy.mockRestore();
-    mockUseCapsConfigContext.mockReset();
+    mockUseCapsConfigContext.mockClear();
   });
 
   it('accepte un formulaire vide pour issuer PARTNERS', () => {
@@ -272,7 +280,7 @@ describe('CapsForm', () => {
     }
 
     consoleErrorSpy.mockRestore();
-    mockUseCapsConfigContext.mockReset();
+    mockUseCapsConfigContext.mockClear();
   });
 
   it.skip('utilise le action fourni en props', () => {

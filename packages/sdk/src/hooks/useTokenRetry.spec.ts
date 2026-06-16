@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import type { Mock } from 'vitest';
 
 import { useTokenRetry } from './useTokenRetry';
 
@@ -10,10 +11,12 @@ vi.mock('react-hook-form', async () => {
   };
 });
 
-const mockUseWatch = vi.mocked(await import('react-hook-form')).useWatch;
+const mockUseWatch = vi.mocked(await import('react-hook-form')).useWatch as unknown as Mock<
+  () => string
+>;
 
 describe('useTokenRetry', () => {
-  let onRetryMock: ReturnType<typeof vi.fn>;
+  let onRetryMock: Mock<() => void>;
 
   beforeEach(() => {
     vi.clearAllMocks();

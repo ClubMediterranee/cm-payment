@@ -2,24 +2,13 @@ import {
   getV2ProposalsProposalId,
   getV3CustomersCustomerIdBookingsBookingId,
 } from '../../../__generated__';
+import { CapsSettings } from '../../../types/CapsSettings';
 
-type StayModel = {
-  productId: string;
-  resortArrivalDate?: string;
-  resortDepartureDate?: string;
-  adultsCount: number;
-  childrenCount: number;
-  roomCount: number;
-  transportTypes: Array<'PLANE' | 'BUS' | 'TRAIN'>;
-};
-
-type GetStayParams = {
-  type: 'booking' | 'proposal';
-  id: string;
-  customerId?: string;
-};
-
-export const getStay = async ({ type, id, customerId }: GetStayParams): Promise<StayModel> => {
+export const getStay = async ({
+  type,
+  id,
+  customerId,
+}: Pick<CapsSettings, 'type' | 'id' | 'customerId'>) => {
   if (type === 'booking') {
     if (!customerId) {
       throw new Error('customerId is required for booking type');
@@ -29,13 +18,13 @@ export const getStay = async ({ type, id, customerId }: GetStayParams): Promise<
     const stay = data.stays?.[0];
 
     return {
-      resortDepartureDate: stay?.resort_leaving_date,
-      resortArrivalDate: stay?.resort_arrival_date,
+      resortDepartureDate: stay?.resort_leaving_date ?? undefined,
+      resortArrivalDate: stay?.resort_arrival_date ?? undefined,
       productId: stay?.product_id || '',
       adultsCount: stay?.attendees?.[0]?.adults_count || 0,
       childrenCount: stay?.attendees?.[0]?.children_count || 0,
-      roomCount: stay?.accommodations.reduce((acc, { quantity = 0 }) => acc + quantity, 0) || 0,
-      transportTypes: stay?.outward_trip?.transportation,
+      roomCount: stay?.accommodations?.reduce((acc, { quantity = 0 }) => acc + quantity, 0) || 0,
+      transportTypes: stay?.outward_trip?.transportation ?? [],
     };
   }
 

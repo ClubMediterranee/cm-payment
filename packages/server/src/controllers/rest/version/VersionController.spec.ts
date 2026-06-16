@@ -15,7 +15,7 @@ describe('VersionController', () => {
     const controller = PlatformTest.get<VersionController>(VersionController);
 
     expect(await controller.get()).toEqual({
-      branch: 'master',
+      branch: 'develop',
       version: '1.0.0',
     });
   });

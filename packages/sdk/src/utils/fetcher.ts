@@ -18,8 +18,7 @@ export const fetcher = async <T>({
   const {
     locale,
     oidc: { accessToken, issuerType },
-    api: { apiKey },
-    paymentGatewayUrl,
+    api: { apiKey, url: baseApiUrl },
   } = getPaymentConfig();
 
   const queryParams = new URLSearchParams();
@@ -30,7 +29,7 @@ export const fetcher = async <T>({
     }
   });
 
-  const endpoint = `${baseUrl || paymentGatewayUrl || ''}${url}?${queryParams.toString()}`;
+  const endpoint = `${baseUrl || baseApiUrl || ''}${url}?${queryParams.toString()}`;
 
   const opts = {
     method,

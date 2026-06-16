@@ -36,7 +36,12 @@ const EnrichedPaymentProviderSchema: any = {
         },
         payment_conditions: {
           type: 'object',
-          additionalProperties: true,
+          additionalProperties: {
+            type: 'array',
+            items: {
+              $ref: 'https://api.clubmed.com/doc/swagger.json#/components/schemas/TimePaymentConditionModel',
+            },
+          },
         },
       },
       required: ['configuration', 'payment_conditions'],

@@ -4,7 +4,7 @@ import type {
   HttpClientOptions,
   HttpRequestConfig,
   HttpRequestErrorConfig,
-} from './HttpClientOptions';
+} from './HttpClientOptions.js';
 
 describe('HttpClientOptions', () => {
   describe('HttpClientOptions interface', () => {

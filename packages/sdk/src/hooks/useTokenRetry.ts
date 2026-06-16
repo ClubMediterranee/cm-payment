@@ -24,7 +24,7 @@ export const useTokenRetry = ({ onRetry }: { onRetry: () => void }) => {
 
     const hasUniqueTokenError = hasUniqueError && errors.token?.value;
 
-    if (hasUniqueTokenError && ['pending', 'idle'].includes(tokenStatus)) {
+    if (hasUniqueTokenError && tokenStatus && ['pending', 'idle'].includes(tokenStatus)) {
       enableRetry();
     }
   };

@@ -4,7 +4,7 @@ import {
   CartUpgradeRoomModel,
   CustomerBookingPaymentScheduleModel,
   ProposalPaymentScheduleModelV1,
-} from '../../infra/api/__generated__/index.schemas.js';
+} from '../../infra/api/__generated__/index.js';
 import { PaymentScheduleNormalizer } from './PaymentScheduleNormalizer.js';
 
 describe('PaymentScheduleNormalizer', () => {

@@ -89,6 +89,7 @@ build:
   extends: .node_install_dependencies
   stage: test
   script:
+    - pnpm run check
     - pnpm run build
   artifacts:
     when: always
@@ -183,7 +184,7 @@ deploy:
     - !reference [.deploy-on-aws-with-parameters, script]
 
 post-deploy:
-  extends: .bun_install_dependencies
+  extends: .node_install_dependencies
   stage: notification
   dependencies:
     - deploy
@@ -204,7 +205,6 @@ rebase:
   script:
     - !reference [.dotenv-source, script]
     - yarn dlx -p @cmflow/cli cm push
-    - !reference [.deploy-with-parameters, script]
 
 rebase-all:
   extends: .node_install_dependencies

@@ -6,7 +6,7 @@ export const PAYMENT_CONFIG_QUERY_KEY = ['paymentConfig'];
 
 export const paymentConfigQueryOptions = () => ({
   queryKey: PAYMENT_CONFIG_QUERY_KEY,
-  queryFn: () => paymentConfigControllerGetPaymentConfig(),
+  queryFn: paymentConfigControllerGetPaymentConfig,
 });
 
 export const usePaymentConfig = () => {

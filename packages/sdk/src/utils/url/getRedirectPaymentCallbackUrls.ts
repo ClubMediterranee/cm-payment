@@ -1,3 +1,4 @@
+import { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType as PaymentProviderDisplayType } from '../../__generated__/bff/index.schemas';
 import { getPaymentConfig } from '../../providers/PaymentConfigProvider';
 import { OidcIssuerTypes } from '../../types/CapsSettings';
 
@@ -6,10 +7,10 @@ export type CallbackUrls = { callback_url: string; callback_url_seller?: string 
 export function getRedirectPaymentCallbackUrls(
   paymentId: string,
   providerId: string,
-  displayType: string,
+  displayType?: PaymentProviderDisplayType,
 ): CallbackUrls {
   const {
-    paymentGatewayUrl,
+    api,
     oidc: { issuerType },
     type,
     id,
@@ -18,7 +19,7 @@ export function getRedirectPaymentCallbackUrls(
     callbackUrlSeller,
   } = getPaymentConfig();
 
-  const baseUrl = new URL(paymentGatewayUrl);
+  const baseUrl = new URL(api.url);
   baseUrl.pathname = `/rest/payment_redirect/${paymentId}`;
 
   baseUrl.searchParams.set('locale', locale);
@@ -30,7 +31,9 @@ export function getRedirectPaymentCallbackUrls(
     baseUrl.searchParams.set('proposal_id', id);
   }
 
-  baseUrl.searchParams.set('mode', displayType);
+  if (displayType) {
+    baseUrl.searchParams.set('mode', displayType);
+  }
 
   const clientUrl = new URL(baseUrl);
   clientUrl.searchParams.set('callback_url', callbackUrl || '');

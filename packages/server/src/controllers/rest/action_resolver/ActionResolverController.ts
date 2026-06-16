@@ -4,7 +4,7 @@ import { Enum, Get, Returns, Summary } from '@tsed/schema';
 
 import { IssuerType } from '../../../decorators/IssuerType.js';
 import { Locale } from '../../../decorators/Locale.js';
-import { Action } from '../../../infra/api/__generated__/index.schemas.js';
+import { Action } from '../../../infra/api/__generated__/index.js';
 import { ActionResolverService } from '../../../services/action_resolver/ActionResolverService.js';
 import { ResolvedActionModel } from '../../../services/action_resolver/models.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';

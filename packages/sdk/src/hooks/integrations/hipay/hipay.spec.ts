@@ -11,6 +11,7 @@ describe('hipay utilities', () => {
       mockHipayInstance = {
         on: vi.fn(),
         getPaymentData: vi.fn(),
+        destroy: vi.fn(),
       };
 
       mockHipaySDK = {

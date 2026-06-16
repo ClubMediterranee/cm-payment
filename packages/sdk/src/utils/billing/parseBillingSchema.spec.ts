@@ -10,8 +10,17 @@ describe('parseBillingSchema', () => {
     consoleErrorSpy.mockClear();
   });
 
+  const baseSchema = {
+    title: 'BillingSchema',
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'billing-test',
+    type: 'object',
+    additionalProperties: false,
+  };
+
   it('parse un schéma valide avec attendee et address', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         attendee: {
           type: 'object',
@@ -59,6 +68,7 @@ describe('parseBillingSchema', () => {
 
   it('parse un champ de type select avec enum', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         address: {
           type: 'object',
@@ -90,6 +100,7 @@ describe('parseBillingSchema', () => {
 
   it('parse un champ de type select avec x-choices', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         address: {
           type: 'object',
@@ -126,6 +137,7 @@ describe('parseBillingSchema', () => {
 
   it('préfère x-choices sur enum si les deux sont présents', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         address: {
           type: 'object',
@@ -153,6 +165,7 @@ describe('parseBillingSchema', () => {
 
   it('parse les contraintes de validation maxLength, minLength, pattern', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         attendee: {
           type: 'object',
@@ -184,6 +197,7 @@ describe('parseBillingSchema', () => {
 
   it('gère les champs non requis', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         attendee: {
           type: 'object',
@@ -200,24 +214,6 @@ describe('parseBillingSchema', () => {
     expect(result[0].required).toBe(false);
   });
 
-  it('parse un schéma avec properties en string JSON', () => {
-    const schema: ClientSchemaModel = {
-      properties: JSON.stringify({
-        attendee: {
-          type: 'object',
-          properties: {
-            first_name: { type: 'string' },
-          },
-        },
-      }),
-    };
-
-    const result = parseBillingSchema(schema);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].name).toBe('first_name');
-  });
-
   it('lève une erreur si properties est manquant', () => {
     const schema = {} as ClientSchemaModel;
 
@@ -227,22 +223,9 @@ describe('parseBillingSchema', () => {
     );
   });
 
-  it('lève une erreur si properties est un JSON invalide', () => {
-    const schema: ClientSchemaModel = {
-      properties: 'invalid json{' as any,
-    };
-
-    expect(() => parseBillingSchema(schema)).toThrow(
-      'Invalid billing schema: malformed properties',
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      '[parseBillingSchema] Failed to parse properties:',
-      expect.any(Error),
-    );
-  });
-
   it('lève une erreur si attendee et address sont tous deux manquants', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         other: { type: 'object' },
       },
@@ -258,6 +241,7 @@ describe('parseBillingSchema', () => {
 
   it('accepte un schéma avec seulement attendee', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         attendee: {
           type: 'object',
@@ -276,6 +260,7 @@ describe('parseBillingSchema', () => {
 
   it('accepte un schéma avec seulement address', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         address: {
           type: 'object',
@@ -294,6 +279,7 @@ describe('parseBillingSchema', () => {
 
   it('gère un groupe sans properties', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         attendee: {
           type: 'object',
@@ -315,6 +301,7 @@ describe('parseBillingSchema', () => {
 
   it('ignore les enum vides', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         address: {
           type: 'object',
@@ -333,6 +320,7 @@ describe('parseBillingSchema', () => {
 
   it('ignore les x-choices vides', () => {
     const schema: ClientSchemaModel = {
+      ...baseSchema,
       properties: {
         address: {
           type: 'object',

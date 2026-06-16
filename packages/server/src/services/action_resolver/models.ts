@@ -1,6 +1,6 @@
 import { Enum, Required } from '@tsed/schema';
 
-import { Action } from '../../infra/api/__generated__/index.schemas.js';
+import { Action } from '../../infra/api/__generated__/index.js';
 
 export class ResolvedActionModel {
   @Required()

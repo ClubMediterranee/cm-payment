@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   PaymentMethodModel4,
   TimePaymentConditionModel,
-} from '../../../infra/api/__generated__/index.schemas.js';
+} from '../../../infra/api/__generated__/index.js';
 import { sortTimePaymentConditions } from './sortTimePaymentConditions.js';
 
 describe('sortTimePaymentConditions', () => {
@@ -71,7 +71,7 @@ describe('sortTimePaymentConditions', () => {
 
   it('should handle empty time_payment_conditions array', () => {
     const paymentMethods: PaymentMethodModel4[] = [
-      { id: 'METHOD_1', time_payment_conditions: [] } as PaymentMethodModel4,
+      { id: 'METHOD_1', currency: 'EUR', time_payment_conditions: [] },
     ];
 
     const result = sortTimePaymentConditions(paymentMethods);

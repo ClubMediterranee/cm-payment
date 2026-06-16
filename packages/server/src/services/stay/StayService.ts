@@ -4,12 +4,11 @@ import {
   getV2ProposalsProposalId,
   getV3CustomersCustomerIdBookingsBookingId,
 } from '../../infra/api/__generated__/index.js';
-import { Stay } from './models.js';
-import { GetStayParams } from './types.js';
+import { ResourceRef } from '../../utils/types.js';
 
 @Service()
 export class StayService {
-  async getStay({ type, id, customerId }: GetStayParams): Promise<Stay | null> {
+  async getStay({ type, id, customerId }: Pick<ResourceRef, 'type' | 'id' | 'customerId'>) {
     if (type === 'booking') {
       if (!customerId) return null;
       const data = await getV3CustomersCustomerIdBookingsBookingId(customerId, id);

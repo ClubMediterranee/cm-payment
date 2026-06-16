@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 
-import type { HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
+import type { CardEvents, HipayInputChangeData, HipayInstance } from '../../../types/Hipay';
 import * as useCapsConfigContext from '../../utils/useCapsConfigContext';
 import * as useFormContext from '../../utils/useForm';
 import * as usePaymentProviderSettings from '../../utils/usePaymentProviderSettings';
@@ -61,8 +61,6 @@ describe('useHipayHostedFields', () => {
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: false,
-      isLoading: false,
-      error: null,
     });
 
     vi.spyOn(usePaymentProviderSettings, 'usePaymentProviderSettings').mockReturnValue({
@@ -80,8 +78,6 @@ describe('useHipayHostedFields', () => {
   it('should initialize Hipay SDK when script loads and register event listeners', async () => {
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     const { result } = renderHook(() =>
@@ -135,8 +131,6 @@ describe('useHipayHostedFields', () => {
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     const { result } = renderHook(() =>
@@ -156,14 +150,14 @@ describe('useHipayHostedFields', () => {
     let inputChangeCallback: ((data: HipayInputChangeData) => void) | undefined;
 
     vi.spyOn(hipayHelpers, 'createHipayClient').mockImplementation((params) => {
-      inputChangeCallback = params.events?.inputChange;
+      if (params.type === 'card') {
+        inputChangeCallback = params.events?.inputChange;
+      }
       return mockHipayInstance;
     });
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     const { result } = renderHook(() =>
@@ -193,26 +187,26 @@ describe('useHipayHostedFields', () => {
   });
 
   it('should generate token when form becomes valid via change event', async () => {
-    let changeCallback: ((data: { valid: boolean }) => void) | undefined;
+    let changeCallback: CardEvents['change'];
 
     const mockToken = 'test-token-123';
     mockHipayInstance.getPaymentData = vi.fn().mockResolvedValue({ token: mockToken });
 
     vi.spyOn(hipayHelpers, 'createHipayClient').mockImplementation((params) => {
-      changeCallback = params.events?.change;
+      if (params.type === 'card') {
+        changeCallback = params.events?.change;
+      }
       return mockHipayInstance;
     });
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     renderHook(() => useHipayHostedFields({ fieldSelectors: mockFieldSelectors }));
 
     await act(async () => {
-      changeCallback?.({ valid: true });
+      changeCallback?.({ valid: true, errors: [] });
       await vi.waitFor(() => expect(mockSetValue).toHaveBeenCalled());
     });
 
@@ -224,7 +218,7 @@ describe('useHipayHostedFields', () => {
   });
 
   it('should handle token generation error', async () => {
-    let changeCallback: ((data: { valid: boolean }) => void) | undefined;
+    let changeCallback: CardEvents['change'];
 
     const mockErrors = [{ field: 'cardNumber', message: 'Card expired' }];
     mockHipayInstance.getPaymentData = vi.fn().mockRejectedValue(mockErrors);
@@ -234,14 +228,14 @@ describe('useHipayHostedFields', () => {
     });
 
     vi.spyOn(hipayHelpers, 'createHipayClient').mockImplementation((params) => {
-      changeCallback = params.events?.change;
+      if (params.type === 'card') {
+        changeCallback = params.events?.change;
+      }
       return mockHipayInstance;
     });
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     const { result } = renderHook(() =>
@@ -249,7 +243,7 @@ describe('useHipayHostedFields', () => {
     );
 
     await act(async () => {
-      changeCallback?.({ valid: true });
+      changeCallback?.({ valid: true, errors: [] });
       await vi.waitFor(() => expect(mockSetValue).toHaveBeenCalledTimes(2));
     });
 
@@ -264,23 +258,23 @@ describe('useHipayHostedFields', () => {
   });
 
   it('should clear token when form becomes invalid', async () => {
-    let changeCallback: ((data: { valid: boolean }) => void) | undefined;
+    let changeCallback: CardEvents['change'];
 
     vi.spyOn(hipayHelpers, 'createHipayClient').mockImplementation((params) => {
-      changeCallback = params.events?.change;
+      if (params.type === 'card') {
+        changeCallback = params.events?.change;
+      }
       return mockHipayInstance;
     });
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     renderHook(() => useHipayHostedFields({ fieldSelectors: mockFieldSelectors }));
 
     await act(async () => {
-      changeCallback?.({ valid: false });
+      changeCallback?.({ valid: false, errors: [] });
     });
 
     expect(mockSetValue).toHaveBeenCalledWith('token.value', '');
@@ -294,8 +288,6 @@ describe('useHipayHostedFields', () => {
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     const { rerender } = renderHook(() =>
@@ -319,7 +311,7 @@ describe('useHipayHostedFields', () => {
   });
 
   it('should cancel previous token generation if input changes', async () => {
-    let changeCallback: ((data: { valid: boolean }) => void) | undefined;
+    let changeCallback: CardEvents['change'];
     let inputChangeCallback: ((data: HipayInputChangeData) => void) | undefined;
 
     let resolveToken: ((value: { token: string }) => void) | undefined;
@@ -330,22 +322,22 @@ describe('useHipayHostedFields', () => {
     mockHipayInstance.getPaymentData = vi.fn().mockReturnValue(tokenPromise);
 
     vi.spyOn(hipayHelpers, 'createHipayClient').mockImplementation((params) => {
-      changeCallback = params.events?.change;
-      inputChangeCallback = params.events?.inputChange;
+      if (params.type === 'card') {
+        changeCallback = params.events?.change;
+        inputChangeCallback = params.events?.inputChange;
+      }
       return mockHipayInstance;
     });
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     renderHook(() => useHipayHostedFields({ fieldSelectors: mockFieldSelectors }));
 
     // Start token generation
     await act(async () => {
-      changeCallback?.({ valid: true });
+      changeCallback?.({ valid: true, errors: [] });
     });
 
     expect(mockSetValue).toHaveBeenCalledWith('token.status', 'pending');

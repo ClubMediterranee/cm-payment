@@ -18,11 +18,11 @@ export type OidcSettings = {
 };
 
 export type ClubMedApiSettings = {
+  url: string;
   apiKey: string;
 };
 
 export type CapsSettings = {
-  paymentGatewayUrl: string;
   locale: string;
   country: string;
   language: string;

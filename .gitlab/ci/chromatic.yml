@@ -44,7 +44,7 @@
 
       # Map Chromatic status -> GitLab state
       case "${STATUS^^}" in
-        PENDING|RUNNING|ACCEPTED|PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
+        PASSED|PENDING|RUNNING|ACCEPTED|PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
         FAILED|ERROR|ABORTED) GSTATE="failed" ;;
         *) GSTATE="pending" ;;
       esac

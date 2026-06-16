@@ -71,7 +71,6 @@ export const MockedProvider = ({
   return (
     <PaymentConfigProvider
       content={content}
-      paymentGatewayUrl="https://mock.clubmed.com"
       locale={locale}
       callbackUrl="http://localhost:3000/callback"
       proposalId={proposalId}

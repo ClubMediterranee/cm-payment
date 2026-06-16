@@ -8,11 +8,13 @@ export const fetcher = async <T>({
   method,
   params = {},
   data,
+  headers: requestHeaders,
 }: {
   url: string;
   method: string;
   params?: Record<string, unknown>;
   data?: unknown;
+  headers?: Record<string, string>;
 }): Promise<T> => {
   const callee = 'API';
   const baseURL = constant<string>('CLUBMED_API_URL', '');
@@ -30,6 +32,7 @@ export const fetcher = async <T>({
     method,
     params,
     headers: {
+      ...requestHeaders,
       'x-api-key': apiKey,
       caller: callerHeader,
       ...(acceptLanguage ? { 'Accept-Language': acceptLanguage } : {}),

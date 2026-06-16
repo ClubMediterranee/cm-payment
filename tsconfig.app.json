@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2020",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
@@ -27,6 +28,7 @@
     "**/node_modules",
     "packages/*/src/**/*.spec.ts",
     "packages/*/src/**/*.spec.tsx",
-    "packages/esbuild-pkg-plugin"
+    "packages/esbuild-pkg-plugin",
+    "packages/server/**"
   ]
 }

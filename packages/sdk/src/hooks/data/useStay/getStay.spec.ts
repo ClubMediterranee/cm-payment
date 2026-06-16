@@ -87,7 +87,7 @@ describe('getStay', () => {
         adultsCount: 0,
         childrenCount: 0,
         roomCount: 0,
-        transportTypes: undefined,
+        transportTypes: [],
       });
     });
 

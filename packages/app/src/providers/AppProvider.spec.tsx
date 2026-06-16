@@ -26,12 +26,7 @@ describe('AppProvider', () => {
   });
 
   it('renders the loading page when values are missing', () => {
-    vi.mocked(useAppParams).mockReturnValue({
-      paymentGatewayUrl: undefined,
-      values: undefined,
-      api: undefined,
-      oidc: undefined,
-    } as any);
+    vi.mocked(useAppParams).mockReturnValue(null);
 
     render(
       <AppProvider>
@@ -45,7 +40,6 @@ describe('AppProvider', () => {
 
   it('passes app params to PaymentConfigProvider and renders children', () => {
     vi.mocked(useAppParams).mockReturnValue({
-      paymentGatewayUrl: 'https://gateway.example.com',
       values: {
         locale: 'fr-FR',
         proposalId: 'proposal-1',
@@ -73,7 +67,6 @@ describe('AppProvider', () => {
     expect(screen.getByText('child')).toBeTruthy();
     expect(provider.getAttribute('data-props')).toBe(
       JSON.stringify({
-        paymentGatewayUrl: 'https://gateway.example.com',
         locale: 'fr-FR',
         proposalId: 'proposal-1',
         bookingId: 'booking-1',

@@ -26,50 +26,24 @@ type SchemaGroup = {
   properties?: Record<string, SchemaProperty>;
 };
 
-type ParsedSchema = {
-  type: string;
-  required?: string[];
-  properties?: {
-    attendee?: SchemaGroup;
-    address?: SchemaGroup;
-  };
-};
-
 export const parseBillingSchema = (rawSchema: ClientSchemaModel): FieldMetadata[] => {
   if (!rawSchema.properties) {
     console.error('[parseBillingSchema] Missing properties in schema');
     throw new Error('Invalid billing schema: missing properties');
   }
 
-  let parsedProperties: Record<string, any>;
-  try {
-    parsedProperties =
-      typeof rawSchema.properties === 'string'
-        ? JSON.parse(rawSchema.properties)
-        : rawSchema.properties;
-  } catch (error) {
-    console.error('[parseBillingSchema] Failed to parse properties:', error);
-    throw new Error('Invalid billing schema: malformed properties');
-  }
+  const parsedProperties = rawSchema.properties;
 
   if (!parsedProperties.attendee && !parsedProperties.address) {
     console.error('[parseBillingSchema] Missing attendee and address in schema properties');
     throw new Error('Invalid billing schema: missing attendee and address groups');
   }
 
-  const schema: ParsedSchema = {
-    type: 'object',
-    properties: {
-      attendee: parsedProperties.attendee,
-      address: parsedProperties.address,
-    },
-  };
-
   const fields: FieldMetadata[] = [];
 
   const groups: Array<{ name: 'attendee' | 'address'; data: SchemaGroup | undefined }> = [
-    { name: 'attendee', data: schema.properties?.attendee },
-    { name: 'address', data: schema.properties?.address },
+    { name: 'attendee', data: parsedProperties.attendee as SchemaGroup | undefined },
+    { name: 'address', data: parsedProperties.address as SchemaGroup | undefined },
   ];
 
   groups.forEach(({ name: groupName, data: group }) => {

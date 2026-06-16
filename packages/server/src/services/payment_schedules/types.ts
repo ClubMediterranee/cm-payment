@@ -4,9 +4,8 @@ import {
   CustomerBookingPaymentScheduleModel,
   PaymentScheduleModel,
   ProposalPaymentScheduleModelV1,
-} from '../../infra/api/__generated__/index.schemas.js';
-
-export type PaymentType = 'booking' | 'proposal';
+} from '../../infra/api/__generated__/index.js';
+import { ResourceType } from '../../utils/types.js';
 
 export type ApiResponse =
   | ProposalPaymentScheduleModelV1
@@ -31,7 +30,7 @@ export type PaymentScheduleOutput = {
 };
 
 export type PaymentScheduleParams = {
-  type: PaymentType;
+  type: ResourceType;
   id: string | number;
   customer_id?: string | number;
   action: Action;

@@ -1,25 +1,12 @@
 import {
   PaymentProvider1,
   TimePaymentConditionModel,
-} from '../../infra/api/__generated__/index.schemas.js';
+} from '../../infra/api/__generated__/index.js';
 import type { CapsProvider } from '../../infra/directus/__generated__/schema.js';
-import { OidcIssuerTypes } from '../payment_config/types.js';
-import { StayType } from '../stay/types.js';
-
-export interface GetPaymentProvidersParams {
-  type: StayType;
-  id: string;
-  locale: string;
-  issuerType: OidcIssuerTypes;
-  customerId?: string;
-  userAgent?: string;
-}
-
-export type PaymentProviderDisplayType = 'hosted_field' | 'iframe' | 'redirect' | 'custom';
 
 export interface ProviderConfigMap {
   [providerId: string]: {
-    display_type: PaymentProviderDisplayType;
+    display_type: CapsProvider['default_display_type'];
     confirmation_strategy: NonNullable<CapsProvider['confirmation_strategy']>;
     settings: Record<string, unknown>;
   } & Record<string, unknown>;

@@ -24,7 +24,11 @@
       "vitest/globals",
       "@testing-library/jest-dom",
       "@storybook/addon-vitest"
-    ]
+    ],
+    "paths": {
+      "@clubmed/caps": ["./packages/sdk/src/index.ts"]
+    }
   },
-  "include": ["packages/*/src/**/*.ts", "packages/*/src/**/*.tsx", "./vitest.shims.d.ts"]
+  "include": ["packages/*/src/**/*.ts", "packages/*/src/**/*.tsx", "./vitest.shims.d.ts"],
+  "exclude": ["packages/server/**"]
 }

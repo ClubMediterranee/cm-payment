@@ -65,6 +65,7 @@ export default defineConfig({
       input: Object.fromEntries(
         globbySync('src/**/*.{ts,tsx}', {
           ignore: [
+            '**/*.d.ts',
             '**/*.spec.{ts,tsx}',
             '**/*.stories.{ts,tsx}',
             '**/__mocks__/**',

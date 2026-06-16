@@ -20,13 +20,13 @@ export const config: Partial<TsED.Configuration> = {
   version: pkg.version,
   ajv: {
     returnsCoercedValues: true,
-    loadSchema: async (uri: string) => {
+    loadSchema: (async (uri: string) => {
       const response = await fetch(uri);
       if (!response.ok) {
         throw new Error(`Unable to load schema: ${uri}`);
       }
       return response.json();
-    },
+    }) as any,
   },
   logger: loggerConfig,
   extends: [DotEnvsConfigSource],

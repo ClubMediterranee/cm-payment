@@ -2,7 +2,7 @@ import { Controller, Inject } from '@tsed/di';
 import { PathParams, QueryParams } from '@tsed/platform-params';
 import { Enum, Get, Returns, Summary } from '@tsed/schema';
 
-import { Action } from '../../../infra/api/__generated__/index.schemas.js';
+import { Action } from '../../../infra/api/__generated__/index.js';
 import { PaymentScheduleOutputModel } from '../../../services/payment_schedules/models.js';
 import { PaymentSchedulesService } from '../../../services/payment_schedules/PaymentSchedulesService.js';
 

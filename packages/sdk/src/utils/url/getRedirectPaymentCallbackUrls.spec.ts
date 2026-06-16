@@ -16,7 +16,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
   describe('GM issuerType', () => {
     it('returns only callback_url for GM without callbackUrlSeller', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
@@ -36,7 +36,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
     it('returns only callback_url for GM even with callbackUrlSeller provided', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
@@ -58,7 +58,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
   describe('GO issuerType', () => {
     it('returns only callback_url for GO without callbackUrlSeller', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
@@ -78,7 +78,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
     it('returns both callback_url and callback_url_seller for GO with callbackUrlSeller', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
@@ -101,7 +101,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
   describe('PARTNERS issuerType', () => {
     it('returns only callback_url for PARTNERS without callbackUrlSeller', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.PARTNERS, accessToken: 'token' },
         type: 'proposal',
         id: 'proposal-999',
@@ -121,7 +121,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
     it('returns both callback_url and callback_url_seller for PARTNERS with callbackUrlSeller', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.PARTNERS, accessToken: 'token' },
         type: 'proposal',
         id: 'proposal-999',
@@ -144,7 +144,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
   describe('edge cases', () => {
     it('handles empty callbackUrl', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
@@ -163,7 +163,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
     it('handles empty providerId', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
         type: 'booking',
         id: 'booking-123',
@@ -184,7 +184,7 @@ describe('getRedirectPaymentCallbackUrls', () => {
 
     it('handles proposal type correctly', () => {
       mockGetCapsConfig.mockReturnValue({
-        paymentGatewayUrl: 'https://payment.clubmed.com',
+        api: { url: 'https://payment.clubmed.com', apiKey: 'test-key' },
         oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
         type: 'proposal',
         id: 'proposal-555',

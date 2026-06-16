@@ -15,6 +15,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "pretest": "pnpm exec playwright install",
+    "check": "tsc --build --noEmit",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "dev:storybook": "storybook dev -p 6006",
