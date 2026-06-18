@@ -23,7 +23,6 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      all: true,
       include: ['src/**/*.{tsx,ts}'],
       exclude: [
         '**/*.spec.{ts,tsx}',

@@ -327,9 +327,9 @@ export const WithProfilePrefill: Story = {
       { timeout: 10000 },
     );
 
-    const inputs = canvas.getAllByRole('textbox', { hidden: true });
-    const firstNameInput = inputs[0] as HTMLInputElement;
-    const lastNameInput = inputs[1] as HTMLInputElement;
+    const inputs = canvas.getAllByRole<HTMLInputElement>('textbox', { hidden: true });
+    const firstNameInput = inputs[0];
+    const lastNameInput = inputs[1];
 
     await waitFor(
       () => {
@@ -339,17 +339,15 @@ export const WithProfilePrefill: Story = {
       { timeout: 10000 },
     );
 
-    const inputsWithStreet = inputs.filter((input: HTMLInputElement) =>
+    const inputsWithStreet = inputs.filter((input) =>
       input.value.includes('Avenue des Champs-Élysées'),
     );
     expect(inputsWithStreet.length).toBeGreaterThan(0);
 
-    const inputsWithParis = inputs.filter((input: HTMLInputElement) => input.value === 'Paris');
+    const inputsWithParis = inputs.filter((input) => input.value === 'Paris');
     expect(inputsWithParis.length).toBeGreaterThan(0);
 
-    const inputsWithPostalCode = inputs.filter(
-      (input: HTMLInputElement) => input.value === '75008',
-    );
+    const inputsWithPostalCode = inputs.filter((input) => input.value === '75008');
     expect(inputsWithPostalCode.length).toBeGreaterThan(0);
   },
 };

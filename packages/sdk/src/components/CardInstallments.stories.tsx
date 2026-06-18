@@ -221,7 +221,6 @@ const CardInstallmentsWithProvider = () => {
       defaultValues={{
         provider_id: 'EVOXPAY',
         amount: '1200',
-        payment_method_id: 'visa-001',
         payment_condition_id: 'visa-1x',
       }}
     >

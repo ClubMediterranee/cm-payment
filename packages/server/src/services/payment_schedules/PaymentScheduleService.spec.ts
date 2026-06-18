@@ -4,7 +4,7 @@ import * as api from '../../infra/api/__generated__/index.js';
 import {
   CustomerBookingPaymentScheduleModel,
   HouseholdPaymentScheduleModels,
-} from '../../infra/api/__generated__/index.schemas.js';
+} from '../../infra/api/__generated__/index.js';
 import { PaymentSchedulesService } from './PaymentSchedulesService.js';
 
 const Action = {
@@ -16,7 +16,8 @@ const Action = {
   PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
 } as const;
 
-vi.mock('../../infra/api/__generated__/index.js', () => ({
+vi.mock('../../infra/api/__generated__/index.js', async (importOriginal) => ({
+  ...(await importOriginal()),
   getV1ProposalsProposalIdPaymentSchedule: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule: vi.fn(),

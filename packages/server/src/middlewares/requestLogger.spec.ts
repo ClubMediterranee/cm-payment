@@ -1,14 +1,24 @@
 import { $log } from '@tsed/logger';
 import { EventEmitter } from 'events';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { Mock } from 'vitest';
 
 import { requestLoggerMiddleware } from './requestLogger.js';
+
+const createMockRequest = (overrides: Partial<FastifyRequest> = {}): Partial<FastifyRequest> => ({
+  method: 'GET',
+  url: '/test',
+  id: 'request-id-123',
+  query: { search: 'test' },
+  params: { id: '123' },
+  ...overrides,
+});
 
 describe('requestLoggerMiddleware', () => {
   let req: Partial<FastifyRequest>;
   let reply: Partial<FastifyReply>;
   let rawEmitter: EventEmitter;
-  let done: vi.Mock;
+  let done: Mock;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -18,13 +28,7 @@ describe('requestLoggerMiddleware', () => {
 
     rawEmitter = new EventEmitter();
 
-    req = {
-      method: 'GET',
-      url: '/test',
-      id: 'request-id-123',
-      query: { search: 'test' },
-      params: { id: '123' },
-    };
+    req = createMockRequest();
 
     reply = {
       statusCode: 200,
@@ -213,8 +217,7 @@ describe('requestLoggerMiddleware', () => {
 
     it('should handle POST request', () => {
       // GIVEN
-      req.method = 'POST';
-      req.url = '/api/users';
+      req = createMockRequest({ method: 'POST', url: '/api/users' });
 
       // WHEN
       requestLoggerMiddleware(req as FastifyRequest, reply as FastifyReply, done);
@@ -232,7 +235,7 @@ describe('requestLoggerMiddleware', () => {
 
     it('should handle PUT request', () => {
       // GIVEN
-      req.method = 'PUT';
+      req = createMockRequest({ method: 'PUT' });
       reply.statusCode = 200;
 
       // WHEN
@@ -251,7 +254,7 @@ describe('requestLoggerMiddleware', () => {
 
     it('should handle DELETE request', () => {
       // GIVEN
-      req.method = 'DELETE';
+      req = createMockRequest({ method: 'DELETE' });
       reply.statusCode = 204;
 
       // WHEN

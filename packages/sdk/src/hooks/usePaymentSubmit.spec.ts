@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import type { UseFormReturn } from 'react-hook-form';
+import type { Mock } from 'vitest';
 
 import * as FormCallbacksContextModule from '../contexts/FormCallbacksContext';
 import { CapsFormSchema } from '../schemas/capsFormSchema';
@@ -12,13 +13,13 @@ import * as useProviderIntegrationModeModule from './utils/useProviderIntegratio
 vi.mock('./utils/useProviderIntegrationMode');
 
 describe('usePaymentSubmit', () => {
-  let mockMutate: ReturnType<typeof vi.fn>;
-  let mockHandleSubmit: ReturnType<typeof vi.fn>;
-  let mockGetValues: ReturnType<typeof vi.fn>;
-  let mockHandleTokenValidationError: ReturnType<typeof vi.fn>;
-  let onErrorMock: ReturnType<typeof vi.fn>;
-  let onLoadMock: ReturnType<typeof vi.fn>;
-  let onLoadEndMock: ReturnType<typeof vi.fn>;
+  let mockMutate: Mock;
+  let mockHandleSubmit: Mock;
+  let mockGetValues: Mock;
+  let mockHandleTokenValidationError: Mock<(errors: any) => void>;
+  let onErrorMock: Mock<(error: Error) => void>;
+  let onLoadMock: Mock<() => void>;
+  let onLoadEndMock: Mock<() => void>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -70,6 +71,8 @@ describe('usePaymentSubmit', () => {
     vi.spyOn(useProviderIntegrationModeModule, 'useProviderIntegrationMode').mockReturnValue({
       iframe: false,
       redirect: true,
+      hostedField: false,
+      custom: false,
     });
   });
 
@@ -121,8 +124,8 @@ describe('usePaymentSubmit', () => {
     renderHook(() => usePaymentSubmit());
 
     const paymentRedirectCall = vi.mocked(usePaymentRedirectModule.usePaymentRedirect).mock
-      .calls[0][0];
-    paymentRedirectCall.onError?.(testError);
+      .calls[0]?.[0];
+    paymentRedirectCall?.onError?.(testError);
 
     expect(onErrorMock).toHaveBeenCalledWith(testError);
   });
@@ -134,9 +137,9 @@ describe('usePaymentSubmit', () => {
     renderHook(() => usePaymentSubmit());
 
     const paymentRedirectCall = vi.mocked(usePaymentRedirectModule.usePaymentRedirect).mock
-      .calls[0][0];
+      .calls[0]?.[0];
     const redirect = { url: 'https://payment.gateway.com', method: 'GET' };
-    paymentRedirectCall.onSuccess?.({ redirect } as any);
+    paymentRedirectCall?.onSuccess?.({ redirect } as any);
 
     expect(window.location.href).toBe('https://payment.gateway.com');
   });
@@ -145,9 +148,9 @@ describe('usePaymentSubmit', () => {
     renderHook(() => usePaymentSubmit());
 
     const paymentRedirectCall = vi.mocked(usePaymentRedirectModule.usePaymentRedirect).mock
-      .calls[0][0];
+      .calls[0]?.[0];
 
-    expect(paymentRedirectCall.onSuccess).toBeDefined();
+    expect(paymentRedirectCall?.onSuccess).toBeDefined();
   });
 
   it('should pass onLoadEnd to usePaymentRedirect', () => {

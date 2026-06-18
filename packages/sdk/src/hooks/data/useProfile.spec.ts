@@ -12,7 +12,7 @@ describe('profileQueryOptions', () => {
       .mockResolvedValue({ id: 'customer-1' } as any);
 
     const options = profileQueryOptions('customer-1');
-    const result = await options.queryFn!({} as any);
+    const result = await options.queryFn!();
 
     expect(spy).toHaveBeenCalledWith('customer-1');
     expect(result).toEqual({ id: 'customer-1' });

@@ -7,13 +7,20 @@ import {
   Required,
 } from '@tsed/schema';
 
-import type { PaymentProviderDisplayType } from '../payment_providers/types.js';
+import type { CapsProvider } from '../../infra/directus/__generated__/schema.js';
 
 @AdditionalProperties(true)
-export class FeatureFlipsConfig {}
+export class FeatureFlipsConfig {
+  @Property()
+  is_paypal_button_enabled?: boolean;
+}
 
 @AdditionalProperties(true)
-export class PaymentSettings {}
+export class PaymentSettings {
+  @Property()
+  @Nullable(Number)
+  days_before_trip_to_allow_free_deposit?: number | null;
+}
 
 export class PaymentConfig {
   @Property()
@@ -80,7 +87,7 @@ export class ProviderModel {
 
   @Required()
   @Enum('hosted_field', 'iframe', 'redirect', 'custom')
-  default_display_type!: PaymentProviderDisplayType;
+  default_display_type!: CapsProvider['default_display_type'];
 
   @Property()
   @Nullable(String)

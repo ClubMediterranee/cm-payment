@@ -8,7 +8,6 @@ const [language, country] = locale.split('-');
 
 export const CapsConfigContext = createContext<CapsSettings>({
   type: '' as CapsSettings['type'],
-  paymentGatewayUrl: '',
   id: '',
   locale,
   country,

@@ -62,7 +62,8 @@ describe('useUplift', () => {
       {
         hotel_name: 'resort-cancun',
         number_of_rooms: 2,
-        room_type: '',
+        reservation_type: '',
+        has_deposit: 'false',
         check_in: '2026-06-15',
         check_out: '2026-06-22',
       },

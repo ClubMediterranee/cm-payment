@@ -47,7 +47,7 @@ export class PaymentConfirmationService {
     return {
       payment_status: response.payment_status || '',
       booking_id: response.booking_id || '',
-      payment_amount: response.payment_amount || '',
+      payment_amount: String(response.payment_amount || ''),
       payment_currency: response.payment_currency || '',
       provider_id: response.provider_id || '',
     };

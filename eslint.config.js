@@ -12,7 +12,14 @@ import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
 
 export default tseslint.config(
   {
-    ignores: ['dist', '**/node_modules', '**/__generated__'],
+    ignores: [
+      '**/dist/**',
+      '**/coverage/**',
+      '**/storybook-static/**',
+      '**/.docusaurus/**',
+      '**/node_modules',
+      '**/__generated__',
+    ],
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

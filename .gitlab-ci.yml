@@ -41,6 +41,7 @@ variables:
   ENV:
     value: "integration"
     options:
+      - "integration-heroku"
       - "integration"
       - "staging"
       - "production"
@@ -67,16 +68,6 @@ stages:
   - release:make
   - deploy
   - notification
-cache:
-  - key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .pnpm/
-    policy: pull
-    untracked: true
 
 lint:
   extends: .node_install_dependencies
@@ -98,6 +89,7 @@ build:
   extends: .node_install_dependencies
   stage: test
   script:
+    - pnpm run check
     - pnpm run build
   artifacts:
     when: always
@@ -177,15 +169,31 @@ deploy:
       when: always
     - when: never
   script:
-    - !reference [.switch-branch, script]
     - !reference [.dotenv-source, script]
-    - echo $VERSION > packages/app/public/release.info
-    - !reference [.deploy-with-parameters, script]
+    - !reference [.switch-branch, script]
     - |
-      if [ "$ENV" = "production" ]; then
-        yarn install
-        npx -p @cmflow/cli cm jira-releases --project-id GPAY --component SDK-PAYMENT --tag $VERSION --verbose --update
+      if echo "$VERSION" | grep -Eq '^v?[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
+        RELEASE_INFO_VERSION="$VERSION"
+      else
+        RELEASE_INFO_VERSION="${VERSION}-$(date -u +%Y%m%d%H%M%S)"
       fi
+      echo "$RELEASE_INFO_VERSION" > resources/release.info
+      echo "release.info version: $RELEASE_INFO_VERSION"
+      echo "PROVIDER: $PROVIDER"
+    - !reference [.deploy-on-heroku-with-parameters, script]
+    - !reference [.deploy-on-aws-with-parameters, script]
+
+post-deploy:
+  extends: .node_install_dependencies
+  stage: notification
+  dependencies:
+    - deploy
+  rules:
+    - if: "$WORKFLOW == 'deploy' && $ENV == 'production'"
+      when: always
+    - when: never
+  script:
+    - bunx @cmflow/cli@v3.0.1 cm jira-releases --project-id GPAY --component SDK-PAYMENT --tag $VERSION --verbose --update
 
 rebase:
   extends: .node_install_dependencies
@@ -197,7 +205,6 @@ rebase:
   script:
     - !reference [.dotenv-source, script]
     - yarn dlx -p @cmflow/cli cm push
-    - !reference [.deploy-with-parameters, script]
 
 rebase-all:
   extends: .node_install_dependencies

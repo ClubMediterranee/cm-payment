@@ -1,4 +1,4 @@
-import { Action } from '../../../infra/api/__generated__/index.schemas.js';
+import { Action } from '../../../infra/api/__generated__/index.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
 import { ActionResolverController } from './ActionResolverController.js';
 

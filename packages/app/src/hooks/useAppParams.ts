@@ -48,21 +48,7 @@ export function useAppParams() {
   } = useQueryParams<any>();
 
   if (auth.isLoading) {
-    return {};
-  }
-
-  if (isConfirmationRoute) {
-    const issuerType = resultConfirmation?.issuer.toUpperCase() as OidcIssuerTypes;
-
-    return {
-      paymentGatewayUrl: import.meta.env.VITE_PAYMENT_GATEWAY_URL,
-      values: { locale, ...confirmationParams },
-      api: AppSettings.api[issuerType],
-      oidc: {
-        issuerType,
-        accessToken: auth?.user?.access_token || '',
-      },
-    };
+    return null;
   }
 
   if (match) {
@@ -92,20 +78,22 @@ export function useAppParams() {
     session.set(values);
   }
 
-  const values = session.get();
+  const values = isConfirmationRoute ? { locale, ...confirmationParams } : session.get();
 
-  if (values) {
-    return {
-      paymentGatewayUrl: import.meta.env.VITE_PAYMENT_GATEWAY_URL,
-      values,
-      api: AppSettings.api[values?.issuerType as OidcIssuerTypes],
-      oidc: {
-        issuerType: values?.issuerType as OidcIssuerTypes,
-        accessToken: auth?.user?.access_token || '',
-      },
-      isIframe: window.self !== window.top,
-    };
+  if (!values) {
+    return null;
   }
 
-  return {};
+  const issuerType = (
+    isConfirmationRoute ? resultConfirmation?.issuer.toUpperCase() : values?.issuerType
+  ) as OidcIssuerTypes;
+
+  return {
+    values,
+    api: { ...AppSettings.api[issuerType], url: import.meta.env.VITE_PAYMENT_GATEWAY_URL },
+    oidc: {
+      issuerType,
+      accessToken: auth?.user?.access_token || '',
+    },
+  };
 }

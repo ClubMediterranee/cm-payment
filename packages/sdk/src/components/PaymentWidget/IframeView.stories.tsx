@@ -140,18 +140,6 @@ Ce composant gère le chargement, la communication avec l'iframe via postMessage
           },
         }}
         proposalId="12345678"
-        paymentConfig={{
-          providers: {
-            [provider]: {
-              is_active: true,
-              display_type: 'iframe',
-            },
-          },
-          feature_flips: {},
-          settings: {
-            days_before_trip_to_allow_free_deposit: 30,
-          },
-        }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
         <IframeView />
@@ -179,23 +167,22 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    let iframe: HTMLIFrameElement | null = null;
-
     try {
       await waitFor(
         () => {
-          iframe = canvas.queryByTitle('payment-iframe') as HTMLIFrameElement;
-          expect(iframe).toBeInTheDocument();
+          expect(canvas.queryByTitle('payment-iframe')).toBeInTheDocument();
         },
         { timeout: 20000 },
       );
+
+      const iframe = canvas.queryByTitle<HTMLIFrameElement>('payment-iframe');
 
       if (iframe) {
         expect(iframe.tagName).toBe('IFRAME');
 
         await waitFor(
           () => {
-            const computedStyle = window.getComputedStyle(iframe!);
+            const computedStyle = window.getComputedStyle(iframe);
             const height = computedStyle.height;
             expect(parseInt(height)).toBeGreaterThan(0);
           },
@@ -204,7 +191,7 @@ export const Default: Story = {
 
         await waitFor(
           () => {
-            expect(iframe!.src).toContain('payment.provider.com');
+            expect(iframe.src).toContain('payment.provider.com');
           },
           { timeout: 10000 },
         );
@@ -246,18 +233,6 @@ export const LoadingState: Story = {
           },
         }}
         proposalId="12345678"
-        paymentConfig={{
-          providers: {
-            EPAYGATE: {
-              is_active: true,
-              display_type: 'iframe',
-            },
-          },
-          feature_flips: {},
-          settings: {
-            days_before_trip_to_allow_free_deposit: 30,
-          },
-        }}
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
         <IframeView />

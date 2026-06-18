@@ -43,15 +43,6 @@ const ContactChoiceWithFormProvider = (args: any) => {
       bookingId="123"
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
-      paymentConfig={{
-        providers: {
-          EVOXPAY: {
-            is_active: true,
-            settings: {},
-          },
-        },
-        feature_flips: {},
-      }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
     >
       <ContactChoice {...args} />
@@ -202,15 +193,6 @@ export const WithAdditionalInteractions: Story = {
       bookingId="123"
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
-      paymentConfig={{
-        providers: {
-          EVOXPAY: {
-            is_active: true,
-            settings: {},
-          },
-        },
-        feature_flips: {},
-      }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '1' }}
     >
       <ContactChoice {...args} reference="123" />
@@ -362,15 +344,6 @@ export const AccessibilityTest: Story = {
       bookingId="123"
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.PARTNERS, accessToken: '' }}
-      paymentConfig={{
-        providers: {
-          EVOXPAY: {
-            is_active: true,
-            settings: {},
-          },
-        },
-        feature_flips: {},
-      }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
     >
       <ContactChoice {...args} />

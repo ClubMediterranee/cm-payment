@@ -10,11 +10,11 @@ type MessageHandler = {
 };
 
 export const useIframeMessageBridge = (handlers: MessageHandler) => {
-  const { paymentGatewayUrl } = useCapsConfigContext();
+  const { api } = useCapsConfigContext();
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== new URL(paymentGatewayUrl).origin) {
+      if (event.origin !== new URL(api.url).origin) {
         return;
       }
 
@@ -28,5 +28,5 @@ export const useIframeMessageBridge = (handlers: MessageHandler) => {
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [handlers, paymentGatewayUrl]);
+  }, [handlers, api.url]);
 };

@@ -1,25 +1,110 @@
-.deploy-with-parameters:
+variables:
+  CIRCLE_CI_TRIGGER_URL: "https://circleci.com/api/v2/project/gh/ClubMediterranee/infra/pipeline"
+  CIRCLE_CI_TRIGGER_TOKEN: ""
+
+.deploy-on-aws-with-parameters:
   script: |
-    echo "Heroku deploy with parameters"
+    if [ "${PROVIDER}" == "aws" ]; then    
+      AWS_REGION="${AWS_REGION:-$AWS_DEFAULT_REGION}"
+      AWS_ACCOUNT_ID="${AWS_ACCOUNT_ID:-$AWS_ECR_ID}"
+      AWS_ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+      AWS_IMAGE_NAME="${AWS_ECR_REGISTRY}/${ECR_REPOSITORY}"
 
-    echo "ENV: $ENV"      
-    echo "VERSION: $VERSION"
-    echo "WORKFLOW: $WORKFLOW"
-    echo "HEROKU_APP: $HEROKU_APP"
-    echo "HEROKU_TEAM: $HEROKU_TEAM"
-    echo "APP_ENV_LEVEL: $APP_ENV_LEVEL"
+      echo "AWS deploy with parameters"
+      echo "ENV: $ENV"
+      echo "VERSION: $VERSION"
+      echo "WORKFLOW: $WORKFLOW"
+      echo "AWS_REGION: $AWS_REGION"
+      echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
+      echo "ECR_REPOSITORY: $ECR_REPOSITORY"
+      echo "AWS_ECR_REGISTRY: $AWS_ECR_REGISTRY"
+      echo "AWS_IMAGE_NAME: $AWS_IMAGE_NAME"
 
-    echo "Heroku login"
+      echo "Install AWS CLI and helpers"
+      if command -v apt-get >/dev/null 2>&1; then
+        apt-get update
+        apt-get install -y curl jq python3 python3-venv bash
+        python3 -m venv /tmp/awscli-venv
+        /tmp/awscli-venv/bin/pip install --no-cache-dir --upgrade pip awscli
+        export PATH="/tmp/awscli-venv/bin:$PATH"
+      elif command -v apk >/dev/null 2>&1; then
+        apk add --no-cache curl jq python3 py3-pip bash aws-cli
+      else
+        echo "Unsupported package manager for AWS CLI install"
+        exit 1
+      fi
+      aws --version
 
-    npx heroku@7.67.2 container:login
+      echo "Compute build context"
+      export ECR="$AWS_ECR_REGISTRY"
+      export DOCKER_IMAGE_NAME="$AWS_IMAGE_NAME"
 
-    echo "Docker login & build"
+      echo "Ensure ECR repository exists: $ECR_REPOSITORY"
+      set -e
+      if ! aws ecr describe-repositories --repository-names "$ECR_REPOSITORY" --region "$AWS_REGION" >/dev/null 2>&1; then
+        aws ecr create-repository --repository-name "$ECR_REPOSITORY" --region "$AWS_REGION"
+      fi
 
-    docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
-    docker build . -t registry.heroku.com/${HEROKU_APP}/web --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg NO_PROXY=${NO_PROXY} --build-arg NODE_ENV=${APP_ENV_LEVEL}
+      echo "Login to ECR"
+      aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR}
 
-    docker push registry.heroku.com/${HEROKU_APP}/web
+      echo "Docker build"
+      docker build . \
+        -t ${DOCKER_IMAGE_NAME}:${VERSION} \
+        -t ${DOCKER_IMAGE_NAME}:latest \
+        --build-arg HTTP_PROXY=${HTTP_PROXY} \
+        --build-arg HTTPS_PROXY=${HTTPS_PROXY} \
+        --build-arg NO_PROXY=${NO_PROXY}
 
-    echo "Heroku deploy"
+      echo "Push to ECR"
+      docker push ${DOCKER_IMAGE_NAME}:${VERSION}
+      docker push ${DOCKER_IMAGE_NAME}:latest
 
-    npx heroku@7.67.2 container:release web --app ${HEROKU_APP}
+      echo "Trigger infra deployment"
+
+      DATA_BODY=$(jq --null-input \
+        --arg version "$VERSION" \
+        --arg stack "${STACK}" \
+        --arg env "${ENV}" \
+        '{branch:"main", parameters: {version: $version, env: $env, stack: $stack, action: "update_version", version_strategy: "set"}}')
+
+      echo "Url: $CIRCLE_CI_TRIGGER_URL"
+      echo "Token: $CIRCLE_CI_TRIGGER_TOKEN"
+      echo "Payload: $DATA_BODY"
+
+      curl -sS -X POST "$CIRCLE_CI_TRIGGER_URL" \
+        -H "Content-Type: application/json" \
+        -H "Circle-Token: $CIRCLE_CI_TRIGGER_TOKEN" \
+        -d "$DATA_BODY"
+    else 
+      echo "[AWS] PROVIDER='${PROVIDER:-<unset>}' -> skipping AWS deploy"
+    fi
+
+.deploy-on-heroku-with-parameters:
+  environment:
+  script: |
+    if [ "${PROVIDER}" == "heroku" ]; then    
+      echo "Heroku deploy with parameters"
+      echo "ENV: $ENV"      
+      echo "VERSION: $VERSION"
+      echo "WORKFLOW: $WORKFLOW"
+      echo "HEROKU_APP: $HEROKU_APP"
+      echo "HEROKU_TEAM: $HEROKU_TEAM"
+      echo "APP_ENV_LEVEL: $APP_ENV_LEVEL"
+
+      echo "Heroku login"
+      bunx heroku@7.67.2 container:login
+
+      echo "Docker login & build"
+
+      docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
+      docker build . -t registry.heroku.com/${HEROKU_APP}/web --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg NO_PROXY=${NO_PROXY}
+
+      docker push registry.heroku.com/${HEROKU_APP}/web
+
+      echo "Heroku deploy"
+
+      bunx heroku@7.67.2 container:release web --app ${HEROKU_APP}
+    else
+      echo "[Heroku] PROVIDER='${PROVIDER:-<unset>}' -> skipping Heroku deploy"
+    fi

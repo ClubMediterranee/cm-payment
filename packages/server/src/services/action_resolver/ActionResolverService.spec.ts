@@ -1,13 +1,14 @@
 import { DITest } from '@tsed/di';
 
 import * as api from '../../infra/api/__generated__/index.js';
-import { Action, BookingStatus } from '../../infra/api/__generated__/index.schemas.js';
+import { Action, BookingStatus } from '../../infra/api/__generated__/index.js';
 import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
 import { OidcIssuerTypes } from '../payment_config/types.js';
 import { PaymentSchedulesService } from '../payment_schedules/PaymentSchedulesService.js';
 import { ActionResolverService } from './ActionResolverService.js';
 
-vi.mock('../../infra/api/__generated__/index.js', () => ({
+vi.mock('../../infra/api/__generated__/index.js', async (importOriginal) => ({
+  ...(await importOriginal()),
   getV3CustomersCustomerIdBookingsBookingId: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule: vi.fn(),

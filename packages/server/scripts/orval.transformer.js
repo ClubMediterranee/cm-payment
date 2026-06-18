@@ -1,6 +1,7 @@
+import { createTransformer } from '../../../scripts/orval/createTransformer.js';
 import { CategoryPaymentMethod, UnsupportedAction } from './constants.js';
 
-export const ENDPOINTS = [
+const ENDPOINTS = [
   'POST /v1/payments/{payment_id}/notify',
   'GET /v1/payment_providers',
   'GET /v0/customers/{customer_id}/bookings/{booking_id}/payment_schedules',
@@ -17,48 +18,23 @@ export const ENDPOINTS = [
   'POST /v0/payments/{payment_id}/redirect_request',
 ];
 
-export default function (schema) {
-  const paths = {};
-
-  Object.entries(schema.paths).forEach(([path, value]) => {
-    Object.entries(value).forEach(([method, operation]) => {
-      if (!ENDPOINTS.includes(`${method.toUpperCase()} ${path}`)) {
-        return;
-      }
-
-      paths[path] = paths[path] || {};
-      paths[path][method] = operation;
-
-      if (operation.parameters) {
-        operation.parameters = operation.parameters.filter((param) => param.name !== 'api_key');
-      }
-    });
-  });
-
-  return {
-    ...schema,
-    components: {
-      ...schema.components,
-      schemas: {
-        ...schema.components.schemas,
-        action: {
-          ...schema.components.schemas.action,
-          enum: schema.components.schemas.action.enum.filter(
-            (action) => !UnsupportedAction.includes(action),
-          ),
-        },
-        PaymentProvider1: {
-          ...schema.components.schemas.PaymentProvider1,
-          properties: {
-            ...schema.components.schemas.PaymentProvider1.properties,
-            category_payment_method: {
-              ...schema.components.schemas.PaymentProvider1.properties.category_payment_method,
-              enum: CategoryPaymentMethod,
-            },
-          },
+export default createTransformer({
+  endpoints: ENDPOINTS,
+  overrideSchemas: (schemas) => ({
+    ...schemas,
+    action: {
+      ...schemas.action,
+      enum: schemas.action.enum.filter((action) => !UnsupportedAction.includes(action)),
+    },
+    PaymentProvider1: {
+      ...schemas.PaymentProvider1,
+      properties: {
+        ...schemas.PaymentProvider1.properties,
+        category_payment_method: {
+          ...schemas.PaymentProvider1.properties.category_payment_method,
+          enum: CategoryPaymentMethod,
         },
       },
     },
-    paths,
-  };
-}
+  }),
+});

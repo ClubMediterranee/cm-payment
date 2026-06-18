@@ -31,7 +31,7 @@ const getStatusConfig = (status: string) => {
 };
 
 export const ConfirmationPage = () => {
-  const { oidc: { issuerType } = {}, values } = useAppParams();
+  const { oidc: { issuerType } = {}, values } = useAppParams() || {};
   const { payment_status, booking_id, payment_amount, payment_currency } = values;
 
   const statusConfig = getStatusConfig(payment_status);

@@ -6,7 +6,7 @@ import { useRoute } from 'wouter';
 import { useAppParams } from './useAppParams';
 
 export const useAutoSignin = () => {
-  const { oidc: { issuerType } = {} } = useAppParams();
+  const { oidc: { issuerType } = {} } = useAppParams() || {};
   const isSeller = [OidcIssuerTypes.GO, OidcIssuerTypes.PARTNERS].includes(issuerType!);
   const [isBookingRoute] = useRoute('/*/booking/*');
   const auth = useAuth();

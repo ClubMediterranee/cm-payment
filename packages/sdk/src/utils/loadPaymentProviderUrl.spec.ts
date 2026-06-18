@@ -225,7 +225,7 @@ describe('loadPaymentProviderUrl', () => {
     });
 
     it('should handle ref with null current gracefully', () => {
-      const iframeRef: RefObject<HTMLIFrameElement> = { current: null };
+      const iframeRef: RefObject<HTMLIFrameElement | null> = { current: null };
 
       const params: ProviderParametersModel = {
         url: 'https://example.com/payment',

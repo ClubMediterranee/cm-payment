@@ -14,9 +14,8 @@ export default defineConfig({
     },
     output: {
       target: join(root, 'src/infra/api/__generated__/index.ts'),
-      mode: 'split',
+      mode: 'single',
       prettier: true,
-      mock: true,
       override: {
         mutator: {
           path: './src/infra/http/fetcher.ts',

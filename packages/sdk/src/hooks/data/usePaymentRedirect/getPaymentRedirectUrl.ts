@@ -4,10 +4,10 @@ import {
   postV1Payments,
   postV3Bookings,
 } from '../../../__generated__';
+import { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType as PaymentProviderDisplayType } from '../../../__generated__/bff/index.schemas';
 import { GLOBAL_CAPS_SETTINGS } from '../../../config';
 import { CapsFormSchema } from '../../../schemas/capsFormSchema';
 import { CapsSettings } from '../../../types/CapsSettings';
-import { PaymentProviderDisplayType } from '../../../types/PaymentConfig';
 import { getRedirectPaymentCallbackUrls } from '../../../utils/url/getRedirectPaymentCallbackUrls';
 
 const mapBillingDetails = (formData: CapsFormSchema) => {

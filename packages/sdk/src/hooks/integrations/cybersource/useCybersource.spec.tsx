@@ -10,18 +10,6 @@ import * as useScriptLoader from '../../utils/useScriptLoader';
 import * as cybersourceHelpers from './cybersource';
 import { useCybersource } from './useCybersource';
 
-vi.mock('react-hook-form', async () => {
-  const actual = await vi.importActual('react-hook-form');
-  return {
-    ...actual,
-    useWatch: vi.fn((options: any) => {
-      const name = typeof options === 'object' ? options.name : options;
-      if (name === 'creditCard.expiryDate') return '2025-12-31';
-      return undefined;
-    }),
-  };
-});
-
 vi.mock('../../../utils/decodeJwt', () => ({
   decodeJwt: vi.fn(() => ({
     ctx: [
@@ -106,8 +94,6 @@ describe('useCybersource', () => {
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: false,
-      isLoading: false,
-      error: null,
     });
 
     vi.spyOn(cybersourceHelpers, 'createCybersourceMicroform').mockReturnValue(mockMicroform);
@@ -119,17 +105,12 @@ describe('useCybersource', () => {
   });
 
   it('should fetch token on mount and initialize CyberSource SDK when script loads', async () => {
-    const mockUseWatch = await import('react-hook-form').then((m) => m.useWatch);
-    vi.mocked(mockUseWatch).mockImplementation((options: any) => {
-      const name = typeof options === 'object' ? options.name : options;
-      if (name === 'creditCard.expiryDate') return '2025-12-31';
-      return undefined;
-    });
+    vi.spyOn(useFormContext, 'useWatch').mockImplementation((name) =>
+      name === 'creditCard.expiryDate' ? '2025-12-31' : undefined,
+    );
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     const { result } = renderHook(() => useCybersource({ fields: mockFields }), {
@@ -162,11 +143,7 @@ describe('useCybersource', () => {
   });
 
   it('should generate token when all fields are valid and expiry date is set', async () => {
-    const mockUseWatch = await import('react-hook-form').then((m) => m.useWatch);
-    const useWatchMock = vi.mocked(mockUseWatch);
-
-    useWatchMock.mockImplementation((options: any) => {
-      const name = typeof options === 'object' ? options.name : options;
+    vi.spyOn(useFormContext, 'useWatch').mockImplementation((name) => {
       if (name === 'provider_id') return 'MCYBERSOURCE';
       if (name === 'creditCard.expiryDate') return '2025-12-31';
       return undefined;
@@ -174,8 +151,6 @@ describe('useCybersource', () => {
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     const { rerender } = renderHook(() => useCybersource({ fields: mockFields }), {
@@ -217,11 +192,7 @@ describe('useCybersource', () => {
   });
 
   it('should handle token generation errors', async () => {
-    const mockUseWatch = await import('react-hook-form').then((m) => m.useWatch);
-    const useWatchMock = vi.mocked(mockUseWatch);
-
-    useWatchMock.mockImplementation((options: any) => {
-      const name = typeof options === 'object' ? options.name : options;
+    vi.spyOn(useFormContext, 'useWatch').mockImplementation((name) => {
       if (name === 'provider_id') return 'MCYBERSOURCE';
       if (name === 'creditCard.expiryDate') return '2025-12-31';
       return undefined;
@@ -229,8 +200,6 @@ describe('useCybersource', () => {
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
       isLoaded: true,
-      isLoading: false,
-      error: null,
     });
 
     const { rerender } = renderHook(() => useCybersource({ fields: mockFields }), {

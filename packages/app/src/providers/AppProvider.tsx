@@ -5,15 +5,16 @@ import { useAppParams } from '../hooks/useAppParams.js';
 import { LoadingPage } from '../pages/LoadingPage.js';
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
-  const { paymentGatewayUrl, values, api, oidc } = useAppParams();
+  const params = useAppParams();
 
-  if (!values) {
+  if (!params) {
     return <LoadingPage />;
   }
 
+  const { values, api, oidc } = params;
+
   return (
     <PaymentConfigProvider
-      paymentGatewayUrl={paymentGatewayUrl}
       locale={values.locale}
       proposalId={values.proposalId}
       bookingId={values.bookingId}
