@@ -76,6 +76,7 @@ variables:
         -H "Content-Type: application/json" \
         -H "Circle-Token: $CIRCLE_CI_TRIGGER_TOKEN" \
         -d "$DATA_BODY"
+
     else 
       echo "[AWS] PROVIDER='${PROVIDER:-<unset>}' -> skipping AWS deploy"
     fi
