@@ -132,6 +132,7 @@ export type Content = {
       imageUrl: string;
       expiredMessage: string;
     };
+  };
   donation: {
     title: string;
     description: string;

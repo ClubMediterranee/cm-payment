@@ -9,10 +9,12 @@ import {
 
 import type { CapsProvider } from '../../infra/directus/__generated__/schema.js';
 
-@AdditionalProperties(true)
 export class FeatureFlipsConfig {
   @Property()
   is_paypal_button_enabled?: boolean;
+
+  @Property()
+  is_donation_enabled?: boolean;
 }
 
 @AdditionalProperties(true)

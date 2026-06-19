@@ -139,6 +139,7 @@ export const defaultContent: Content = {
       imageUrl: 'https://ns.clubmed.com/it/2018/be/payment/wechat.png',
       expiredMessage: 'Transaction expired',
     },
+  },
   donation: {
     title: 'Make a donation to the Friends of the Foundation',
     description:

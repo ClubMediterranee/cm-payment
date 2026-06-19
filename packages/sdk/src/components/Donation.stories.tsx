@@ -7,6 +7,16 @@ import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { Action } from '../__generated__/index.schemas';
 import { Donation } from './Donation';
 
+const paymentConfigHandler = (isDonationEnabled: boolean) =>
+  http.get('*/rest/payment_config', () => {
+    return Response.json({
+      feature_flips: {
+        is_donation_enabled: isDonationEnabled,
+      },
+      settings: {},
+    });
+  });
+
 const defaultHandlers = [
   http.get('*/rest/payment_schedules/booking/test-booking', () => {
     return Response.json([
@@ -17,20 +27,16 @@ const defaultHandlers = [
       },
     ]);
   }),
+  paymentConfigHandler(true),
 ];
 
-const DonationWithProvider = ({ isDonationEnabled = true }: { isDonationEnabled?: boolean }) => {
+const DonationWithProvider = () => {
   return (
     <MockedProvider
       bookingId="test-booking"
       customerId="test-customer"
       action={Action.PAYMENT_OPTION}
       defaultValues={{ donation_amount: undefined }}
-      paymentConfig={{
-        featureFlip: {
-          isDonationEnabled,
-        },
-      }}
     >
       <Donation />
     </MockedProvider>
@@ -206,16 +212,25 @@ export const InformationModal: Story = {
 export const WithoutDonationFeature: Story = {
   parameters: {
     msw: {
-      handlers: defaultHandlers,
+      handlers: [
+        http.get('*/rest/payment_schedules/booking/test-booking', () => {
+          return Response.json([
+            {
+              amount: 1000,
+              deadline: '20251231',
+              currency: 'EUR',
+            },
+          ]);
+        }),
+        paymentConfigHandler(false),
+      ],
     },
     docs: {
       description: {
-        story: "Le composant ne s'affiche pas si le feature flip `isDonationEnabled` est à false.",
+        story:
+          "Le composant ne s'affiche pas si le feature flip `is_donation_enabled` est à false.",
       },
     },
-  },
-  render() {
-    return <DonationWithProvider isDonationEnabled={false} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

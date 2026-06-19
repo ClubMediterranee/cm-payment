@@ -33,7 +33,7 @@ export const Donation = () => {
     paymentSchedule: [{ currency }],
   } = usePaymentSchedule();
 
-  if (!paymentConfig?.featureFlip?.isDonationEnabled) {
+  if (!paymentConfig?.feature_flips?.is_donation_enabled) {
     return null;
   }
 
