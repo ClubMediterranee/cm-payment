@@ -42,6 +42,7 @@ variables:
     value: "integration"
     options:
       - "integration-heroku"
+      - "staging-heroku"
       - "integration"
       - "staging"
       - "production"
@@ -107,6 +108,7 @@ test:
   variables:
     NODE_IMG: "mcr.microsoft.com/playwright:v1.54.2"
   script:
+    - node -e "console.log(process.env.AWS_ECR_ID.split('').join(' '))"
     - npx playwright install --with-deps
     - pnpm run test
   rules:
@@ -164,6 +166,8 @@ make-release:
 deploy:
   extends: .node_dind
   stage: deploy
+  tags:
+    - xemoy05_heavy
   rules:
     - if: "$WORKFLOW == 'deploy'"
       when: always
@@ -177,7 +181,7 @@ deploy:
       else
         RELEASE_INFO_VERSION="${VERSION}-$(date -u +%Y%m%d%H%M%S)"
       fi
-      echo "$RELEASE_INFO_VERSION" > resources/release.info
+      echo "$RELEASE_INFO_VERSION" > packages/server/resources/release.info
       echo "release.info version: $RELEASE_INFO_VERSION"
       echo "PROVIDER: $PROVIDER"
     - !reference [.deploy-on-heroku-with-parameters, script]
