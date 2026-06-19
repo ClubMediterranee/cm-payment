@@ -4,6 +4,7 @@ import {
   CardInstallments,
   Cgv,
   ContactChoice,
+  Donation,
   Form,
   PaymentProviders,
   PaymentSchedule,
@@ -84,6 +85,7 @@ export function PaymentPage() {
         </div>
         <CardInstallments />
         <ContactChoice reference={reference} uuid={uuid} />
+        <Donation />
         <Cgv />
         <BillingAddress />
         <PaymentWidget />

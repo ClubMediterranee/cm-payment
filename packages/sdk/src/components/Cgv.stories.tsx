@@ -17,6 +17,19 @@ const CgvWithFormProvider = () => {
   );
 };
 
+// Wrapper component with donation to test the donation CGV checkbox
+const CgvWithDonationProvider = () => {
+  return (
+    <MockedProvider
+      bookingId="test-booking"
+      customerId="test-customer"
+      defaultValues={{ cgv: false, donation_amount: 20, cgv_donation: false }}
+    >
+      <Cgv />
+    </MockedProvider>
+  );
+};
+
 const meta: Meta<typeof Cgv> = {
   title: 'Components/Cgv',
   component: Cgv,
@@ -58,24 +71,24 @@ export const WithInteractions: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Vérifier que le composant est rendu
-    expect(canvas.getByText('Terms and Conditions')).toBeInTheDocument();
-
-    // Trouver le checkbox
-    const checkbox = canvas.getByRole('checkbox');
-    await expect(checkbox).toBeInTheDocument();
-    await expect(checkbox).not.toBeChecked();
-
     // Vérifier que le texte des CGV est présent
-    await expect(canvas.getByText(/Validating my reservation implies/)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(canvas.getByText(/Validating my reservation implies/)).toBeInTheDocument();
+    });
+
+    // Trouver le checkbox principal CGV
+    const checkboxes = canvas.getAllByRole('checkbox');
+    const cgvCheckbox = checkboxes[0]; // Le premier checkbox est celui des CGV
+    await expect(cgvCheckbox).toBeInTheDocument();
+    await expect(cgvCheckbox).not.toBeChecked();
 
     // Cliquer sur le checkbox pour le cocher
-    await userEvent.click(checkbox);
-    await expect(checkbox).toBeChecked();
+    await userEvent.click(cgvCheckbox);
+    await expect(cgvCheckbox).toBeChecked();
 
     // Décocher le checkbox
-    await userEvent.click(checkbox);
-    await expect(checkbox).not.toBeChecked();
+    await userEvent.click(cgvCheckbox);
+    await expect(cgvCheckbox).not.toBeChecked();
   },
 };
 
@@ -124,12 +137,14 @@ export const AccessibilityTest: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Vérifier que le titre est un heading
-    const heading = canvas.getByRole('heading', { name: /Terms and Conditions/ });
-    expect(heading).toBeInTheDocument();
+    // Attendre que le composant soit rendu
+    await waitFor(() => {
+      expect(canvas.getByText(/Validating my reservation implies/)).toBeInTheDocument();
+    });
 
     // Vérifier que le checkbox est accessible via le clavier
-    const checkbox = canvas.getByRole('checkbox');
+    const checkboxes = canvas.getAllByRole('checkbox');
+    const checkbox = checkboxes[0]; // Le premier checkbox est celui des CGV
 
     // Simuler la navigation au clavier
     checkbox.focus();
@@ -142,5 +157,58 @@ export const AccessibilityTest: Story = {
     // Désactiver via la barre d'espace
     await userEvent.keyboard(' ');
     expect(checkbox).not.toBeChecked();
+  },
+};
+
+export const WithDonation: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'État du composant CGV avec une donation active - affiche une checkbox supplémentaire pour accepter les CGV de la donation.',
+      },
+    },
+  },
+  render() {
+    return <CgvWithDonationProvider />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Attendre que le composant soit rendu
+    await waitFor(() => {
+      expect(canvas.getByText(/Validating my reservation implies/)).toBeInTheDocument();
+    });
+
+    // Vérifier que les deux checkboxes sont présents (CGV principale + CGV donation)
+    const checkboxes = canvas.getAllByRole('checkbox');
+    expect(checkboxes).toHaveLength(2);
+
+    const cgvCheckbox = checkboxes[0];
+    const donationCgvCheckbox = checkboxes[1];
+
+    // Vérifier que les deux checkboxes ne sont pas cochées par défaut
+    expect(cgvCheckbox).not.toBeChecked();
+    expect(donationCgvCheckbox).not.toBeChecked();
+
+    // Vérifier que le texte de la CGV donation est présent
+    expect(canvas.getByText(/I accept the donation terms and conditions/)).toBeInTheDocument();
+
+    // Cocher la CGV principale
+    await userEvent.click(cgvCheckbox);
+    expect(cgvCheckbox).toBeChecked();
+
+    // Cocher la CGV donation
+    await userEvent.click(donationCgvCheckbox);
+    expect(donationCgvCheckbox).toBeChecked();
+
+    // Vérifier que les deux restent cochées
+    expect(cgvCheckbox).toBeChecked();
+    expect(donationCgvCheckbox).toBeChecked();
+
+    // Décocher la CGV donation
+    await userEvent.click(donationCgvCheckbox);
+    expect(donationCgvCheckbox).not.toBeChecked();
+    expect(cgvCheckbox).toBeChecked(); // La CGV principale reste cochée
   },
 };

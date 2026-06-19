@@ -140,4 +140,20 @@ export const defaultContent: Content = {
       expiredMessage: 'Transaction expired',
     },
   },
+  donation: {
+    title: 'Make a donation to the Friends of the Foundation',
+    description:
+      "Would you like to make a donation to support the Foundation's projects for education and nature conservation around Club Med Villages?",
+    notThisTime: 'Not this time!',
+    freeAmount: 'Free amount',
+    imageUrl: 'https://ns.clubmed.com/it/2019/be/donation.jpg',
+    popinTitle: 'Friends of the Foundation',
+    popinDescription:
+      "Would you like to make a donation to support the Foundation's projects for education and nature conservation around Club Med Villages?",
+    popinFiscalInfo:
+      'Your donation is tax deductible. You will receive a tax receipt after your donation.',
+    acceptCGU: 'I accept the donation terms and conditions',
+    donationTerms: 'donation terms and conditions',
+    linkDonationTerms: '',
+  },
 };

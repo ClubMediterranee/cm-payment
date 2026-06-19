@@ -7,4 +7,5 @@ export const TOKENS = {
   PaymentWidget: Symbol('PaymentWidget'),
   CardInstallments: Symbol('CardInstallments'),
   SubmitButton: Symbol('SubmitButton'),
+  Donation: Symbol('Donation'),
 } as const;

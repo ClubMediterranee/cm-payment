@@ -1,11 +1,11 @@
-import { Property } from '@tsed/schema';
+import { Property, Required } from '@tsed/schema';
 
 export class PaymentScheduleOutputModel {
   @Property()
   amount?: number;
 
-  @Property()
-  currency?: string;
+  @Required()
+  currency!: string;
 
   @Property()
   deadline?: string;

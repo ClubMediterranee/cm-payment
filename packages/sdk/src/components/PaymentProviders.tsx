@@ -33,7 +33,10 @@ export const PaymentProviders = () => {
   } = usePaymentSchedule();
 
   const watchedAmount = useWatch('amount');
+  const watchedDonationAmount = useWatch('donation_amount');
   const watchedProvider = useWatchedPaymentProvider();
+
+  const amount = Number(watchedAmount || 0) + Number(watchedDonationAmount || 0);
 
   const PROVIDER_LABEL = {
     [PaymentProvider1CategoryPaymentMethod.CreditCard]: content.paymentProviders.creditCard.label,
@@ -92,7 +95,7 @@ export const PaymentProviders = () => {
                         {
                           amount: (
                             <span className="font-bold text-sienna">
-                              {formatCurrency({ amount: Number(watchedAmount), currency, locale })}
+                              {formatCurrency({ amount, currency, locale })}
                             </span>
                           ),
                         },

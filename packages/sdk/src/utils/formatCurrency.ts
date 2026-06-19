@@ -12,3 +12,11 @@ export const formatCurrency = ({
   }
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
 };
+
+export const getCurrencySymbol = ({ currency, locale }: { currency: string; locale: string }) => {
+  return (
+    new Intl.NumberFormat(locale, { style: 'currency', currency })
+      .formatToParts(0)
+      .find((part) => part.type === 'currency')?.value || currency
+  );
+};

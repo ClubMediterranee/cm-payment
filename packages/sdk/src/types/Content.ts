@@ -133,4 +133,17 @@ export type Content = {
       expiredMessage: string;
     };
   };
+  donation: {
+    title: string;
+    description: string;
+    notThisTime: string;
+    freeAmount: string;
+    imageUrl: string;
+    popinTitle: string;
+    popinDescription: string;
+    popinFiscalInfo: string;
+    acceptCGU: string;
+    donationTerms: string;
+    linkDonationTerms: string;
+  };
 };

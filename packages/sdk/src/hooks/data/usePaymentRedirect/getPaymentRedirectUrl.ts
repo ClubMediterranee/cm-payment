@@ -62,6 +62,8 @@ export const getPaymentRedirectUrl = async (
     action: formData.action,
     amount: Number(formData.amount),
     provider_id: formData.provider_id,
+    // TO FIX: swagger donation amount is always 0
+    ...(formData.donation_amount ? { donation_amount: formData.donation_amount as 0 } : {}),
   });
 
   const callbacks = getRedirectPaymentCallbackUrls(paymentId, formData.provider_id, displayType);
