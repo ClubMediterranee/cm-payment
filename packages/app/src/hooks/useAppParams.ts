@@ -90,7 +90,7 @@ export function useAppParams() {
 
   return {
     values,
-    api: { ...AppSettings.api[issuerType], url: import.meta.env.VITE_PAYMENT_GATEWAY_URL },
+    api: { ...AppSettings.api[issuerType], url: AppSettings.url },
     oidc: {
       issuerType,
       accessToken: auth?.user?.access_token || '',

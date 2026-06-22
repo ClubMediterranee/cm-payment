@@ -7,5 +7,5 @@ export const fetcher = async <T>(opts: {
   params?: Record<string, unknown>;
   data?: unknown;
 }): Promise<T> => {
-  return fetchSdk({ baseUrl: import.meta.env.VITE_API_URL, ...opts });
+  return fetchSdk({ baseUrl: '/api', ...opts });
 };
