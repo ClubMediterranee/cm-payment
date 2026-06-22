@@ -259,7 +259,7 @@ export interface CapsProvider {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   /** @required */
-  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom';
+  default_display_type: 'hosted_field' | 'iframe' | 'redirect' | 'custom';
   image_url?: string | null;
   category_payment_method?:
     | 'credit_card'

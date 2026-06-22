@@ -1,13 +1,14 @@
-import { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationValidation } from '../__generated__/bff/index.schemas';
+import type { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfiguration } from '../__generated__/bff/index.schemas';
 import type { Content } from './Content';
+
+type ProviderValidation = Pick<
+  PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfiguration,
+  'requires_token' | 'requires_expiry_date' | 'requires_card_holder'
+>;
 
 export type CapsFormConfig = {
   content: Content;
   isSeller: boolean;
   maxAmount: number;
-  getProviderValidation: (
-    providerId: string,
-  ) =>
-    | PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationValidation
-    | undefined;
+  getProviderValidation: (providerId: string) => ProviderValidation | undefined;
 };

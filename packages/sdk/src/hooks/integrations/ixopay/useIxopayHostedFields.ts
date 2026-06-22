@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { IxopayError, IxopayEventData } from '../../../types/Ixopay';
+import type { IxopayConfig, IxopayError, IxopayEventData } from '../../../types/Ixopay';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useDisclosure } from '../../utils/useDisclosure';
 import { useFormContext, useWatch } from '../../utils/useForm';
@@ -34,7 +34,8 @@ export const useIxopayHostedFields = ({ fieldSelectors }: UseIxopayHostedFieldsP
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const { script_url, integration_key } = provider?.configuration?.settings || {};
+  const { script_url = '', integration_key } = (provider?.configuration?.settings ||
+    {}) as Partial<IxopayConfig>;
   const { isLoaded } = useScriptLoader(script_url, { 'data-main': 'payment-js' });
 
   const watchedToken = useWatch('token.value');

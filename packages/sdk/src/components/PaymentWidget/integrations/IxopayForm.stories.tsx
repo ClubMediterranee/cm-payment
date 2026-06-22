@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { beforeAll, vi } from 'vitest';
 
 import { MockedProvider } from '../../../__fixtures__/MockedProvider';
 import { IxopayForm } from './IxopayForm';
@@ -8,9 +9,9 @@ import { IxopayForm } from './IxopayForm';
 // Mock the global PaymentJs
 const mockPaymentJs = {
   init: (
-    integrationKey: string,
-    numberSelector: string,
-    cvvSelector: string,
+    _integrationKey: string,
+    _numberSelector: string,
+    _cvvSelector: string,
     callback: (payment: any) => void,
   ) => {
     const payment = {
@@ -27,10 +28,8 @@ const mockPaymentJs = {
 };
 
 beforeAll(() => {
-  (window as any).PaymentJs = class PaymentJs {
-    constructor(version: string) {
-      return mockPaymentJs;
-    }
+  (window as any).PaymentJs = function PaymentJs() {
+    return mockPaymentJs;
   };
 });
 
@@ -127,6 +126,9 @@ export const Default: Story = {
 
     const cardHolderInput = canvas.getByPlaceholderText('Cardholder name');
     expect(cardHolderInput).toBeInTheDocument();
+
+    await userEvent.type(cardHolderInput, 'John Doe');
+    expect(cardHolderInput).toHaveValue('John Doe');
   },
 };
 
@@ -139,8 +141,6 @@ export const WithLoadingState: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
     const loadingFields = canvasElement.querySelectorAll('.animate-pulsation');
 
     loadingFields.forEach((field) => {

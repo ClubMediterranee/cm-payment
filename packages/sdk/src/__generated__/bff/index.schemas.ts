@@ -204,6 +204,7 @@ export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem
     settings: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings;
     requires_token?: boolean;
     requires_expiry_date?: boolean;
+    requires_card_holder?: boolean;
   };
 
 export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfPaymentConditions =
@@ -238,6 +239,7 @@ export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvid
     settings: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings;
     requires_token?: boolean;
     requires_expiry_date?: boolean;
+    requires_card_holder?: boolean;
   };
 
 export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfPaymentConditions =

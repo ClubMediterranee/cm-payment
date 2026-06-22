@@ -31,6 +31,9 @@ const EnrichedPaymentProviderSchema: any = {
             requires_expiry_date: {
               type: 'boolean',
             },
+            requires_card_holder: {
+              type: 'boolean',
+            },
           },
           required: ['display_type', 'settings'],
         },

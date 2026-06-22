@@ -90,7 +90,6 @@ const createHandlers = (delayMs = 0) => [
 ];
 
 const handlers = createHandlers();
-const delayedHandlers = createHandlers(3000);
 
 type IframeViewStoryArgs = {
   provider: 'EPAYGATE' | 'EGLOBALCOLLECT';

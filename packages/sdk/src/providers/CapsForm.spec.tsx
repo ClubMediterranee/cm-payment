@@ -305,7 +305,9 @@ describe('CapsForm', () => {
           <MockSubmitButton>Payer</MockSubmitButton>
         </CapsForm>,
       );
-    } catch {}
+    } catch {
+      void 0;
+    }
 
     expect(actionResolverSpy).toHaveBeenCalledWith(Action.PAYMENT_RESA);
 
