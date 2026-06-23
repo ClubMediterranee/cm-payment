@@ -49,6 +49,7 @@ RUN pnpm install --frozen-lockfile --prod --filter @clubmed/server --ignore-scri
 #COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/server/dist ./packages/server/dist
 COPY --from=builder /app/packages/server/views ./packages/server/views
+COPY --from=builder /app/packages/server/resources ./packages/server/resources
 
 # Copy built applications to nginx html directory
 COPY --from=builder /app/packages/app/dist /app/packages/app/dist
