@@ -50,18 +50,14 @@ async function getTunnelUrl(): Promise<string> {
 async function main() {
   const url = await getTunnelUrl();
 
-  let envContent = '';
   if (env !== 'development') {
     const envFilePath = join(CONFIG_DIR, `.env.${env}`);
     try {
-      envContent = readFileSync(envFilePath, 'utf-8');
+      writeFileSync(ENV_FILE, readFileSync(envFilePath, 'utf-8'));
     } catch {
       console.warn(`\x1b[33m⚠\x1b[0m  Fichier .env.${env} non trouvé\n`);
     }
   }
-
-  const localEnvContent = `${envContent}\nVITE_PAYMENT_GATEWAY_URL=${url}\n`;
-  writeFileSync(ENV_FILE, localEnvContent);
 
   console.log(`\n\x1b[1m\x1b[32mURL PUBLIQUE:\x1b[0m \x1b[1m${url}\x1b[0m\n`);
   console.log(`\x1b[90mEnvironnement: ${env}\x1b[0m\n`);

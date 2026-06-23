@@ -48,8 +48,11 @@ variables:
       - "production"
     description: "The deployment target environment"
   VERSION:
-    value: "$CI_COMMIT_REF_NAME"
+    value: $CI_COMMIT_REF_NAME
     description: "The version or branch name to be deployed on environment."
+  INFRA_BRANCH:
+    value: "main"
+    description: "ClubMed infra branch to deploy application"
   WORKFLOW:
     value: "build"
     options:

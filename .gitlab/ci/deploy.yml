@@ -9,9 +9,11 @@ variables:
       AWS_ACCOUNT_ID="${AWS_ACCOUNT_ID:-$AWS_ECR_ID}"
       AWS_ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
       AWS_IMAGE_NAME="${AWS_ECR_REGISTRY}/${ECR_REPOSITORY}"
+      INFRA_BRANCH="${INFRA_BRANCH:-"main"}"
 
       echo "AWS deploy with parameters"
       echo "ENV: $ENV"
+      echo "INFRA_BRANCH: $INFRA_BRANCH"
       echo "VERSION: $VERSION"
       echo "WORKFLOW: $WORKFLOW"
       echo "AWS_REGION: $AWS_REGION"
@@ -66,7 +68,8 @@ variables:
         --arg version "$VERSION" \
         --arg stack "${STACK}" \
         --arg env "${ENV}" \
-        '{branch:"main", parameters: {version: $version, env: $env, stack: $stack, action: "update_version", version_strategy: "set"}}')
+        --arg infraBranch "${INFRA_BRANCH}" \
+        '{branch: $infraBranch, parameters: {version: $version, env: $env, stack: $stack, action: "update_version", version_strategy: "set"}}')
 
       echo "Url: $CIRCLE_CI_TRIGGER_URL"
       echo "Token: $CIRCLE_CI_TRIGGER_TOKEN"
