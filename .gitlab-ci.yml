@@ -184,6 +184,7 @@ deploy:
       else
         RELEASE_INFO_VERSION="${VERSION}-$(date -u +%Y%m%d%H%M%S)"
       fi
+      export RELEASE_INFO_VERSION
       echo "$RELEASE_INFO_VERSION" > packages/server/resources/release.info
       echo "release.info version: $RELEASE_INFO_VERSION"
       echo "PROVIDER: $PROVIDER"

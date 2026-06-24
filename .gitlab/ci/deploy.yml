@@ -10,11 +10,13 @@ variables:
       AWS_ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
       AWS_IMAGE_NAME="${AWS_ECR_REGISTRY}/${ECR_REPOSITORY}"
       INFRA_BRANCH="${INFRA_BRANCH:-"main"}"
+      RELEASE_INFO_VERSION="${RELEASE_INFO_VERSION:-$VERSION}"
 
       echo "AWS deploy with parameters"
       echo "ENV: $ENV"
       echo "INFRA_BRANCH: $INFRA_BRANCH"
       echo "VERSION: $VERSION"
+      echo "RELEASE_INFO_VERSION: $RELEASE_INFO_VERSION"
       echo "WORKFLOW: $WORKFLOW"
       echo "AWS_REGION: $AWS_REGION"
       echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
@@ -52,20 +54,21 @@ variables:
 
       echo "Docker build"
       docker build . \
-        -t ${DOCKER_IMAGE_NAME}:${VERSION} \
+        -t ${DOCKER_IMAGE_NAME}:${RELEASE_INFO_VERSION} \
         -t ${DOCKER_IMAGE_NAME}:latest \
         --build-arg HTTP_PROXY=${HTTP_PROXY} \
         --build-arg HTTPS_PROXY=${HTTPS_PROXY} \
-        --build-arg NO_PROXY=${NO_PROXY}
+        --build-arg NO_PROXY=${NO_PROXY} \
+        --build-arg NODE_ENV=${NODE_ENV}
 
       echo "Push to ECR"
-      docker push ${DOCKER_IMAGE_NAME}:${VERSION}
+      docker push ${DOCKER_IMAGE_NAME}:${RELEASE_INFO_VERSION}
       docker push ${DOCKER_IMAGE_NAME}:latest
 
       echo "Trigger infra deployment"
 
       DATA_BODY=$(jq --null-input \
-        --arg version "$VERSION" \
+        --arg version "$RELEASE_INFO_VERSION" \
         --arg stack "${STACK}" \
         --arg env "${ENV}" \
         --arg infraBranch "${INFRA_BRANCH}" \
@@ -94,7 +97,6 @@ variables:
       echo "WORKFLOW: $WORKFLOW"
       echo "HEROKU_APP: $HEROKU_APP"
       echo "HEROKU_TEAM: $HEROKU_TEAM"
-      echo "APP_ENV_LEVEL: $APP_ENV_LEVEL"
 
       echo "Heroku login"
       bunx heroku@7.67.2 container:login
@@ -102,7 +104,7 @@ variables:
       echo "Docker login & build"
 
       docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
-      docker build . -t registry.heroku.com/${HEROKU_APP}/web --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg NO_PROXY=${NO_PROXY}
+      docker build . -t registry.heroku.com/${HEROKU_APP}/web --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg NO_PROXY=${NO_PROXY} --build-arg NODE_ENV=${NODE_ENV}
 
       docker push registry.heroku.com/${HEROKU_APP}/web
 
