@@ -1,5 +1,5 @@
 # Multi-stage build for the payment applications
-FROM node:20-alpine AS builder
+FROM node:24.17.0-alpine AS builder
 ARG NODE_ENV
 
 # Set working directory
@@ -23,14 +23,14 @@ RUN pnpm install --frozen-lockfile --shamefully-hoist --ignore-scripts
 COPY . .
 
 # Build all applications with correct base paths
-RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
-RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/starter/ pnpm --filter @clubmed/starter run build
-RUN NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
-RUN NODE_ENV=${NODE_ENV} pnpm build:server
-RUN NODE_ENV=${NODE_ENV} pnpm --filter docs run build
+RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
+RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/starter/ pnpm --filter @clubmed/starter run build
+RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
+RUN CI=true NODE_ENV=${NODE_ENV} pnpm build:server
+RUN CI=true NODE_ENV=${NODE_ENV} pnpm --filter docs run build
 
 # Production stage with Node + nginx runtime
-FROM node:20-alpine
+FROM node:24.17.0-alpine
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
