@@ -151,7 +151,7 @@ const paymentProviders = [
   {
     id: 'CYBERSOURCE',
     label: 'Carte bancaire',
-    connection_type: 'REDIRECT',
+    connection_type: 'E-commerce' as const,
     category_payment_method: PaymentProvider1CategoryPaymentMethod.CreditCard,
     billing_address_form: true,
     required_delay_before_departure: 0,

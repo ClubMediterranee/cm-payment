@@ -14,6 +14,7 @@ const ENDPOINTS = [
   'GET /v2/proposals/{proposal_id}',
   'GET /v0/countries',
   'POST /v3/bookings',
+  'PATCH /v2/bookings/{booking_id}',
   'POST /v1/payments',
   'POST /v0/payments/{payment_id}/redirect_request',
 ];

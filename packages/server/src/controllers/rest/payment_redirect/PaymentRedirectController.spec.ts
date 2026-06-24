@@ -18,7 +18,7 @@ describe('PaymentRedirectController', () => {
 
     controller = new PaymentRedirectController();
 
-    Object.defineProperty(controller, 'paymentConfirmationService', {
+    Object.defineProperty(controller, 'paymentRedirectService', {
       get: () => mockPaymentService,
       configurable: true,
     });

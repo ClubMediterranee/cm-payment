@@ -4,6 +4,8 @@ import {
 } from '../../infra/api/__generated__/index.js';
 import type { CapsProvider } from '../../infra/directus/__generated__/schema.js';
 
+export const MANUAL_CONNECTION_TYPE = 'Manual';
+
 export interface ProviderConfigMap {
   [providerId: string]: {
     display_type: CapsProvider['default_display_type'];

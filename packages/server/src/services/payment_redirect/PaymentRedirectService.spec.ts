@@ -2,17 +2,26 @@ import { DITest } from '@tsed/di';
 
 import * as api from '../../infra/api/__generated__/index.js';
 import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
-import { PaymentConfirmationService } from './PaymentConfirmationService.js';
+import { PaymentRedirectService } from './PaymentRedirectService.js';
 
 vi.mock('../../infra/api/__generated__/index.js', () => ({
   getV0PaymentsPaymentIdStatus: vi.fn(),
   postV1PaymentsPaymentIdNotify: vi.fn(),
+  patchV2BookingsBookingId: vi.fn(),
+  PaymentStatus: {
+    PENDING: 'PENDING',
+    OK: 'OK',
+    CANCELED: 'CANCELED',
+    REFUSED_CM: 'REFUSED_CM',
+    REFUSED_PSP: 'REFUSED_PSP',
+  },
+  ValidPatchBookingRequestBookingStatusModel: { VALIDATED: 'VALIDATED' },
 }));
 
 const getPaymentProvidersConfig = vi.fn();
 
 function invokeService() {
-  return DITest.invoke<PaymentConfirmationService>(PaymentConfirmationService, [
+  return DITest.invoke<PaymentRedirectService>(PaymentRedirectService, [
     { token: PaymentConfigService, use: { getPaymentProvidersConfig } },
   ]);
 }
@@ -23,7 +32,7 @@ function mockStrategy(providerId: string, strategy: 'status' | 'notify') {
   });
 }
 
-describe('PaymentConfirmationService', () => {
+describe('PaymentRedirectService', () => {
   afterEach(() => {
     DITest.reset();
     vi.clearAllMocks();
@@ -249,6 +258,54 @@ describe('PaymentConfirmationService', () => {
 
       expect(api.getV0PaymentsPaymentIdStatus).toHaveBeenCalledTimes(2);
       expect(redirectUrl).toContain('payment_status=SUCCESS');
+    });
+  });
+
+  describe('confirmBookingWithoutPayment', () => {
+    it('should validate the booking and redirect with payment_status=OK on success', async () => {
+      const service = await invokeService();
+
+      vi.mocked(api.patchV2BookingsBookingId).mockResolvedValue(undefined as any);
+
+      const redirectUrl = await service.confirmBookingWithoutPayment('BOOK_OK', {
+        callback_url: 'https://example.com/callback',
+        provider_id: 'MMANUAL',
+        customer_id: 'CUST1',
+        amount: '100',
+        currency: 'EUR',
+      });
+
+      expect(api.patchV2BookingsBookingId).toHaveBeenCalledWith('BOOK_OK', {
+        booking_status: 'VALIDATED',
+        customer_id: 'CUST1',
+        currency: 'EUR',
+        payments: [{ method_id: 'MMANUAL', amount: 100 }],
+      });
+      expect(redirectUrl).toContain('https://example.com/callback');
+      expect(redirectUrl).toContain('payment_status=OK');
+      expect(redirectUrl).toContain('booking_id=BOOK_OK');
+      expect(redirectUrl).toContain('payment_amount=100');
+      expect(redirectUrl).toContain('payment_currency=EUR');
+    });
+
+    it('should redirect with payment_status=REFUSED_CM when the booking PATCH fails', async () => {
+      const service = await invokeService();
+
+      vi.mocked(api.patchV2BookingsBookingId).mockRejectedValue(new Error('Unauthorized'));
+
+      const redirectUrl = await service.confirmBookingWithoutPayment('BOOK_KO', {
+        callback_url: 'https://example.com/callback',
+        provider_id: 'MMANUAL',
+        customer_id: 'CUST2',
+        amount: '250',
+        currency: 'USD',
+      });
+
+      expect(redirectUrl).toContain('https://example.com/callback');
+      expect(redirectUrl).toContain('payment_status=REFUSED_CM');
+      expect(redirectUrl).toContain('booking_id=BOOK_KO');
+      expect(redirectUrl).toContain('payment_amount=250');
+      expect(redirectUrl).toContain('payment_currency=USD');
     });
   });
 });

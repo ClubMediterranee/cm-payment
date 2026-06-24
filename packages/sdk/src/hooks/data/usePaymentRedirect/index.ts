@@ -1,15 +1,20 @@
 import { noop, useMutation, useMutationState } from '@tanstack/react-query';
 
+import { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType as ConnectionType } from '../../../__generated__/bff/index.schemas';
 import type { ProviderParametersModel } from '../../../__generated__/index.schemas';
 import type { CapsFormSchema } from '../../../schemas/capsFormSchema';
-import type { CallbackUrls } from '../../../utils/url/getRedirectPaymentCallbackUrls';
+import {
+  type CallbackUrls,
+  getRedirectPaymentCallbackUrls,
+} from '../../../utils/url/getRedirectPaymentCallbackUrls';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatchedPaymentProvider } from '../../utils/useWatchedPaymentProvider';
 import { getPaymentRedirectUrl } from './getPaymentRedirectUrl';
+import { resolveBooking } from './resolveBooking';
 
 export type PaymentRedirectResult = {
   redirect: ProviderParametersModel;
-  payment: { paymentId: string; callbacks: CallbackUrls };
+  payment?: { paymentId: string; callbacks: CallbackUrls };
 };
 
 const paymentRedirectMutationKey = (type: string, id: string) => ['paymentRedirect', type, id];
@@ -29,10 +34,29 @@ export const usePaymentRedirect = ({
 
   const watchedPaymentProvider = useWatchedPaymentProvider();
 
-  const mutationFn = (formData: CapsFormSchema) => {
+  const mutationFn = async (formData: CapsFormSchema): Promise<PaymentRedirectResult> => {
+    const { booking_id, customer_id } = await resolveBooking({ type, id, customerId });
+
+    if (watchedPaymentProvider?.connection_type === ConnectionType.Manual) {
+      const callbacks = getRedirectPaymentCallbackUrls({
+        paymentId: 'paymentless',
+        providerId: formData.provider_id,
+        params: {
+          booking_id,
+          customer_id,
+          amount: formData.amount,
+          currency: formData.currency,
+        },
+      });
+
+      return {
+        redirect: { url: callbacks.callback_url_seller ?? callbacks.callback_url, method: 'GET' },
+      };
+    }
+
     return getPaymentRedirectUrl(
       formData,
-      { type, id, customerId },
+      { booking_id, customer_id },
       watchedPaymentProvider?.configuration.display_type,
     );
   };

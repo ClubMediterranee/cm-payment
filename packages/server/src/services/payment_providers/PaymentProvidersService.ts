@@ -9,7 +9,12 @@ import { PaymentConfigService } from '../payment_config/PaymentConfigService.js'
 import { Stay } from '../stay/models.js';
 import { StayService } from '../stay/StayService.js';
 import { PaymentProvidersValidationError } from './errors.js';
-import { PaymentProvidersResponse, ProviderConfigMap } from './types.js';
+import {
+  EnrichedPaymentProvider,
+  MANUAL_CONNECTION_TYPE,
+  PaymentProvidersResponse,
+  ProviderConfigMap,
+} from './types.js';
 import { sortTimePaymentConditions } from './utils/sortTimePaymentConditions.js';
 import { splitByCategory } from './utils/splitByCategory.js';
 
@@ -70,10 +75,24 @@ export class PaymentProvidersService {
           payment_conditions,
         };
       })
+      .flatMap((provider) => this.flattenManualProvider(provider))
       .reduce(splitByCategory, {
         payment_providers: [],
         buy_now_pay_later_providers: [],
       });
+  }
+
+  private flattenManualProvider(provider: EnrichedPaymentProvider) {
+    if (provider.connection_type !== MANUAL_CONNECTION_TYPE) {
+      return provider;
+    }
+
+    return (provider.payment_methods ?? []).map((method) => ({
+      ...provider,
+      id: method.id,
+      description: method.label,
+      payment_methods: [],
+    }));
   }
 
   private isBeforeMinimumDepartureWindow(
@@ -95,7 +114,7 @@ export class PaymentProvidersService {
   }
 
   private isValidConnectionType(provider: PaymentProvider1, issuerType?: string): boolean {
-    return issuerType !== 'GM' || provider.connection_type !== 'Manual';
+    return issuerType !== 'GM' || provider.connection_type !== MANUAL_CONNECTION_TYPE;
   }
 
   private isAllowedForUserAgent(

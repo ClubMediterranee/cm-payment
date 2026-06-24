@@ -136,6 +136,7 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
       ]),
     },
     ...{
+      connection_type: faker.helpers.arrayElement(['E-commerce', 'Manual'] as const),
       configuration: {
         display_type: faker.helpers.arrayElement([
           'hosted_field',
@@ -259,6 +260,7 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
       ]),
     },
     ...{
+      connection_type: faker.helpers.arrayElement(['E-commerce', 'Manual'] as const),
       configuration: {
         display_type: faker.helpers.arrayElement([
           'hosted_field',

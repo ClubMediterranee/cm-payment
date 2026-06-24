@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3444.0
+ * OpenAPI spec version: 0.3447.0
  */
 import { faker } from '@faker-js/faker';
 
@@ -2240,6 +2240,25 @@ export const getPostV1PaymentsPaymentIdNotifyMockHandler = (
     options,
   );
 };
+
+export const getPatchV2BookingsBookingIdMockHandler = (
+  overrideResponse?:
+    | void
+    | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<void> | void),
+  options?: RequestHandlerOptions,
+) => {
+  return http.patch(
+    '*/api/v2/bookings/:bookingId',
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === 'function') {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 204 });
+    },
+    options,
+  );
+};
 export const getClubMedAPIMock = () => [
   getGetV0CountriesMockHandler(),
   getGetV1PaymentProvidersMockHandler(),
@@ -2256,4 +2275,5 @@ export const getClubMedAPIMock = () => [
   getPostV0PaymentProvidersProviderIdRequestTokenMockHandler(),
   getPostV0PaymentsPaymentIdRedirectRequestMockHandler(),
   getPostV1PaymentsPaymentIdNotifyMockHandler(),
+  getPatchV2BookingsBookingIdMockHandler(),
 ];

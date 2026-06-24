@@ -1,37 +1,39 @@
 import { Controller, Inject } from '@tsed/di';
 import { BodyParams, Context, PathParams, QueryParams } from '@tsed/platform-params';
 import { PlatformViews } from '@tsed/platform-views';
-import { AdditionalProperties, Get, Hidden, Post, Property, Summary } from '@tsed/schema';
+import { Get, Hidden, Post, Summary } from '@tsed/schema';
 
-import { PaymentConfirmationService } from '../../../services/payment_confirmation/PaymentConfirmationService.js';
-
-@AdditionalProperties(true)
-class PaymentRedirectQuery {
-  @Property()
-  callback_url?: string;
-
-  @Property()
-  proposal_id?: string;
-
-  @Property()
-  provider_id?: string;
-
-  @Property()
-  locale?: string;
-
-  @Property()
-  mode?: string;
-
-  [key: string]: any;
-}
+import {
+  PaymentlessQuery,
+  PaymentRedirectQuery,
+} from '../../../services/payment_redirect/models.js';
+import { PaymentRedirectService } from '../../../services/payment_redirect/PaymentRedirectService.js';
 
 @Controller('/payment_redirect')
 export class PaymentRedirectController {
   @Inject()
-  protected paymentConfirmationService!: PaymentConfirmationService;
+  protected paymentRedirectService!: PaymentRedirectService;
 
   @Inject()
   protected views!: PlatformViews;
+
+  @Get('/paymentless')
+  @Hidden()
+  @Summary('Confirm a booking without an online payment and redirect to confirmation')
+  async paymentless(@QueryParams() queryParams: PaymentlessQuery, @Context() ctx: Context) {
+    const { booking_id, locale } = queryParams;
+
+    if (locale) {
+      ctx.request.headers['accept-language'] = locale;
+    }
+
+    const redirectUrl = await this.paymentRedirectService.confirmBookingWithoutPayment(booking_id, {
+      ...queryParams,
+      locale,
+    });
+
+    return ctx.response.redirect(302, redirectUrl);
+  }
 
   @Get('/:paymentId')
   @Post('/:paymentId')
@@ -50,7 +52,7 @@ export class PaymentRedirectController {
       ctx.request.headers['accept-language'] = locale;
     }
 
-    const redirectUrl = await this.paymentConfirmationService.handlePaymentRedirect(paymentId, {
+    const redirectUrl = await this.paymentRedirectService.handlePaymentRedirect(paymentId, {
       ...redirectParams,
       locale,
     });

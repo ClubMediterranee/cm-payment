@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3444.0
+ * OpenAPI spec version: 0.3447.0
  */
 export interface LinkModel {
   /** Name of the relationship */
@@ -2831,6 +2831,51 @@ export interface NotifyPaymentOrderNotificationStatus {
   provider_id: string;
   /** Codified value, looking like a bank card brand, required by accountant department. */
   payment_method?: string;
+}
+
+/**
+ * Booking status.
+ */
+export type ValidPatchBookingRequestBookingStatusModel =
+  (typeof ValidPatchBookingRequestBookingStatusModel)[keyof typeof ValidPatchBookingRequestBookingStatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ValidPatchBookingRequestBookingStatusModel = {
+  VALIDATED: 'VALIDATED',
+} as const;
+
+/**
+ * Transaction id
+ */
+export type PatchBookingPaymentModelTransactionId = string | null;
+
+export interface PatchBookingPaymentModel {
+  /** Transaction id */
+  transaction_id?: PatchBookingPaymentModelTransactionId;
+  /** Indicates the payment method, CB for payment by Bank Card, CH for payment by Cheque, WD for payment by wire transfer, SM for Sum Pay */
+  method_id: string;
+  /** Payment amount */
+  amount: number;
+  /**
+   * for the deposit offset, directs to the account to be debited (max 60 charactères)
+   * @maxLength 60
+   */
+  comments?: string;
+}
+
+export type PatchBookingPaymentsModel = PatchBookingPaymentModel[];
+
+export interface PatchBookingRequestModel {
+  booking_status?: ValidPatchBookingRequestBookingStatusModel;
+  /** Customer id */
+  customer_id?: string;
+  payments?: PatchBookingPaymentsModel;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency?: string;
 }
 
 /**

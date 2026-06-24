@@ -186,7 +186,7 @@ describe('PaymentProvidersService', () => {
             label: 'Manual Provider',
             category_payment_method: 'CreditCard',
             connection_type: 'Manual',
-            payment_methods: [],
+            payment_methods: [{ id: 'WD', label: 'Wire transfers' }],
           },
         ],
         {
@@ -203,7 +203,7 @@ describe('PaymentProvidersService', () => {
       });
 
       expect(result.payment_providers).toHaveLength(2);
-      expect(result.payment_providers.find((p: any) => p.id === 'MMANUAL')).toBeDefined();
+      expect(result.payment_providers.find((p: any) => p.id === 'WD')).toBeDefined();
     });
 
     it('should include Manual connection_type providers when issuerType is PARTNERS', async () => {
@@ -214,7 +214,7 @@ describe('PaymentProvidersService', () => {
             label: 'Manual Provider',
             category_payment_method: 'CreditCard',
             connection_type: 'Manual',
-            payment_methods: [],
+            payment_methods: [{ id: 'WD', label: 'Wire transfers' }],
           },
         ],
         {
@@ -230,7 +230,62 @@ describe('PaymentProvidersService', () => {
       });
 
       expect(result.payment_providers).toHaveLength(1);
-      expect(result.payment_providers[0].id).toBe('MMANUAL');
+      expect(result.payment_providers[0].id).toBe('WD');
+    });
+
+    it('should flatten a Manual provider into one entry per payment_method', async () => {
+      setup(
+        [
+          {
+            id: 'MCYBERSOURCE',
+            label: 'Cybersource',
+            category_payment_method: 'CreditCard',
+            connection_type: 'E-commerce',
+            payment_methods: [],
+          },
+          {
+            id: 'MCLUBMED',
+            label: 'CLUBMED',
+            category_payment_method: 'BankTransfer',
+            connection_type: 'Manual',
+            payment_methods: [
+              { id: 'WD', label: 'Wire transfers' },
+              { id: 'CH', label: 'Cheque' },
+            ],
+          },
+        ],
+        {
+          MCYBERSOURCE: { display_type: 'hosted_field', settings: {} },
+          MCLUBMED: { display_type: 'redirect', settings: {} },
+        },
+      );
+
+      const result = await service.getPaymentProviders({
+        type: 'proposal',
+        id: '123',
+        locale: 'fr-FR',
+        issuerType: OidcIssuerTypes.GO,
+      });
+
+      const psp = result.payment_providers.find((p: any) => p.id === 'MCYBERSOURCE');
+      expect(psp?.connection_type).toBe('E-commerce');
+
+      const wd = result.payment_providers.find((p: any) => p.id === 'WD');
+      const ch = result.payment_providers.find((p: any) => p.id === 'CH');
+      expect(result.payment_providers.find((p: any) => p.id === 'MCLUBMED')).toBeUndefined();
+      expect(wd).toMatchObject({
+        id: 'WD',
+        description: 'Wire transfers',
+        connection_type: 'Manual',
+        payment_methods: [],
+        label: 'CLUBMED',
+      });
+      expect(ch).toMatchObject({
+        id: 'CH',
+        description: 'Cheque',
+        connection_type: 'Manual',
+        payment_methods: [],
+      });
     });
 
     it('should keep all non-Manual connection_type providers for GM issuerType', async () => {
