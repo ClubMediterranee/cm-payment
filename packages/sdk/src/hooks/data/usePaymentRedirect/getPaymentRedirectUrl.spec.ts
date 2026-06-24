@@ -241,9 +241,8 @@ describe('getPaymentRedirectUrl', () => {
   });
 
   it('should handle null callback url', async () => {
-    const { getRedirectPaymentCallbackUrls } = await import(
-      '../../../utils/url/getRedirectPaymentCallbackUrls'
-    );
+    const { getRedirectPaymentCallbackUrls } =
+      await import('../../../utils/url/getRedirectPaymentCallbackUrls');
     vi.mocked(getRedirectPaymentCallbackUrls).mockReturnValueOnce({ callback_url: '' } as any);
 
     mockPostV1Payments.mockResolvedValue({
@@ -291,9 +290,8 @@ describe('getPaymentRedirectUrl', () => {
   });
 
   it('should handle callback_url_seller for GO/PARTNERS', async () => {
-    const { getRedirectPaymentCallbackUrls } = await import(
-      '../../../utils/url/getRedirectPaymentCallbackUrls'
-    );
+    const { getRedirectPaymentCallbackUrls } =
+      await import('../../../utils/url/getRedirectPaymentCallbackUrls');
     vi.mocked(getRedirectPaymentCallbackUrls).mockReturnValueOnce({
       callback_url: 'https://callback.url/client',
       callback_url_seller: 'https://callback.url/seller',
