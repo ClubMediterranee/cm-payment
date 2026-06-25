@@ -12,10 +12,10 @@ import type { Schema } from './__generated__/schema.js';
 
 @Injectable()
 export class DirectusClient {
-  @Constant('DIRECTUS_URL')
+  @Constant('envs.DIRECTUS_URL', 'https://staging.cms.api.clubmed')
   protected directusUrl!: string;
 
-  @Constant('DIRECTUS_API_TOKEN')
+  @Constant('envs.DIRECTUS_API_TOKEN', '')
   protected directusApiToken!: string;
 
   private client!: DirectusSDKClient<Schema> & RestClient<Schema>;

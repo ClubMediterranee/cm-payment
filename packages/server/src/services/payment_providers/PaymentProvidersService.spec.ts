@@ -13,8 +13,10 @@ describe('PaymentProvidersService', () => {
 
   beforeEach(async () => {
     await PlatformTest.create({
-      DIRECTUS_URL: 'http://localhost',
-      DIRECTUS_API_TOKEN: 'test-token',
+      envs: {
+        DIRECTUS_URL: 'http://localhost',
+        DIRECTUS_API_TOKEN: 'test-token',
+      },
     });
 
     service = await PlatformTest.invoke<PaymentProvidersService>(PaymentProvidersService);
