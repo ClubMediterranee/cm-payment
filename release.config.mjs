@@ -37,16 +37,13 @@ export default defineConfig({
         path: './packages/server/resources/release.info',
       },
     ],
-    [
-      '@cmflow/cli/semantic/core/run', // add this task to trigger build npm task
-      {
-        command: 'build',
-      },
-    ],
     '@cmflow/cli/semantic/core/prepare/commit',
   ],
   publish: ['@cmflow/cli/semantic/core/sync-repository'],
-  success: [['semantic-release-jira-releases-modern', jiraReleasesConfig]],
+  success: [
+    ['./scripts/semantic-release/write-release-env.mjs'],
+    ['semantic-release-jira-releases-modern', jiraReleasesConfig],
+  ],
   fail: [],
   writerOpts: {},
 });
