@@ -11,10 +11,8 @@ describe('PaymentProvidersController', () => {
 
   beforeEach(async () => {
     await PlatformTest.create({
-      envs: {
-        DIRECTUS_URL: 'http://localhost',
-        DIRECTUS_API_TOKEN: 'test-token',
-      },
+      DIRECTUS_URL: 'http://localhost',
+      DIRECTUS_API_TOKEN: 'test-token',
     });
 
     controller = await PlatformTest.invoke<PaymentProvidersController>(PaymentProvidersController);

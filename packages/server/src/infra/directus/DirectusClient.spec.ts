@@ -20,10 +20,8 @@ describe('DirectusClient', () => {
   beforeEach(async () => {
     requestMock.mockReset();
     await PlatformTest.create({
-      envs: {
-        DIRECTUS_URL: 'http://localhost',
-        DIRECTUS_API_TOKEN: 'test-token',
-      },
+      DIRECTUS_URL: 'http://localhost',
+      DIRECTUS_API_TOKEN: 'test-token',
     });
     client = await PlatformTest.invoke<DirectusClient>(DirectusClient);
   });

@@ -9,10 +9,8 @@ describe('PaymentConfigRepository', () => {
 
   beforeEach(async () => {
     await PlatformTest.create({
-      envs: {
-        DIRECTUS_URL: 'http://localhost',
-        DIRECTUS_API_TOKEN: 'test-token',
-      },
+      DIRECTUS_URL: 'http://localhost',
+      DIRECTUS_API_TOKEN: 'test-token',
     });
 
     repository = await PlatformTest.invoke<PaymentConfigRepository>(PaymentConfigRepository);

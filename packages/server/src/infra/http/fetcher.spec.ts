@@ -38,7 +38,7 @@ describe('fetcher', () => {
     vi.mocked(constant).mockImplementation((key: string, defaultValue?: string) => {
       const values: Record<string, string> = {
         CLUBMED_API_URL: 'https://api.clubmed.com',
-        API_KEY: 'test-api-key',
+        CLUBMED_API_KEY: 'test-api-key',
         AKAMAI_CALLER_HEADER: 'X-CLUBMED-CALLER',
       };
       return values[key] || defaultValue || '';
@@ -140,7 +140,7 @@ describe('fetcher', () => {
     expect(mockHttpClient.fetch).toHaveBeenCalledWith(
       expect.objectContaining({
         headers: {
-          'x-api-key': '',
+          'x-api-key': 'test-api-key',
           caller: 'X-CLUBMED-CALLER',
         },
       }),

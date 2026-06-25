@@ -12,13 +12,13 @@ import { proxyConfig } from './proxy/index.js';
 
 const pkg = JSON.parse(readFileSync('./package.json', { encoding: 'utf8' }));
 const rootDir = process.cwd();
-
 /**
  * This is the shared configuration for the application
  */
 export const config: Partial<TsED.Configuration> = {
   rootDir,
   version: pkg.version,
+  // envs,
   ajv: {
     returnsCoercedValues: true,
     loadSchema: (async (uri: string) => {
@@ -70,18 +70,6 @@ export const config: Partial<TsED.Configuration> = {
     '/storybook': {
       isApp: true,
       root: join(rootDir, '..', '..', 'storybook-static'),
-      maxAge: '1d',
-      wildcard: false,
-    },
-    '/docs': {
-      isApp: true,
-      root: join(rootDir, '..', 'docs', 'build'),
-      maxAge: '1d',
-      wildcard: false,
-    },
-    '/starter': {
-      isApp: true,
-      root: join(rootDir, '..', 'starter', 'dist'),
       maxAge: '1d',
       wildcard: false,
     },

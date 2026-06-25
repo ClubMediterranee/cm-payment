@@ -24,10 +24,8 @@ COPY . .
 
 # Build all applications with correct base paths
 RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
-RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/starter/ pnpm --filter @clubmed/starter run build
 RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
 RUN CI=true NODE_ENV=${NODE_ENV} pnpm build:server
-RUN CI=true NODE_ENV=${NODE_ENV} pnpm --filter docs run build
 
 # Production stage with Node + nginx runtime
 FROM node:24.17.0-alpine
@@ -45,6 +43,7 @@ COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 # Copy server metadata, build artifacts, and runtime dependencies from the builder
 COPY packages/server/package.json ./packages/server/package.json
+COPY packages/server/.env ./packages/server/.env
 RUN pnpm install --frozen-lockfile --prod --filter @clubmed/server --ignore-scripts
 #COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/server/dist ./packages/server/dist
@@ -53,9 +52,7 @@ COPY --from=builder /app/packages/server/resources ./packages/server/resources
 
 # Copy built applications to nginx html directory
 COPY --from=builder /app/packages/app/dist /app/packages/app/dist
-COPY --from=builder /app/packages/starter/dist /app/packages/starter/dist
 COPY --from=builder /app/storybook-static /app/storybook-static
-COPY --from=builder /app/packages/docs/build /app/packages/docs/build
 
 EXPOSE 8083
 
