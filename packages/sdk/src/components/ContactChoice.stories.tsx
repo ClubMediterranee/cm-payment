@@ -24,6 +24,7 @@ const handlers = [
           configuration: {
             display_type: 'redirect',
             settings: {},
+            requires_contact_choice: true,
             validation: {
               requires_token: false,
               requires_expiry_date: false,
@@ -44,6 +45,7 @@ const ContactChoiceWithFormProvider = (args: any) => {
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
+      getProviderValidation={() => ({ requires_contact_choice: true })}
     >
       <ContactChoice {...args} />
     </MockedProvider>
@@ -173,6 +175,7 @@ export const WithAdditionalInteractions: Story = {
                 configuration: {
                   display_type: 'redirect',
                   settings: {},
+                  requires_contact_choice: true,
                   validation: {
                     requires_token: false,
                     requires_expiry_date: false,
@@ -345,6 +348,7 @@ export const AccessibilityTest: Story = {
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.PARTNERS, accessToken: '' }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
+      getProviderValidation={() => ({ requires_contact_choice: true })}
     >
       <ContactChoice {...args} />
     </MockedProvider>

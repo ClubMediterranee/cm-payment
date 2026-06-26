@@ -1,7 +1,5 @@
 import { Inject, Service } from '@tsed/di';
 
-import type { ProviderConfigMap } from '../payment_providers/types.js';
-import type { ProviderModel } from './models.js';
 import { PaymentConfigRepository } from './PaymentConfigRepository.js';
 import { configMatchRules, findByRules, providerMatchRules } from './resolvers.js';
 import { OidcIssuerTypes, PaymentConfigSettings, PaymentFeatureFlips } from './types.js';
@@ -40,37 +38,43 @@ export class PaymentConfigService {
     return { feature_flips, settings };
   }
 
-  async getPaymentProvidersConfig({ locale }: { locale: string }) {
+  async getPaymentProvidersConfig({
+    locale,
+    issuerType,
+  }: {
+    locale: string;
+    issuerType?: OidcIssuerTypes;
+  }) {
     const providers = await this.paymentConfigRepository.getProviders();
 
-    return providers
-      .filter((provider) => this.isProviderActive(provider, locale))
-      .reduce<ProviderConfigMap>((config, provider) => {
-        config[provider.id] = this.buildProviderConfig(provider, locale);
-        return config;
-      }, {});
-  }
-
-  private isProviderActive(provider: ProviderModel, locale: string) {
-    const variant = findByRules(provider.variants, providerMatchRules({ locale }));
-    return !!variant?.active;
-  }
-
-  private buildProviderConfig(provider: ProviderModel, locale: string) {
-    const global = provider.variants.find((v) => v.locale === null);
-    const local = provider.variants.find((v) => v.locale === locale);
-
-    const settings = [...(global?.settings || []), ...(local?.settings || [])].reduce(
-      (acc, setting) => ({ ...acc, [setting.key]: setting.value }),
-      {},
+    const activeProviders = providers.filter(
+      (provider) => !!findByRules(provider.variants, providerMatchRules({ locale }))?.active,
     );
 
-    return {
-      ...global?.validation,
-      ...local?.validation,
-      settings,
-      display_type: provider.default_display_type,
-      confirmation_strategy: provider.confirmation_strategy ?? 'status',
-    };
+    return Object.fromEntries(
+      activeProviders.map((provider) => {
+        const global = provider.variants.find((v) => v.locale === null);
+        const local = provider.variants.find((v) => v.locale === locale);
+
+        const settings = [...(global?.settings || []), ...(local?.settings || [])].reduce<
+          Record<string, unknown>
+        >((acc, setting) => ({ ...acc, [setting.key]: setting.value }), {});
+
+        const validation = { ...global?.validation, ...local?.validation };
+
+        return [
+          provider.id,
+          {
+            ...validation,
+            requires_contact_choice: (validation.requires_contact_choice ?? []).includes(
+              issuerType!,
+            ),
+            settings,
+            display_type: provider.default_display_type,
+            confirmation_strategy: provider.confirmation_strategy ?? 'status',
+          },
+        ] as const;
+      }),
+    );
   }
 }

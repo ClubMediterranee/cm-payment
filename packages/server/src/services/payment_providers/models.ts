@@ -30,6 +30,9 @@ export const EnrichedPaymentProviderSchema: any = {
             requires_expiry_date: {
               type: 'boolean',
             },
+            requires_contact_choice: {
+              type: 'boolean',
+            },
           },
           required: ['display_type', 'settings'],
         },

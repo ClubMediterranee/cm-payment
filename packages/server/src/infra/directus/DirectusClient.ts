@@ -48,6 +48,7 @@ export class DirectusClient {
               'display_type',
               'requires_token',
               'requires_expiry_date',
+              'requires_contact_choice',
               'settings',
             ],
           },

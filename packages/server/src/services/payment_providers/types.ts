@@ -2,20 +2,16 @@ import {
   PaymentProvider1,
   TimePaymentConditionModel,
 } from '../../infra/api/__generated__/index.js';
-import type { CapsProvider } from '../../infra/directus/__generated__/schema.js';
+import type { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
 
 export const MANUAL_CONNECTION_TYPE = 'Manual';
 
-export interface ProviderConfigMap {
-  [providerId: string]: {
-    display_type: CapsProvider['default_display_type'];
-    confirmation_strategy: NonNullable<CapsProvider['confirmation_strategy']>;
-    settings: Record<string, unknown>;
-  } & Record<string, unknown>;
-}
+type ProviderConfig = Awaited<
+  ReturnType<PaymentConfigService['getPaymentProvidersConfig']>
+>[string];
 
 export interface EnrichedPaymentProvider extends PaymentProvider1 {
-  configuration: ProviderConfigMap[string];
+  configuration: ProviderConfig;
   payment_conditions: Record<string, TimePaymentConditionModel[]>;
 }
 

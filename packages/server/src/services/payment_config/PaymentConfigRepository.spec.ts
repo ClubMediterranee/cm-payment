@@ -134,7 +134,9 @@ describe('PaymentConfigRepository', () => {
         requires_token: true,
         requires_expiry_date: false,
       });
-      expect(provider.variants[0].settings).toEqual([{ key: 'script_url', value: 'https://x.io' }]);
+      expect(provider.variants[0].settings).toEqual([
+        { key: 'script_url', type: 'string', value: 'https://x.io' },
+      ]);
     });
 
     it('returns empty settings array when variant settings is null', async () => {

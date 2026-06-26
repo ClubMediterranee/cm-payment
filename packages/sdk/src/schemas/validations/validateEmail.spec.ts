@@ -8,17 +8,17 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: true,
   maxAmount: 10000,
-  getProviderValidation: () => undefined,
+  getProviderValidation: () => ({ requires_contact_choice: true }),
 };
 
 describe('validateEmail', () => {
-  it('returns undefined when isSeller is false', () => {
+  it('returns undefined when provider has no requires_contact_choice', () => {
     const result = validateEmail(
       {
         template_id: GLOBAL_CAPS_SETTINGS.templateIds.email,
         billing_details: { email: 'test@example.com' },
       } as unknown as CapsFormSchema,
-      { ...mockConfig, isSeller: false },
+      { ...mockConfig, getProviderValidation: () => undefined },
     );
 
     expect(result).toBeUndefined();
