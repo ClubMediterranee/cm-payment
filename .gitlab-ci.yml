@@ -35,8 +35,8 @@ include:
   - local: ".gitlab/ci/switch-branch.yml"
 
 variables:
-  NODE_VERSION: 22.17.1
-  NODE_IMG: "node:22.17.0-bullseye"
+  NODE_VERSION: 24.17.0
+  NODE_IMG: "node:24.17.0-bullseye"
   SEMANTIC_RELEASE_OPTS: ""
   ENV:
     value: "integration"
@@ -69,6 +69,7 @@ stages:
   - test
   - storybook:dev
   - release
+  - publish
   - release:make
   - deploy
   - notification
@@ -146,9 +147,37 @@ release:
     - if: '$WORKFLOW == "build" && $CI_COMMIT_REF_NAME =~ /main|develop|next-release/'
       when: on_success
     - when: never
+  artifacts:
+    when: always
+    paths:
+      - package.json
+      - packages/sdk/package.json
+    reports:
+      dotenv: release.env
+    expire_in: 1 week
   script:
     - !reference [.dotenv-source, script]
+    - echo "RELEASE_CREATED=false" > release.env
     - pnpm run release
+
+publish:
+  extends: .node_install_dependencies
+  stage: publish
+  needs:
+    - job: release
+      artifacts: true
+  rules:
+    - if: '$WORKFLOW == "build" && $CI_COMMIT_REF_NAME =~ /main|develop|next-release/'
+      when: on_success
+    - when: never
+  script:
+    - |
+      if [ "$RELEASE_CREATED" != "true" ]; then
+        echo "No release generated. Skip npm publish."
+        exit 0
+      fi
+    - rm -rf ./packages/sdk/dist
+    - pnpm --filter @clubmed/caps run build
     - cd ./packages/sdk/dist
     - !reference [.publish-npm-package, script]
 

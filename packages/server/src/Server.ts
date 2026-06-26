@@ -8,17 +8,12 @@ import { application, type PlatformStaticsOptions } from '@tsed/platform-http';
 
 import { config } from './config/config.js';
 import { ExternalRefResolver } from './infra/spec/ExternalRefResolver.js';
-import { requestLoggerMiddleware } from './middlewares/requestLogger.js';
 
 @Configuration(config)
 export class Server {
   protected app = application();
 
   protected disableRoutesSummary = constant<boolean>('logger.disableRoutesSummary');
-
-  $beforeRoutesInit() {
-    this.app.getApp().addHook('onRequest', requestLoggerMiddleware);
-  }
 
   $staticsMounted(mountPath: string, options: PlatformStaticsOptions) {
     if (options.isApp) {

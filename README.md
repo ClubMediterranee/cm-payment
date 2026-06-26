@@ -177,7 +177,7 @@ pnpm --filter @clubmed/app run dev
 
 - `HOST` – override the advertised host returned by `configuration().getBestHost()`
 - `CLUBMED_API_URL` – upstream REST API used by the `/api` proxy and the `ApiClient`
-- `API_KEY` – API key injected into outbound requests sent via `ApiClient`
+- `CLUBMED_API_KEY` – API key injected into outbound requests sent via `ApiClient`
 - `AKAMAI_CALLER_HEADER` – custom caller header name (defaults to `X-CLUBMED-CALLER`)
 - `TRUST_PROXY` – set to `true` when the server is deployed behind a reverse proxy
 - `logger.disableRoutesSummary` – set to `true` to silence Ts.ED's boot summary logs
@@ -203,7 +203,7 @@ pnpm --filter @clubmed/caps run test
 ## Configuration & Environments
 
 - `packages/app` and `packages/starter` ship sample `.env.*` files under their `config/` folders. Copy the appropriate template (staging/production/local) and provide the API hosts, OIDC data, and `VITE_` prefixed values those Vite apps expect.
-- `packages/server` reads `.env`, `.env.local`, `.env.staging`, etc., via Ts.ED's `DotEnvsConfigSource`. Set the variables described in the Ts.ED section (`CLUBMED_API_URL`, `API_KEY`, `AKAMAI_CALLER_HEADER`, `HOST`, `TRUST_PROXY`, etc.) before booting the server.
+- `packages/server` reads `.env`, `.env.local`, `.env.staging`, etc., via Ts.ED's `DotEnvsConfigSource`. Set the variables described in the Ts.ED section (`CLUBMED_API_URL`, `CLUBMED_API_KEY`, `AKAMAI_CALLER_HEADER`, `HOST`, `TRUST_PROXY`, etc.) before booting the server.
 - CI/CD injects secrets at runtime; do not commit credentialed `.env` files.
 
 ## Publishing & Release
@@ -242,7 +242,7 @@ These conventions automatically trigger the appropriate version type (major/mino
 - TS build issues: run tsc -b or pnpm build at the root to ensure project references are up to date.
 - Node/PNPM versions: make sure you use Node 20+ and PNPM 9+.
 - Caches: pnpm store prune and delete node_modules if needed.
-- Ts.ED server issues: if `/` or `/starter` return 404s, rebuild the corresponding front-end (`pnpm build:app`, `pnpm --filter @clubmed/starter run build`, `pnpm --filter docs run build`, `pnpm build-storybook`). Proxy failures usually mean `CLUBMED_API_URL` or `API_KEY` is missing from `packages/server/.env`.
+- Ts.ED server issues: if `/` or `/starter` return 404s, rebuild the corresponding front-end (`pnpm build:app`, `pnpm --filter @clubmed/starter run build`, `pnpm --filter docs run build`, `pnpm build-storybook`). Proxy failures usually mean `CLUBMED_API_URL` or `CLUBMED_API_KEY` is missing from `packages/server/.env`.
 
 ## License
 

@@ -1,4 +1,6 @@
-export const FormErrorFallback = ({ error }: { error: Error }) => {
+import type { FallbackProps } from 'react-error-boundary';
+
+export const FormErrorFallback = ({ error }: FallbackProps) => {
   console.error(error);
   return (
     <div className="p-40 text-center">

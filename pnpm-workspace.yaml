@@ -9,6 +9,9 @@ allowBuilds:
   esbuild: false
   msw: false
 
+minimumReleaseAgeExclude:
+  - vite@8.1.0
+
 onlyBuiltDependencies:
   - "@scarf/scarf"
   - "@swc/core"
