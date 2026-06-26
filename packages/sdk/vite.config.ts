@@ -1,7 +1,7 @@
 import { dirname, extname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import { globbySync } from 'globby';
 import { visualizer } from 'rollup-plugin-visualizer';
 import preserveDirectives from 'rollup-preserve-directives';

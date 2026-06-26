@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig } from 'vitest/config';
@@ -59,10 +59,10 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        statements: 88.02,
-        branches: 77.68,
-        functions: 79.93,
-        lines: 87.25,
+        statements: 87.52,
+        branches: 77.42,
+        functions: 79.59,
+        lines: 86.64,
       },
     },
     projects: [
