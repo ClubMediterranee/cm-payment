@@ -7,5 +7,12 @@ export async function success(pluginConfig, context) {
     return;
   }
 
-  await writeFile('release.env', `RELEASE_CREATED=true\nSDK_VERSION=${version}\n`, 'utf8');
+  const prereleaseIdentifier = version.match(/-(.+?)\./)?.[1];
+  const distTag = prereleaseIdentifier || 'latest';
+
+  await writeFile(
+    'release.env',
+    `RELEASE_CREATED=true\nSDK_VERSION=${version}\nNPM_DIST_TAG=${distTag}\n`,
+    'utf8',
+  );
 }

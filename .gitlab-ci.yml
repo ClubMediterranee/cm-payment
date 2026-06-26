@@ -176,6 +176,7 @@ publish:
         echo "No release generated. Skip npm publish."
         exit 0
       fi
+    - node -e "const fs=require('node:fs'); const path='packages/sdk/package.json'; const pkg=JSON.parse(fs.readFileSync(path,'utf8')); pkg.version=process.env.SDK_VERSION; fs.writeFileSync(path, JSON.stringify(pkg, null, 2)+'\n');"
     - rm -rf ./packages/sdk/dist
     - pnpm --filter @clubmed/caps run build
     - cd ./packages/sdk/dist
