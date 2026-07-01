@@ -9,8 +9,10 @@ import type {
   PaymentConfig,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentProvidersControllerGetPaymentProvidersParams,
+  PaymentRedirectResultModel,
   PaymentScheduleControllerGetPaymentSchedulesParams,
   PaymentScheduleOutputModel,
+  PaymentlessBody,
   ResolvedActionModel,
   VersionInfo,
 } from './index.schemas';
@@ -55,6 +57,18 @@ export const paymentProvidersControllerGetPaymentProviders = (
 };
 
 /**
+ * @summary Confirm a booking without an online payment and return the confirmation redirect
+ */
+export const paymentRedirectControllerPaymentless = (paymentlessBody?: PaymentlessBody) => {
+  return fetcher<PaymentRedirectResultModel>({
+    url: `/rest/payment_redirect/paymentless`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: paymentlessBody,
+  });
+};
+
+/**
  * @summary Get payment schedules by type and id
  */
 export const paymentScheduleControllerGetPaymentSchedules = (
@@ -85,6 +99,9 @@ export type PaymentConfigControllerGetPaymentConfigResult = NonNullable<
 >;
 export type PaymentProvidersControllerGetPaymentProvidersResult = NonNullable<
   Awaited<ReturnType<typeof paymentProvidersControllerGetPaymentProviders>>
+>;
+export type PaymentRedirectControllerPaymentlessResult = NonNullable<
+  Awaited<ReturnType<typeof paymentRedirectControllerPaymentless>>
 >;
 export type PaymentScheduleControllerGetPaymentSchedulesResult = NonNullable<
   Awaited<ReturnType<typeof paymentScheduleControllerGetPaymentSchedules>>

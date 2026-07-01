@@ -1,6 +1,6 @@
 import { AdditionalProperties, Property, Required } from '@tsed/schema';
 
-export class PaymentlessQuery {
+export class PaymentlessBody {
   @Required()
   callback_url!: string;
 
@@ -21,9 +21,14 @@ export class PaymentlessQuery {
 
   @Property()
   proposal_id?: string;
+}
 
-  @Property()
-  locale?: string;
+export class PaymentRedirectResultModel {
+  @Required()
+  url!: string;
+
+  @Required()
+  method!: string;
 }
 
 @AdditionalProperties(true)

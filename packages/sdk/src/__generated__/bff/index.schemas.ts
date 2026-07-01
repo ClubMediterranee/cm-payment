@@ -43,6 +43,29 @@ export interface PaymentSettings {
   [key: string]: unknown;
 }
 
+export interface PaymentRedirectResultModel {
+  /** @minLength 1 */
+  url: string;
+  /** @minLength 1 */
+  method: string;
+}
+
+export interface PaymentlessBody {
+  /** @minLength 1 */
+  callback_url: string;
+  /** @minLength 1 */
+  booking_id: string;
+  /** @minLength 1 */
+  customer_id: string;
+  /** @minLength 1 */
+  provider_id: string;
+  /** @minLength 1 */
+  amount: string;
+  /** @minLength 1 */
+  currency: string;
+  proposal_id?: string;
+}
+
 export interface PaymentScheduleOutputModel {
   amount?: number;
   /** @minLength 1 */
