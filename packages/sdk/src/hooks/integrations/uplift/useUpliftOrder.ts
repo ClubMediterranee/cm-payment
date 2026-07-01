@@ -8,7 +8,7 @@ export const useUpliftOrder = (): UpliftOrder | null => {
   const amount = useWatch('amount');
   const { data: stay } = useStay();
 
-  const enableTransportQuery = stay.transportTypes.includes('PLANE');
+  const enableTransportQuery = stay.transportTypes?.includes('PLANE');
 
   const { data: transport } = useTransportDetails({
     enabled: enableTransportQuery,

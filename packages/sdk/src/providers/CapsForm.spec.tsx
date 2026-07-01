@@ -283,14 +283,15 @@ describe('CapsForm', () => {
     mockUseCapsConfigContext.mockClear();
   });
 
-  it.skip('utilise le action fourni en props', () => {
-    mockUseCapsConfigContext.mockReturnValueOnce({
+  it('utilise le action fourni en props', () => {
+    mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
       oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
     });
 
-    mockUseActionResolver.mockClear();
+    const actionResolverSpy = vi.fn((action: Action) => action);
+    mockUseActionResolver.mockImplementation(actionResolverSpy);
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -305,11 +306,12 @@ describe('CapsForm', () => {
         </CapsForm>,
       );
     } catch {
-      // Ignore render errors
+      void 0;
     }
 
-    expect(mockUseActionResolver).toHaveBeenCalledWith(Action.PAYMENT_RESA);
+    expect(actionResolverSpy).toHaveBeenCalledWith(Action.PAYMENT_RESA);
 
     consoleErrorSpy.mockRestore();
+    mockUseCapsConfigContext.mockReset();
   });
 });

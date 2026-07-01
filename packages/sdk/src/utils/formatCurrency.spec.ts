@@ -7,7 +7,7 @@ describe('formatCurrency', () => {
       currency: 'EUR',
       locale: 'fr-FR',
     });
-    expect(result).toBe('1\u202f234,56\u00a0€');
+    expect(result).toBe('1 234,56 €');
   });
 
   it('formats amount with currency symbol on the left', () => {
@@ -25,7 +25,7 @@ describe('formatCurrency', () => {
       currency: 'EUR',
       locale: 'fr-FR',
     });
-    expect(result).toBe('0,00\u00a0€');
+    expect(result).toBe('0,00 €');
   });
 
   it('handles negative amount', () => {
@@ -43,6 +43,15 @@ describe('formatCurrency', () => {
       currency: 'EUR',
       locale: 'fr-FR',
     });
-    expect(result).toBe('123,46\u00a0€');
+    expect(result).toBe('123,46 €');
+  });
+
+  it('formats amount without a currency symbol when currency is undefined', () => {
+    const result = formatCurrency({
+      amount: 1234.56,
+      currency: undefined,
+      locale: 'fr-FR',
+    });
+    expect(result).toBe('1 234,56');
   });
 });

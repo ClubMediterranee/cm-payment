@@ -146,6 +146,7 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
         settings: {},
         requires_token: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_expiry_date: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        requires_card_holder: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
       },
       payment_conditions: {
         [faker.string.alphanumeric(5)]: Array.from(
@@ -268,6 +269,7 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
         settings: {},
         requires_token: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_expiry_date: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        requires_card_holder: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
       },
       payment_conditions: {
         [faker.string.alphanumeric(5)]: Array.from(

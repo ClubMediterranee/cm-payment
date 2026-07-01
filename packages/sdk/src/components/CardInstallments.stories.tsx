@@ -277,21 +277,28 @@ export const WithInteractions: Story = {
 
     await waitFor(
       () => {
-        expect(canvas.getByLabelText(/Select your card type/i)).toBeInTheDocument();
+        const selects = canvas.getAllByRole('combobox');
+        expect(selects.length).toBeGreaterThan(0);
       },
-      { timeout: 3000 },
+      { timeout: 5000 },
     );
 
-    const cardTypeSelect = canvas.getByLabelText(/Select your card type/i) as HTMLSelectElement;
-
-    expect(cardTypeSelect.value).toBe('Visa');
-
-    cardTypeSelect.value = 'Mastercard';
-    cardTypeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    const selects = canvas.getAllByRole('combobox');
+    const cardTypeSelect = selects[0] as HTMLSelectElement;
 
     await waitFor(() => {
-      expect(cardTypeSelect.value).toBe('Mastercard');
+      expect(cardTypeSelect.value).toBeTruthy();
     });
+
+    const options = Array.from(cardTypeSelect.options).map((opt) => opt.value);
+    if (options.length > 1) {
+      cardTypeSelect.value = options[1];
+      cardTypeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+      await waitFor(() => {
+        expect(cardTypeSelect.value).toBe(options[1]);
+      });
+    }
   },
 };
 

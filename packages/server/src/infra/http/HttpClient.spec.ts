@@ -45,7 +45,6 @@ describe('httpClient', () => {
 
   describe('head()', () => {
     it('should call send method', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
 
       vi.spyOn(client, 'raw').mockResolvedValue({
@@ -53,7 +52,6 @@ describe('httpClient', () => {
           'x-test': 'test',
         },
       } as any);
-      // WHEN
       const result = await runInContext(ctx, () =>
         client.head('/test', {
           headers: {
@@ -79,7 +77,6 @@ describe('httpClient', () => {
         },
       } as any);
 
-      // WHEN
       const result = await runInContext(ctx, () =>
         client.get('/test', {
           params: {
@@ -126,14 +123,12 @@ describe('httpClient', () => {
       });
     });
     it('should call send (with bulkData)', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
 
       const bulkData = [{ id: 'id' }, { text: 'text' }];
 
       vi.spyOn(client, 'raw').mockReturnValue('' as any);
 
-      // WHEN
       await runInContext(ctx, () =>
         client.post('/test', {
           bulkData,
@@ -154,7 +149,6 @@ describe('httpClient', () => {
 
       vi.spyOn(client, 'raw').mockResolvedValue({ data: 'stream' } as any);
 
-      // WHEN
       const result = await runInContext(ctx, () =>
         client.get('/test', {
           headers: {
@@ -175,12 +169,10 @@ describe('httpClient', () => {
       });
     });
     it('should throw error (without response information)', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
 
       vi.spyOn(client, 'raw').mockRejectedValue(new Error('Some error'));
 
-      // WHEN
       const error = await catchAsyncError<Exception>(() =>
         runInContext(ctx, () =>
           client.get('/test', {
@@ -202,10 +194,8 @@ describe('httpClient', () => {
       expect(!!error?.stack).toBe(true);
     });
     it('should throw error (with response information)', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
 
-      // Create a mock error with response for the logger
       const axiosError = new Error('message');
       Object.defineProperty(axiosError, 'response', {
         value: {
@@ -222,7 +212,6 @@ describe('httpClient', () => {
 
       vi.spyOn(client, 'raw').mockRejectedValue(axiosError);
 
-      // WHEN
       const error = await catchAsyncError<Exception>(() =>
         runInContext(ctx, () =>
           client.get('/test', {
@@ -261,10 +250,8 @@ describe('httpClient', () => {
       );
     });
     it('should throw error (with partial response information)', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
 
-      // Create a mock error with response for the logger
       const axiosError = new Error('message');
       Object.defineProperty(axiosError, 'response', {
         value: {
@@ -280,7 +267,6 @@ describe('httpClient', () => {
 
       vi.spyOn(client, 'raw').mockRejectedValue(axiosError);
 
-      // WHEN
       const error = await catchAsyncError<Exception>(() =>
         runInContext(ctx, () =>
           client.get('/test', {
@@ -306,10 +292,8 @@ describe('httpClient', () => {
   });
   describe('post()', () => {
     it('should throw error (with response information)', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
 
-      // Create a mock error with response for the logger
       const axiosError = new Error('message');
       Object.defineProperty(axiosError, 'response', {
         value: {
@@ -326,7 +310,6 @@ describe('httpClient', () => {
 
       vi.spyOn(client, 'raw').mockRejectedValue(axiosError);
 
-      // WHEN
       const error = await catchAsyncError<Exception>(() =>
         runInContext(ctx, () =>
           client.post('/test', {
@@ -371,7 +354,6 @@ describe('httpClient', () => {
   });
   describe('put()', () => {
     it('should make a request', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
       const payload = {
         id: 'id',
@@ -384,7 +366,6 @@ describe('httpClient', () => {
         },
       } as any);
 
-      // WHEN
       const result = await runInContext(ctx, () =>
         client.put('/test', {
           data: payload,
@@ -413,7 +394,6 @@ describe('httpClient', () => {
 
   describe('patch()', () => {
     it('should make a request', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
       const payload = {
         id: 'id',
@@ -426,7 +406,6 @@ describe('httpClient', () => {
         },
       } as any);
 
-      // WHEN
       const result = await runInContext(ctx, () =>
         client.patch('/test', {
           data: payload,
@@ -455,7 +434,6 @@ describe('httpClient', () => {
 
   describe('delete()', () => {
     it('should make a request', async () => {
-      // GIVEN
       const { client, ctx } = await createServiceFixture();
       const payload = {
         id: 'id',
@@ -468,7 +446,6 @@ describe('httpClient', () => {
         },
       } as any);
 
-      // WHEN
       const result = await runInContext(ctx, () =>
         client.delete('/test', {
           data: payload,
