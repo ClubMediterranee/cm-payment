@@ -45,17 +45,27 @@ export class PaymentProvidersService {
     const shouldFetchStay = this.shouldFetchStay(paymentProviders, paymentProvidersConfig);
     const stay = shouldFetchStay ? await this.stayService.getStay({ type, id, customerId }) : null;
 
+    const daysUntilDeparture = this.getDaysUntilDeparture(stay);
+
     const paymentProvidersEligibilityRules: Array<(provider: PaymentProvider1) => boolean> = [
       (provider) => !!paymentProvidersConfig[provider.id],
       (provider) => this.isBeforeMinimumDepartureWindow(paymentProvidersConfig[provider.id], stay),
       (provider) => this.isValidConnectionType(provider, issuerType),
       (provider) => this.isAllowedForUserAgent(paymentProvidersConfig[provider.id], userAgent),
+      (provider) => daysUntilDeparture > provider.required_delay_before_departure,
     ];
 
     return paymentProviders
       .filter((provider) => paymentProvidersEligibilityRules.every((rule) => rule(provider)))
       .map((provider) => {
-        const payment_methods = sortTimePaymentConditions(provider.payment_methods);
+        const payment_methods = sortTimePaymentConditions(provider.payment_methods)
+          ?.map((method) => ({
+            ...method,
+            time_payment_conditions: method.time_payment_conditions?.filter(
+              (condition) => daysUntilDeparture > condition.required_delay_before_departure,
+            ),
+          }))
+          .filter((method) => method.time_payment_conditions?.length !== 0);
         const payment_conditions = Object.fromEntries(
           (payment_methods ?? []).map((method) => [
             method.label || method.id,
@@ -90,20 +100,19 @@ export class PaymentProvidersService {
     }));
   }
 
+  private getDaysUntilDeparture(stay: Stay | null): number {
+    const arrival = parseApiDate(stay?.resortArrivalDate);
+    return arrival ? daysUntilToday(arrival) : Infinity;
+  }
+
   private isBeforeMinimumDepartureWindow(
     providerConfig: ProviderConfig | undefined,
     stay: Stay | null,
   ): boolean {
-    if (!stay?.resortArrivalDate) return true;
-
     const minDays = providerConfig?.settings?.min_days_before_departure;
     if (!minDays) return true;
 
-    const arrival = parseApiDate(stay.resortArrivalDate);
-    if (!arrival) return true;
-
-    const daysUntilDeparture = daysUntilToday(arrival);
-    return daysUntilDeparture < Number(minDays);
+    return this.getDaysUntilDeparture(stay) < Number(minDays);
   }
 
   private isValidConnectionType(provider: PaymentProvider1, issuerType?: string): boolean {
@@ -123,6 +132,15 @@ export class PaymentProvidersService {
     providers: PaymentProvider1[],
     config: Record<string, ProviderConfig>,
   ): boolean {
-    return providers.some((provider) => !!config[provider.id]?.settings?.min_days_before_departure);
+    return providers.some(
+      (provider) =>
+        !!config[provider.id]?.settings?.min_days_before_departure ||
+        provider.required_delay_before_departure > 0 ||
+        provider.payment_methods?.some((method) =>
+          method.time_payment_conditions?.some(
+            (condition) => condition.required_delay_before_departure > 0,
+          ),
+        ),
+    );
   }
 }

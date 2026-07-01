@@ -51,6 +51,7 @@ describe('getPaymentRedirect', () => {
     });
     expect(result).toEqual({
       redirect: { url: 'https://confirmation.url?payment_status=OK', method: 'GET' },
+      payment: null,
     });
     expect(mockGetPaymentRedirectUrl).not.toHaveBeenCalled();
   });

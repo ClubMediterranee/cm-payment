@@ -29,7 +29,7 @@ export const getPaymentRedirect = async (
       ...(type === 'proposal' ? { proposal_id: id } : {}),
     });
 
-    return { redirect };
+    return { redirect, payment: null };
   }
 
   return getPaymentRedirectUrl(
