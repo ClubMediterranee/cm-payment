@@ -9,7 +9,9 @@ import formRawbody from 'fastify-raw-body';
 import * as rest from '../controllers/rest/index.js';
 import loggerConfig from './logger/index.js';
 import { proxyConfig } from './proxy/index.js';
+import { envs } from './utils/index.js';
 
+console.log('==+>', envs);
 const pkg = JSON.parse(readFileSync('./package.json', { encoding: 'utf8' }));
 const rootDir = process.cwd();
 /**
@@ -18,7 +20,8 @@ const rootDir = process.cwd();
 export const config: Partial<TsED.Configuration> = {
   rootDir,
   version: pkg.version,
-  // envs,
+  ...envs,
+  envs,
   ajv: {
     returnsCoercedValues: true,
     loadSchema: (async (uri: string) => {
