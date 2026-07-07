@@ -114,7 +114,7 @@ export const ValidationTest: Story = {
     expect(checkbox).not.toBeChecked();
 
     // Soumettre le formulaire pour déclencher la validation
-    const form = document.getElementById('mocked-form');
+    const form = canvasElement.querySelector('#mocked-form');
     if (form) {
       fireEvent.submit(form);
     }

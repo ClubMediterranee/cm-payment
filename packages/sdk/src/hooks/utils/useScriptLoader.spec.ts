@@ -12,7 +12,7 @@ const fireLoad = (url: string) => {
 
 describe('useScriptLoader', () => {
   beforeEach(() => {
-    document.head.querySelectorAll('script').forEach((s) => s.remove());
+    document.querySelectorAll('script').forEach((s) => s.remove());
   });
 
   it('appends a script tag and flips isLoaded to true on load', async () => {

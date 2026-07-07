@@ -312,12 +312,7 @@ export const WithProfilePrefill: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await waitFor(
-      () => {
-        expect(canvas.getByText('First Name', { exact: false })).toBeInTheDocument();
-      },
-      { timeout: 10000 },
-    );
+    await canvas.findByText('First Name', { exact: false }, { timeout: 10000 });
 
     await waitFor(
       () => {

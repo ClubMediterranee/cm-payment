@@ -3,6 +3,7 @@ import '@tsed/logger-std';
 import '@tsed/logger/layouts/JsonLayout.js';
 import '@tsed/logger/layouts/ColoredLayout.js';
 
+import { isStream } from '@tsed/core';
 import { cleanObject } from '@tsed/core/utils/cleanObject.js';
 import { attachLogger, DIContext } from '@tsed/di';
 import { $log } from '@tsed/logger';
@@ -55,7 +56,7 @@ export default {
     return {
       ...minimalLog,
       headers: ctx.request.headers,
-      body: ctx.request.body,
+      body: isStream(ctx.request.body) ? '[STREAM]' : ctx.request.body,
       query: ctx.request.query,
       params: ctx.request.params,
     };

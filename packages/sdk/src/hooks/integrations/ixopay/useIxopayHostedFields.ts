@@ -71,36 +71,34 @@ export const useIxopayHostedFields = ({ fieldSelectors }: UseIxopayHostedFieldsP
         payment.setNumberPlaceholder(content.creditCardForm.cardNumber);
         payment.setCvvPlaceholder(content.creditCardForm.cvc);
 
-        setTimeout(() => {
-          payment.numberOn('input', ({ validNumber }: IxopayEventData) => {
-            setErrors((prev) =>
-              validNumber
-                ? removeErrorKey(prev, 'number')
-                : {
-                    ...prev,
-                    ...mapIxopayErrorsToObject([
-                      {
-                        attribute: 'number',
-                        message: content.creditCardForm.validation.cardNumber,
-                      },
-                    ]),
-                  },
-            );
-          });
+        payment.numberOn('input', ({ validNumber }: IxopayEventData) => {
+          setErrors((prev) =>
+            validNumber
+              ? removeErrorKey(prev, 'number')
+              : {
+                  ...prev,
+                  ...mapIxopayErrorsToObject([
+                    {
+                      attribute: 'number',
+                      message: content.creditCardForm.validation.cardNumber,
+                    },
+                  ]),
+                },
+          );
+        });
 
-          payment.cvvOn('input', ({ validCvv }: IxopayEventData) => {
-            setErrors((prev) =>
-              validCvv
-                ? removeErrorKey(prev, 'cvv')
-                : {
-                    ...prev,
-                    ...mapIxopayErrorsToObject([
-                      { attribute: 'cvv', message: content.creditCardForm.validation.cvc },
-                    ]),
-                  },
-            );
-          });
-        }, 200);
+        payment.cvvOn('input', ({ validCvv }: IxopayEventData) => {
+          setErrors((prev) =>
+            validCvv
+              ? removeErrorKey(prev, 'cvv')
+              : {
+                  ...prev,
+                  ...mapIxopayErrorsToObject([
+                    { attribute: 'cvv', message: content.creditCardForm.validation.cvc },
+                  ]),
+                },
+          );
+        });
 
         onIxopayReady();
       },
