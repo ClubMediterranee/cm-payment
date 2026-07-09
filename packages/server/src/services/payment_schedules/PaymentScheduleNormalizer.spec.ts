@@ -1,6 +1,7 @@
 import { DITest } from '@tsed/di';
 
 import {
+  CartModel,
   CartUpgradeRoomModel,
   CustomerBookingPaymentScheduleModel,
   ProposalPaymentScheduleModelV1,
@@ -51,6 +52,30 @@ describe('PaymentScheduleNormalizer', () => {
 
       expect(result.currency).toBe('');
       expect(result.total).toBe(420);
+    });
+
+    it('should normalize CartModel using the cart total', async () => {
+      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
+
+      const input: CartModel = {
+        price: {
+          total: 250,
+          currency: 'EUR',
+        },
+      };
+
+      const result = normalizer.normalize(input);
+
+      expect(result).toEqual({
+        currency: 'EUR',
+        total: 250,
+        payment_schedules: [
+          {
+            amount: 250,
+            deadline: undefined,
+          },
+        ],
+      });
     });
 
     it('should normalize ProposalPaymentScheduleModelV1', async () => {

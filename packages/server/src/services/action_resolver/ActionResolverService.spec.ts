@@ -11,7 +11,7 @@ vi.mock('../../infra/api/__generated__/index.js', async (importOriginal) => ({
   ...(await importOriginal()),
   getV3CustomersCustomerIdBookingsBookingId: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules: vi.fn(),
-  getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule: vi.fn(),
+  getV1CustomersCustomerIdBookingsBookingIdCart: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations: vi.fn(),
   getV1ProposalsProposalIdPaymentSchedule: vi.fn(),
 }));

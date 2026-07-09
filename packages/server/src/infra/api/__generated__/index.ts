@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3454.0
+ * OpenAPI spec version: 0.3460.1
  */
 import { fetcher } from '../../http/fetcher.js';
 export interface LinkModel {
@@ -1012,6 +1012,16 @@ export interface PaymentStatusModel {
   errors?: string;
 }
 
+/**
+ * List of service_ids which are mandatory with this service. Each service in this list must be booked as well if you wish to book this service
+ */
+export type MandatoryServiceIdModel = string[];
+
+/**
+ * List of service_ids not compatible with this service. This service cannot be booked if any service in the list is booked
+ */
+export type NotCompatibleServiceIdsModel = string[];
+
 export type StayAccommodationRoomsModel = RoomModel[];
 
 /**
@@ -1831,6 +1841,130 @@ export interface CustomerBookingPaymentScheduleModel {
   payment_schedules?: PaymentSchedules;
 }
 
+/**
+ * type of the service
+ */
+export type CartPriceDetailModelTypes =
+  (typeof CartPriceDetailModelTypes)[keyof typeof CartPriceDetailModelTypes];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CartPriceDetailModelTypes = {
+  CHILDCARE: 'CHILDCARE',
+  TRANSFER: 'TRANSFER',
+  RENTAL: 'RENTAL',
+  EXCURSION: 'EXCURSION',
+  LAND_SPORT: 'LAND_SPORT',
+  WINTER_SPORT: 'WINTER_SPORT',
+  WATER_SPORT: 'WATER_SPORT',
+  WELLNESS: 'WELLNESS',
+  INSURANCE: 'INSURANCE',
+  PARKING: 'PARKING',
+  CONCIERGERIE: 'CONCIERGERIE',
+} as const;
+
+export interface CartPriceDetailModel {
+  /** total price for the given type of service (ie. childcares, transfers, ...) */
+  amount?: number;
+  type?: CartPriceDetailModelTypes;
+}
+
+export type CartPriceDetails = CartPriceDetailModel[];
+
+/**
+ * Cart price
+ */
+export interface CartPrice {
+  /** total price for all services currently in cart. */
+  total?: number;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  detail?: CartPriceDetails;
+}
+
+export type CartServiceTypeModel = (typeof CartServiceTypeModel)[keyof typeof CartServiceTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CartServiceTypeModel = {
+  CHILDCARE: 'CHILDCARE',
+  TRANSFER: 'TRANSFER',
+  RENTAL: 'RENTAL',
+  EXCURSION: 'EXCURSION',
+  LAND_SPORT: 'LAND_SPORT',
+  WINTER_SPORT: 'WINTER_SPORT',
+  WATER_SPORT: 'WATER_SPORT',
+  WELLNESS: 'WELLNESS',
+  INSURANCE: 'INSURANCE',
+  PARKING: 'PARKING',
+  CONCIERGERIE: 'CONCIERGERIE',
+} as const;
+
+export interface CartServiceScheduleAttendee {
+  /** concerned attendee id */
+  id: string;
+  /** service's price for the concerned attendee */
+  price?: number;
+}
+
+/**
+ * service attendees
+ */
+export type CartServiceScheduleAttendees = CartServiceScheduleAttendee[];
+
+/**
+ * start date for service deliverance
+ */
+export type CartServiceScheduleModelStartDate = string | null;
+
+/**
+ * end date for service deliverance
+ */
+export type CartServiceScheduleModelEndDate = string | null;
+
+export interface CartServiceScheduleModel {
+  /** start date for service deliverance */
+  start_date?: CartServiceScheduleModelStartDate;
+  /** end date for service deliverance */
+  end_date?: CartServiceScheduleModelEndDate;
+  attendees?: CartServiceScheduleAttendees;
+}
+
+export type CartServiceSchedulesModel = CartServiceScheduleModel[];
+
+/**
+ * Service's stay index
+ * @minimum 0
+ */
+export type CartServiceModelStayIndex = number | null;
+
+export interface CartServiceModel {
+  /** service id */
+  id: string;
+  type: CartServiceTypeModel;
+  schedules?: CartServiceSchedulesModel;
+  /**
+   * Service's stay index
+   * @minimum 0
+   */
+  stay_index: CartServiceModelStayIndex;
+  sold_only_with?: MandatoryServiceIdModel;
+  not_compatible_with?: NotCompatibleServiceIdsModel;
+  _links?: LinksModel;
+}
+
+/**
+ * Cart services
+ */
+export type CartServicesModel = CartServiceModel[];
+
+export interface CartModel {
+  price: CartPrice;
+  services?: CartServicesModel;
+}
+
 export type CartUpgradeRoomPriceModelAnyOf = {
   /** Room price amount */
   amount: number;
@@ -1870,46 +2004,6 @@ export type CartUpgradeRoomAccommodationsModel = CartUpgradeRoomAccommodationMod
 export interface CartUpgradeRoomModel {
   price?: CartUpgradeRoomPriceModel;
   accommodations?: CartUpgradeRoomAccommodationsModel;
-}
-
-export interface PaymentScheduleDeadlineItemModel {
-  /** amount */
-  amount?: number;
-  /** Payment Deadline date */
-  deadline: string;
-}
-
-export type PaymentScheduleDeadlineItemsModel = PaymentScheduleDeadlineItemModel[];
-
-/**
- * The iso 3 currency. Ex: CNY,EUR,..
- * @minLength 3
- * @maxLength 3
- */
-export type PaymentScheduleModelCurrency = string | null;
-
-/**
- * paid
- */
-export type PaymentScheduleModelPaid = number | null;
-
-/**
- * paid
- */
-export type PaymentScheduleModelTotal = number | null;
-
-export interface PaymentScheduleModel {
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: PaymentScheduleModelCurrency;
-  /** paid */
-  paid?: PaymentScheduleModelPaid;
-  /** paid */
-  total?: PaymentScheduleModelTotal;
-  payment_schedules?: PaymentScheduleDeadlineItemsModel;
 }
 
 /**
@@ -2816,10 +2910,10 @@ export const AcceptLanguageParamModel = {
   'fr-TJ': 'fr-TJ',
   'en-GE': 'en-GE',
   'en-AZ': 'en-AZ',
-  'sk-SK': 'sk-SK',
-  'fr-TM': 'fr-TM',
   'es-DO': 'es-DO',
+  'fr-TM': 'fr-TM',
   'fr-TN': 'fr-TN',
+  'sk-SK': 'sk-SK',
 } as const;
 
 /**
@@ -2931,6 +3025,19 @@ export const getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules = (
 };
 
 /**
+ * @summary Get the services a cart contains for a given booking.
+ */
+export const getV1CustomersCustomerIdBookingsBookingIdCart = (
+  customerId: string,
+  bookingId: string,
+) => {
+  return fetcher<CartModel>({
+    url: `/v1/customers/${customerId}/bookings/${bookingId}/cart`,
+    method: 'GET',
+  });
+};
+
+/**
  * @summary Retrieves the accommodations a cart contains for a given booking.
  */
 export const getV0CustomersCustomerIdBookingsBookingIdCartAccommodations = (
@@ -2939,19 +3046,6 @@ export const getV0CustomersCustomerIdBookingsBookingIdCartAccommodations = (
 ) => {
   return fetcher<CartUpgradeRoomModel>({
     url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`,
-    method: 'GET',
-  });
-};
-
-/**
- * @summary Get the payment schedule for a cart that contains a given booking.
- */
-export const getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule = (
-  customerId: string,
-  bookingId: string,
-) => {
-  return fetcher<PaymentScheduleModel>({
-    url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/payment_schedule`,
     method: 'GET',
   });
 };
@@ -3058,11 +3152,11 @@ export type GetV3CustomersCustomerIdBookingsBookingIdResult = NonNullable<
 export type GetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResult = NonNullable<
   Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules>>
 >;
+export type GetV1CustomersCustomerIdBookingsBookingIdCartResult = NonNullable<
+  Awaited<ReturnType<typeof getV1CustomersCustomerIdBookingsBookingIdCart>>
+>;
 export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = NonNullable<
   Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartAccommodations>>
->;
-export type GetV0CustomersCustomerIdBookingsBookingIdCartPaymentScheduleResult = NonNullable<
-  Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule>>
 >;
 export type PostV1PaymentsResult = NonNullable<Awaited<ReturnType<typeof postV1Payments>>>;
 export type PostV3BookingsResult = NonNullable<Awaited<ReturnType<typeof postV3Bookings>>>;
