@@ -6,15 +6,14 @@
   build scripts under `scripts/`.
 - `packages/app` is the full-featured demo/acceptance app; UI assets live in `src/assets`, config and environment
   samples are under `config/`.
-- `packages/starter` provides a minimal integration example you can copy to new projects.
-- `packages/docs` holds integration docs and diagrams used for publishable documentation.
+- `packages/server` hosts the backend payment API (Ts.ED) consumed by the app and SDK.
 - Common tooling (ESLint, Vitest, Tailwind, Storybook, release config) is defined at the repo root so every package
   inherits the same setup.
 
 ## Build, Test & Development Commands
 
 - `pnpm install` — bootstrap the workspace (Node 20+, PNPM 9+ per `.nvmrc`).
-- `pnpm dev:app | dev:sdk | dev:starter | dev:storybook` — run the respective package in watch/dev mode.
+- `pnpm dev:app | dev:sdk | dev:storybook` — run the respective package in watch/dev mode.
 - `pnpm build` — type-check and bundle every package (use `--filter` to scope, e.g.,
   `pnpm --filter @clubmed/caps run build`).
 - `pnpm lint` / `pnpm lint:fix` — run ESLint with the shared config; fixes formatting/lint issues.
