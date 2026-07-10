@@ -52,6 +52,10 @@ Tip: use the Node version indicated by `.nvmrc`.
 
 ## Quick start
 
+- Create a booking and its payment page via the dataviz automated scenarios tool:
+
+  <https://dataviz.api.clubmed/tools/automated-scenarios/booking/create>
+
 - Run the demo application:
 
   ```sh
