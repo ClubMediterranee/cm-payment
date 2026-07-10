@@ -25,6 +25,10 @@ The app is a centralized payment application that provides a testing environment
 127.0.0.1 payment
 ```
 
+**Create a booking / payment page**: Use the dataviz automated scenarios tool, which creates a booking and builds the associated payment page:
+
+<https://dataviz.api.clubmed/tools/automated-scenarios/booking/create>
+
 ## Installation
 
 This package is part of the Club Med payment monorepo. Install dependencies from the project root:
