@@ -109,11 +109,23 @@ MockPaymentSchedule.COMPONENT_KEY = TOKENS.PaymentSchedule;
 const MockCgv = () => <div>Cgv</div>;
 MockCgv.COMPONENT_KEY = TOKENS.Cgv;
 
+const MockContactChoice = () => <div>ContactChoice</div>;
+MockContactChoice.COMPONENT_KEY = TOKENS.ContactChoice;
+
 const MockPaymentProviders = () => <div>PaymentProviders</div>;
 MockPaymentProviders.COMPONENT_KEY = TOKENS.PaymentProviders;
 
+const MockBillingAddress = () => <div>BillingAddress</div>;
+MockBillingAddress.COMPONENT_KEY = TOKENS.BillingAddress;
+
 const MockPaymentWidget = () => <div>PaymentWidget</div>;
 MockPaymentWidget.COMPONENT_KEY = TOKENS.PaymentWidget;
+
+const MockCardInstallments = () => <div>CardInstallments</div>;
+MockCardInstallments.COMPONENT_KEY = TOKENS.CardInstallments;
+
+const MockDonation = () => <div>Donation</div>;
+MockDonation.COMPONENT_KEY = TOKENS.Donation;
 
 const MockSubmitButton = ({ children }: { children: React.ReactNode }) => (
   <button>{children}</button>
@@ -142,19 +154,20 @@ describe('CapsForm', () => {
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    try {
+    expect(() => {
       render(
         <CapsForm action={Action.PAYMENT_CART}>
           <MockPaymentSchedule />
           <MockCgv />
           <MockPaymentProviders />
+          <MockBillingAddress />
           <MockPaymentWidget />
+          <MockCardInstallments />
           <MockSubmitButton>Payer</MockSubmitButton>
+          <MockDonation />
         </CapsForm>,
       );
-    } catch (error: any) {
-      expect(error.message).not.toContain('Missing required components');
-    }
+    }).not.toThrow(/Missing required components/);
 
     consoleErrorSpy.mockRestore();
     mockUseCapsConfigContext.mockClear();
@@ -191,17 +204,20 @@ describe('CapsForm', () => {
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    try {
+    expect(() => {
       render(
         <CapsForm action={Action.PAYMENT_CART}>
           <MockPaymentSchedule />
           <MockCgv />
+          <MockContactChoice />
           <MockPaymentProviders />
+          <MockBillingAddress />
+          <MockCardInstallments />
+          <MockSubmitButton>Payer</MockSubmitButton>
+          <MockDonation />
         </CapsForm>,
       );
-    } catch (error: any) {
-      expect(error.message).not.toContain('Missing required components');
-    }
+    }).not.toThrow(/Missing required components/);
 
     consoleErrorSpy.mockRestore();
     mockUseCapsConfigContext.mockClear();
@@ -228,7 +244,7 @@ describe('CapsForm', () => {
     mockUseCapsConfigContext.mockClear();
   });
 
-  it('accepte un formulaire minimal pour issuer PARTNERS', () => {
+  it('accepte tous les composants requis pour issuer PARTNERS', () => {
     mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
@@ -237,21 +253,26 @@ describe('CapsForm', () => {
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    try {
+    expect(() => {
       render(
         <CapsForm action={Action.PAYMENT_CART}>
-          <MockSubmitButton>Valider</MockSubmitButton>
+          <MockPaymentSchedule />
+          <MockCgv />
+          <MockContactChoice />
+          <MockPaymentProviders />
+          <MockBillingAddress />
+          <MockCardInstallments />
+          <MockSubmitButton>Payer</MockSubmitButton>
+          <MockDonation />
         </CapsForm>,
       );
-    } catch (error: any) {
-      expect(error.message).not.toContain('Missing required components');
-    }
+    }).not.toThrow(/Missing required components/);
 
     consoleErrorSpy.mockRestore();
     mockUseCapsConfigContext.mockClear();
   });
 
-  it('accepte un formulaire vide pour issuer PARTNERS', () => {
+  it('génère une erreur si composants manquants pour issuer PARTNERS', () => {
     mockUseCapsConfigContext.mockReturnValue({
       id: 'PROP001',
       content: {},
@@ -260,15 +281,13 @@ describe('CapsForm', () => {
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    try {
+    expect(() => {
       render(
         <CapsForm action={Action.PAYMENT_CART}>
           <div>Custom content</div>
         </CapsForm>,
       );
-    } catch (error: any) {
-      expect(error.message).not.toContain('Missing required components');
-    }
+    }).toThrow('Missing required components');
 
     consoleErrorSpy.mockRestore();
     mockUseCapsConfigContext.mockClear();
@@ -292,8 +311,11 @@ describe('CapsForm', () => {
           <MockPaymentSchedule />
           <MockCgv />
           <MockPaymentProviders />
+          <MockBillingAddress />
           <MockPaymentWidget />
+          <MockCardInstallments />
           <MockSubmitButton>Payer</MockSubmitButton>
+          <MockDonation />
         </CapsForm>,
       );
     } catch {
