@@ -10,13 +10,13 @@ export const AppSettings = {
   url: DOMAIN,
   api: {
     [OidcIssuerTypes.GM]: {
-      apiKey: import.meta.env.VITE_API_KEY,
+      apiKey: import.meta.env.VITE_GM_API_KEY,
     },
     [OidcIssuerTypes.GO]: {
-      apiKey: import.meta.env.VITE_SELLER_API_KEY,
+      apiKey: import.meta.env.VITE_GO_API_KEY,
     },
     [OidcIssuerTypes.PARTNERS]: {
-      apiKey: import.meta.env.VITE_SELLER_API_KEY,
+      apiKey: import.meta.env.VITE_PARTNERS_API_KEY,
     },
   },
   oidc: {

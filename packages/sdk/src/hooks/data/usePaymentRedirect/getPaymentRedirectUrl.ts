@@ -1,14 +1,9 @@
-import {
-  getV2ProposalsProposalId,
-  postV0PaymentsPaymentIdRedirectRequest,
-  postV1Payments,
-  postV3Bookings,
-} from '../../../__generated__';
+import { postV0PaymentsPaymentIdRedirectRequest, postV1Payments } from '../../../__generated__';
 import { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType as PaymentProviderDisplayType } from '../../../__generated__/bff/index.schemas';
 import { GLOBAL_CAPS_SETTINGS } from '../../../config';
 import { CapsFormSchema } from '../../../schemas/capsFormSchema';
-import { CapsSettings } from '../../../types/CapsSettings';
 import { getRedirectPaymentCallbackUrls } from '../../../utils/url/getRedirectPaymentCallbackUrls';
+import { resolveBooking } from './resolveBooking';
 
 const mapBillingDetails = (formData: CapsFormSchema) => {
   const { billing_details, template_id } = formData;
@@ -40,21 +35,9 @@ const mapBillingDetails = (formData: CapsFormSchema) => {
 
 export const getPaymentRedirectUrl = async (
   formData: CapsFormSchema,
-  { type, id, customerId }: Pick<CapsSettings, 'type' | 'id' | 'customerId'>,
+  { booking_id, customer_id }: Awaited<ReturnType<typeof resolveBooking>>,
   displayType?: PaymentProviderDisplayType,
 ) => {
-  let customer_id = customerId;
-  let booking_id = id;
-
-  if (type === 'proposal') {
-    const proposal = await getV2ProposalsProposalId(id);
-    const customerIdFromProposal = proposal?.households?.[0]?.attendees?.[0]?.customer_id || '';
-    const booking = await postV3Bookings({ proposal_id: id } as never);
-
-    customer_id = customerIdFromProposal;
-    booking_id = booking.booking_id;
-  }
-
   const { id: paymentId } = await postV1Payments({
     booking_id: booking_id!,
     customer_id: customer_id!,
@@ -66,7 +49,11 @@ export const getPaymentRedirectUrl = async (
     ...(formData.donation_amount ? { donation_amount: formData.donation_amount as 0 } : {}),
   });
 
-  const callbacks = getRedirectPaymentCallbackUrls(paymentId, formData.provider_id, displayType);
+  const callbacks = getRedirectPaymentCallbackUrls({
+    paymentId,
+    providerId: formData.provider_id,
+    params: { mode: displayType },
+  });
 
   const redirectParams = await postV0PaymentsPaymentIdRedirectRequest(paymentId, {
     ...callbacks,

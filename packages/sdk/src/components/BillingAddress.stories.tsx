@@ -151,7 +151,7 @@ const paymentProviders = [
   {
     id: 'CYBERSOURCE',
     label: 'Carte bancaire',
-    connection_type: 'REDIRECT',
+    connection_type: 'E-commerce' as const,
     category_payment_method: PaymentProvider1CategoryPaymentMethod.CreditCard,
     billing_address_form: true,
     required_delay_before_departure: 0,
@@ -312,12 +312,7 @@ export const WithProfilePrefill: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await waitFor(
-      () => {
-        expect(canvas.getByText('First Name', { exact: false })).toBeInTheDocument();
-      },
-      { timeout: 10000 },
-    );
+    await canvas.findByText('First Name', { exact: false }, { timeout: 10000 });
 
     await waitFor(
       () => {

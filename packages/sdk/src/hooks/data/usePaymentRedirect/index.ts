@@ -1,18 +1,13 @@
 import { noop, useMutation, useMutationState } from '@tanstack/react-query';
 
-import type { ProviderParametersModel } from '../../../__generated__/index.schemas';
 import type { CapsFormSchema } from '../../../schemas/capsFormSchema';
-import type { CallbackUrls } from '../../../utils/url/getRedirectPaymentCallbackUrls';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatchedPaymentProvider } from '../../utils/useWatchedPaymentProvider';
-import { getPaymentRedirectUrl } from './getPaymentRedirectUrl';
-
-export type PaymentRedirectResult = {
-  redirect: ProviderParametersModel;
-  payment: { paymentId: string; callbacks: CallbackUrls };
-};
+import { getPaymentRedirect } from './getPaymentRedirect';
 
 const paymentRedirectMutationKey = (type: string, id: string) => ['paymentRedirect', type, id];
+
+type PaymentRedirectResult = Awaited<ReturnType<typeof getPaymentRedirect>>;
 
 type Props = {
   onError?: (error: Error) => void;
@@ -25,21 +20,18 @@ export const usePaymentRedirect = ({
   onSuccess = noop,
   onLoadEnd = noop,
 }: Props = {}) => {
-  const { type, id, customerId } = useCapsConfigContext();
+  const { type, id, customerId, callbackUrlSeller } = useCapsConfigContext();
 
   const watchedPaymentProvider = useWatchedPaymentProvider();
 
-  const mutationFn = (formData: CapsFormSchema) => {
-    return getPaymentRedirectUrl(
-      formData,
-      { type, id, customerId },
-      watchedPaymentProvider?.configuration.display_type,
-    );
-  };
-
   return useMutation({
     mutationKey: paymentRedirectMutationKey(type, id),
-    mutationFn,
+    mutationFn: (formData: CapsFormSchema) =>
+      getPaymentRedirect(
+        formData,
+        { type, id, customerId, callbackUrlSeller },
+        watchedPaymentProvider,
+      ),
     onSuccess,
     onError,
     onSettled: onLoadEnd,

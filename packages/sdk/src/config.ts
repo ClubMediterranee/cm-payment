@@ -4,7 +4,6 @@ import { TOKENS } from './types/Tokens';
 
 export const GLOBAL_CAPS_SETTINGS = Object.freeze({
   thirdPartyIframeProviders: [PspProviders.MUPLIFT],
-  withContactMethodProviders: [PspProviders.EVOXPAY],
   templateIds: {
     email: '6',
     mobilePhone: '4',

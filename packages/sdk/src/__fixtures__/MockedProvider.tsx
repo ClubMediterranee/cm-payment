@@ -10,6 +10,7 @@ import { ACTION_RESOLVER_QUERY_KEY } from '../hooks/data/useActionResolver';
 import { PaymentConfigProvider } from '../providers/PaymentConfigProvider';
 import { sdkQueryClient } from '../providers/QueryClientProvider';
 import { CapsFormSchema } from '../schemas/capsFormSchema';
+import { CapsFormConfig } from '../types/CapsFormConfig';
 import { OidcIssuerTypes, OidcSettings } from '../types/CapsSettings';
 import { Content } from '../types/Content';
 import { mergeFromPattern } from '../utils/mergeFromPattern';
@@ -27,6 +28,7 @@ interface MockedProviderProps {
   content?: Content;
   maxAmount?: number;
   locale?: string;
+  getProviderValidation?: CapsFormConfig['getProviderValidation'];
 }
 
 export const MockedProvider = ({
@@ -40,6 +42,7 @@ export const MockedProvider = ({
   defaultValues,
   maxAmount = 10000,
   locale = 'fr-FR',
+  getProviderValidation = () => undefined,
 }: MockedProviderProps) => {
   const isSeller = [OidcIssuerTypes.PARTNERS, OidcIssuerTypes.GO].includes(
     oidc?.issuerType as OidcIssuerTypes,
@@ -53,7 +56,7 @@ export const MockedProvider = ({
     content: mergeFromPattern(defaultContent, content),
     isSeller,
     maxAmount,
-    getProviderValidation: () => undefined,
+    getProviderValidation,
   });
 
   useEffect(() => {

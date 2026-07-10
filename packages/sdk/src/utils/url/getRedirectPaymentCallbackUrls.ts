@@ -1,14 +1,19 @@
-import { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType as PaymentProviderDisplayType } from '../../__generated__/bff/index.schemas';
 import { getPaymentConfig } from '../../providers/PaymentConfigProvider';
 import { OidcIssuerTypes } from '../../types/CapsSettings';
 
 export type CallbackUrls = { callback_url: string; callback_url_seller?: string };
 
-export function getRedirectPaymentCallbackUrls(
-  paymentId: string,
-  providerId: string,
-  displayType?: PaymentProviderDisplayType,
-): CallbackUrls {
+type GetRedirectPaymentCallbackUrlsParams = {
+  paymentId: string;
+  providerId: string;
+  params?: Record<string, string | number | undefined>;
+};
+
+export function getRedirectPaymentCallbackUrls({
+  paymentId,
+  providerId,
+  params = {},
+}: GetRedirectPaymentCallbackUrlsParams): CallbackUrls {
   const {
     api,
     oidc: { issuerType },
@@ -31,9 +36,11 @@ export function getRedirectPaymentCallbackUrls(
     baseUrl.searchParams.set('proposal_id', id);
   }
 
-  if (displayType) {
-    baseUrl.searchParams.set('mode', displayType);
-  }
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined) {
+      baseUrl.searchParams.set(key, String(value));
+    }
+  });
 
   const clientUrl = new URL(baseUrl);
   clientUrl.searchParams.set('callback_url', callbackUrl || '');

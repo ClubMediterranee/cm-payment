@@ -36,17 +36,17 @@ describe('configMatchRules', () => {
   const rules = configMatchRules({ locale: 'fr-FR', issuer: OidcIssuerTypes.GM });
 
   it('first rule matches when locale and issuer match', () => {
-    expect(rules[0]({ locale: 'fr-FR', issuer: 'GM', value: null })).toBe(true);
+    expect(rules[0]({ locale: 'fr-FR', issuer: 'GM' })).toBe(true);
   });
 
   it('second rule matches the global fallback (locale null) with the same issuer', () => {
-    expect(rules[1]({ locale: null, issuer: 'GM', value: null })).toBe(true);
-    expect(rules[1]({ locale: 'fr-FR', issuer: 'GM', value: null })).toBe(false);
+    expect(rules[1]({ locale: null, issuer: 'GM' })).toBe(true);
+    expect(rules[1]({ locale: 'fr-FR', issuer: 'GM' })).toBe(false);
   });
 
   it('third rule matches the locale when no issuer is set', () => {
-    expect(rules[2]({ locale: 'fr-FR', value: null })).toBe(true);
-    expect(rules[2]({ locale: 'fr-FR', issuer: 'GO', value: null })).toBe(false);
+    expect(rules[2]({ locale: 'fr-FR' })).toBe(true);
+    expect(rules[2]({ locale: 'fr-FR', issuer: 'GO' })).toBe(false);
   });
 });
 

@@ -2,8 +2,13 @@ import { GLOBAL_CAPS_SETTINGS } from '../../config';
 import { emailRegex } from '../../utils/regex';
 import type { Validate } from '../capsFormSchema';
 
-export const validateEmail: Validate = (data, { isSeller, content }) => {
-  if (isSeller && data.template_id === GLOBAL_CAPS_SETTINGS.templateIds.email) {
+export const validateEmail: Validate = (data, { content, getProviderValidation }) => {
+  const validation = getProviderValidation(data.provider_id);
+
+  if (
+    validation?.requires_contact_choice &&
+    data.template_id === GLOBAL_CAPS_SETTINGS.templateIds.email
+  ) {
     const email = data.billing_details?.email;
     if (!email || email.trim() === '') {
       return {

@@ -15,10 +15,7 @@ export class PaymentConfigController {
   @Get('/')
   @Summary('Get payment configuration for a given locale and issuer type')
   @Returns(200, PaymentConfig)
-  async getPaymentConfig(
-    @Locale() locale: string,
-    @IssuerType() issuerType: OidcIssuerTypes,
-  ): Promise<PaymentConfig> {
+  async getPaymentConfig(@Locale() locale: string, @IssuerType() issuerType: OidcIssuerTypes) {
     return this.paymentConfigService.getPaymentConfig({ locale, issuerType });
   }
 }

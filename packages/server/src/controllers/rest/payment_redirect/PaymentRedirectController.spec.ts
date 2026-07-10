@@ -10,6 +10,7 @@ describe('PaymentRedirectController', () => {
   beforeEach(() => {
     mockPaymentService = {
       handlePaymentRedirect: vi.fn(),
+      confirmBookingWithoutPayment: vi.fn(),
     };
 
     mockViews = {
@@ -18,7 +19,7 @@ describe('PaymentRedirectController', () => {
 
     controller = new PaymentRedirectController();
 
-    Object.defineProperty(controller, 'paymentConfirmationService', {
+    Object.defineProperty(controller, 'paymentRedirectService', {
       get: () => mockPaymentService,
       configurable: true,
     });
@@ -26,6 +27,34 @@ describe('PaymentRedirectController', () => {
     Object.defineProperty(controller, 'views', {
       get: () => mockViews,
       configurable: true,
+    });
+  });
+
+  describe('paymentless()', () => {
+    it('should confirm the booking and return the confirmation redirect as JSON', async () => {
+      mockPaymentService.confirmBookingWithoutPayment.mockResolvedValue(
+        'https://example.com/confirmation?payment_status=OK',
+      );
+
+      const body = {
+        callback_url: 'https://example.com/confirmation',
+        booking_id: 'BOOK_OK',
+        customer_id: 'CUST_1',
+        provider_id: 'MANUAL',
+        amount: '100',
+        currency: 'EUR',
+      };
+
+      const result = await controller.paymentless(body, 'fr-FR');
+
+      expect(mockPaymentService.confirmBookingWithoutPayment).toHaveBeenCalledWith('BOOK_OK', {
+        ...body,
+        locale: 'fr-FR',
+      });
+      expect(result).toEqual({
+        url: 'https://example.com/confirmation?payment_status=OK',
+        method: 'GET',
+      });
     });
   });
 

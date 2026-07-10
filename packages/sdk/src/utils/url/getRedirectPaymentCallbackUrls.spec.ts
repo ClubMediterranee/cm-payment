@@ -25,7 +25,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: undefined,
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-456',
+        providerId: 'PROVIDER-789',
+        params: { mode: 'redirect' },
+      });
 
       expect(result).toEqual({
         callback_url:
@@ -45,7 +49,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://app.clubmed.com/seller/dashboard',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-456',
+        providerId: 'PROVIDER-789',
+        params: { mode: 'redirect' },
+      });
 
       expect(result).toEqual({
         callback_url:
@@ -67,7 +75,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: undefined,
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-456',
+        providerId: 'PROVIDER-789',
+        params: { mode: 'redirect' },
+      });
 
       expect(result).toEqual({
         callback_url:
@@ -87,7 +99,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://app.clubmed.com/seller/dashboard',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-456',
+        providerId: 'PROVIDER-789',
+        params: { mode: 'redirect' },
+      });
 
       expect(result).toEqual({
         callback_url:
@@ -110,7 +126,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: undefined,
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-777', 'PROVIDER-888', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-777',
+        providerId: 'PROVIDER-888',
+        params: { mode: 'redirect' },
+      });
 
       expect(result).toEqual({
         callback_url:
@@ -130,7 +150,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://partner.com/seller/dashboard',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-777', 'PROVIDER-888', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-777',
+        providerId: 'PROVIDER-888',
+        params: { mode: 'redirect' },
+      });
 
       expect(result).toEqual({
         callback_url:
@@ -153,7 +177,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: undefined,
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-456',
+        providerId: 'PROVIDER-789',
+        params: { mode: 'redirect' },
+      });
 
       expect(result).toEqual({
         callback_url:
@@ -172,7 +200,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://app.clubmed.com/seller',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', '', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-456',
+        providerId: '',
+        params: { mode: 'redirect' },
+      });
 
       expect(result).toEqual({
         callback_url:
@@ -193,7 +225,11 @@ describe('getRedirectPaymentCallbackUrls', () => {
         callbackUrlSeller: 'https://app.clubmed.com/seller',
       } as any);
 
-      const result = getRedirectPaymentCallbackUrls('payment-456', 'PROVIDER-789', 'redirect');
+      const result = getRedirectPaymentCallbackUrls({
+        paymentId: 'payment-456',
+        providerId: 'PROVIDER-789',
+        params: { mode: 'redirect' },
+      });
 
       expect(result.callback_url).toContain('proposal_id=proposal-555');
       expect(result.callback_url_seller).toContain('proposal_id=proposal-555');

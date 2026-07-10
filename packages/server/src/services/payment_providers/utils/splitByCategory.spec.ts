@@ -20,7 +20,7 @@ describe('splitByCategory', () => {
         display_type: 'redirect',
         confirmation_strategy: 'status',
         settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
+        requires_contact_choice: false,
       },
       payment_conditions: {},
     } as const;
@@ -48,7 +48,7 @@ describe('splitByCategory', () => {
         display_type: 'redirect',
         confirmation_strategy: 'status',
         settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
+        requires_contact_choice: false,
       },
       payment_conditions: {},
     } as const;
@@ -76,7 +76,7 @@ describe('splitByCategory', () => {
         display_type: 'redirect',
         confirmation_strategy: 'status',
         settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
+        requires_contact_choice: false,
       },
       payment_conditions: {},
     } as const;
@@ -91,7 +91,7 @@ describe('splitByCategory', () => {
         display_type: 'redirect',
         confirmation_strategy: 'status',
         settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
+        requires_contact_choice: false,
       },
       payment_conditions: {},
     } as const;
@@ -120,7 +120,7 @@ describe('splitByCategory', () => {
         display_type: 'redirect',
         confirmation_strategy: 'status',
         settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
+        requires_contact_choice: false,
       },
       payment_conditions: {},
     } as const;
@@ -135,7 +135,7 @@ describe('splitByCategory', () => {
         display_type: 'redirect',
         confirmation_strategy: 'status',
         settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
+        requires_contact_choice: false,
       },
       payment_conditions: {},
     } as const;
@@ -165,7 +165,7 @@ describe('splitByCategory', () => {
         display_type: 'redirect',
         confirmation_strategy: 'status',
         settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
+        requires_contact_choice: false,
       },
       payment_conditions: {},
     } as const;
@@ -193,7 +193,7 @@ describe('splitByCategory', () => {
         display_type: 'redirect',
         confirmation_strategy: 'status',
         settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
+        requires_contact_choice: false,
       },
       payment_conditions: {},
     } as const;
@@ -216,7 +216,7 @@ describe('splitByCategory', () => {
           display_type: 'redirect',
           confirmation_strategy: 'status',
           settings: {},
-          validation: { requires_token: false, requires_expiry_date: false },
+          requires_contact_choice: false,
         },
         payment_conditions: {},
       },
@@ -231,7 +231,7 @@ describe('splitByCategory', () => {
           display_type: 'redirect',
           confirmation_strategy: 'status',
           settings: {},
-          validation: { requires_token: false, requires_expiry_date: false },
+          requires_contact_choice: false,
         },
         payment_conditions: {},
       },
@@ -246,7 +246,7 @@ describe('splitByCategory', () => {
           display_type: 'redirect',
           confirmation_strategy: 'status',
           settings: {},
-          validation: { requires_token: false, requires_expiry_date: false },
+          requires_contact_choice: false,
         },
         payment_conditions: {},
       },

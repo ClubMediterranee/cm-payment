@@ -247,6 +247,7 @@ export interface CapsProviderConfiguration {
   requires_expiry_date?: boolean | null;
   settings?: Array<{ key: string; type: 'boolean' | 'number' | 'string'; value: string }> | null;
   requires_card_holder?: boolean | null;
+  requires_contact_choice?: Array<'PARTNERS' | 'GO' | 'GM'> | null;
 }
 
 export interface CapsProvider {
@@ -259,7 +260,7 @@ export interface CapsProvider {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   /** @required */
-  default_display_type: 'hosted_field' | 'iframe' | 'redirect' | 'custom';
+  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom';
   image_url?: string | null;
   category_payment_method?:
     | 'credit_card'

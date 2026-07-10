@@ -5,15 +5,6 @@ import { Action } from '../__generated__/index.schemas';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { TOKENS } from '../types/Tokens';
 
-vi.mock('../hooks/utils/useCapsConfigContext');
-vi.mock('../hooks/data/usePaymentConfig');
-vi.mock('../hooks/data/useActionResolver');
-vi.mock('../hooks/data/usePaymentProviders');
-vi.mock('../hooks/data/usePaymentSchedule');
-vi.mock('../hooks/useCapsForm');
-vi.mock('../components/Form');
-vi.mock('react-error-boundary');
-
 const mockUseCapsConfigContext = vi.fn(() => ({
   id: 'PROP001',
   content: {},
