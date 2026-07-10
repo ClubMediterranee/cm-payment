@@ -4,7 +4,7 @@ Centralized payment application for testing Club Med's payment workflows with co
 
 ## Description
 
-The app is a centralized payment application that provides a testing environment for Club Med's payment flows. It accepts URL parameters to configure the payment context including locale, booking/proposal IDs, and OIDC issuer types. This application is designed to work in conjunction with the starter package to provide a complete payment workflow testing experience.
+The app is a centralized payment application that provides a testing environment for Club Med's payment flows. It accepts URL parameters to configure the payment context including locale, booking/proposal IDs, and OIDC issuer types.
 
 ## Features
 
@@ -19,14 +19,11 @@ The app is a centralized payment application that provides a testing environment
 
 ## Prerequisites
 
-**Important**: To properly test the payment workflow in the app, you must first run the starter application:
+**Host Configuration**: Ensure your `/etc/hosts` file is configured with:
 
-1. **Start the Starter Application**: The `packages/starter` project provides the front-end interface to initiate payment workflows
-2. **Host Configuration**: Ensure your `/etc/hosts` file is configured with:
-   ```
-   127.0.0.1 payment-starter
-   127.0.0.1 payment
-   ```
+```
+127.0.0.1 payment
+```
 
 ## Installation
 
@@ -116,11 +113,10 @@ https://cm-payment:4003/:issuer/:type/:id/:locale?customer_id=123
 
 ### Workflow Integration
 
-1. **Start with Starter App**: Use `packages/starter` to configure and initiate payment flows
-2. **Automatic Redirect**: The starter app will redirect to the app with appropriate parameters
-3. **Payment Processing**: The app handles the complete payment workflow
-4. **Authentication**: Automatic OIDC authentication for booking-based payments
-5. **Completion**: Redirect to confirmation page upon successful payment
+1. **Open a payment URL**: Navigate to the app with the appropriate path and query parameters (see URL Structure above)
+2. **Payment Processing**: The app handles the complete payment workflow
+3. **Authentication**: Automatic OIDC authentication for booking-based payments
+4. **Completion**: Redirect to confirmation page upon successful payment
 
 ## Dependencies
 
@@ -183,7 +179,6 @@ src/
 
 1. **Configure hosts file** (`/etc/hosts`):
    ```
-   127.0.0.1 payment-starter
    127.0.0.1 payment
    ```
 
@@ -193,8 +188,7 @@ src/
 2. Clone the repository and navigate to the project root
 3. Install dependencies: `pnpm install`
 4. Configure the hosts file as described above
-5. Start the starter application: `cd packages/starter && pnpm dev`
-6. In a new terminal, start the app: `cd packages/app && pnpm dev`
+5. Start the app: `cd packages/app && pnpm dev`
 
 ## Building for Production
 
@@ -204,23 +198,19 @@ pnpm build
 
 The built files will be available in the `dist` directory.
 
-## Testing with Starter
+## Testing
 
-To properly test the app:
+To test the app:
 
-1. **Start both applications:**
-   - Starter: `https://payment-starter:4004`
+1. **Start the application:**
    - App: `https://cm-payment:4003`
 
-2. **Use the starter interface** to:
+2. **Open a payment URL** with the appropriate path and query parameters to:
    - Select locale and OIDC provider
    - Configure customer ID, booking ID, or proposal ID
-   - Click "Start flow" to initiate payment
 
-3. **The starter will redirect** to the app with appropriate parameters
-
-4. **Complete the payment flow** in the app interface
+3. **Complete the payment flow** in the app interface
 
 ## Contributing
 
-This package is part of the Club Med payment system. Please follow the project's contribution guidelines and ensure all changes are properly tested with both the starter and app applications.
+This package is part of the Club Med payment system. Please follow the project's contribution guidelines and ensure all changes are properly tested.
