@@ -8,6 +8,11 @@ vi.mock('../../infra/api/__generated__/index.js', () => ({
   getV0PaymentsPaymentIdStatus: vi.fn(),
   postV1PaymentsPaymentIdNotify: vi.fn(),
   patchV2BookingsBookingId: vi.fn(),
+  postV1Payments: vi.fn(),
+  postV0PaymentsPaymentIdRedirectRequest: vi.fn(),
+  postV0PaymentProvidersProviderIdRequestToken: vi.fn(),
+  getV2ProposalsProposalId: vi.fn(),
+  postV3Bookings: vi.fn(),
   PaymentStatus: {
     PENDING: 'PENDING',
     OK: 'OK',
@@ -20,7 +25,10 @@ vi.mock('../../infra/api/__generated__/index.js', () => ({
 
 const getPaymentProvidersConfig = vi.fn();
 
-function invokeService() {
+const BASE_URL = 'https://bff.test';
+
+async function invokeService() {
+  await DITest.create({ BASE_URL } as Partial<TsED.Configuration>);
   return DITest.invoke<PaymentRedirectService>(PaymentRedirectService, [
     { token: PaymentConfigService, use: { getPaymentProvidersConfig } },
   ]);
@@ -261,19 +269,26 @@ describe('PaymentRedirectService', () => {
     });
   });
 
-  describe('confirmBookingWithoutPayment', () => {
-    it('should validate the booking and redirect with payment_status=OK on success', async () => {
-      const service = await invokeService();
+  describe('manual provider confirmation', () => {
+    const context = { locale: 'fr-FR' };
+    const manualBody = {
+      type: 'booking' as const,
+      id: 'BOOK_OK',
+      customer_id: 'CUST1',
+      provider_id: 'MMANUAL',
+      connection_type: 'Manual',
+      action: 'PAYMENT_RESA' as any,
+      amount: '100',
+      currency: 'EUR',
+      callback_url: 'https://client.callback',
+      callback_url_seller: 'https://example.com/callback',
+    };
 
+    it('validates the booking and redirects with payment_status=OK on success', async () => {
+      const service = await invokeService();
       vi.mocked(api.patchV2BookingsBookingId).mockResolvedValue(undefined as any);
 
-      const redirectUrl = await service.confirmBookingWithoutPayment('BOOK_OK', {
-        callback_url: 'https://example.com/callback',
-        provider_id: 'MMANUAL',
-        customer_id: 'CUST1',
-        amount: '100',
-        currency: 'EUR',
-      });
+      const { redirect } = await service.createPaymentRedirect(manualBody, context);
 
       expect(api.patchV2BookingsBookingId).toHaveBeenCalledWith('BOOK_OK', {
         booking_status: 'VALIDATED',
@@ -281,31 +296,249 @@ describe('PaymentRedirectService', () => {
         currency: 'EUR',
         payments: [{ method_id: 'MMANUAL', amount: 100 }],
       });
-      expect(redirectUrl).toContain('https://example.com/callback');
-      expect(redirectUrl).toContain('payment_status=OK');
-      expect(redirectUrl).toContain('booking_id=BOOK_OK');
-      expect(redirectUrl).toContain('payment_amount=100');
-      expect(redirectUrl).toContain('payment_currency=EUR');
+      expect(redirect.url).toContain('https://example.com/callback');
+      expect(redirect.url).toContain('payment_status=OK');
+      expect(redirect.url).toContain('booking_id=BOOK_OK');
+      expect(redirect.url).toContain('payment_amount=100');
+      expect(redirect.url).toContain('payment_currency=EUR');
     });
 
-    it('should redirect with payment_status=REFUSED_CM when the booking PATCH fails', async () => {
+    it('redirects with payment_status=REFUSED_CM when the booking PATCH fails', async () => {
       const service = await invokeService();
-
       vi.mocked(api.patchV2BookingsBookingId).mockRejectedValue(new Error('Unauthorized'));
 
-      const redirectUrl = await service.confirmBookingWithoutPayment('BOOK_KO', {
-        callback_url: 'https://example.com/callback',
-        provider_id: 'MMANUAL',
-        customer_id: 'CUST2',
-        amount: '250',
-        currency: 'USD',
-      });
+      const { redirect } = await service.createPaymentRedirect(
+        { ...manualBody, id: 'BOOK_KO', customer_id: 'CUST2', amount: '250', currency: 'USD' },
+        context,
+      );
 
-      expect(redirectUrl).toContain('https://example.com/callback');
-      expect(redirectUrl).toContain('payment_status=REFUSED_CM');
-      expect(redirectUrl).toContain('booking_id=BOOK_KO');
-      expect(redirectUrl).toContain('payment_amount=250');
-      expect(redirectUrl).toContain('payment_currency=USD');
+      expect(redirect.url).toContain('https://example.com/callback');
+      expect(redirect.url).toContain('payment_status=REFUSED_CM');
+      expect(redirect.url).toContain('booking_id=BOOK_KO');
+      expect(redirect.url).toContain('payment_amount=250');
+      expect(redirect.url).toContain('payment_currency=USD');
+    });
+  });
+
+  describe('createPaymentRedirect', () => {
+    const baseBody = {
+      type: 'booking' as const,
+      id: 'BOOK1',
+      customer_id: 'CUST1',
+      provider_id: 'EVOXPAY',
+      action: 'PAYMENT_RESA' as any,
+      amount: '100',
+      currency: 'EUR',
+      callback_url: 'https://client.callback',
+    };
+
+    const context = { locale: 'fr-FR' };
+
+    beforeEach(() => {
+      vi.mocked(api.postV1Payments).mockResolvedValue({ id: 'PAY1' } as any);
+      vi.mocked(api.postV0PaymentsPaymentIdRedirectRequest).mockResolvedValue({
+        url: 'https://psp',
+        method: 'GET',
+      } as any);
+      mockStrategy('EVOXPAY', 'status');
+    });
+
+    it('creates the payment and returns the provider redirect for a standard payment', async () => {
+      const service = await invokeService();
+
+      const result = await service.createPaymentRedirect(
+        { ...baseBody, template_id: '6' },
+        context,
+      );
+
+      expect(api.postV1Payments).toHaveBeenCalledWith(
+        expect.objectContaining({
+          booking_id: 'BOOK1',
+          customer_id: 'CUST1',
+          provider_id: 'EVOXPAY',
+          amount: 100,
+          action: 'PAYMENT_RESA',
+        }),
+      );
+      expect(api.postV0PaymentProvidersProviderIdRequestToken).not.toHaveBeenCalled();
+      expect(api.postV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith(
+        'PAY1',
+        expect.objectContaining({ template_id: '6' }),
+      );
+      expect(result.payment?.callbacks.callback_url).toContain('mode=redirect');
+      expect(result.payment?.callbacks.callback_url).toContain(
+        `${BASE_URL}/rest/payment_redirect/PAY1`,
+      );
+      expect(result).toEqual({
+        redirect: { url: 'https://psp', method: 'GET' },
+        payment: {
+          paymentId: 'PAY1',
+          callbacks: { callback_url: expect.stringContaining('/rest/payment_redirect/PAY1') },
+        },
+      });
+    });
+
+    it('requests a provider token with uuid for an incoming DTMF call and injects open_id', async () => {
+      const service = await invokeService();
+      vi.mocked(api.postV0PaymentProvidersProviderIdRequestToken).mockResolvedValue({
+        token: 'DTMF_TOKEN',
+      } as any);
+
+      await service.createPaymentRedirect(
+        { ...baseBody, template_id: '1', uuid: 'CALL_UUID' },
+        context,
+      );
+
+      expect(api.postV0PaymentProvidersProviderIdRequestToken).toHaveBeenCalledWith('EVOXPAY', {
+        params: { uuid: 'CALL_UUID' },
+      });
+      expect(api.postV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledWith(
+        'PAY1',
+        expect.objectContaining({ open_id: 'DTMF_TOKEN' }),
+      );
+    });
+
+    it('requests a provider token with reference for an outgoing DTMF call', async () => {
+      const service = await invokeService();
+      vi.mocked(api.postV0PaymentProvidersProviderIdRequestToken).mockResolvedValue({
+        token: 'DTMF_TOKEN',
+      } as any);
+
+      await service.createPaymentRedirect(
+        { ...baseBody, template_id: '1', reference: 'CONTACT_REF' },
+        context,
+      );
+
+      expect(api.postV0PaymentProvidersProviderIdRequestToken).toHaveBeenCalledWith('EVOXPAY', {
+        params: { reference: 'CONTACT_REF' },
+      });
+    });
+
+    it('retries the redirect request for DTMF until the backoffice finds the secured call', async () => {
+      vi.useFakeTimers();
+      const service = await invokeService();
+      vi.mocked(api.postV0PaymentProvidersProviderIdRequestToken).mockResolvedValue({
+        token: 'DTMF_TOKEN',
+      } as any);
+      vi.mocked(api.postV0PaymentsPaymentIdRedirectRequest)
+        .mockRejectedValueOnce(new Error('secured call not found'))
+        .mockRejectedValueOnce(new Error('secured call not found'))
+        .mockResolvedValueOnce({ url: 'https://psp', method: 'GET' } as any);
+
+      const promise = service.createPaymentRedirect(
+        { ...baseBody, template_id: '1', uuid: 'CALL_UUID' },
+        context,
+      );
+
+      await vi.runAllTimersAsync();
+      const result = await promise;
+
+      expect(api.postV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledTimes(3);
+      expect(result.redirect).toEqual({ url: 'https://psp', method: 'GET' });
+      vi.useRealTimers();
+    });
+
+    it('does not retry a standard (non-DTMF) redirect request', async () => {
+      const service = await invokeService();
+      vi.mocked(api.postV0PaymentsPaymentIdRedirectRequest).mockRejectedValueOnce(
+        new Error('boom'),
+      );
+
+      await expect(
+        service.createPaymentRedirect({ ...baseBody, template_id: '6' }, context),
+      ).rejects.toThrow('boom');
+      expect(api.postV0PaymentsPaymentIdRedirectRequest).toHaveBeenCalledTimes(1);
+    });
+
+    it('resolves a booking from a proposal before creating the payment', async () => {
+      const service = await invokeService();
+      vi.mocked(api.getV2ProposalsProposalId).mockResolvedValue({
+        households: [{ attendees: [{ customer_id: 'CUST_FROM_PROPOSAL' }] }],
+      } as any);
+      vi.mocked(api.postV3Bookings).mockResolvedValue({ booking_id: 'BOOK_FROM_PROPOSAL' } as any);
+
+      await service.createPaymentRedirect(
+        { ...baseBody, type: 'proposal', id: 'PROP1', customer_id: undefined, template_id: '6' },
+        context,
+      );
+
+      expect(api.getV2ProposalsProposalId).toHaveBeenCalledWith('PROP1');
+      expect(api.postV1Payments).toHaveBeenCalledWith(
+        expect.objectContaining({
+          booking_id: 'BOOK_FROM_PROPOSAL',
+          customer_id: 'CUST_FROM_PROPOSAL',
+        }),
+      );
+    });
+
+    it('confirms the booking without payment for a manual provider', async () => {
+      const service = await invokeService();
+      vi.mocked(api.patchV2BookingsBookingId).mockResolvedValue(undefined as any);
+
+      const result = await service.createPaymentRedirect(
+        {
+          ...baseBody,
+          connection_type: 'Manual',
+          callback_url_seller: 'https://seller.callback',
+          template_id: '6',
+        },
+        context,
+      );
+
+      expect(api.postV1Payments).not.toHaveBeenCalled();
+      expect(api.postV0PaymentsPaymentIdRedirectRequest).not.toHaveBeenCalled();
+      expect(result.redirect.method).toBe('GET');
+      expect(result.redirect.url).toContain('https://seller.callback');
+      expect(result.payment).toBeUndefined();
+    });
+
+    it('confirms a manual proposal and carries the proposal id in the redirect', async () => {
+      const service = await invokeService();
+      vi.mocked(api.getV2ProposalsProposalId).mockResolvedValue({
+        households: [{ attendees: [{ customer_id: 'CUST_FROM_PROPOSAL' }] }],
+      } as any);
+      vi.mocked(api.postV3Bookings).mockResolvedValue({ booking_id: 'BOOK_FROM_PROPOSAL' } as any);
+      vi.mocked(api.patchV2BookingsBookingId).mockResolvedValue(undefined as any);
+
+      const result = await service.createPaymentRedirect(
+        {
+          ...baseBody,
+          type: 'proposal',
+          id: 'PROP1',
+          customer_id: undefined,
+          connection_type: 'Manual',
+          callback_url_seller: 'https://seller.callback',
+        },
+        context,
+      );
+
+      expect(api.patchV2BookingsBookingId).toHaveBeenCalledWith(
+        'BOOK_FROM_PROPOSAL',
+        expect.anything(),
+      );
+      expect(result.redirect.url).toContain('proposal_id=PROP1');
+    });
+
+    it('throws for a manual provider without a seller callback url', async () => {
+      const service = await invokeService();
+      vi.mocked(api.patchV2BookingsBookingId).mockResolvedValue(undefined as any);
+
+      await expect(
+        service.createPaymentRedirect({ ...baseBody, connection_type: 'Manual' }, context),
+      ).rejects.toThrow('callback_url is required');
+    });
+
+    it('forwards the donation amount when creating the payment', async () => {
+      const service = await invokeService();
+
+      await service.createPaymentRedirect(
+        { ...baseBody, template_id: '6', donation_amount: 20 },
+        context,
+      );
+
+      expect(api.postV1Payments).toHaveBeenCalledWith(
+        expect.objectContaining({ donation_amount: 20 }),
+      );
     });
   });
 });

@@ -43,27 +43,61 @@ export interface PaymentSettings {
   [key: string]: unknown;
 }
 
-export interface PaymentRedirectResultModel {
+export interface PaymentRedirectRequestResult {
+  redirect: ProviderRedirectModel;
+  payment?: PaymentInfoModel;
+}
+
+export type ProviderRedirectModelHeaders = { [key: string]: unknown };
+
+export interface ProviderRedirectModel {
   /** @minLength 1 */
   url: string;
   /** @minLength 1 */
   method: string;
+  body?: string;
+  headers?: ProviderRedirectModelHeaders;
 }
 
-export interface PaymentlessBody {
+export interface PaymentInfoModel {
+  /** @minLength 1 */
+  paymentId: string;
+  callbacks: RedirectCallbacksModel;
+}
+
+export interface RedirectCallbacksModel {
   /** @minLength 1 */
   callback_url: string;
+  callback_url_seller?: string;
+}
+
+export type PaymentRedirectRequestBodyBillingDetails = { [key: string]: unknown };
+
+export interface PaymentRedirectRequestBody {
   /** @minLength 1 */
-  booking_id: string;
+  type: string;
   /** @minLength 1 */
-  customer_id: string;
+  id: string;
+  customer_id?: string;
   /** @minLength 1 */
   provider_id: string;
+  connection_type?: string;
+  /** @minLength 1 */
+  action: string;
   /** @minLength 1 */
   amount: string;
   /** @minLength 1 */
   currency: string;
-  proposal_id?: string;
+  payment_condition_id?: string;
+  template_id?: string;
+  billing_details?: PaymentRedirectRequestBodyBillingDetails;
+  donation_amount?: number;
+  token?: string;
+  /** @minLength 1 */
+  callback_url: string;
+  callback_url_seller?: string;
+  uuid?: string;
+  reference?: string;
 }
 
 export interface PaymentScheduleOutputModel {

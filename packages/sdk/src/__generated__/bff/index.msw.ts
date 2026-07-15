@@ -12,7 +12,7 @@ import type { RequestHandlerOptions } from 'msw';
 import type {
   PaymentConfig,
   PaymentProvidersControllerGetPaymentProviders200,
-  PaymentRedirectResultModel,
+  PaymentRedirectRequestResult,
   PaymentScheduleOutputModel,
   ResolvedActionModel,
   VersionInfo,
@@ -314,11 +314,31 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
   ...overrideResponse,
 });
 
-export const getPaymentRedirectControllerPaymentlessResponseMock = (
-  overrideResponse: Partial<PaymentRedirectResultModel> = {},
-): PaymentRedirectResultModel => ({
-  url: faker.string.alpha({ length: { min: 1, max: 20 } }),
-  method: faker.string.alpha({ length: { min: 1, max: 20 } }),
+export const getPaymentRedirectControllerCreateResponseMock = (
+  overrideResponse: Partial<PaymentRedirectRequestResult> = {},
+): PaymentRedirectRequestResult => ({
+  redirect: {
+    url: faker.string.alpha({ length: { min: 1, max: 20 } }),
+    method: faker.string.alpha({ length: { min: 1, max: 20 } }),
+    body: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    headers: faker.helpers.arrayElement([{}, undefined]),
+  },
+  payment: faker.helpers.arrayElement([
+    {
+      paymentId: faker.string.alpha({ length: { min: 1, max: 20 } }),
+      callbacks: {
+        callback_url: faker.string.alpha({ length: { min: 1, max: 20 } }),
+        callback_url_seller: faker.helpers.arrayElement([
+          faker.string.alpha({ length: { min: 10, max: 20 } }),
+          undefined,
+        ]),
+      },
+    },
+    undefined,
+  ]),
   ...overrideResponse,
 });
 
@@ -434,16 +454,16 @@ export const getPaymentProvidersControllerGetPaymentProvidersMockHandler = (
   );
 };
 
-export const getPaymentRedirectControllerPaymentlessMockHandler = (
+export const getPaymentRedirectControllerCreateMockHandler = (
   overrideResponse?:
-    | PaymentRedirectResultModel
+    | PaymentRedirectRequestResult
     | ((
         info: Parameters<Parameters<typeof http.post>[1]>[0],
-      ) => Promise<PaymentRedirectResultModel> | PaymentRedirectResultModel),
+      ) => Promise<PaymentRedirectRequestResult> | PaymentRedirectRequestResult),
   options?: RequestHandlerOptions,
 ) => {
   return http.post(
-    '*/rest/payment_redirect/paymentless',
+    '*/rest/payment_redirect',
     async (info) => {
       await delay(1000);
 
@@ -453,7 +473,7 @@ export const getPaymentRedirectControllerPaymentlessMockHandler = (
             ? typeof overrideResponse === 'function'
               ? await overrideResponse(info)
               : overrideResponse
-            : getPaymentRedirectControllerPaymentlessResponseMock(),
+            : getPaymentRedirectControllerCreateResponseMock(),
         ),
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       );
@@ -519,7 +539,7 @@ export const getApiDocumentationMock = () => [
   getActionResolverControllerResolveActionMockHandler(),
   getPaymentConfigControllerGetPaymentConfigMockHandler(),
   getPaymentProvidersControllerGetPaymentProvidersMockHandler(),
-  getPaymentRedirectControllerPaymentlessMockHandler(),
+  getPaymentRedirectControllerCreateMockHandler(),
   getPaymentScheduleControllerGetPaymentSchedulesMockHandler(),
   getVersionControllerGetMockHandler(),
 ];

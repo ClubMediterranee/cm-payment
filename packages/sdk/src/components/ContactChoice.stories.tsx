@@ -198,7 +198,7 @@ export const WithAdditionalInteractions: Story = {
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '1' }}
     >
-      <ContactChoice {...args} reference="123" />
+      <ContactChoice {...args} uuid="123" />
     </MockedProvider>
   ),
   play: async ({ canvasElement }) => {
