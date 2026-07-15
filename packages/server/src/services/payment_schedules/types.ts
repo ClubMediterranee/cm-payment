@@ -1,8 +1,8 @@
 import {
   Action,
+  CartModel,
   CartUpgradeRoomModel,
   CustomerBookingPaymentScheduleModel,
-  PaymentScheduleModel,
   ProposalPaymentScheduleModelV1,
 } from '../../infra/api/__generated__/index.js';
 import { ResourceType } from '../../utils/types.js';
@@ -10,7 +10,7 @@ import { ResourceType } from '../../utils/types.js';
 export type ApiResponse =
   | ProposalPaymentScheduleModelV1
   | CustomerBookingPaymentScheduleModel
-  | PaymentScheduleModel
+  | CartModel
   | CartUpgradeRoomModel;
 
 export type PaymentSchedule = {

@@ -2,8 +2,8 @@ import { Inject, Service } from '@tsed/di';
 
 import {
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
-  getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule,
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
+  getV1CustomersCustomerIdBookingsBookingIdCart,
   getV1ProposalsProposalIdPaymentSchedule,
 } from '../../infra/api/__generated__/index.js';
 import { Action } from '../../infra/api/__generated__/index.js';
@@ -28,7 +28,7 @@ export class PaymentSchedulesService {
     [Action.PAYMENT_OPTION]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
     [Action.PAYMENT_SOLDE]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
     [Action.PAYMENT_PARTIAL]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
-    [Action.PAYMENT_CART]: getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule,
+    [Action.PAYMENT_CART]: getV1CustomersCustomerIdBookingsBookingIdCart,
     [Action.PAYMENT_UPGRADE_ROOM]: getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
   };
 

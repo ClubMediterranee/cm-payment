@@ -20,7 +20,7 @@ vi.mock('../../infra/api/__generated__/index.js', async (importOriginal) => ({
   ...(await importOriginal()),
   getV1ProposalsProposalIdPaymentSchedule: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules: vi.fn(),
-  getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule: vi.fn(),
+  getV1CustomersCustomerIdBookingsBookingIdCart: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations: vi.fn(),
 }));
 
@@ -249,21 +249,15 @@ describe('PaymentSchedulesService', () => {
       expect(paymentSchedule[1].deadline).not.toBe('2026-02-10');
     });
 
-    it('cart payment schedule: should build merged schedule when >= 2 payments', async () => {
+    it('cart: should return a single schedule line with the cart total', async () => {
       const service = await DITest.invoke(PaymentSchedulesService);
 
-      vi.mocked(api.getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule).mockResolvedValue(
-        {
-          currency: 'EUR',
-          paid: 1200,
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdCart).mockResolvedValue({
+        price: {
           total: 3470,
-          payment_schedules: [
-            { amount: 1200, deadline: '2026-02-10' },
-            { amount: 800, deadline: '2026-03-20' },
-            { amount: 1470, deadline: '2026-04-20' },
-          ],
-        } as any,
-      );
+          currency: 'EUR',
+        },
+      } as any);
 
       const schedule = await service.handlePaymentSchedules({
         type: 'booking',
@@ -272,25 +266,26 @@ describe('PaymentSchedulesService', () => {
         action: Action.PAYMENT_CART,
       } as any);
 
+      expect(api.getV1CustomersCustomerIdBookingsBookingIdCart).toHaveBeenCalledWith(
+        '123456',
+        '123456',
+      );
+
       expect(schedule).toEqual([
-        { amount: 3470, currency: 'EUR' },
-        { amount: 1200, currency: 'EUR', deadline: '2026-03-20', balance: 800 },
+        {
+          amount: 3470,
+          deadline: undefined,
+          currency: 'EUR',
+        },
       ]);
     });
 
-    it('cart payment schedule: should use 2nd payment deadline and amount as balance', async () => {
+    it('cart: should fallback to empty currency and never set balance', async () => {
       const service = await DITest.invoke(PaymentSchedulesService);
 
-      vi.mocked(api.getV0CustomersCustomerIdBookingsBookingIdCartPaymentSchedule).mockResolvedValue(
-        {
-          currency: 'EUR',
-          total: 3470,
-          payment_schedules: [
-            { amount: 1200, deadline: '2026-02-10' }, // NE DOIT PAS être utilisé comme deadline dans la ligne 2
-            { amount: 800, deadline: '2026-03-20' }, // DOIT être utilisé
-          ],
-        } as any,
-      );
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdCart).mockResolvedValue({
+        price: { total: 3470, currency: undefined },
+      } as any);
 
       const schedule = await service.handlePaymentSchedules({
         type: 'booking',
@@ -299,16 +294,10 @@ describe('PaymentSchedulesService', () => {
         action: Action.PAYMENT_CART,
       } as any);
 
-      expect(schedule).toHaveLength(2);
-
-      expect(schedule[1]).toMatchObject({
-        amount: 1200,
-        currency: 'EUR',
-        deadline: '2026-03-20',
-        balance: 800,
-      });
-
-      expect(schedule[1].deadline).not.toBe('2026-02-10');
+      expect(schedule).toHaveLength(1);
+      expect(schedule[0].currency).toBe('');
+      expect(schedule[0].amount).toBe(3470);
+      expect(schedule[0]).not.toHaveProperty('balance');
     });
 
     it('upgrade room: should return a single schedule line (payments length < 2)', async () => {

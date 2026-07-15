@@ -1,6 +1,7 @@
 import { Service } from '@tsed/di';
 
 import {
+  CartModel,
   CartUpgradeRoomModel,
   ProposalPaymentScheduleModelV1,
 } from '../../infra/api/__generated__/index.js';
@@ -8,9 +9,12 @@ import { ApiResponse, PaymentSchedule } from './types.js';
 
 @Service()
 export class PaymentScheduleNormalizer {
-  normalize(response: ApiResponse): PaymentSchedule {
-    if (this.isCartUpgradeRoom(response)) {
-      return this.normalizeUpgradeSchedule(response);
+  normalize(response: ApiResponse) {
+    if (this.isCart(response)) {
+      const price = response.price;
+      const amount = price && 'amount' in price ? price.amount : price?.total;
+
+      return this.normalizeCartSchedule({ amount, currency: price?.currency });
     }
 
     if (this.isProposalSchedule(response)) {
@@ -20,28 +24,23 @@ export class PaymentScheduleNormalizer {
     return response as PaymentSchedule;
   }
 
-  private isCartUpgradeRoom(data: any): data is CartUpgradeRoomModel {
-    return data?.price?.amount !== undefined;
+  private isCart(data: any): data is CartModel | CartUpgradeRoomModel {
+    return !!data?.price;
   }
 
   private isProposalSchedule(data: any): data is ProposalPaymentScheduleModelV1 {
     return Array.isArray(data?.households);
   }
 
-  private normalizeUpgradeSchedule(data: CartUpgradeRoomModel): PaymentSchedule {
+  private normalizeCartSchedule({ amount, currency }: { amount?: number; currency?: string }) {
     return {
-      currency: data.price?.currency || '',
-      total: data.price?.amount,
-      payment_schedules: [
-        {
-          amount: data.price?.amount,
-          deadline: undefined,
-        },
-      ],
+      currency: currency || '',
+      total: amount,
+      payment_schedules: [{ amount }],
     };
   }
 
-  private normalizeProposalSchedule(data: ProposalPaymentScheduleModelV1): PaymentSchedule {
+  private normalizeProposalSchedule(data: ProposalPaymentScheduleModelV1) {
     const household = data.households?.[0];
 
     return {
