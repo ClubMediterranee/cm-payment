@@ -28,6 +28,11 @@ export const useContactChoice = ({ reference, uuid }: UseContactChoiceParams) =>
     }
   }, [isCallRadioDisabled, watchedTemplateId, setValue, templateIds.call, templateIds.mobilePhone]);
 
+  useEffect(() => {
+    setValue('uuid', uuid);
+    setValue('reference', reference);
+  }, [uuid, reference, setValue]);
+
   const shouldDisplay = !!watchedPaymentProvider?.configuration?.requires_contact_choice;
 
   const isOnCall = reference || uuid;

@@ -5,9 +5,9 @@ import { Get, Hidden, Post, Returns, Summary } from '@tsed/schema';
 
 import { Locale } from '../../../decorators/Locale.js';
 import {
-  PaymentlessBody,
   PaymentRedirectQuery,
-  PaymentRedirectResultModel,
+  PaymentRedirectRequestBody,
+  PaymentRedirectRequestResult,
 } from '../../../services/payment_redirect/models.js';
 import { PaymentRedirectService } from '../../../services/payment_redirect/PaymentRedirectService.js';
 
@@ -19,19 +19,14 @@ export class PaymentRedirectController {
   @Inject()
   protected views!: PlatformViews;
 
-  @Post('/paymentless')
-  @Summary('Confirm a booking without an online payment and return the confirmation redirect')
-  @Returns(200, PaymentRedirectResultModel)
-  async paymentless(
-    @BodyParams() body: PaymentlessBody,
+  @Post('/')
+  @Summary('Create a payment and return the provider redirect parameters')
+  @Returns(200, PaymentRedirectRequestResult)
+  async create(
+    @BodyParams() body: PaymentRedirectRequestBody,
     @Locale() locale: string,
-  ): Promise<PaymentRedirectResultModel> {
-    const redirectUrl = await this.paymentRedirectService.confirmBookingWithoutPayment(
-      body.booking_id,
-      { ...body, locale },
-    );
-
-    return { url: redirectUrl, method: 'GET' };
+  ): Promise<PaymentRedirectRequestResult> {
+    return this.paymentRedirectService.createPaymentRedirect(body, { locale });
   }
 
   @Get('/:paymentId')

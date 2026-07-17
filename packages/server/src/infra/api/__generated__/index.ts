@@ -2429,6 +2429,30 @@ export type HeadersModelAnyOf = {
 export type HeadersModel = HeadersModelAnyOf | null;
 
 /**
+ * ad-hoc registry of values, as needed by the provider (ask the payment team).
+ */
+export interface Params {
+  [key: string]: unknown;
+}
+
+/**
+ * Supplemental parameters needed by the provider.
+ */
+export interface TokenRequestModel {
+  params?: Params;
+}
+
+/**
+ * Token metadata and data.
+ */
+export interface TokenHolderModel {
+  /** Informal (for a human reader) description of the token representation format */
+  format: string;
+  /** The token returned by the provider, depending of the PSP, it may be a litteral value or a structure. */
+  token: string;
+}
+
+/**
  * device type
  */
 export type Device = (typeof Device)[keyof typeof Device];
@@ -3080,6 +3104,22 @@ export const postV3Bookings = (
 };
 
 /**
+ * <p><strong>Should be called after :</strong></p><ul><li><code>GET /v0/payment_providers</code> &rArr; list of available <em>{provider_id}</em></li></ul>
+ * @summary <em>RPC</em> &ndash; Obtains a token from a payment providers.
+ */
+export const postV0PaymentProvidersProviderIdRequestToken = (
+  providerId: string,
+  tokenRequestModel: TokenRequestModel,
+) => {
+  return fetcher<TokenHolderModel>({
+    url: `/v0/payment_providers/${providerId}/request_token`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: tokenRequestModel,
+  });
+};
+
+/**
  * The only required parameters is the return url, to which the payment service provider will redirect to after
               the payment is processed. Other parameters are to be provided on case by case basis, for a given provider, payment methods,
               and use case flow.
@@ -3160,6 +3200,9 @@ export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = 
 >;
 export type PostV1PaymentsResult = NonNullable<Awaited<ReturnType<typeof postV1Payments>>>;
 export type PostV3BookingsResult = NonNullable<Awaited<ReturnType<typeof postV3Bookings>>>;
+export type PostV0PaymentProvidersProviderIdRequestTokenResult = NonNullable<
+  Awaited<ReturnType<typeof postV0PaymentProvidersProviderIdRequestToken>>
+>;
 export type PostV0PaymentsPaymentIdRedirectRequestResult = NonNullable<
   Awaited<ReturnType<typeof postV0PaymentsPaymentIdRedirectRequest>>
 >;

@@ -10,7 +10,7 @@ describe('PaymentRedirectController', () => {
   beforeEach(() => {
     mockPaymentService = {
       handlePaymentRedirect: vi.fn(),
-      confirmBookingWithoutPayment: vi.fn(),
+      createPaymentRedirect: vi.fn(),
     };
 
     mockViews = {
@@ -30,31 +30,30 @@ describe('PaymentRedirectController', () => {
     });
   });
 
-  describe('paymentless()', () => {
-    it('should confirm the booking and return the confirmation redirect as JSON', async () => {
-      mockPaymentService.confirmBookingWithoutPayment.mockResolvedValue(
-        'https://example.com/confirmation?payment_status=OK',
-      );
+  describe('create()', () => {
+    it('delegates to createPaymentRedirect and returns its result', async () => {
+      const serviceResult = {
+        redirect: { url: 'https://psp', method: 'GET' },
+        payment: { paymentId: 'PAY1', callbacks: { callback_url: 'https://cb' } },
+      };
+      mockPaymentService.createPaymentRedirect.mockResolvedValue(serviceResult);
 
       const body = {
-        callback_url: 'https://example.com/confirmation',
-        booking_id: 'BOOK_OK',
-        customer_id: 'CUST_1',
-        provider_id: 'MANUAL',
+        type: 'booking',
+        id: 'BOOK1',
+        provider_id: 'EVOXPAY',
+        action: 'PAYMENT_RESA',
         amount: '100',
         currency: 'EUR',
-      };
+        callback_url: 'https://client.callback',
+      } as any;
 
-      const result = await controller.paymentless(body, 'fr-FR');
+      const result = await controller.create(body, 'fr-FR');
 
-      expect(mockPaymentService.confirmBookingWithoutPayment).toHaveBeenCalledWith('BOOK_OK', {
-        ...body,
+      expect(mockPaymentService.createPaymentRedirect).toHaveBeenCalledWith(body, {
         locale: 'fr-FR',
       });
-      expect(result).toEqual({
-        url: 'https://example.com/confirmation?payment_status=OK',
-        method: 'GET',
-      });
+      expect(result).toEqual(serviceResult);
     });
   });
 

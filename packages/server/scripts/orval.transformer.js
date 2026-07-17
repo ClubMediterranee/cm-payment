@@ -17,6 +17,7 @@ const ENDPOINTS = [
   'PATCH /v2/bookings/{booking_id}',
   'POST /v1/payments',
   'POST /v0/payments/{payment_id}/redirect_request',
+  'POST /v0/payment_providers/{provider_id}/request_token',
 ];
 
 export default createTransformer({

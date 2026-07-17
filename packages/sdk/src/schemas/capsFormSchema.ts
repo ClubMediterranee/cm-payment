@@ -47,6 +47,8 @@ export const capsFormSchema = ({
           message: content.freeDeposit.validation.maxExceeded,
         }),
       currency: z.string(),
+      uuid: z.string().optional(),
+      reference: z.string().optional(),
       template_id: z
         .enum([
           GLOBAL_CAPS_SETTINGS.templateIds.email,

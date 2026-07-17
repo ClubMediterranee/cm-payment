@@ -1,27 +1,117 @@
-import { Inject, Service } from '@tsed/di';
+import { constant, Inject, Service } from '@tsed/di';
 
 import {
   getV0PaymentsPaymentIdStatus,
   patchV2BookingsBookingId,
+  PaymentRedirectRequestModel,
   PaymentStatus,
+  postV0PaymentProvidersProviderIdRequestToken,
+  postV0PaymentsPaymentIdRedirectRequest,
+  postV1Payments,
   postV1PaymentsPaymentIdNotify,
   ValidPatchBookingRequestBookingStatusModel,
 } from '../../infra/api/__generated__/index.js';
 import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
+import { TEMPLATE_IDS } from './constants.js';
+import { PaymentRedirectRequestBody, PaymentRedirectRequestResult } from './models.js';
+import { buildConfirmationUrl } from './utils/buildConfirmationUrl.js';
+import { getRedirectPaymentCallbackUrls } from './utils/getRedirectPaymentCallbackUrls.js';
+import { mapBillingDetails } from './utils/mapBillingDetails.js';
 import { poll } from './utils/poll.js';
+import { resolveBooking } from './utils/resolveBooking.js';
+import { retry } from './utils/retry.js';
 
-type PaymentData = {
-  payment_status: PaymentStatus;
-  booking_id: string;
-  payment_amount: string;
-  payment_currency: string;
-  provider_id: string;
-};
+const MANUAL_CONNECTION_TYPE = 'Manual';
 
 @Service()
 export class PaymentRedirectService {
   @Inject()
   protected paymentConfigService!: PaymentConfigService;
+
+  async createPaymentRedirect(
+    body: PaymentRedirectRequestBody,
+    { locale }: { locale: string },
+  ): Promise<PaymentRedirectRequestResult> {
+    const { bookingId, customerId } = await resolveBooking({
+      type: body.type,
+      id: body.id,
+      customerId: body.customer_id,
+    });
+
+    const proposalId = body.type === 'proposal' ? body.id : undefined;
+
+    if (body.connection_type === MANUAL_CONNECTION_TYPE) {
+      const redirectUrl = await this.confirmBookingWithoutPayment({
+        bookingId: bookingId!,
+        customerId: customerId!,
+        providerId: body.provider_id,
+        amount: body.amount,
+        currency: body.currency,
+        callbackUrl: body.callback_url_seller || '',
+        proposalId,
+        locale,
+      });
+
+      return { redirect: { url: redirectUrl, method: 'GET' } };
+    }
+
+    const { id: paymentId } = await postV1Payments({
+      booking_id: bookingId!,
+      customer_id: customerId!,
+      currency: body.currency,
+      action: body.action,
+      amount: Number(body.amount),
+      provider_id: body.provider_id,
+      // cast donation_amount to 0 to contourn an api typing issue
+      ...(body.donation_amount ? { donation_amount: body.donation_amount as 0 } : {}),
+    });
+
+    const providersConfig = await this.paymentConfigService.getPaymentProvidersConfig({ locale });
+
+    const callbacks = getRedirectPaymentCallbackUrls({
+      paymentId,
+      providerId: body.provider_id,
+      apiUrl: constant<string>('BASE_URL', ''),
+      locale,
+      callbackUrl: body.callback_url,
+      callbackUrlSeller: body.callback_url_seller,
+      proposalId,
+      params: { mode: providersConfig[body.provider_id]?.display_type },
+    });
+
+    const redirectPayload = {
+      ...callbacks,
+      payment_condition_id: body.payment_condition_id,
+      template_id: body.template_id,
+      billing_details: mapBillingDetails(body.billing_details, body.template_id),
+      token: body.token,
+    };
+
+    const redirect =
+      body.template_id === TEMPLATE_IDS.call
+        ? await this.sendDtmfRedirectRequest({ paymentId, body, redirectPayload })
+        : await postV0PaymentsPaymentIdRedirectRequest(paymentId, redirectPayload);
+
+    return { redirect, payment: { paymentId, callbacks } };
+  }
+
+  private async sendDtmfRedirectRequest({
+    paymentId,
+    body,
+    redirectPayload,
+  }: {
+    paymentId: string;
+    body: PaymentRedirectRequestBody;
+    redirectPayload: PaymentRedirectRequestModel;
+  }) {
+    const { token } = await postV0PaymentProvidersProviderIdRequestToken(body.provider_id, {
+      params: body.uuid ? { uuid: body.uuid } : { reference: body.reference },
+    });
+
+    return retry(() =>
+      postV0PaymentsPaymentIdRedirectRequest(paymentId, { ...redirectPayload, open_id: token }),
+    );
+  }
 
   async handlePaymentRedirect(paymentId: string, queryParams: Record<string, any>) {
     const { callback_url, proposal_id, provider_id, locale, ...providerResponse } = queryParams;
@@ -33,38 +123,58 @@ export class PaymentRedirectService {
         ? await this.confirmPaymentWithNotify(paymentId, providerResponse)
         : await this.confirmPaymentWithPolling(paymentId);
 
-    return this.buildCallbackUrl(callback_url, paymentData, proposal_id, locale);
+    return buildConfirmationUrl({
+      callbackUrl: callback_url,
+      paymentData,
+      proposalId: proposal_id,
+      locale,
+    });
   }
 
-  async confirmBookingWithoutPayment(bookingId: string, queryParams: Record<string, any>) {
-    const { callback_url, proposal_id, provider_id, customer_id, amount, currency, locale } =
-      queryParams;
-
-    let payment_status: PaymentStatus = PaymentStatus.OK;
+  private async confirmBookingWithoutPayment({
+    bookingId,
+    customerId,
+    providerId,
+    amount,
+    currency,
+    callbackUrl,
+    proposalId,
+    locale,
+  }: {
+    bookingId: string;
+    customerId: string;
+    providerId: string;
+    amount: string;
+    currency: string;
+    callbackUrl: string;
+    proposalId?: string;
+    locale: string;
+  }) {
+    let paymentStatus: PaymentStatus = PaymentStatus.OK;
 
     try {
       await patchV2BookingsBookingId(bookingId, {
         booking_status: ValidPatchBookingRequestBookingStatusModel.VALIDATED,
-        customer_id,
+        customer_id: customerId,
         currency,
-        payments: [{ method_id: provider_id, amount: Number(amount) }],
+        payments: [{ method_id: providerId, amount: Number(amount) }],
       });
     } catch {
-      payment_status = PaymentStatus.REFUSED_CM;
+      paymentStatus = PaymentStatus.REFUSED_CM;
     }
 
-    return this.buildCallbackUrl(
-      callback_url,
-      {
-        payment_status,
+    return buildConfirmationUrl({
+      callbackUrl,
+      paymentData: {
+        payment_status: paymentStatus,
         booking_id: bookingId,
         payment_amount: String(amount),
         payment_currency: currency,
-        provider_id,
+        provider_id: providerId,
       },
-      proposal_id,
+      proposalId,
       locale,
-    );
+    });
   }
 
   private async confirmPaymentWithNotify(paymentId: string, providerResponse: Record<string, any>) {
@@ -97,24 +207,5 @@ export class PaymentRedirectService {
       payment_currency: paiement.codeDevise,
       provider_id: paiement.serveurId,
     };
-  }
-
-  private buildCallbackUrl(
-    callbackUrl: string | null,
-    paymentData: PaymentData,
-    proposalId: string | null,
-    locale: string | null,
-  ) {
-    if (!callbackUrl) {
-      throw new Error('callback_url is required');
-    }
-
-    const params = new URLSearchParams({
-      ...paymentData,
-      ...(proposalId ? { proposal_id: proposalId } : {}),
-      ...(locale ? { locale } : {}),
-    });
-
-    return `${callbackUrl}?${params.toString()}`;
   }
 }
