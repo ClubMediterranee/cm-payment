@@ -1,7 +1,7 @@
 import { AdditionalProperties, Property, Required } from '@tsed/schema';
 
-import { Action } from '../../infra/api/__generated__/index.js';
 import type { BillingDetailsModel, HeadersModel } from '../../infra/api/__generated__/index.js';
+import { Action } from '../../infra/api/__generated__/index.js';
 
 export class PaymentRedirectRequestBody {
   @Required()
