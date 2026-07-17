@@ -14,6 +14,7 @@ const Action = {
   PAYMENT_SOLDE: 'PAYMENT_SOLDE',
   PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
   PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
 } as const;
 
 vi.mock('../../infra/api/__generated__/index.js', async (importOriginal) => ({
@@ -22,6 +23,7 @@ vi.mock('../../infra/api/__generated__/index.js', async (importOriginal) => ({
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules: vi.fn(),
   getV1CustomersCustomerIdBookingsBookingIdCart: vi.fn(),
   getV0CustomersCustomerIdBookingsBookingIdCartAccommodations: vi.fn(),
+  getV3CustomersCustomerIdBookingsBookingIdServices: vi.fn(),
 }));
 
 describe('PaymentSchedulesService', () => {
@@ -324,6 +326,92 @@ describe('PaymentSchedulesService', () => {
           currency: 'EUR',
         },
       ]);
+    });
+
+    it('services in option: should call the services route filtered on OPTION and sum the prices', async () => {
+      const service = await DITest.invoke(PaymentSchedulesService);
+
+      vi.mocked(api.getV3CustomersCustomerIdBookingsBookingIdServices).mockResolvedValue([
+        {
+          id: 'service_1',
+          type: 'TRANSFER',
+          currency: 'EUR',
+          stay_index: 0,
+          schedules: [
+            {
+              start_date: '2026-05-01',
+              end_date: '2026-05-01',
+              attendees: [
+                { id: 'A', status: 'OPTION', price: 21, price_without_discount: 21 },
+                { id: 'B', status: 'OPTION', price: 21, price_without_discount: 21 },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'service_2',
+          type: 'INSURANCE',
+          currency: 'EUR',
+          stay_index: 0,
+          schedules: [
+            {
+              start_date: '2026-05-02',
+              end_date: '2026-05-02',
+              attendees: [{ id: 'A', status: 'OPTION', price: 38, price_without_discount: 38 }],
+            },
+          ],
+        },
+      ] as any);
+
+      const schedule = await service.handlePaymentSchedules({
+        type: 'booking',
+        id: 123456,
+        customer_id: 123456,
+        action: Action.PAYMENT_SERVICES_IN_OPTION,
+      } as any);
+
+      expect(api.getV3CustomersCustomerIdBookingsBookingIdServices).toHaveBeenCalledWith(
+        '123456',
+        '123456',
+        { status: 'OPTION' },
+      );
+
+      expect(schedule).toEqual([
+        {
+          amount: 80,
+          deadline: undefined,
+          currency: 'EUR',
+        },
+      ]);
+    });
+
+    it('services in option: should throw not found when the total is zero', async () => {
+      const service = await DITest.invoke(PaymentSchedulesService);
+
+      vi.mocked(api.getV3CustomersCustomerIdBookingsBookingIdServices).mockResolvedValue([
+        {
+          id: 'service_1',
+          type: 'TRANSFER',
+          currency: 'EUR',
+          stay_index: 0,
+          schedules: [
+            {
+              start_date: '2026-05-01',
+              end_date: '2026-05-01',
+              attendees: [{ id: 'A', status: 'OPTION', price: 0, price_without_discount: 0 }],
+            },
+          ],
+        },
+      ] as any);
+
+      await expect(
+        service.handlePaymentSchedules({
+          type: 'booking',
+          id: 123456,
+          customer_id: 123456,
+          action: Action.PAYMENT_SERVICES_IN_OPTION,
+        } as any),
+      ).rejects.toThrow('No payment schedule found for id: 123456');
     });
 
     it('upgrade room: should fallback to empty currency and never set balance when only one payment', async () => {

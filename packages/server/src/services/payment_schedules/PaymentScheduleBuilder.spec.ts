@@ -57,6 +57,20 @@ describe('PaymentScheduleBuilder', () => {
       expect(result).toEqual([]);
     });
 
+    it('should return empty array when single payment amount is zero', async () => {
+      const builder = await DITest.invoke(PaymentScheduleBuilder);
+
+      const input: PaymentSchedule = {
+        currency: 'EUR',
+        total: 0,
+        payment_schedules: [{ amount: 0 }],
+      };
+
+      const result = builder.build(input);
+
+      expect(result).toEqual([]);
+    });
+
     it('should build multiple payments with total and first payment details', async () => {
       const builder = await DITest.invoke(PaymentScheduleBuilder);
 
