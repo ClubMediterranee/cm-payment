@@ -17,7 +17,7 @@ export function useMockedForm({
   isSeller,
   maxAmount,
   defaultValues,
-  getProviderValidation,
+  getProviderConfiguration,
 }: {
   onError?: (errors: FieldErrors) => void;
   onChange?: (value: any) => void;
@@ -25,14 +25,14 @@ export function useMockedForm({
   isSeller?: boolean;
   maxAmount?: number;
   defaultValues?: UseCapsFormParams['defaultValues'];
-  getProviderValidation?: CapsFormConfig['getProviderValidation'];
+  getProviderConfiguration?: CapsFormConfig['getProviderConfiguration'];
 }) {
   const methods = useCapsForm({
     config: {
       content: content!,
       isSeller: isSeller!,
       maxAmount: maxAmount!,
-      getProviderValidation: getProviderValidation || (() => undefined),
+      getProviderConfiguration: getProviderConfiguration || (() => undefined),
     },
     defaultValues,
   });

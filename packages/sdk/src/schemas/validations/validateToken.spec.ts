@@ -1,3 +1,4 @@
+import { mockProviderConfiguration } from '../../__fixtures__/mockProviderConfiguration';
 import { defaultContent } from '../../content/default';
 import type { CapsFormConfig } from '../../types/CapsFormConfig';
 import type { CapsFormSchema } from '../capsFormSchema';
@@ -7,9 +8,9 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: false,
   maxAmount: 10000,
-  getProviderValidation: (providerId: string) => {
+  getProviderConfiguration: (providerId: string) => {
     if (providerId === 'MHIPAY') {
-      return { requires_token: true };
+      return mockProviderConfiguration({ requires_token: true });
     }
     return undefined;
   },

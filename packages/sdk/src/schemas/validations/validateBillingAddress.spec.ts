@@ -9,7 +9,7 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: true,
   maxAmount: 10000,
-  getProviderValidation: () => undefined,
+  getProviderConfiguration: () => undefined,
 };
 
 describe('validateBillingAddress', () => {

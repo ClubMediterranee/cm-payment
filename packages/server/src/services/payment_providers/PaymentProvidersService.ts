@@ -56,6 +56,7 @@ export class PaymentProvidersService {
     ];
 
     return paymentProviders
+      .flatMap((provider) => this.flattenManualProvider(provider))
       .filter((provider) => paymentProvidersEligibilityRules.every((rule) => rule(provider)))
       .map((provider) => {
         const payment_methods = sortTimePaymentConditions(provider.payment_methods)
@@ -80,14 +81,13 @@ export class PaymentProvidersService {
           payment_conditions,
         };
       })
-      .flatMap((provider) => this.flattenManualProvider(provider))
       .reduce(splitByCategory, {
         payment_providers: [],
         buy_now_pay_later_providers: [],
       });
   }
 
-  private flattenManualProvider(provider: EnrichedPaymentProvider) {
+  private flattenManualProvider(provider: PaymentProvider1) {
     if (provider.connection_type !== MANUAL_CONNECTION_TYPE) {
       return provider;
     }

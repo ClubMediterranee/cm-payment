@@ -30,6 +30,7 @@ export const buildPaymentRedirectPayload = (
     uuid,
     reference,
     token,
+    comments,
     billing_details: { email, mobile_phone, attendee, address },
   } = formData;
 
@@ -48,6 +49,7 @@ export const buildPaymentRedirectPayload = (
     uuid,
     reference,
     token: token?.value,
+    comments,
     billing_details: {
       email,
       mobile_phone,

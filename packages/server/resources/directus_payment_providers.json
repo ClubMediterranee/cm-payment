@@ -632,7 +632,7 @@
     ]
   },
   {
-    "id": "MCLUBMED",
+    "id": "WD",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
     "settings": [
@@ -765,6 +765,28 @@
         "status": "published",
         "settings": [],
         "requires_contact_choice": ["GO", "PARTNERS"]
+      }
+    ]
+  },
+  {
+    "id": "OF",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "settings": [
+      {
+        "locale": "*",
+        "status": "archived",
+        "settings": [
+          {
+            "key": "requires_comments",
+            "type": "boolean",
+            "value": true
+          }
+        ]
+      },
+      {
+        "locale": "zh-CN",
+        "status": "published"
       }
     ]
   }

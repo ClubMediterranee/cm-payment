@@ -1,6 +1,7 @@
 export * from './components/BillingAddress';
 export * from './components/CardInstallments';
 export * from './components/Cgv';
+export * from './components/Comments';
 export * from './components/ContactChoice';
 export * from './components/Donation';
 export * from './components/PaymentProviders';

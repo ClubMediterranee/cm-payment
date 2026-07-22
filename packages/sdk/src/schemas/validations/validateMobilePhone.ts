@@ -2,8 +2,8 @@ import { GLOBAL_CAPS_SETTINGS } from '../../config';
 import { intlPhoneRegex } from '../../utils/regex';
 import type { Validate } from '../capsFormSchema';
 
-export const validateMobilePhone: Validate = (data, { content, getProviderValidation }) => {
-  const validation = getProviderValidation(data.provider_id);
+export const validateMobilePhone: Validate = (data, { content, getProviderConfiguration }) => {
+  const validation = getProviderConfiguration(data.provider_id);
 
   if (
     validation?.requires_contact_choice &&

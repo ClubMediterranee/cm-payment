@@ -6,6 +6,7 @@ import { CapsFormConfig } from '../types/CapsFormConfig';
 import { LocaleOrCountry } from '../types/LocaleOrCountry';
 import { validateBillingAddress } from './validations/validateBillingAddress';
 import { validateCardHolder } from './validations/validateCardHolder';
+import { validateComment } from './validations/validateComment';
 import { validateDonation } from './validations/validateDonation';
 import { validateEmail } from './validations/validateEmail';
 import { validateExpiryDate } from './validations/validateExpiryDate';
@@ -19,14 +20,14 @@ export type ValidationError = {
 
 export type Validate = (
   data: CapsFormSchema,
-  config: Pick<CapsFormConfig, 'isSeller' | 'content' | 'getProviderValidation'>,
+  config: Pick<CapsFormConfig, 'isSeller' | 'content' | 'getProviderConfiguration'>,
 ) => ValidationError | ValidationError[] | undefined;
 
 export const capsFormSchema = ({
   isSeller,
   content,
   maxAmount,
-  getProviderValidation,
+  getProviderConfiguration,
 }: CapsFormConfig) =>
   z
     .object({
@@ -49,6 +50,7 @@ export const capsFormSchema = ({
       currency: z.string(),
       uuid: z.string().optional(),
       reference: z.string().optional(),
+      comments: z.string().optional(),
       template_id: z
         .enum([
           GLOBAL_CAPS_SETTINGS.templateIds.email,
@@ -99,7 +101,7 @@ export const capsFormSchema = ({
         .optional(),
     })
     .superRefine((data, ctx) => {
-      const config = { isSeller, content, getProviderValidation };
+      const config = { isSeller, content, getProviderConfiguration };
 
       const validations = [
         validateToken,
@@ -109,6 +111,7 @@ export const capsFormSchema = ({
         validateMobilePhone,
         validateBillingAddress,
         validateDonation,
+        validateComment,
       ];
       validations.forEach((validate) => {
         const result = validate(data, config);

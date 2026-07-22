@@ -32,6 +32,12 @@ export type Content = {
       mustAccept: string;
     };
   };
+  comments: {
+    placeholder: string;
+    validation: {
+      required: string;
+    };
+  };
   contactChoice: {
     validation: {
       required: string;

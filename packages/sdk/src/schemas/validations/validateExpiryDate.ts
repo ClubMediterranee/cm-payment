@@ -1,7 +1,7 @@
 import type { Validate } from '../capsFormSchema';
 
-export const validateExpiryDate: Validate = (data, { content, getProviderValidation }) => {
-  const validation = getProviderValidation(data.provider_id);
+export const validateExpiryDate: Validate = (data, { content, getProviderConfiguration }) => {
+  const validation = getProviderConfiguration(data.provider_id);
 
   if (!validation?.requires_expiry_date) {
     return undefined;

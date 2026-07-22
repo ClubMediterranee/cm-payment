@@ -36,6 +36,12 @@ export const defaultContent: Content = {
       mustAccept: 'You must accept the T&C',
     },
   },
+  comments: {
+    placeholder: 'Enter your comments',
+    validation: {
+      required: 'Comments are required',
+    },
+  },
   contactChoice: {
     title: 'What type of channel?',
     choiceLabel: 'By {label}',

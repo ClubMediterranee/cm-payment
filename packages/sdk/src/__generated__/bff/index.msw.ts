@@ -40,6 +40,7 @@ export const getPaymentConfigControllerGetPaymentConfigResponseMock = (
     {
       is_paypal_button_enabled: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
       is_donation_enabled: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+      is_comments_enabled: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
     },
     undefined,
   ]),

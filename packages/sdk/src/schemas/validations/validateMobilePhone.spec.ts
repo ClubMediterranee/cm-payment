@@ -1,3 +1,4 @@
+import { mockProviderConfiguration } from '../../__fixtures__/mockProviderConfiguration';
 import { GLOBAL_CAPS_SETTINGS } from '../../config';
 import { defaultContent } from '../../content/default';
 import type { CapsFormConfig } from '../../types/CapsFormConfig';
@@ -8,7 +9,7 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: true,
   maxAmount: 10000,
-  getProviderValidation: () => ({ requires_contact_choice: true }),
+  getProviderConfiguration: () => mockProviderConfiguration({ requires_contact_choice: true }),
 };
 
 describe('validateMobilePhone', () => {
@@ -18,7 +19,7 @@ describe('validateMobilePhone', () => {
         template_id: GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone,
         billing_details: { mobile_phone: '+33612345678' },
       } as unknown as CapsFormSchema,
-      { ...mockConfig, getProviderValidation: () => undefined },
+      { ...mockConfig, getProviderConfiguration: () => undefined },
     );
 
     expect(result).toBeUndefined();

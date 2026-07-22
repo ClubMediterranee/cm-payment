@@ -1,3 +1,4 @@
+import { mockProviderConfiguration } from '../../__fixtures__/mockProviderConfiguration';
 import { defaultContent } from '../../content/default';
 import type { CapsFormConfig } from '../../types/CapsFormConfig';
 import { PspProviders } from '../../types/PspProviders';
@@ -8,9 +9,9 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: false,
   maxAmount: 10000,
-  getProviderValidation: (providerId: string) => {
+  getProviderConfiguration: (providerId: string) => {
     if (providerId === PspProviders.MCYBERSOURCE) {
-      return { requires_card_holder: true };
+      return mockProviderConfiguration({ requires_card_holder: true });
     }
     return undefined;
   },
@@ -32,7 +33,7 @@ describe('validateCardHolder', () => {
   it('returns undefined when requires_card_holder is false', () => {
     const customConfig: CapsFormConfig = {
       ...mockConfig,
-      getProviderValidation: () => ({ requires_card_holder: false }),
+      getProviderConfiguration: () => mockProviderConfiguration({ requires_card_holder: false }),
     };
 
     const result = validateCardHolder(

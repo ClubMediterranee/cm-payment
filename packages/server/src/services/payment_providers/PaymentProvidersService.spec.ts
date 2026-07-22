@@ -200,7 +200,7 @@ describe('PaymentProvidersService', () => {
         ],
         {
           MCYBERSOURCE: { display_type: 'hosted_field', settings: {} },
-          MMANUAL: { display_type: 'hosted_field', settings: {} },
+          WD: { display_type: 'hosted_field', settings: {} },
         },
       );
 
@@ -228,7 +228,7 @@ describe('PaymentProvidersService', () => {
           },
         ],
         {
-          MMANUAL: { display_type: 'hosted_field', settings: {} },
+          WD: { display_type: 'hosted_field', settings: {} },
         },
       );
 
@@ -294,7 +294,8 @@ describe('PaymentProvidersService', () => {
         ],
         {
           MCYBERSOURCE: { display_type: 'hosted_field', settings: {} },
-          MCLUBMED: { display_type: 'redirect', settings: {} },
+          WD: { display_type: 'redirect', settings: {} },
+          CH: { display_type: 'redirect', settings: {} },
         },
       );
 
