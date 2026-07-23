@@ -9,7 +9,7 @@ import { PaymentConfigService } from '../payment_config/PaymentConfigService.js'
 import { Stay } from '../stay/models.js';
 import { StayService } from '../stay/StayService.js';
 import { PaymentProvidersValidationError } from './errors.js';
-import { EnrichedPaymentProvider, MANUAL_CONNECTION_TYPE } from './types.js';
+import { MANUAL_CONNECTION_TYPE } from './types.js';
 import { sortTimePaymentConditions } from './utils/sortTimePaymentConditions.js';
 import { splitByCategory } from './utils/splitByCategory.js';
 

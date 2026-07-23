@@ -1,4 +1,3 @@
-import { mockProviderConfiguration } from '../../__fixtures__/mockProviderConfiguration';
 import { defaultContent } from '../../content/default';
 import type { CapsFormConfig } from '../../types/CapsFormConfig';
 import type { CapsFormSchema } from '../capsFormSchema';
@@ -8,8 +7,7 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: true,
   maxAmount: 10000,
-  getProviderConfiguration: () =>
-    mockProviderConfiguration({ settings: { requires_comments: true } }),
+  getProviderConfiguration: () => ({ settings: { requires_comments: true } }),
 };
 
 describe('validateComment', () => {
@@ -18,7 +16,7 @@ describe('validateComment', () => {
       { provider_id: 'PROVIDER', comments: '' } as unknown as CapsFormSchema,
       {
         ...mockConfig,
-        getProviderConfiguration: () => mockProviderConfiguration({ settings: {} }),
+        getProviderConfiguration: () => ({ settings: {} }),
       },
     );
 

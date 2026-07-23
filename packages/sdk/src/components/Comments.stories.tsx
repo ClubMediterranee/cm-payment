@@ -17,7 +17,7 @@ const paymentConfigHandler = (isCommentsEnabled: boolean) =>
     });
   });
 
-const paymentProvidersHandler = (needComments: boolean) =>
+const paymentProvidersHandler = (requiresComments: boolean) =>
   http.get('*/rest/payment_providers/booking/*', () => {
     return Response.json({
       payment_providers: [
@@ -30,7 +30,7 @@ const paymentProvidersHandler = (needComments: boolean) =>
           required_delay_before_departure: 0,
           configuration: {
             display_type: 'redirect',
-            settings: needComments ? { requires_comments: true } : {},
+            settings: requiresComments ? { requires_comments: true } : {},
             requires_contact_choice: false,
           },
           payment_conditions: {},
@@ -41,12 +41,12 @@ const paymentProvidersHandler = (needComments: boolean) =>
   });
 
 const handlers = ({
-  needComments = false,
+  requiresComments = false,
   isCommentsEnabled = false,
 }: {
-  needComments?: boolean;
+  requiresComments?: boolean;
   isCommentsEnabled?: boolean;
-}) => [paymentProvidersHandler(needComments), paymentConfigHandler(isCommentsEnabled)];
+}) => [paymentProvidersHandler(requiresComments), paymentConfigHandler(isCommentsEnabled)];
 
 const CommentsWithProvider = () => {
   return (
@@ -84,7 +84,7 @@ type Story = StoryObj<typeof meta>;
 
 export const WithProviderRequirement: Story = {
   parameters: {
-    msw: { handlers: handlers({ needComments: true }) },
+    msw: { handlers: handlers({ requiresComments: true }) },
     docs: {
       description: {
         story:

@@ -4,7 +4,6 @@ import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
-import { mockProviderConfiguration } from '../__fixtures__/mockProviderConfiguration';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { ContactChoice } from './ContactChoice';
 
@@ -46,7 +45,7 @@ const ContactChoiceWithFormProvider = (args: any) => {
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
-      getProviderConfiguration={() => mockProviderConfiguration({ requires_contact_choice: true })}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
     >
       <ContactChoice {...args} />
     </MockedProvider>
@@ -349,7 +348,7 @@ export const AccessibilityTest: Story = {
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.PARTNERS, accessToken: '' }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
-      getProviderConfiguration={() => mockProviderConfiguration({ requires_contact_choice: true })}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
     >
       <ContactChoice {...args} />
     </MockedProvider>

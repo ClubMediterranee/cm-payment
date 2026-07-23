@@ -1,4 +1,3 @@
-import { mockProviderConfiguration } from '../../__fixtures__/mockProviderConfiguration';
 import { GLOBAL_CAPS_SETTINGS } from '../../config';
 import { defaultContent } from '../../content/default';
 import type { CapsFormConfig } from '../../types/CapsFormConfig';
@@ -9,7 +8,7 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: true,
   maxAmount: 10000,
-  getProviderConfiguration: () => mockProviderConfiguration({ requires_contact_choice: true }),
+  getProviderConfiguration: () => ({ requires_contact_choice: true }),
 };
 
 describe('validateMobilePhone', () => {

@@ -8,5 +8,5 @@ export type CapsFormConfig = {
   content: Content;
   isSeller: boolean;
   maxAmount: number;
-  getProviderConfiguration: (providerId: string) => ProviderConfiguration | undefined;
+  getProviderConfiguration: (providerId: string) => Partial<ProviderConfiguration> | undefined;
 };
