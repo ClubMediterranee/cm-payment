@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { beforeAll, vi } from 'vitest';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../../../__fixtures__/MockedProvider';
 import { IxopayForm } from './IxopayForm';
@@ -15,23 +14,21 @@ const mockPaymentJs = {
     callback: (payment: any) => void,
   ) => {
     const payment = {
-      setNumberStyle: vi.fn(),
-      setCvvStyle: vi.fn(),
-      setNumberPlaceholder: vi.fn(),
-      setCvvPlaceholder: vi.fn(),
-      numberOn: vi.fn(),
-      cvvOn: vi.fn(),
+      setNumberStyle: fn(),
+      setCvvStyle: fn(),
+      setNumberPlaceholder: fn(),
+      setCvvPlaceholder: fn(),
+      numberOn: fn(),
+      cvvOn: fn(),
     };
     setTimeout(() => callback(payment), 100);
   },
-  tokenize: vi.fn(),
+  tokenize: fn(),
 };
 
-beforeAll(() => {
-  (window as any).PaymentJs = function PaymentJs() {
-    return mockPaymentJs;
-  };
-});
+(window as any).PaymentJs = function PaymentJs() {
+  return mockPaymentJs;
+};
 
 const ixopayProvider = {
   id: 'IXOPAY',
