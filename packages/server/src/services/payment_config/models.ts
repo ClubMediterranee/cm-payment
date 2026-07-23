@@ -6,6 +6,9 @@ export class FeatureFlipsConfig {
 
   @Property()
   is_donation_enabled?: boolean;
+
+  @Property()
+  is_comments_enabled?: boolean;
 }
 
 @AdditionalProperties(true)

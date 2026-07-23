@@ -8,4 +8,5 @@ export const TOKENS = {
   CardInstallments: Symbol('CardInstallments'),
   SubmitButton: Symbol('SubmitButton'),
   Donation: Symbol('Donation'),
+  Comments: Symbol('Comments'),
 } as const;

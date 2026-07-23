@@ -8,7 +8,7 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: true,
   maxAmount: 10000,
-  getProviderValidation: () => ({ requires_contact_choice: true }),
+  getProviderConfiguration: () => ({ requires_contact_choice: true }),
 };
 
 describe('validateEmail', () => {
@@ -18,7 +18,7 @@ describe('validateEmail', () => {
         template_id: GLOBAL_CAPS_SETTINGS.templateIds.email,
         billing_details: { email: 'test@example.com' },
       } as unknown as CapsFormSchema,
-      { ...mockConfig, getProviderValidation: () => undefined },
+      { ...mockConfig, getProviderConfiguration: () => undefined },
     );
 
     expect(result).toBeUndefined();

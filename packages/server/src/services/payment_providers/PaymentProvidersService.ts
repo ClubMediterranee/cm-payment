@@ -9,7 +9,7 @@ import { PaymentConfigService } from '../payment_config/PaymentConfigService.js'
 import { Stay } from '../stay/models.js';
 import { StayService } from '../stay/StayService.js';
 import { PaymentProvidersValidationError } from './errors.js';
-import { EnrichedPaymentProvider, MANUAL_CONNECTION_TYPE } from './types.js';
+import { MANUAL_CONNECTION_TYPE } from './types.js';
 import { sortTimePaymentConditions } from './utils/sortTimePaymentConditions.js';
 import { splitByCategory } from './utils/splitByCategory.js';
 
@@ -56,6 +56,7 @@ export class PaymentProvidersService {
     ];
 
     return paymentProviders
+      .flatMap((provider) => this.flattenManualProvider(provider))
       .filter((provider) => paymentProvidersEligibilityRules.every((rule) => rule(provider)))
       .map((provider) => {
         const payment_methods = sortTimePaymentConditions(provider.payment_methods)
@@ -80,14 +81,13 @@ export class PaymentProvidersService {
           payment_conditions,
         };
       })
-      .flatMap((provider) => this.flattenManualProvider(provider))
       .reduce(splitByCategory, {
         payment_providers: [],
         buy_now_pay_later_providers: [],
       });
   }
 
-  private flattenManualProvider(provider: EnrichedPaymentProvider) {
+  private flattenManualProvider(provider: PaymentProvider1) {
     if (provider.connection_type !== MANUAL_CONNECTION_TYPE) {
       return provider;
     }

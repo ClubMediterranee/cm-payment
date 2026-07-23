@@ -7,6 +7,7 @@ export enum OidcIssuerTypes {
 export type PaymentFeatureFlips = {
   is_paypal_button_enabled?: boolean;
   is_donation_enabled?: boolean;
+  is_comments_enabled?: boolean;
 };
 
 export type PaymentConfigSettings = {

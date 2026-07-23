@@ -28,7 +28,7 @@ interface MockedProviderProps {
   content?: Content;
   maxAmount?: number;
   locale?: string;
-  getProviderValidation?: CapsFormConfig['getProviderValidation'];
+  getProviderConfiguration?: CapsFormConfig['getProviderConfiguration'];
 }
 
 export const MockedProvider = ({
@@ -42,7 +42,7 @@ export const MockedProvider = ({
   defaultValues,
   maxAmount = 10000,
   locale = 'fr-FR',
-  getProviderValidation = () => undefined,
+  getProviderConfiguration = () => undefined,
 }: MockedProviderProps) => {
   const isSeller = [OidcIssuerTypes.PARTNERS, OidcIssuerTypes.GO].includes(
     oidc?.issuerType as OidcIssuerTypes,
@@ -56,7 +56,7 @@ export const MockedProvider = ({
     content: mergeFromPattern(defaultContent, content),
     isSeller,
     maxAmount,
-    getProviderValidation,
+    getProviderConfiguration,
   });
 
   useEffect(() => {

@@ -54,6 +54,9 @@ export class PaymentRedirectRequestBody {
 
   @Property()
   reference?: string;
+
+  @Property()
+  comments?: string;
 }
 
 export class RedirectCallbacksModel {

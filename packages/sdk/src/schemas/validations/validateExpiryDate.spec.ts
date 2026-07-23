@@ -8,7 +8,7 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: false,
   maxAmount: 10000,
-  getProviderValidation: (providerId: string) => {
+  getProviderConfiguration: (providerId: string) => {
     if (providerId === PspProviders.MCYBERSOURCE) {
       return { requires_expiry_date: true };
     }
@@ -32,7 +32,7 @@ describe('validateExpiryDate', () => {
   it('returns undefined when provider does not require expiry date', () => {
     const customConfig: CapsFormConfig = {
       ...mockConfig,
-      getProviderValidation: () => ({ requires_expiry_date: false }),
+      getProviderConfiguration: () => ({ requires_expiry_date: false }),
     };
 
     const result = validateExpiryDate(

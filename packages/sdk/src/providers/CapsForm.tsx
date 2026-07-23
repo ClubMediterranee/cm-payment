@@ -65,7 +65,7 @@ function CapsFormProvider({
       content,
       isSeller,
       maxAmount,
-      getProviderValidation: (providerId: string) => {
+      getProviderConfiguration: (providerId: string) => {
         const provider = paymentProviders.find((p) => p.id === providerId);
         return provider?.configuration;
       },

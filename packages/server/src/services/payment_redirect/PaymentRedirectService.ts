@@ -2,6 +2,7 @@ import { constant, Inject, Service } from '@tsed/di';
 
 import {
   getV0PaymentsPaymentIdStatus,
+  PatchBookingPaymentModel,
   patchV2BookingsBookingId,
   PaymentRedirectRequestModel,
   PaymentStatus,
@@ -36,6 +37,7 @@ export class PaymentRedirectService {
       type: body.type,
       id: body.id,
       customerId: body.customer_id,
+      ...(body.connection_type !== MANUAL_CONNECTION_TYPE ? { comment: body.comments } : {}),
     });
 
     const proposalId = body.type === 'proposal' ? body.id : undefined;
@@ -50,6 +52,7 @@ export class PaymentRedirectService {
         callbackUrl: body.callback_url_seller || '',
         proposalId,
         locale,
+        comments: body.comments,
       });
 
       return { redirect: { url: redirectUrl, method: 'GET' } };
@@ -140,6 +143,7 @@ export class PaymentRedirectService {
     callbackUrl,
     proposalId,
     locale,
+    comments,
   }: {
     bookingId: string;
     customerId: string;
@@ -149,6 +153,7 @@ export class PaymentRedirectService {
     callbackUrl: string;
     proposalId?: string;
     locale: string;
+    comments: PatchBookingPaymentModel['comments'];
   }) {
     let paymentStatus: PaymentStatus = PaymentStatus.OK;
 
@@ -157,7 +162,13 @@ export class PaymentRedirectService {
         booking_status: ValidPatchBookingRequestBookingStatusModel.VALIDATED,
         customer_id: customerId,
         currency,
-        payments: [{ method_id: providerId, amount: Number(amount) }],
+        payments: [
+          {
+            method_id: providerId,
+            amount: Number(amount),
+            ...(comments ? { comments } : {}),
+          },
+        ],
       });
     } catch {
       paymentStatus = PaymentStatus.REFUSED_CM;

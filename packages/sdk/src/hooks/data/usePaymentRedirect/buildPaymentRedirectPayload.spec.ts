@@ -24,6 +24,7 @@ const formData = {
   token: { value: 'tok', status: 'success' },
   uuid: 'call-ref-1',
   reference: 'contact-1',
+  comments: 'account to debit',
 } as any;
 
 const settings = {
@@ -68,6 +69,7 @@ describe('buildPaymentRedirectPayload', () => {
       callback_url_seller: 'https://seller.callback',
       uuid: 'call-ref-1',
       reference: 'contact-1',
+      comments: 'account to debit',
     });
   });
 

@@ -303,6 +303,20 @@ describe('PaymentRedirectService', () => {
       expect(redirect.url).toContain('payment_currency=EUR');
     });
 
+    it('forwards the comment on the payment when provided', async () => {
+      const service = await invokeService();
+      vi.mocked(api.patchV2BookingsBookingId).mockResolvedValue(undefined as any);
+
+      await service.createPaymentRedirect({ ...manualBody, comments: 'account to debit' }, context);
+
+      expect(api.patchV2BookingsBookingId).toHaveBeenCalledWith('BOOK_OK', {
+        booking_status: 'VALIDATED',
+        customer_id: 'CUST1',
+        currency: 'EUR',
+        payments: [{ method_id: 'MMANUAL', amount: 100, comments: 'account to debit' }],
+      });
+    });
+
     it('redirects with payment_status=REFUSED_CM when the booking PATCH fails', async () => {
       const service = await invokeService();
       vi.mocked(api.patchV2BookingsBookingId).mockRejectedValue(new Error('Unauthorized'));

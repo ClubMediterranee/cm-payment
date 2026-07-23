@@ -3,6 +3,7 @@ import {
   BillingAddress,
   CardInstallments,
   Cgv,
+  Comments,
   ContactChoice,
   Donation,
   Form,
@@ -86,6 +87,11 @@ export function PaymentPage() {
         <CardInstallments />
         <ContactChoice reference={reference} uuid={uuid} />
         <Donation />
+        <div className="w-full">
+          <h2 className="text-h5 mb-16 font-serif">Fill your comments</h2>
+          <Comments />
+        </div>
+
         <Cgv />
         <BillingAddress />
         <PaymentWidget />

@@ -45,7 +45,7 @@ const ContactChoiceWithFormProvider = (args: any) => {
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
-      getProviderValidation={() => ({ requires_contact_choice: true })}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
     >
       <ContactChoice {...args} />
     </MockedProvider>
@@ -348,7 +348,7 @@ export const AccessibilityTest: Story = {
       customerId="456"
       oidc={{ issuerType: OidcIssuerTypes.PARTNERS, accessToken: '' }}
       defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
-      getProviderValidation={() => ({ requires_contact_choice: true })}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
     >
       <ContactChoice {...args} />
     </MockedProvider>

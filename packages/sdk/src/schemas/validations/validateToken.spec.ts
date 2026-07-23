@@ -7,7 +7,7 @@ const mockConfig: CapsFormConfig = {
   content: defaultContent,
   isSeller: false,
   maxAmount: 10000,
-  getProviderValidation: (providerId: string) => {
+  getProviderConfiguration: (providerId: string) => {
     if (providerId === 'MHIPAY') {
       return { requires_token: true };
     }

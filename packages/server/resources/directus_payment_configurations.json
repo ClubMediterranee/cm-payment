@@ -25,6 +25,19 @@
     ]
   },
   {
+    "key": "is_comments_enabled",
+    "description": "Enable comments",
+    "type": "boolean",
+    "value": false,
+    "overrides": [
+      {
+        "locale": "*",
+        "issuer": "GO",
+        "value": true
+      }
+    ]
+  },
+  {
     "key": "days_before_trip_to_allow_free_deposit",
     "description": "Number of days before trip departure to allow free deposit (varies by issuer type: GM vs Seller)",
     "type": "number",
