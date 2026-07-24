@@ -10,7 +10,10 @@ export const AppSettings = {
   url: DOMAIN,
   api: {
     [OidcIssuerTypes.GM]: {
-      apiKey: import.meta.env.VITE_GM_API_KEY,
+      apiKey: {
+        BE: import.meta.env.VITE_GM_API_KEY_BE,
+        CA: import.meta.env.VITE_GM_API_KEY_CA,
+      },
     },
     [OidcIssuerTypes.GO]: {
       apiKey: import.meta.env.VITE_GO_API_KEY,
