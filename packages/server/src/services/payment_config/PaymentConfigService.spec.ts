@@ -43,6 +43,22 @@ describe('PaymentConfigService', () => {
       expect(result.settings).toEqual({ days_before_trip_to_allow_free_deposit: 90 });
     });
 
+    it('should return default config values when called without locale or issuer', async () => {
+      const configurations = [
+        {
+          key: 'days_before_trip_to_allow_free_deposit',
+          type: 'number',
+          value: 90,
+          overrides: [{ locale: 'en-US', issuer: 'GM', value: 30 }],
+        },
+      ] as never;
+      vi.spyOn(paymentConfigRepository, 'getConfigurations').mockResolvedValue(configurations);
+
+      const result = await service.getPaymentConfig();
+
+      expect(result.settings).toEqual({ days_before_trip_to_allow_free_deposit: 90 });
+    });
+
     it('should resolve override values by locale and issuer', async () => {
       const configurations = [
         {

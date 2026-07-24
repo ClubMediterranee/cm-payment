@@ -13,9 +13,9 @@ export class PaymentConfigService {
     issuerType,
     locale,
   }: {
-    issuerType: OidcIssuerTypes;
-    locale: string;
-  }): Promise<{ feature_flips: PaymentFeatureFlips; settings: PaymentConfigSettings }> {
+    issuerType?: OidcIssuerTypes;
+    locale?: string;
+  } = {}): Promise<{ feature_flips: PaymentFeatureFlips; settings: PaymentConfigSettings }> {
     const configurations = await this.paymentConfigRepository.getConfigurations();
 
     const feature_flips: PaymentFeatureFlips = {};
