@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { delay, http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
+import type { ReactNode } from 'react';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { Action } from '../__generated__/index.schemas';
@@ -92,6 +93,7 @@ const createHandlers = (delayMs = 0, integrationMode: IntegrationMode = 'redirec
 
 type PaymentWidgetStoryArgs = {
   integrationMode: IntegrationMode;
+  children?: ReactNode;
 };
 
 const meta: Meta<PaymentWidgetStoryArgs> = {

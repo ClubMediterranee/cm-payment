@@ -1,5 +1,5 @@
 import { Select } from '@clubmed/trident-ui/molecules/Forms/Select';
-import { useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
@@ -11,7 +11,10 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { renderTemplate } from '../utils/renderTemplate';
 import { FormPanel } from './ui/FormPanel';
 
-export const CardInstallments = () => {
+export const CardInstallments = ({
+  className,
+  children,
+}: PropsWithChildren<{ className?: string }>) => {
   const { content, locale } = useCapsConfigContext();
   const watchedProvider = useWatchedPaymentProvider();
   const paymentConditions = watchedProvider?.payment_conditions || {};
@@ -55,62 +58,65 @@ export const CardInstallments = () => {
   if ((paymentConditions[selectedCardType] ?? []).length <= 1) return null;
 
   return (
-    <FormPanel className="w-full flex flex-col md:flex-row gap-16">
-      <div className="flex-1">
-        <Select
-          name="payment_method_id"
-          value={selectedCardType}
-          onChange={(_, val) => handleCardTypeChange(val as string)}
-          label={content.cardInstallments.selectCardType}
-        >
-          {cardTypes.map((label) => (
-            <option key={label} value={label}>
-              {label}
-            </option>
-          ))}
-        </Select>
-      </div>
+    <div className={className}>
+      {children}
+      <FormPanel className="w-full flex flex-col md:flex-row gap-16">
+        <div className="flex-1">
+          <Select
+            name="payment_method_id"
+            value={selectedCardType}
+            onChange={(_, val) => handleCardTypeChange(val as string)}
+            label={content.cardInstallments.selectCardType}
+          >
+            {cardTypes.map((label) => (
+              <option key={label} value={label}>
+                {label}
+              </option>
+            ))}
+          </Select>
+        </div>
 
-      <div className="flex-1">
-        <Controller
-          name="payment_condition_id"
-          control={control}
-          render={({ field: { value, onChange, name } }) => (
-            <Select
-              name={name}
-              value={value}
-              onChange={(_, val) => onChange(val)}
-              label={content.cardInstallments.selectInstallments}
-              disabled={!selectedCardType}
-              errorMessage={formState.errors.payment_condition_id?.message as string}
-            >
-              {(paymentConditions[selectedCardType] ?? []).map(
-                ({ payment_count: count, id: timeConditionId }) => {
-                  const amountPerInstallment = Number(amount) / (count || 0);
+        <div className="flex-1">
+          <Controller
+            name="payment_condition_id"
+            control={control}
+            render={({ field: { value, onChange, name } }) => (
+              <Select
+                name={name}
+                value={value}
+                onChange={(_, val) => onChange(val)}
+                label={content.cardInstallments.selectInstallments}
+                disabled={!selectedCardType}
+                errorMessage={formState.errors.payment_condition_id?.message as string}
+              >
+                {(paymentConditions[selectedCardType] ?? []).map(
+                  ({ payment_count: count, id: timeConditionId }) => {
+                    const amountPerInstallment = Number(amount) / (count || 0);
 
-                  return (
-                    <option key={timeConditionId} value={timeConditionId}>
-                      {renderTemplate(
-                        content.cardInstallments.installmentLabel,
-                        {
-                          count,
-                          amount: formatCurrency({
-                            amount: amountPerInstallment,
-                            currency,
-                            locale,
-                          }),
-                        },
-                        { asFragment: true },
-                      )}
-                    </option>
-                  );
-                },
-              )}
-            </Select>
-          )}
-        />
-      </div>
-    </FormPanel>
+                    return (
+                      <option key={timeConditionId} value={timeConditionId}>
+                        {renderTemplate(
+                          content.cardInstallments.installmentLabel,
+                          {
+                            count,
+                            amount: formatCurrency({
+                              amount: amountPerInstallment,
+                              currency,
+                              locale,
+                            }),
+                          },
+                          { asFragment: true },
+                        )}
+                      </option>
+                    );
+                  },
+                )}
+              </Select>
+            )}
+          />
+        </div>
+      </FormPanel>
+    </div>
   );
 };
 

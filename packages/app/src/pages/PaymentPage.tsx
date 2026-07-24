@@ -74,33 +74,41 @@ export function PaymentPage() {
       </Suspense>
 
       <Form onError={onError} onLoad={onLoad} onLoadEnd={onLoadEnd} action={action}>
-        <div className="w-full">
+        <PaymentSchedule>
           <h2 className="text-h5 mb-16 font-serif">Choisissez l'échéancier de paiement</h2>
-          <PaymentSchedule />
-        </div>
-        <div className="w-full">
+        </PaymentSchedule>
+        <PaymentProviders>
           <h2 className="text-h5 mb-16 font-serif">
             Quel moyen de paiement souhaitez-vous utiliser ?
           </h2>
-          <PaymentProviders />
-        </div>
-        <CardInstallments />
-        <ContactChoice reference={reference} uuid={uuid} />
-        <Donation />
-        <div className="w-full">
+        </PaymentProviders>
+        <CardInstallments>
+          <h2 className="text-h5 mb-16 font-serif">Choisissez votre échéancier de carte</h2>
+        </CardInstallments>
+        <ContactChoice reference={reference} uuid={uuid}>
+          <h2 className="text-h5 mb-16 font-serif">Comment souhaitez-vous être contacté ?</h2>
+        </ContactChoice>
+        <Donation>
+          <h2 className="text-h5 mb-16 font-serif">Faites un don</h2>
+        </Donation>
+        <Comments>
           <h2 className="text-h5 mb-16 font-serif">Fill your comments</h2>
-          <Comments />
-        </div>
-
-        <Cgv />
-        <BillingAddress />
-        <PaymentWidget />
+        </Comments>
+        <Cgv>
+          <h2 className="text-h5 mb-16 font-serif">Conditions générales de vente</h2>
+        </Cgv>
+        <BillingAddress>
+          <h2 className="text-h5 mb-16 font-serif">Adresse de facturation</h2>
+        </BillingAddress>
+        <PaymentWidget>
+          <h2 className="text-h5 mb-16 font-serif">Informations de paiement</h2>
+        </PaymentWidget>
         {error?.message && (
           <p ref={ref} className="text-red font-semibold my-4">
             {error?.message}
           </p>
         )}
-        <SubmitButton className="my-8">Payer</SubmitButton>
+        <SubmitButton className="my-8 self-center">Payer</SubmitButton>
       </Form>
     </div>
   );
