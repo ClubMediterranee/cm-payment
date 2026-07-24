@@ -12,4 +12,8 @@ export type PaymentFeatureFlips = {
 
 export type PaymentConfigSettings = {
   days_before_trip_to_allow_free_deposit?: number | null;
+  payment_status_poll_attempts?: number;
+  payment_status_poll_delay_ms?: number;
+  dtmf_redirect_retry_attempts?: number;
+  dtmf_redirect_retry_delay_ms?: number;
 };

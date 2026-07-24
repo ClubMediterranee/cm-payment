@@ -3,7 +3,7 @@ import type { OidcIssuerTypes } from './types.js';
 type LocaleScoped = { locale: string | null };
 type IssuerScoped = LocaleScoped & { issuer?: string | null };
 
-export const configMatchRules = (context: { locale: string; issuer: OidcIssuerTypes }) => [
+export const configMatchRules = (context: { locale?: string; issuer?: OidcIssuerTypes }) => [
   ({ locale, issuer }: IssuerScoped) => locale === context.locale && issuer === context.issuer,
   ({ locale, issuer }: IssuerScoped) => locale === null && issuer === context.issuer,
   ({ locale, issuer }: IssuerScoped) => locale === context.locale && !issuer,

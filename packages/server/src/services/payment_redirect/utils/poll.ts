@@ -1,3 +1,5 @@
+import { RETRY_DEFAULTS } from './constants.js';
+
 type PollOptions<T> = {
   attempts?: number;
   delay?: number;
@@ -5,7 +7,11 @@ type PollOptions<T> = {
 };
 
 export const poll = async <T>(fn: () => Promise<T>, options: PollOptions<T>): Promise<T> => {
-  const { attempts = 3, delay = 1000, continue: shouldContinue } = options;
+  const {
+    attempts = RETRY_DEFAULTS.attempts,
+    delay = RETRY_DEFAULTS.delay,
+    continue: shouldContinue,
+  } = options;
 
   let result = await fn();
 
