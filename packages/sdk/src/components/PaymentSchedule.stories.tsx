@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
+import type { ReactNode } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
@@ -81,7 +82,16 @@ const handlers = [
   }),
 ];
 
-const meta: Meta<typeof PaymentSchedule> = {
+type PaymentScheduleStoryArgs = {
+  action?: Action;
+  proposalId?: string;
+  bookingId?: string;
+  customerId?: string;
+  payment_mode?: string;
+  children?: ReactNode;
+};
+
+const meta: Meta<PaymentScheduleStoryArgs> = {
   title: 'Components/PaymentSchedule',
   component: PaymentSchedule,
   loaders: [mswLoader],

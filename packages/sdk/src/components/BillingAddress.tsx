@@ -1,6 +1,6 @@
 import { Select } from '@clubmed/trident-ui/molecules/Forms/Select';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
-import { Suspense } from 'react';
+import { PropsWithChildren, Suspense } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { useBillingSchema } from '../hooks/data/useBillingSchema';
@@ -105,7 +105,10 @@ const BillingAddressContent = () => {
   );
 };
 
-export const BillingAddress = () => {
+export const BillingAddress = ({
+  className,
+  children,
+}: PropsWithChildren<{ className?: string }>) => {
   const watchedProvider = useWatchedPaymentProvider();
 
   const showBillingForm = watchedProvider?.billing_address_form === true;
@@ -116,9 +119,12 @@ export const BillingAddress = () => {
   }
 
   return (
-    <Suspense fallback={<BillingAddressSkeleton />}>
-      <BillingAddressContent />
-    </Suspense>
+    <div className={className}>
+      {children}
+      <Suspense fallback={<BillingAddressSkeleton />}>
+        <BillingAddressContent />
+      </Suspense>
+    </div>
   );
 };
 
