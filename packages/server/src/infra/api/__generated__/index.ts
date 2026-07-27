@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3460.1
+ * OpenAPI spec version: 0.3462.0
  */
 import { fetcher } from '../../http/fetcher.js';
 export interface LinkModel {
@@ -1965,6 +1965,254 @@ export interface CartModel {
   services?: CartServicesModel;
 }
 
+/**
+ * type of the service
+ */
+export type ServiceTypesModel = (typeof ServiceTypesModel)[keyof typeof ServiceTypesModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ServiceTypesModel = {
+  CHILDCARE: 'CHILDCARE',
+  TRANSFER: 'TRANSFER',
+  INSURANCE: 'INSURANCE',
+  RENTAL: 'RENTAL',
+  EXCURSION: 'EXCURSION',
+  WATER_SPORT: 'WATER_SPORT',
+  LAND_SPORT: 'LAND_SPORT',
+  WINTER_SPORT: 'WINTER_SPORT',
+  WELLNESS: 'WELLNESS',
+  CONCIERGERIE: 'CONCIERGERIE',
+  PARKING: 'PARKING',
+  VISAS: 'VISAS',
+  TOURIST_TAX: 'TOURIST_TAX',
+  PORT_TAX: 'PORT_TAX',
+  UPGRADE_PACKAGE: 'UPGRADE_PACKAGE',
+  DONATION: 'DONATION',
+  ROOM_SELECTION: 'ROOM_SELECTION',
+  MISCELLANEOUS_TOUR: 'MISCELLANEOUS_TOUR',
+  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
+  HONEYMOON: 'HONEYMOON',
+  HOUSEKEEPING: 'HOUSEKEEPING',
+  FOOD_AND_BEVERAGE: 'FOOD_AND_BEVERAGE',
+  TAILORMED: 'TAILORMED',
+  ALL_INCLUSIVE: 'ALL_INCLUSIVE',
+} as const;
+
+/**
+ * the service's status for a given schedule and attendee
+ */
+export type ServiceV3StatusModel = (typeof ServiceV3StatusModel)[keyof typeof ServiceV3StatusModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ServiceV3StatusModel = {
+  VALIDATED: 'VALIDATED',
+  OPTION: 'OPTION',
+  REQUEST: 'REQUEST',
+  WAITING_LIST: 'WAITING_LIST',
+  QUOTE: 'QUOTE',
+  WAITING_LIST_UNLOCKABLE: 'WAITING_LIST_UNLOCKABLE',
+  CANCELED: 'CANCELED',
+  EXPIRED: 'EXPIRED',
+  HOPE_TO_UNLOCK: 'HOPE_TO_UNLOCK',
+  HOPE: 'HOPE',
+  MUTE: 'MUTE',
+  INCLUDED: 'INCLUDED',
+} as const;
+
+export interface BookingServiceScheduleAttendeeDiscountV3 {
+  /** discount's amount applied on the service for the concerned attendee and schedule */
+  amount: number;
+  /** Offer id if relevant */
+  offer_id?: string;
+  /** Offer code */
+  code?: string;
+  _links?: LinksModel;
+}
+
+export type BookingServiceScheduleAttendeeDiscounts = BookingServiceScheduleAttendeeDiscountV3[];
+
+export interface ServiceAttendeeV3Model {
+  /** attendee id */
+  id: string;
+  status: ServiceV3StatusModel;
+  /** price per attendee */
+  price?: number;
+  /** price per attendee without discount */
+  price_without_discount: number;
+  discounts?: BookingServiceScheduleAttendeeDiscounts;
+}
+
+export type ServiceAttendeesV3 = ServiceAttendeeV3Model[];
+
+/**
+ * attendees id for which the transfer information is relevant
+ * @minItems 1
+ */
+export type ServiceTransferInformationConcernedAttendees = string[];
+
+/**
+ * Direction of transfer
+ */
+export type ValidServiceTransferInformationWaysModel =
+  | 'INBOUND'
+  | 'OUTBOUND'
+  | 'WITHIN_TOUR'
+  | null;
+
+/**
+ * indicates the travel company code, on two letters.
+ */
+export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfId = string | null;
+
+/**
+ * full company name
+ */
+export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfLabel = string | null;
+
+export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf = {
+  /** indicates the travel company code, on two letters. */
+  id?: BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfId;
+  /** full company name */
+  label?: BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfLabel;
+};
+
+export type BookingTransferInfoCustomerTravelingInformationTravelCompany =
+  BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf | null;
+
+/**
+ * arrival or departure travel time
+ * @pattern ^\d+:\d+:\d+.\d+$
+ */
+export type BookingTransferInfoCustomerTravelingInformationAnyOfTime = string | null;
+
+/**
+ * arrival or departure travel reference
+ * @maxLength 6
+ */
+export type BookingTransferInfoCustomerTravelingInformationAnyOfTravelReference = string | null;
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type BookingTransferInfoCustomerTravelingInformationAnyOf = {
+  /**
+   * arrival or departure travel time
+   * @pattern ^\d+:\d+:\d+.\d+$
+   */
+  time?: BookingTransferInfoCustomerTravelingInformationAnyOfTime;
+  /**
+   * arrival or departure travel reference
+   * @maxLength 6
+   */
+  travel_reference?: BookingTransferInfoCustomerTravelingInformationAnyOfTravelReference;
+  travel_company?: BookingTransferInfoCustomerTravelingInformationTravelCompany;
+};
+
+/**
+ * information provided by the customer to insure the service delivery
+ */
+export type BookingTransferInfoCustomerTravelingInformation =
+  BookingTransferInfoCustomerTravelingInformationAnyOf | null;
+
+export type TransfersBookingFromAnyOfId = string | null;
+
+export type TransfersBookingFromAnyOfLabel = string | null;
+
+/**
+ * transfer pickup place
+ */
+export type TransfersBookingFromAnyOf = {
+  id?: TransfersBookingFromAnyOfId;
+  label?: TransfersBookingFromAnyOfLabel;
+};
+
+/**
+ * transfer pickup place
+ */
+export type TransfersBookingFrom = TransfersBookingFromAnyOf | null;
+
+export type TransfersBookingToAnyOfId = string | null;
+
+export type TransfersBookingToAnyOfLabel = string | null;
+
+/**
+ * transfer drop off place
+ */
+export type TransfersBookingToAnyOf = {
+  id?: TransfersBookingToAnyOfId;
+  label?: TransfersBookingToAnyOfLabel;
+};
+
+/**
+ * transfer drop off place
+ */
+export type TransfersBookingTo = TransfersBookingToAnyOf | null;
+
+export type ServiceTransferInformationV3ModelAnyOf = {
+  concerned_attendees: ServiceTransferInformationConcernedAttendees;
+  way: ValidServiceTransferInformationWaysModel;
+  customer_traveling_information: BookingTransferInfoCustomerTravelingInformation;
+  from?: TransfersBookingFrom;
+  to?: TransfersBookingTo;
+  /**
+   * Any special comment regarding the transfer
+   * @maxLength 30
+   */
+  comment: string;
+};
+
+export type ServiceTransferInformationV3Model = ServiceTransferInformationV3ModelAnyOf | null;
+
+export type ServiceTransferInformationsV3Model = ServiceTransferInformationV3Model[] | null;
+
+/**
+ * service start date
+ */
+export type ServiceScheduleV3ModelStartDate = string | null;
+
+/**
+ * service end date
+ */
+export type ServiceScheduleV3ModelEndDate = string | null;
+
+export interface ServiceScheduleV3Model {
+  /** service start date */
+  start_date: ServiceScheduleV3ModelStartDate;
+  /** service end date */
+  end_date: ServiceScheduleV3ModelEndDate;
+  attendees?: ServiceAttendeesV3;
+  transfer_information?: ServiceTransferInformationsV3Model;
+}
+
+export type ServiceSchedulesV3 = ServiceScheduleV3Model[];
+
+/**
+ * Order of the stay this service is applied to. Counting from 0.
+ * @minimum 0
+ */
+export type ServiceV3ModelStayIndex = number | null;
+
+export interface ServiceV3Model {
+  /** service id */
+  id: string;
+  type: ServiceTypesModel;
+  /**
+   * The iso 3 currency. Ex: CNY,EUR,..
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  /**
+   * Order of the stay this service is applied to. Counting from 0.
+   * @minimum 0
+   */
+  stay_index: ServiceV3ModelStayIndex;
+  schedules: ServiceSchedulesV3;
+  _links?: LinksModel;
+}
+
+export type ServicesV3Model = ServiceV3Model[];
+
 export type CartUpgradeRoomPriceModelAnyOf = {
   /** Room price amount */
   amount: number;
@@ -2967,6 +3215,32 @@ export type GetV0CountriesParams = {
   filter?: FilterArrayParamModel;
 };
 
+export type GetV3CustomersCustomerIdBookingsBookingIdServicesParams = {
+  /**
+   * Specify if you only want services with a given status
+   */
+  status?: GetV3CustomersCustomerIdBookingsBookingIdServicesStatus;
+};
+
+export type GetV3CustomersCustomerIdBookingsBookingIdServicesStatus =
+  (typeof GetV3CustomersCustomerIdBookingsBookingIdServicesStatus)[keyof typeof GetV3CustomersCustomerIdBookingsBookingIdServicesStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetV3CustomersCustomerIdBookingsBookingIdServicesStatus = {
+  VALIDATED: 'VALIDATED',
+  OPTION: 'OPTION',
+  REQUEST: 'REQUEST',
+  WAITING_LIST: 'WAITING_LIST',
+  QUOTE: 'QUOTE',
+  WAITING_LIST_UNLOCKABLE: 'WAITING_LIST_UNLOCKABLE',
+  CANCELED: 'CANCELED',
+  EXPIRED: 'EXPIRED',
+  HOPE_TO_UNLOCK: 'HOPE_TO_UNLOCK',
+  HOPE: 'HOPE',
+  MUTE: 'MUTE',
+  INCLUDED: 'INCLUDED',
+} as const;
+
 export type PostV3BookingsParams = {
   /**
    * Technical information provided, if needed, by Club Med to the partner
@@ -3058,6 +3332,21 @@ export const getV1CustomersCustomerIdBookingsBookingIdCart = (
   return fetcher<CartModel>({
     url: `/v1/customers/${customerId}/bookings/${bookingId}/cart`,
     method: 'GET',
+  });
+};
+
+/**
+ * @summary Provides the list of subscribed services in a booking
+ */
+export const getV3CustomersCustomerIdBookingsBookingIdServices = (
+  customerId: string,
+  bookingId: string,
+  params?: GetV3CustomersCustomerIdBookingsBookingIdServicesParams,
+) => {
+  return fetcher<ServicesV3Model>({
+    url: `/v3/customers/${customerId}/bookings/${bookingId}/services`,
+    method: 'GET',
+    params,
   });
 };
 
@@ -3194,6 +3483,9 @@ export type GetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResult = No
 >;
 export type GetV1CustomersCustomerIdBookingsBookingIdCartResult = NonNullable<
   Awaited<ReturnType<typeof getV1CustomersCustomerIdBookingsBookingIdCart>>
+>;
+export type GetV3CustomersCustomerIdBookingsBookingIdServicesResult = NonNullable<
+  Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingIdServices>>
 >;
 export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = NonNullable<
   Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartAccommodations>>

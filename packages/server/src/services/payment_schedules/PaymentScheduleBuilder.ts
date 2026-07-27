@@ -23,7 +23,7 @@ export class PaymentScheduleBuilder {
     payment: { amount?: number; deadline?: string },
     currency: string,
   ): PaymentScheduleOutput[] {
-    if (payment.amount === undefined) {
+    if (!payment.amount) {
       return [];
     }
 

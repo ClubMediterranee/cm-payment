@@ -5,6 +5,8 @@ import {
   getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1CustomersCustomerIdBookingsBookingIdCart,
   getV1ProposalsProposalIdPaymentSchedule,
+  getV3CustomersCustomerIdBookingsBookingIdServices,
+  GetV3CustomersCustomerIdBookingsBookingIdServicesStatus,
 } from '../../infra/api/__generated__/index.js';
 import { Action } from '../../infra/api/__generated__/index.js';
 import {
@@ -30,6 +32,10 @@ export class PaymentSchedulesService {
     [Action.PAYMENT_PARTIAL]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
     [Action.PAYMENT_CART]: getV1CustomersCustomerIdBookingsBookingIdCart,
     [Action.PAYMENT_UPGRADE_ROOM]: getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
+    [Action.PAYMENT_SERVICES_IN_OPTION]: (customerId: string, bookingId: string) =>
+      getV3CustomersCustomerIdBookingsBookingIdServices(customerId, bookingId, {
+        status: GetV3CustomersCustomerIdBookingsBookingIdServicesStatus.OPTION,
+      }),
   };
 
   async handlePaymentSchedules({
