@@ -1,3 +1,4 @@
+import { PropsWithChildren } from 'react';
 import { Controller } from 'react-hook-form';
 
 import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
@@ -9,7 +10,7 @@ import { FormPanel } from './ui/FormPanel';
 import { TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
 import { Textarea } from './ui/Textarea';
 
-export const Comments = () => {
+export const Comments = ({ className, children }: PropsWithChildren<{ className?: string }>) => {
   const { content } = useCapsConfigContext();
   const { control } = useFormContext();
   const watchedProvider = useWatchedPaymentProvider();
@@ -24,22 +25,25 @@ export const Comments = () => {
   }
 
   return (
-    <FormPanel className="w-full flex flex-col">
-      <Controller
-        name="comments"
-        control={control}
-        render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
-          <Textarea
-            value={value}
-            onChange={onChange}
-            onBlur={onBlur}
-            placeholder={content.comments.placeholder}
-            errorMessage={error?.message}
-            dataTestId="payment-comments"
-          />
-        )}
-      />
-    </FormPanel>
+    <div className={className}>
+      {children}
+      <FormPanel>
+        <Controller
+          name="comments"
+          control={control}
+          render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
+            <Textarea
+              value={value}
+              onChange={onChange}
+              onBlur={onBlur}
+              placeholder={content.comments.placeholder}
+              errorMessage={error?.message}
+              dataTestId="payment-comments"
+            />
+          )}
+        />
+      </FormPanel>
+    </div>
   );
 };
 

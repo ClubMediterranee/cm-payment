@@ -88,9 +88,15 @@ export function useAppParams() {
     isConfirmationRoute ? resultConfirmation?.issuer.toUpperCase() : values?.issuerType
   ) as OidcIssuerTypes;
 
+  const gmApiKey = values?.bookingId
+    ? AppSettings.api[OidcIssuerTypes.GM].apiKey.CA
+    : AppSettings.api[OidcIssuerTypes.GM].apiKey.BE;
+
+  const apiKey = issuerType === OidcIssuerTypes.GM ? gmApiKey : AppSettings.api[issuerType].apiKey;
+
   return {
     values,
-    api: { ...AppSettings.api[issuerType], url: AppSettings.url },
+    api: { url: AppSettings.url, apiKey },
     oidc: {
       issuerType,
       accessToken: auth?.user?.access_token || '',

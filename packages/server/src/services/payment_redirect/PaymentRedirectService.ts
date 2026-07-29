@@ -107,12 +107,19 @@ export class PaymentRedirectService {
     body: PaymentRedirectRequestBody;
     redirectPayload: PaymentRedirectRequestModel;
   }) {
+    const { settings } = await this.paymentConfigService.getPaymentConfig();
+
     const { token } = await postV0PaymentProvidersProviderIdRequestToken(body.provider_id, {
       params: body.uuid ? { uuid: body.uuid } : { reference: body.reference },
     });
 
-    return retry(() =>
-      postV0PaymentsPaymentIdRedirectRequest(paymentId, { ...redirectPayload, open_id: token }),
+    return retry(
+      () =>
+        postV0PaymentsPaymentIdRedirectRequest(paymentId, { ...redirectPayload, open_id: token }),
+      {
+        attempts: settings.dtmf_redirect_retry_attempts,
+        delay: settings.dtmf_redirect_retry_delay_ms,
+      },
     );
   }
 
@@ -203,9 +210,11 @@ export class PaymentRedirectService {
   }
 
   private async confirmPaymentWithPolling(paymentId: string) {
+    const { settings } = await this.paymentConfigService.getPaymentConfig();
+
     const response = await poll(() => getV0PaymentsPaymentIdStatus(paymentId), {
-      attempts: 3,
-      delay: 1000,
+      attempts: settings.payment_status_poll_attempts,
+      delay: settings.payment_status_poll_delay_ms,
       continue: (res) => res.finalisePaymentResponse.paiement.statutPaiement === 'PENDING',
     });
 

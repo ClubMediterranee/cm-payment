@@ -46,13 +46,18 @@ describe('poll', () => {
   });
 
   it('should use default values for attempts and delay', async () => {
+    vi.useFakeTimers();
     const fn = vi.fn(async () => ({ status: 'PENDING' }));
 
-    await poll(fn, {
+    const promise = poll(fn, {
       continue: (res) => res.status === 'PENDING',
     });
 
+    await vi.runAllTimersAsync();
+    await promise;
+
     expect(fn).toHaveBeenCalledTimes(3);
+    vi.useRealTimers();
   });
 
   it('should infer correct return type', async () => {

@@ -24,13 +24,24 @@ vi.mock('../../infra/api/__generated__/index.js', () => ({
 }));
 
 const getPaymentProvidersConfig = vi.fn();
+const getPaymentConfig = vi.fn();
 
 const BASE_URL = 'https://bff.test';
 
 async function invokeService() {
+  getPaymentConfig.mockResolvedValue({
+    feature_flips: {},
+    settings: {
+      payment_status_poll_attempts: 3,
+      payment_status_poll_delay_ms: 3000,
+      dtmf_redirect_retry_attempts: 10,
+      dtmf_redirect_retry_delay_ms: 1000,
+    },
+  });
+
   await DITest.create({ BASE_URL } as Partial<TsED.Configuration>);
   return DITest.invoke<PaymentRedirectService>(PaymentRedirectService, [
-    { token: PaymentConfigService, use: { getPaymentProvidersConfig } },
+    { token: PaymentConfigService, use: { getPaymentProvidersConfig, getPaymentConfig } },
   ]);
 }
 

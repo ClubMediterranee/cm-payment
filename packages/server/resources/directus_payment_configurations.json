@@ -54,5 +54,33 @@
         "value": 3
       }
     ]
+  },
+  {
+    "key": "payment_status_poll_attempts",
+    "description": "Max attempts when polling payment status after provider redirect",
+    "type": "number",
+    "value": 3,
+    "overrides": []
+  },
+  {
+    "key": "payment_status_poll_delay_ms",
+    "description": "Delay in ms between payment status poll attempts",
+    "type": "number",
+    "value": 3000,
+    "overrides": []
+  },
+  {
+    "key": "dtmf_redirect_retry_attempts",
+    "description": "Max attempts when retrying the DTMF redirect request until the backoffice finds the secured call",
+    "type": "number",
+    "value": 10,
+    "overrides": []
+  },
+  {
+    "key": "dtmf_redirect_retry_delay_ms",
+    "description": "Delay in ms between DTMF redirect retry attempts",
+    "type": "number",
+    "value": 1000,
+    "overrides": []
   }
 ]

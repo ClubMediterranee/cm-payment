@@ -9,7 +9,7 @@ export function Form({ children }: PropsWithChildren) {
     <form
       id="payment-form"
       onSubmit={handleSubmit}
-      className="w-full flex flex-col justify-center items-center gap-24 text-b4"
+      className="w-full flex flex-col justify-center items-stretch gap-24 text-b4"
     >
       {children}
     </form>

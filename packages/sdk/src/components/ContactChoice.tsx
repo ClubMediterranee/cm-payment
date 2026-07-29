@@ -1,5 +1,6 @@
 import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
 import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
+import { PropsWithChildren } from 'react';
 import { Controller } from 'react-hook-form';
 
 import { useContactChoice } from '../hooks/useContactChoice';
@@ -11,12 +12,13 @@ import { renderTemplate } from '../utils/renderTemplate';
 import { FormPanel } from './ui/FormPanel';
 import { RadioSkeleton, TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
 
-type Props = {
+type Props = PropsWithChildren<{
+  className?: string;
   reference?: string;
   uuid?: string;
-};
+}>;
 
-export const ContactChoice = ({ reference, uuid }: Props) => {
+export const ContactChoice = ({ className, reference, uuid, children }: Props) => {
   const { content } = useCapsConfigContext();
   const { control } = useFormContext();
 
@@ -31,66 +33,69 @@ export const ContactChoice = ({ reference, uuid }: Props) => {
   }
 
   return (
-    <FormPanel className="w-full flex flex-col">
-      <span className="text-sienna text-b3 mb-20">{sendLinkText}</span>
-      <Controller
-        name="template_id"
-        control={control}
-        render={({ field: { value, onChange, name } }) => (
-          <div className="flex flex-row gap-32">
-            {contactChoices.map((choice) => {
-              const isCurrentTemplate = choice.templateId === value;
-              const hasTextField = !!choice.input;
+    <div className={className}>
+      {children}
+      <FormPanel>
+        <span className="text-sienna text-b3 mb-20">{sendLinkText}</span>
+        <Controller
+          name="template_id"
+          control={control}
+          render={({ field: { value, onChange, name } }) => (
+            <div className="flex flex-row gap-32">
+              {contactChoices.map((choice) => {
+                const isCurrentTemplate = choice.templateId === value;
+                const hasTextField = !!choice.input;
 
-              return (
-                <div key={choice.templateId} className="flex flex-col space-y-16 w-full">
-                  <Radio
-                    key={`${isCurrentTemplate}`}
-                    name={name}
-                    value={choice.templateId}
-                    checked={isCurrentTemplate}
-                    disabled={!!choice.radio.disabled}
-                    onChange={(_, newValue) => onChange(newValue || '')}
-                  >
-                    <span data-textid="ContactChoicesLabel">
-                      {renderTemplate(content.contactChoice.choiceLabel, {
-                        label: choice.radio.label,
-                      })}
-                    </span>
-                  </Radio>
-                  {hasTextField && (
-                    <Controller
-                      name={`billing_details.${choice.input.name}` as any}
-                      control={control}
-                      render={({
-                        field: { value, onChange, ...rest },
-                        fieldState: { error, isTouched },
-                      }) => (
-                        <TextField
-                          {...rest}
-                          type={choice.input.type}
-                          value={value}
-                          onChange={(_, value) => onChange(value)}
-                          disabled={!isCurrentTemplate}
-                          data-name={'InputFor_' + choice.input.name}
-                          data-testid={'InputFor_' + choice.input.name}
-                          label={choice.input.label}
-                          aria-describedby={choice.input.label}
-                          errorMessage={error?.message}
-                          validationStatus={
-                            isTouched && !error ? 'success' : error ? 'error' : 'default'
-                          }
-                        />
-                      )}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      />
-    </FormPanel>
+                return (
+                  <div key={choice.templateId} className="flex flex-col space-y-16 w-full">
+                    <Radio
+                      key={`${isCurrentTemplate}`}
+                      name={name}
+                      value={choice.templateId}
+                      checked={isCurrentTemplate}
+                      disabled={!!choice.radio.disabled}
+                      onChange={(_, newValue) => onChange(newValue || '')}
+                    >
+                      <span data-textid="ContactChoicesLabel">
+                        {renderTemplate(content.contactChoice.choiceLabel, {
+                          label: choice.radio.label,
+                        })}
+                      </span>
+                    </Radio>
+                    {hasTextField && (
+                      <Controller
+                        name={`billing_details.${choice.input.name}` as any}
+                        control={control}
+                        render={({
+                          field: { value, onChange, ...rest },
+                          fieldState: { error, isTouched },
+                        }) => (
+                          <TextField
+                            {...rest}
+                            type={choice.input.type}
+                            value={value}
+                            onChange={(_, value) => onChange(value)}
+                            disabled={!isCurrentTemplate}
+                            data-name={'InputFor_' + choice.input.name}
+                            data-testid={'InputFor_' + choice.input.name}
+                            label={choice.input.label}
+                            aria-describedby={choice.input.label}
+                            errorMessage={error?.message}
+                            validationStatus={
+                              isTouched && !error ? 'success' : error ? 'error' : 'default'
+                            }
+                          />
+                        )}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        />
+      </FormPanel>
+    </div>
   );
 };
 

@@ -1,6 +1,11 @@
+import { RETRY_DEFAULTS } from './constants.js';
+
 export const retry = async <T>(
   fn: () => Promise<T>,
-  { attempts = 10, delay = 1000 }: { attempts?: number; delay?: number } = {},
+  {
+    attempts = RETRY_DEFAULTS.attempts,
+    delay = RETRY_DEFAULTS.delay,
+  }: { attempts?: number; delay?: number } = {},
 ): Promise<T> => {
   for (let attempt = 1; ; attempt++) {
     try {

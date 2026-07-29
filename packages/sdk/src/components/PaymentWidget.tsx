@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 
 import { useFormContext } from '../hooks/utils/useForm';
 import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegrationMode';
@@ -8,7 +8,10 @@ import { IntegratedView } from './PaymentWidget/IntegratedView';
 import { FormPanel } from './ui/FormPanel';
 import { TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
 
-export const PaymentWidget = () => {
+export const PaymentWidget = ({
+  className,
+  children,
+}: PropsWithChildren<{ className?: string }>) => {
   const { iframe, hostedField, custom } = useProviderIntegrationMode();
   const { setValue } = useFormContext();
 
@@ -18,15 +21,18 @@ export const PaymentWidget = () => {
     }
   }, [hostedField]);
 
-  if (hostedField || custom) {
-    return <IntegratedView />;
+  const view = hostedField || custom ? <IntegratedView /> : iframe ? <IframeView /> : null;
+
+  if (!view) {
+    return null;
   }
 
-  if (iframe) {
-    return <IframeView />;
-  }
-
-  return null;
+  return (
+    <div className={className}>
+      {children}
+      {view}
+    </div>
+  );
 };
 
 const PaymentWidgetSkeleton = () => (
