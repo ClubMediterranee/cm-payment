@@ -104,7 +104,7 @@ export function PaymentPage() {
           <h2 className="text-h5 mb-16 font-serif">Informations de paiement</h2>
         </PaymentWidget>
         {error?.message && (
-          <p ref={ref} className="text-red font-semibold my-4">
+          <p ref={ref} className="text-red font-semibold my-4 text-center">
             {error?.message}
           </p>
         )}
