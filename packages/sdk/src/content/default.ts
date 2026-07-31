@@ -95,6 +95,12 @@ export const defaultContent: Content = {
       positive: 'The amount must be greater than 0',
       maxExceeded: 'The amount cannot exceed the remaining total',
     },
+    overpaymentConfirmation: {
+      title: 'Payment above the due amount',
+      description: 'The amount you entered exceeds the amount due. Do you wish to proceed?',
+      confirm: 'Confirm',
+      cancel: 'Cancel',
+    },
   },
   cardInstallments: {
     title: 'Payment method',

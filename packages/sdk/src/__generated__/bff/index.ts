@@ -7,10 +7,12 @@
 import type {
   ActionResolverControllerResolveActionParams,
   PaymentConfig,
+  PaymentMaxAmountOutputModel,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentProvidersControllerGetPaymentProvidersParams,
   PaymentRedirectRequestBody,
   PaymentRedirectRequestResult,
+  PaymentScheduleControllerGetOverpaymentAllowanceParams,
   PaymentScheduleControllerGetPaymentSchedulesParams,
   PaymentScheduleOutputModel,
   ResolvedActionModel,
@@ -71,6 +73,20 @@ export const paymentRedirectControllerCreate = (
 };
 
 /**
+ * @summary Get the allowed surplus above the due amount for a booking
+ */
+export const paymentScheduleControllerGetOverpaymentAllowance = (
+  bookingId: string,
+  params?: PaymentScheduleControllerGetOverpaymentAllowanceParams,
+) => {
+  return fetcher<PaymentMaxAmountOutputModel>({
+    url: `/rest/payment_schedules/booking/${bookingId}/overpayment_allowance`,
+    method: 'GET',
+    params,
+  });
+};
+
+/**
  * @summary Get payment schedules by type and id
  */
 export const paymentScheduleControllerGetPaymentSchedules = (
@@ -104,6 +120,9 @@ export type PaymentProvidersControllerGetPaymentProvidersResult = NonNullable<
 >;
 export type PaymentRedirectControllerCreateResult = NonNullable<
   Awaited<ReturnType<typeof paymentRedirectControllerCreate>>
+>;
+export type PaymentScheduleControllerGetOverpaymentAllowanceResult = NonNullable<
+  Awaited<ReturnType<typeof paymentScheduleControllerGetOverpaymentAllowance>>
 >;
 export type PaymentScheduleControllerGetPaymentSchedulesResult = NonNullable<
   Awaited<ReturnType<typeof paymentScheduleControllerGetPaymentSchedules>>

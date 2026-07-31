@@ -88,6 +88,12 @@ export type Content = {
       positive: string;
       maxExceeded: string;
     };
+    overpaymentConfirmation: {
+      title: string;
+      description: string;
+      confirm: string;
+      cancel: string;
+    };
   };
   cardInstallments: {
     title: string;

@@ -82,5 +82,61 @@
     "type": "number",
     "value": 1000,
     "overrides": []
+  },
+  {
+    "key": "max_amount_exceedance_type",
+    "description": "Type of overpayment allowance: none | percent | amount",
+    "type": "string",
+    "value": "none",
+    "overrides": [
+      {
+        "locale": "fr-CA",
+        "issuer": "GO",
+        "value": "amount"
+      },
+      {
+        "locale": "en-CA",
+        "issuer": "GO",
+        "value": "amount"
+      },
+      {
+        "locale": "fr-CA",
+        "issuer": "PARTNERS",
+        "value": "percent"
+      },
+      {
+        "locale": "en-CA",
+        "issuer": "PARTNERS",
+        "value": "percent"
+      }
+    ]
+  },
+  {
+    "key": "max_amount_exceedance_value",
+    "description": "Overpayment allowance value: fixed amount (CAD) for GO, percentage for PARTNERS",
+    "type": "number",
+    "value": 0,
+    "overrides": [
+      {
+        "locale": "fr-CA",
+        "issuer": "GO",
+        "value": 10000
+      },
+      {
+        "locale": "en-CA",
+        "issuer": "GO",
+        "value": 10000
+      },
+      {
+        "locale": "fr-CA",
+        "issuer": "PARTNERS",
+        "value": 0.5
+      },
+      {
+        "locale": "en-CA",
+        "issuer": "PARTNERS",
+        "value": 0.5
+      }
+    ]
   }
 ]

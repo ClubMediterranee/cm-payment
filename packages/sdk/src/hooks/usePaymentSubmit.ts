@@ -41,7 +41,7 @@ export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) 
   }, [iframe, isPending, onLoad]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    await methods.handleSubmit((data) => mutate(data), handleTokenValidationError)(e).catch;
+    await methods.handleSubmit((data) => mutate(data), handleTokenValidationError)(e);
   };
 
   return { handleSubmit, ...mutationProps };
