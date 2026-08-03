@@ -11,16 +11,12 @@ vi.mock('./utils/useProviderIntegrationMode');
 describe('useOverpaymentSubmit', () => {
   let mockHandleSubmit: Mock;
   let mockWatch: Mock;
-  let mockOnOpen: Mock;
-  let mockOnClose: Mock;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     mockHandleSubmit = vi.fn();
     mockWatch = vi.fn();
-    mockOnOpen = vi.fn();
-    mockOnClose = vi.fn();
 
     vi.spyOn(usePaymentSubmitModule, 'usePaymentSubmit').mockReturnValue({
       handleSubmit: mockHandleSubmit,
