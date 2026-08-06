@@ -244,7 +244,22 @@ export const ActionResolverControllerResolveActionAction = {
 
 export type PaymentProvidersControllerGetPaymentProvidersParams = {
   customer_id?: string;
+  action?: PaymentProvidersControllerGetPaymentProvidersAction;
 };
+
+export type PaymentProvidersControllerGetPaymentProvidersAction =
+  (typeof PaymentProvidersControllerGetPaymentProvidersAction)[keyof typeof PaymentProvidersControllerGetPaymentProvidersAction];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentProvidersControllerGetPaymentProvidersAction = {
+  PAYMENT_CART: 'PAYMENT_CART',
+  PAYMENT_RESA: 'PAYMENT_RESA',
+  PAYMENT_OPTION: 'PAYMENT_OPTION',
+  PAYMENT_SOLDE: 'PAYMENT_SOLDE',
+  PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
+  PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
+} as const;
 
 export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType =
   (typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType)[keyof typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType];

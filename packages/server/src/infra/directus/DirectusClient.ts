@@ -44,15 +44,20 @@ export class DirectusClient {
           {
             settings: [
               'locale',
-              'status',
               'display_type',
               'requires_token',
               'requires_expiry_date',
               'requires_contact_choice',
+              'allowed_actions',
               'settings',
             ],
           },
         ],
+        deep: {
+          settings: {
+            _filter: { status: { _eq: 'published' } },
+          },
+        },
       }),
     );
   }

@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3454.0
+ * OpenAPI spec version: 0.3473.0
  */
 import type {
   BookingTransportDetailsListModelV2,
@@ -613,7 +613,7 @@ export const postV1Payments = (paymentOrderModel: PaymentOrderModel) => {
 };
 
 /**
- * Behind the scene, this endpoint acts like calling the POST /v3/proposals/search and the PUT /v1/proposals/{proposal_id}/attendees before creating the booking. To create a booking, the proposal must contain attendees information. The booking can be created with different statuses impacting the booking life cycle. The booking creation will decrease Club Med stock. The booking creation is required to create a payment. The accept-language must be the same as the one in the proposal creation.
+ * Behind the scene, this endpoint acts like calling the POST /v3/proposals/search and the PUT /v2/proposals/{proposal_id}/attendees before creating the booking. To create a booking, the proposal must contain attendees information. The booking can be created with different statuses impacting the booking life cycle. The booking creation will decrease Club Med stock. The booking creation is required to create a payment. The accept-language must be the same as the one in the proposal creation.
  * @summary Creates a booking
  */
 export const postV3Bookings = (

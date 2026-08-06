@@ -47,14 +47,11 @@ export class PaymentConfigService {
   }) {
     const providers = await this.paymentConfigRepository.getProviders();
 
-    const activeProviders = providers.filter(
-      (provider) => !!findByRules(provider.variants, providerMatchRules({ locale }))?.active,
-    );
-
     return Object.fromEntries(
-      activeProviders.map((provider) => {
+      providers.map((provider) => {
         const global = provider.variants.find((v) => v.locale === null);
         const local = provider.variants.find((v) => v.locale === locale);
+        const resolved = findByRules(provider.variants, providerMatchRules({ locale }));
 
         const settings = [...(global?.settings || []), ...(local?.settings || [])].reduce<
           Record<string, unknown>
@@ -66,6 +63,7 @@ export class PaymentConfigService {
           provider.id,
           {
             ...global?.validation,
+            allowed_actions: resolved?.allowed_actions ?? [],
             requires_contact_choice: (validation.requires_contact_choice ?? []).includes(
               issuerType!,
             ),
