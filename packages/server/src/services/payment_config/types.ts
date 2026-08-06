@@ -16,4 +16,6 @@ export type PaymentConfigSettings = {
   payment_status_poll_delay_ms?: number;
   dtmf_redirect_retry_attempts?: number;
   dtmf_redirect_retry_delay_ms?: number;
+  max_amount_exceedance_type?: 'none' | 'percent' | 'amount' | null;
+  max_amount_exceedance_value?: number | null;
 };

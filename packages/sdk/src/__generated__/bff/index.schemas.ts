@@ -102,6 +102,10 @@ export interface PaymentRedirectRequestBody {
   comments?: string;
 }
 
+export interface PaymentMaxAmountOutputModel {
+  amount: number;
+}
+
 export interface PaymentScheduleOutputModel {
   amount?: number;
   /** @minLength 1 */
@@ -340,6 +344,10 @@ export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvid
 export type PaymentProvidersControllerGetPaymentProviders200 = {
   payment_providers: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem[];
   buy_now_pay_later_providers: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem[];
+};
+
+export type PaymentScheduleControllerGetOverpaymentAllowanceParams = {
+  customer_id?: string;
 };
 
 export type PaymentScheduleControllerGetPaymentSchedulesParams = {

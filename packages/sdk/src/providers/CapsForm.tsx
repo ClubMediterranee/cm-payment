@@ -11,6 +11,7 @@ import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback'
 import { GlobalFormSkeleton } from '../components/ui/fallbacks/GlobalFormSkeleton';
 import { FormCallbacks, FormCallbacksContext } from '../contexts/FormCallbacksContext';
 import { useActionResolver } from '../hooks/data/useActionResolver';
+import { useOverpaymentAllowance } from '../hooks/data/useOverpaymentAllowance';
 import { paymentProvidersQueryOptions } from '../hooks/data/usePaymentProviders';
 import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
 import { useCapsForm } from '../hooks/useCapsForm';
@@ -56,7 +57,10 @@ function CapsFormProvider({
     ],
   });
 
-  const maxAmount = paymentSchedule?.[0]?.amount || 0;
+  const { data: overpaymentAllowanceData } = useOverpaymentAllowance({
+    enabled: resolvedAction === Action.PAYMENT_PARTIAL,
+  });
+  const maxAmount = (paymentSchedule?.[0]?.amount ?? 0) + (overpaymentAllowanceData?.amount ?? 0);
 
   const countryCode = locale.split('-')[1] || locale.toUpperCase();
 

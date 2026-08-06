@@ -11,6 +11,7 @@ import type { RequestHandlerOptions } from 'msw';
 
 import type {
   PaymentConfig,
+  PaymentMaxAmountOutputModel,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentRedirectRequestResult,
   PaymentScheduleOutputModel,
@@ -343,6 +344,13 @@ export const getPaymentRedirectControllerCreateResponseMock = (
   ...overrideResponse,
 });
 
+export const getPaymentScheduleControllerGetOverpaymentAllowanceResponseMock = (
+  overrideResponse: Partial<PaymentMaxAmountOutputModel> = {},
+): PaymentMaxAmountOutputModel => ({
+  amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
+  ...overrideResponse,
+});
+
 export const getPaymentScheduleControllerGetPaymentSchedulesResponseMock =
   (): PaymentScheduleOutputModel[] =>
     Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
@@ -483,6 +491,34 @@ export const getPaymentRedirectControllerCreateMockHandler = (
   );
 };
 
+export const getPaymentScheduleControllerGetOverpaymentAllowanceMockHandler = (
+  overrideResponse?:
+    | PaymentMaxAmountOutputModel
+    | ((
+        info: Parameters<Parameters<typeof http.get>[1]>[0],
+      ) => Promise<PaymentMaxAmountOutputModel> | PaymentMaxAmountOutputModel),
+  options?: RequestHandlerOptions,
+) => {
+  return http.get(
+    '*/rest/payment_schedules/booking/:bookingId/overpayment_allowance',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getPaymentScheduleControllerGetOverpaymentAllowanceResponseMock(),
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    },
+    options,
+  );
+};
+
 export const getPaymentScheduleControllerGetPaymentSchedulesMockHandler = (
   overrideResponse?:
     | PaymentScheduleOutputModel[]
@@ -541,6 +577,7 @@ export const getApiDocumentationMock = () => [
   getPaymentConfigControllerGetPaymentConfigMockHandler(),
   getPaymentProvidersControllerGetPaymentProvidersMockHandler(),
   getPaymentRedirectControllerCreateMockHandler(),
+  getPaymentScheduleControllerGetOverpaymentAllowanceMockHandler(),
   getPaymentScheduleControllerGetPaymentSchedulesMockHandler(),
   getVersionControllerGetMockHandler(),
 ];
