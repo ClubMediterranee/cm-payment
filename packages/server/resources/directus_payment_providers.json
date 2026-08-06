@@ -30,7 +30,16 @@
           }
         ],
         "requires_token": true,
-        "requires_expiry_date": false
+        "requires_expiry_date": false,
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -41,10 +50,11 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
+        "status": "published",
         "settings": [],
         "requires_token": true,
-        "requires_expiry_date": false
+        "requires_expiry_date": false,
+        "allowed_actions": []
       },
       {
         "locale": "en-US",
@@ -60,7 +70,8 @@
             "type": "string",
             "value": "UP-75709538-99"
           }
-        ]
+        ],
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
       },
       {
         "locale": "en-CA",
@@ -76,7 +87,8 @@
             "type": "string",
             "value": "UP-75709538-99"
           }
-        ]
+        ],
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
       },
       {
         "locale": "fr-CA",
@@ -92,6 +104,15 @@
             "type": "string",
             "value": "UP-75709538-99"
           }
+        ],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
         ]
       }
     ]
@@ -104,7 +125,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "de-DE",
@@ -130,6 +160,15 @@
             "type": "string",
             "value": "stage"
           }
+        ],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
         ]
       }
     ]
@@ -141,7 +180,7 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
+        "status": "published",
         "settings": [
           {
             "key": "merchant_id",
@@ -158,7 +197,8 @@
             "type": "number",
             "value": 45
           }
-        ]
+        ],
+        "allowed_actions": []
       },
       {
         "locale": "fr-FR",
@@ -174,7 +214,8 @@
             "type": "string",
             "value": "4x"
           }
-        ]
+        ],
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
       },
       {
         "locale": "fr-BE",
@@ -190,7 +231,8 @@
             "type": "string",
             "value": "3x"
           }
-        ]
+        ],
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
       },
       {
         "locale": "nl-BE",
@@ -206,6 +248,15 @@
             "type": "string",
             "value": "3x"
           }
+        ],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
         ]
       }
     ]
@@ -218,7 +269,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -230,7 +290,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -241,20 +310,39 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
+        "status": "published",
         "settings": [],
         "requires_token": true,
-        "requires_expiry_date": true
+        "requires_expiry_date": true,
+        "allowed_actions": []
       },
       {
         "locale": "en-US",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "fr-CA",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -266,7 +354,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -278,7 +375,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -290,17 +396,28 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "en-US",
-        "status": "archived",
-        "settings": []
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
       },
       {
         "locale": "fr-CA",
-        "status": "archived",
-        "settings": []
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
       }
     ]
   },
@@ -312,7 +429,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -323,8 +449,9 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
-        "settings": []
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
       }
     ]
   },
@@ -336,7 +463,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -348,7 +484,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -360,7 +505,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -371,8 +525,9 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
-        "settings": []
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
       }
     ]
   },
@@ -384,7 +539,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -397,7 +561,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -410,7 +583,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -423,7 +605,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -434,8 +625,9 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
-        "settings": []
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
       }
     ]
   },
@@ -446,7 +638,7 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
+        "status": "published",
         "settings": [
           {
             "key": "blocked_user_agent_pattern",
@@ -463,17 +655,36 @@
             "type": "number",
             "value": 2
           }
-        ]
+        ],
+        "allowed_actions": []
       },
       {
         "locale": "zh-CN",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "en-CN",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -486,7 +697,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -498,7 +718,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -510,7 +739,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -522,7 +760,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -534,7 +781,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -546,7 +802,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -559,7 +824,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -572,7 +846,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -585,7 +868,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -598,7 +890,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -610,12 +911,22 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "fr-CH",
-        "status": "archived",
-        "settings": []
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
       }
     ]
   },
@@ -627,7 +938,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -638,43 +958,107 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
-        "settings": []
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
       },
       {
         "locale": "en-HK",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "en-SG",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "en-MY",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "en-TW",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "en-TH",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "zh-TW",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       },
       {
         "locale": "es-AR",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -687,7 +1071,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -713,7 +1106,16 @@
         ],
         "requires_token": true,
         "requires_expiry_date": true,
-        "requires_card_holder": true
+        "requires_card_holder": true,
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -725,7 +1127,16 @@
       {
         "locale": "*",
         "status": "published",
-        "settings": []
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -738,7 +1149,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -751,7 +1171,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -764,7 +1193,16 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "requires_contact_choice": ["GO", "PARTNERS"]
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   },
@@ -775,18 +1213,28 @@
     "settings": [
       {
         "locale": "*",
-        "status": "archived",
+        "status": "published",
         "settings": [
           {
             "key": "requires_comments",
             "type": "boolean",
             "value": true
           }
-        ]
+        ],
+        "allowed_actions": []
       },
       {
         "locale": "zh-CN",
-        "status": "published"
+        "status": "published",
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
       }
     ]
   }

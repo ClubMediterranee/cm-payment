@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@tsed/di';
 
-import { GLOBAL_LOCALE, PUBLISHED_STATUS } from '../../infra/directus/constants.js';
+import { GLOBAL_LOCALE } from '../../infra/directus/constants.js';
 import { DirectusClient } from '../../infra/directus/DirectusClient.js';
 
 type RawProvider = Awaited<ReturnType<DirectusClient['getProviders']>>[number];
@@ -31,10 +31,10 @@ export class PaymentConfigRepository {
   }
 
   private toVariant(raw: RawVariant) {
-    const { locale, status, settings, ...validation } = raw;
+    const { locale, settings, allowed_actions, ...validation } = raw;
     return {
       locale: locale === GLOBAL_LOCALE ? null : locale,
-      active: status === PUBLISHED_STATUS,
+      allowed_actions: allowed_actions ?? [],
       settings: settings ?? [],
       validation,
     };

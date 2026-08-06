@@ -1,7 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { paymentProvidersControllerGetPaymentProviders } from '../../__generated__/bff';
+import { Action } from '../../__generated__/index.schemas';
 import { useCapsConfigContext } from '../utils/useCapsConfigContext';
+import { getResolvedAction } from './useActionResolver';
 
 export const paymentProvidersQueryOptions = ({
   id,
@@ -11,19 +13,24 @@ export const paymentProvidersQueryOptions = ({
   id: string;
   type: 'booking' | 'proposal';
   customerId?: string;
-}) => ({
-  queryKey: ['paymentProviders', id, type, customerId],
-  queryFn: async () => {
-    const { payment_providers = [], buy_now_pay_later_providers = [] } =
-      await paymentProvidersControllerGetPaymentProviders(type, id, {
-        customer_id: customerId,
-      });
-    return {
-      paymentProviders: payment_providers,
-      buyNowPayLaterProviders: buy_now_pay_later_providers,
-    };
-  },
-});
+}) => {
+  const action = getResolvedAction();
+
+  return {
+    queryKey: ['paymentProviders', id, type, customerId, action],
+    queryFn: async () => {
+      const { payment_providers = [], buy_now_pay_later_providers = [] } =
+        await paymentProvidersControllerGetPaymentProviders(type, id, {
+          customer_id: customerId,
+          action,
+        });
+      return {
+        paymentProviders: payment_providers,
+        buyNowPayLaterProviders: buy_now_pay_later_providers,
+      };
+    },
+  };
+};
 
 export const usePaymentProviders = () => {
   const { type, id, customerId } = useCapsConfigContext();

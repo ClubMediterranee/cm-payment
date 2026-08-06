@@ -5,6 +5,7 @@ import { Enum, Get, Returns, Summary } from '@tsed/schema';
 import { IssuerType } from '../../../decorators/IssuerType.js';
 import { Locale } from '../../../decorators/Locale.js';
 import { UserAgent } from '../../../decorators/UserAgent.js';
+import { Action } from '../../../infra/api/__generated__/index.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
 import { PaymentProvidersResponseSchema } from '../../../services/payment_providers/models.js';
 import { PaymentProvidersService } from '../../../services/payment_providers/PaymentProvidersService.js';
@@ -24,6 +25,7 @@ export class PaymentProvidersController {
     @IssuerType() issuerType: OidcIssuerTypes,
     @UserAgent() userAgent: string | undefined,
     @QueryParams('customer_id') customerId?: string,
+    @Enum(Action) @QueryParams('action') action?: Action,
   ) {
     return this.paymentProvidersService.getPaymentProviders({
       type,
@@ -32,6 +34,7 @@ export class PaymentProvidersController {
       issuerType,
       customerId,
       userAgent,
+      action,
     });
   }
 }

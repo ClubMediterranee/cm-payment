@@ -11,7 +11,6 @@ import loggerConfig from './logger/index.js';
 import { proxyConfig } from './proxy/index.js';
 import { envs } from './utils/index.js';
 
-console.log('==+>', envs);
 const pkg = JSON.parse(readFileSync('./package.json', { encoding: 'utf8' }));
 const rootDir = process.cwd();
 /**

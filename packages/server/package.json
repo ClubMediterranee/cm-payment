@@ -9,7 +9,7 @@
     "start:prod": "cross-env NODE_ENV=production node dist/index.js",
     "generate:types": "pnpm run generate:api && pnpm run generate:directus",
     "generate:api": "orval --config orval.config.ts",
-    "generate:directus": "dotenv -e .env -- sh -c 'directus-sdk-typegen -u $DIRECTUS_URL -t $DIRECTUS_API_TOKEN -o src/infra/directus/__generated__/schema.ts'",
+    "generate:directus": "dotenv -e .env.local -e .env -- sh -c 'directus-sdk-typegen -u $DIRECTUS_URL -t $DIRECTUS_API_TOKEN -o src/infra/directus/__generated__/schema.ts'",
     "test": "pnpm run test:lint && pnpm run test:coverage",
     "test:lint": "eslint",
     "test:lint:fix": "eslint --fix",

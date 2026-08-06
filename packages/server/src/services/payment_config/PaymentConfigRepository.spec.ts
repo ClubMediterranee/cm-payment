@@ -65,15 +65,15 @@ describe('PaymentConfigRepository', () => {
   });
 
   describe('getProviders', () => {
-    it("translates Directus '*' locale to null and 'published' to active=true in variants", async () => {
+    it("translates Directus '*' locale to null in variants and exposes allowed_actions", async () => {
       vi.spyOn(directusClient, 'getProviders').mockResolvedValue([
         {
           id: 'MHIPAY',
           default_display_type: 'hosted_field',
           settings: [
-            { locale: '*', status: 'published', settings: [] },
-            { locale: 'fr-FR', status: 'archived', settings: [] },
-            { locale: 'en-US', status: 'draft', settings: [] },
+            { locale: '*', allowed_actions: ['PAYMENT_RESA'], settings: [] },
+            { locale: 'fr-FR', allowed_actions: null, settings: [] },
+            { locale: 'en-US', settings: [] },
           ],
         },
       ] as never);
@@ -81,9 +81,9 @@ describe('PaymentConfigRepository', () => {
       const [provider] = await repository.getProviders();
 
       expect(provider.variants).toEqual([
-        expect.objectContaining({ locale: null, active: true }),
-        expect.objectContaining({ locale: 'fr-FR', active: false }),
-        expect.objectContaining({ locale: 'en-US', active: false }),
+        expect.objectContaining({ locale: null, allowed_actions: ['PAYMENT_RESA'] }),
+        expect.objectContaining({ locale: 'fr-FR', allowed_actions: [] }),
+        expect.objectContaining({ locale: 'en-US', allowed_actions: [] }),
       ]);
     });
 
@@ -109,7 +109,7 @@ describe('PaymentConfigRepository', () => {
       expect(provider.variants).toEqual([]);
     });
 
-    it('extracts validation fields from each variant (excluding locale/status/settings)', async () => {
+    it('extracts validation fields from each variant (excluding locale/settings/allowed_actions)', async () => {
       vi.spyOn(directusClient, 'getProviders').mockResolvedValue([
         {
           id: 'MHIPAY',
@@ -117,7 +117,7 @@ describe('PaymentConfigRepository', () => {
           settings: [
             {
               locale: '*',
-              status: 'published',
+              allowed_actions: ['PAYMENT_RESA'],
               settings: [{ key: 'script_url', type: 'string', value: 'https://x.io' }],
               display_type: 'iframe',
               requires_token: true,
@@ -144,7 +144,7 @@ describe('PaymentConfigRepository', () => {
         {
           id: 'MHIPAY',
           default_display_type: 'redirect',
-          settings: [{ locale: '*', status: 'published', settings: null }],
+          settings: [{ locale: '*', settings: null }],
         },
       ] as never);
 

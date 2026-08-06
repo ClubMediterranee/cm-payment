@@ -1,7 +1,10 @@
 import { Inject, Service } from '@tsed/di';
 
-import { getV1PaymentProviders } from '../../infra/api/__generated__/index.js';
-import { PaymentProvider1 } from '../../infra/api/__generated__/index.js';
+import {
+  Action,
+  getV1PaymentProviders,
+  PaymentProvider1,
+} from '../../infra/api/__generated__/index.js';
 import { daysUntilToday } from '../../utils/daysUntilToday.js';
 import { parseApiDate } from '../../utils/parseApiDate.js';
 import { ResourceRef } from '../../utils/types.js';
@@ -32,7 +35,11 @@ export class PaymentProvidersService {
     issuerType,
     customerId,
     userAgent,
-  }: Pick<ResourceRef, 'type' | 'id' | 'customerId' | 'locale' | 'issuerType' | 'userAgent'>) {
+    action,
+  }: Pick<
+    ResourceRef,
+    'type' | 'id' | 'customerId' | 'locale' | 'issuerType' | 'userAgent' | 'action'
+  >) {
     if (type === 'booking' && !customerId) {
       throw new PaymentProvidersValidationError('customer_id is required for booking type');
     }
@@ -48,7 +55,7 @@ export class PaymentProvidersService {
     const daysUntilDeparture = this.getDaysUntilDeparture(stay);
 
     const paymentProvidersEligibilityRules: Array<(provider: PaymentProvider1) => boolean> = [
-      (provider) => !!paymentProvidersConfig[provider.id],
+      (provider) => this.isAllowedForAction(paymentProvidersConfig[provider.id], action),
       (provider) => this.isBeforeMinimumDepartureWindow(paymentProvidersConfig[provider.id], stay),
       (provider) => this.isValidConnectionType(provider, issuerType),
       (provider) => this.isAllowedForUserAgent(paymentProvidersConfig[provider.id], userAgent),
@@ -103,6 +110,10 @@ export class PaymentProvidersService {
   private getDaysUntilDeparture(stay: Stay | null): number {
     const arrival = parseApiDate(stay?.resortArrivalDate);
     return arrival ? daysUntilToday(arrival) : Infinity;
+  }
+
+  private isAllowedForAction(providerConfig: ProviderConfig | undefined, action?: Action) {
+    return !!providerConfig?.allowed_actions.includes(action as Action);
   }
 
   private isBeforeMinimumDepartureWindow(

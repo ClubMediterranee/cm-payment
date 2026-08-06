@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3462.0
+ * OpenAPI spec version: 0.3473.0
  */
 import { fetcher } from '../../http/fetcher.js';
 export interface LinkModel {
@@ -127,26 +127,6 @@ export interface CountryModel {
 export type CountriesModel = CountryModel[];
 
 /**
- * Phone type
- */
-export type PhoneTypeModel = (typeof PhoneTypeModel)[keyof typeof PhoneTypeModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PhoneTypeModel = {
-  HOME: 'HOME',
-  MOBILE: 'MOBILE',
-  OFFICE: 'OFFICE',
-} as const;
-
-export interface PhoneModel {
-  /** Phone number */
-  number?: string;
-  type?: PhoneTypeModel;
-}
-
-export type PhonesModel = PhoneModel[];
-
-/**
  * type of product
  */
 export type ProductTypeModel = (typeof ProductTypeModel)[keyof typeof ProductTypeModel];
@@ -169,6 +149,26 @@ export interface DiscountModelV3 {
 }
 
 export type DiscountsModelV3 = DiscountModelV3[];
+
+/**
+ * Phone type
+ */
+export type PhoneTypeModel = (typeof PhoneTypeModel)[keyof typeof PhoneTypeModel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PhoneTypeModel = {
+  HOME: 'HOME',
+  MOBILE: 'MOBILE',
+  OFFICE: 'OFFICE',
+} as const;
+
+export interface PhoneModel {
+  /** Phone number */
+  number?: string;
+  type?: PhoneTypeModel;
+}
+
+export type PhonesModel = PhoneModel[];
 
 /**
  * Type of national identifier code, null if not recognized
@@ -882,21 +882,6 @@ export interface ProposalResponseModelV1 {
 }
 
 /**
- * Defines the client's status at the time of the call
- */
-export type CustomerStatus = 'NEW_CUSTOMER' | 'UNAVAILABLE' | 'PROSPECT' | 'CLIENT' | null;
-
-export interface LegacyOptinModel {
-  channel: ValidOptinChanelModel;
-  /** True if the customer has agreed to be contacted on this channel */
-  optin: boolean;
-  /** True if the customer has agreed to be contacted by Club Med's partners, available only for EMAIL channel */
-  optin_partners?: boolean;
-}
-
-export type LegacyOptinsModel = LegacyOptinModel[];
-
-/**
  * What is paid : booking, upsale, option,...
  */
 export type ActionCode = (typeof ActionCode)[keyof typeof ActionCode];
@@ -1022,74 +1007,20 @@ export type MandatoryServiceIdModel = string[];
  */
 export type NotCompatibleServiceIdsModel = string[];
 
-export type StayAccommodationRoomsModel = RoomModel[];
-
 /**
- * accommodation occupancy start date
+ * Defines the client's status at the time of the call
  */
-export type StayAccommodationModelStartDate = string | null;
+export type CustomerStatus = 'NEW_CUSTOMER' | 'UNAVAILABLE' | 'PROSPECT' | 'CLIENT' | null;
 
-/**
- * accommodation occupancy end date
- */
-export type StayAccommodationModelEndDate = string | null;
-
-/**
- * false if there is no baby bed in the room
- */
-export type StayAccommodationModelBabyBed = boolean | null;
-
-/**
- * Indicate if the room is sharable
- */
-export type StayAccommodationModelSharedRoom = boolean | null;
-
-/**
- * number of persons in the room
- */
-export type StayAccommodationModelOccupation = 0 | null;
-
-export interface StayAccommodationModel {
-  /** accommodation occupancy start date */
-  start_date?: StayAccommodationModelStartDate;
-  /** accommodation occupancy end date */
-  end_date?: StayAccommodationModelEndDate;
-  /** number of accommodations for the id and time period */
-  quantity: number;
-  /** false if there is no baby bed in the room */
-  baby_bed?: StayAccommodationModelBabyBed;
-  /** Indicate if the room is sharable */
-  shared_room?: StayAccommodationModelSharedRoom;
-  /** number of persons in the room */
-  occupation?: StayAccommodationModelOccupation;
-  /** accommodation id */
-  accommodation_id?: string;
-  rooms?: StayAccommodationRoomsModel;
-  _links?: LinksModel;
+export interface LegacyOptinModel {
+  channel: ValidOptinChanelModel;
+  /** True if the customer has agreed to be contacted on this channel */
+  optin: boolean;
+  /** True if the customer has agreed to be contacted by Club Med's partners, available only for EMAIL channel */
+  optin_partners?: boolean;
 }
 
-export type StayAccommodationsModel = StayAccommodationModel[];
-
-/**
- * List of attendee
- */
-export type BookingPackageAttendeeIdsModel = string[];
-
-/**
- * package label
- */
-export type BookingPackageModelLabel = string | null;
-
-export interface BookingPackageModel {
-  /** package id of the booking */
-  id: string;
-  /** package label */
-  label?: BookingPackageModelLabel;
-  attendee_ids?: BookingPackageAttendeeIdsModel;
-  _links?: LinksModel;
-}
-
-export type BookingPackagesModel = BookingPackageModel[];
+export type LegacyOptinsModel = LegacyOptinModel[];
 
 export interface AttendeePaymentScheduleModel {
   /** Payment schedule Id */
@@ -1667,6 +1598,75 @@ export type OutwardTripModelV2AnyOf = {
 };
 
 export type OutwardTripModelV2 = OutwardTripModelV2AnyOf | null;
+
+export type StayAccommodationRoomsModel = RoomModel[];
+
+/**
+ * accommodation occupancy start date
+ */
+export type StayAccommodationModelStartDate = string | null;
+
+/**
+ * accommodation occupancy end date
+ */
+export type StayAccommodationModelEndDate = string | null;
+
+/**
+ * false if there is no baby bed in the room
+ */
+export type StayAccommodationModelBabyBed = boolean | null;
+
+/**
+ * Indicate if the room is sharable
+ */
+export type StayAccommodationModelSharedRoom = boolean | null;
+
+/**
+ * number of persons in the room
+ */
+export type StayAccommodationModelOccupation = 0 | null;
+
+export interface StayAccommodationModel {
+  /** accommodation occupancy start date */
+  start_date?: StayAccommodationModelStartDate;
+  /** accommodation occupancy end date */
+  end_date?: StayAccommodationModelEndDate;
+  /** number of accommodations for the id and time period */
+  quantity: number;
+  /** false if there is no baby bed in the room */
+  baby_bed?: StayAccommodationModelBabyBed;
+  /** Indicate if the room is sharable */
+  shared_room?: StayAccommodationModelSharedRoom;
+  /** number of persons in the room */
+  occupation?: StayAccommodationModelOccupation;
+  /** accommodation id */
+  accommodation_id?: string;
+  rooms?: StayAccommodationRoomsModel;
+  _links?: LinksModel;
+}
+
+export type StayAccommodationsModel = StayAccommodationModel[];
+
+/**
+ * List of attendee
+ */
+export type BookingPackageAttendeeIdsModel = string[];
+
+/**
+ * package label
+ */
+export type BookingPackageModelLabel = string | null;
+
+export interface BookingPackageModel {
+  /** package id of the booking */
+  id: string;
+  /** package label */
+  label?: BookingPackageModelLabel;
+  attendee_ids?: BookingPackageAttendeeIdsModel;
+  _links?: LinksModel;
+}
+
+export type BookingPackagesModel = BookingPackageModel[];
 
 /**
  * resort arrival date which can be different from the departure_date, if the flight lasts more than 1 day for example YYYYMMDD
@@ -2352,127 +2352,127 @@ export interface CreateBookingResponseAttendeeModel {
  * location number
  * @maxLength 50
  */
-export type ProposalHouseholdAddressV1ModelAnyOfNumber = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfNumber = string | null;
 
 /**
  * location street
  * @maxLength 100
  */
-export type ProposalHouseholdAddressV1ModelAnyOfStreet = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfStreet = string | null;
 
 /**
  * additional information (eg: floor number)
  * @maxLength 50
  */
-export type ProposalHouseholdAddressV1ModelAnyOfAddOn = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfAddOn = string | null;
 
 /**
  * Locality name (might not be applicable for every country)
  * @maxLength 100
  */
-export type ProposalHouseholdAddressV1ModelAnyOfTown = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfTown = string | null;
 
 /**
  * city name
  * @maxLength 150
  */
-export type ProposalHouseholdAddressV1ModelAnyOfCity = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfCity = string | null;
 
 /**
  * postal code
  * @maxLength 50
  */
-export type ProposalHouseholdAddressV1ModelAnyOfZipCode = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfZipCode = string | null;
 
 /**
  * administrative division
  * @maxLength 100
  */
-export type ProposalHouseholdAddressV1ModelAnyOfStateOrDistrict = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfStateOrDistrict = string | null;
 
 /**
  * Country
  * @maxLength 100
  */
-export type ProposalHouseholdAddressV1ModelAnyOfCountry = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfCountry = string | null;
 
 /**
  * ISO 3166-1 alpha-2 country code
  * @maxLength 3
  */
-export type ProposalHouseholdAddressV1ModelAnyOfCountryCode = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfCountryCode = string | null;
 
 /**
  * additional information such as one's host or building
  * @maxLength 100
  */
-export type ProposalHouseholdAddressV1ModelAnyOfAdditionalInformation1 = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfAdditionalInformation1 = string | null;
 
 /**
  * additional information such as one's host or building
  * @maxLength 100
  */
-export type ProposalHouseholdAddressV1ModelAnyOfAdditionalInformation2 = string | null;
+export type CreateBookingHouseholdAddressModelAnyOfAdditionalInformation2 = string | null;
 
-export type ProposalHouseholdAddressV1ModelAnyOf = {
+export type CreateBookingHouseholdAddressModelAnyOf = {
   /**
    * location number
    * @maxLength 50
    */
-  number?: ProposalHouseholdAddressV1ModelAnyOfNumber;
+  number?: CreateBookingHouseholdAddressModelAnyOfNumber;
   /**
    * location street
    * @maxLength 100
    */
-  street?: ProposalHouseholdAddressV1ModelAnyOfStreet;
+  street?: CreateBookingHouseholdAddressModelAnyOfStreet;
   /**
    * additional information (eg: floor number)
    * @maxLength 50
    */
-  add_on?: ProposalHouseholdAddressV1ModelAnyOfAddOn;
+  add_on?: CreateBookingHouseholdAddressModelAnyOfAddOn;
   /**
    * Locality name (might not be applicable for every country)
    * @maxLength 100
    */
-  town?: ProposalHouseholdAddressV1ModelAnyOfTown;
+  town?: CreateBookingHouseholdAddressModelAnyOfTown;
   /**
    * city name
    * @maxLength 150
    */
-  city?: ProposalHouseholdAddressV1ModelAnyOfCity;
+  city?: CreateBookingHouseholdAddressModelAnyOfCity;
   /**
    * postal code
    * @maxLength 50
    */
-  zip_code?: ProposalHouseholdAddressV1ModelAnyOfZipCode;
+  zip_code?: CreateBookingHouseholdAddressModelAnyOfZipCode;
   /**
    * administrative division
    * @maxLength 100
    */
-  state_or_district?: ProposalHouseholdAddressV1ModelAnyOfStateOrDistrict;
+  state_or_district?: CreateBookingHouseholdAddressModelAnyOfStateOrDistrict;
   /**
    * Country
    * @maxLength 100
    */
-  country?: ProposalHouseholdAddressV1ModelAnyOfCountry;
+  country?: CreateBookingHouseholdAddressModelAnyOfCountry;
   /**
    * ISO 3166-1 alpha-2 country code
    * @maxLength 3
    */
-  country_code?: ProposalHouseholdAddressV1ModelAnyOfCountryCode;
+  country_code?: CreateBookingHouseholdAddressModelAnyOfCountryCode;
   /**
    * additional information such as one's host or building
    * @maxLength 100
    */
-  additional_information_1?: ProposalHouseholdAddressV1ModelAnyOfAdditionalInformation1;
+  additional_information_1?: CreateBookingHouseholdAddressModelAnyOfAdditionalInformation1;
   /**
    * additional information such as one's host or building
    * @maxLength 100
    */
-  additional_information_2?: ProposalHouseholdAddressV1ModelAnyOfAdditionalInformation2;
+  additional_information_2?: CreateBookingHouseholdAddressModelAnyOfAdditionalInformation2;
 };
 
-export type ProposalHouseholdAddressV1Model = ProposalHouseholdAddressV1ModelAnyOf | null;
+export type CreateBookingHouseholdAddressModel = CreateBookingHouseholdAddressModelAnyOf | null;
 
 export interface ProposalAttendeeInputTravelDocumentV2Model {
   document_number?: string;
@@ -2531,23 +2531,23 @@ Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
   optins?: ProposalAttendeeInputOptinsV1;
 }
 
-export type ProposalAttendeesInputV1Model = ProposalAttendeeInputV2Model[];
+export type CreateBookingRequestAttendeesModel = ProposalAttendeeInputV2Model[];
 
 /**
  * customer language. ISO 2 code
  */
-export type ProposalHouseholdV1ModelLanguageCode = string | null;
+export type CreateBookingRequestHouseholdModelLanguageCode = string | null;
 
-export interface ProposalHouseholdV1Model {
+export interface CreateBookingRequestHouseholdModel {
   /** The id of the household to which the attendees belong */
   household_id: string;
-  address?: ProposalHouseholdAddressV1Model;
-  attendees?: ProposalAttendeesInputV1Model;
+  address?: CreateBookingHouseholdAddressModel;
+  attendees?: CreateBookingRequestAttendeesModel;
   /** customer language. ISO 2 code */
-  language_code?: ProposalHouseholdV1ModelLanguageCode;
+  language_code?: CreateBookingRequestHouseholdModelLanguageCode;
 }
 
-export type PutProposalAttendeesV1PayloadModel = ProposalHouseholdV1Model[];
+export type ProposalAttendeesPayloadModel = CreateBookingRequestHouseholdModel[];
 
 export interface CreateBookingRequestPriceModel {
   /** Price requested by the user in his registered currency. Will retrieve a proposal if the price is related to an offer. */
@@ -2608,7 +2608,7 @@ export interface CreateDirectBookingRequestModel {
   departure_option_id?: string;
   /** Accommodation id */
   accommodation_id?: string;
-  households?: PutProposalAttendeesV1PayloadModel;
+  households?: ProposalAttendeesPayloadModel;
   /** Identifier referencing the associated business opportunity in Club Med CRM, linking the call or lead to a potential booking for tracking and conversion. */
   opportunity_id?: string;
   /** Allows the sending of the e-mail summarizing the booking information */
@@ -3376,7 +3376,7 @@ export const postV1Payments = (paymentOrderModel: PaymentOrderModel) => {
 };
 
 /**
- * Behind the scene, this endpoint acts like calling the POST /v3/proposals/search and the PUT /v1/proposals/{proposal_id}/attendees before creating the booking. To create a booking, the proposal must contain attendees information. The booking can be created with different statuses impacting the booking life cycle. The booking creation will decrease Club Med stock. The booking creation is required to create a payment. The accept-language must be the same as the one in the proposal creation.
+ * Behind the scene, this endpoint acts like calling the POST /v3/proposals/search and the PUT /v2/proposals/{proposal_id}/attendees before creating the booking. To create a booking, the proposal must contain attendees information. The booking can be created with different statuses impacting the booking life cycle. The booking creation will decrease Club Med stock. The booking creation is required to create a payment. The accept-language must be the same as the one in the proposal creation.
  * @summary Creates a booking
  */
 export const postV3Bookings = (

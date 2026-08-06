@@ -1,3 +1,19 @@
+export interface AiPrompt {
+  /** @primaryKey */
+  id: string;
+  sort?: number | null;
+  date_created?: string | null;
+  user_created?: DirectusUser | string | null;
+  date_updated?: string | null;
+  user_updated?: DirectusUser | string | null;
+  /** @required */
+  name: string;
+  status?: 'published' | 'draft' | 'archived' | null;
+  description?: string | null;
+  system_prompt?: string | null;
+  messages?: Array<{ role: 'user' | 'assistant'; text: string }> | null;
+}
+
 export interface BackendError {
   /** @primaryKey */
   id: string;
@@ -248,6 +264,15 @@ export interface CapsProviderConfiguration {
   settings?: Array<{ key: string; type: 'boolean' | 'number' | 'string'; value: string }> | null;
   requires_card_holder?: boolean | null;
   requires_contact_choice?: Array<'PARTNERS' | 'GO' | 'GM'> | null;
+  allowed_actions?: Array<
+    | 'PAYMENT_CART'
+    | 'PAYMENT_RESA'
+    | 'PAYMENT_OPTION'
+    | 'PAYMENT_SOLDE'
+    | 'PAYMENT_PARTIAL'
+    | 'PAYMENT_UPGRADE_ROOM'
+    | 'PAYMENT_SERVICES_IN_OPTION'
+  > | null;
 }
 
 export interface CapsProvider {
@@ -280,6 +305,59 @@ export interface Channel {
   label: string;
 }
 
+export interface CmmConfluence {
+  /** @primaryKey */
+  id: string;
+  root_page?: string | null;
+}
+
+export interface CmmProduct {
+  /** @description ClubMed Product ID @primaryKey @required */
+  id: string;
+  status?: 'published' | 'draft' | 'archived';
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  /** @description The Channel manager Product ID */
+  channel_manager_product_id?: string | null;
+  ota_products?: OtaProductId[] | string[];
+  rooms?: CmmRoom[] | string[];
+  rates?: CmmRate[] | string[];
+}
+
+export interface CmmRate {
+  /** @primaryKey */
+  id: string;
+  status?: 'published' | 'draft' | 'archived';
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  /** @required */
+  rate_code: string;
+  channel_manager_rate_id?: string | null;
+  /** @required */
+  product_id: CmmProduct | string;
+  ota_rates?: OtaRateId[] | string[];
+}
+
+export interface CmmRoom {
+  /** @primaryKey */
+  id: string;
+  status?: 'published' | 'draft' | 'archived';
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  /** @required */
+  room_code: string;
+  channel_manager_room_id?: string | null;
+  /** @required */
+  product_id: CmmProduct | string;
+  ota_rooms?: OtaRoomId[] | string[];
+}
+
 export interface Language {
   /** @primaryKey */
   code: string;
@@ -299,11 +377,11 @@ export interface MigrationNote {
   date_updated?: string | null;
   number?: number | null;
   image?: DirectusFile | string | null;
+  related_routes?: MigrationNotesRoute[] | string[];
   tags?: MigrationNotesTag[] | string[];
+  translations?: MigrationNotesTranslation[] | null;
   /** @required */
   channels: MigrationNotesChannel[] | string[];
-  translations?: MigrationNotesTranslation[] | null;
-  related_routes?: MigrationNotesRoute[] | string[];
 }
 
 export interface MigrationNotesChannel {
@@ -341,6 +419,60 @@ export interface MigrationNotesTranslation {
   subtitle?: string | null;
 }
 
+export interface NavigationItem {
+  /** @primaryKey */
+  id: string;
+  status?: 'published' | 'draft' | 'archived';
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  path?: string | null;
+  parent_id?: NavigationItem | string | null;
+  sort?: number | null;
+  navigation_id?: Navigation | string | null;
+  column?: number | null;
+  icon?: string | null;
+  is_custom_url?: boolean | null;
+  items?: NavigationItem[] | string[];
+  translations?: NavigationItemsTranslation[] | null;
+  target?: NavigationItemsTarget[] | string[];
+}
+
+export interface NavigationItemsTarget {
+  /** @primaryKey */
+  id: number;
+  navigation_items_id?: NavigationItem | string | null;
+  item?: Page | Scenario | Release | MigrationNote | string | null;
+  collection?: string | null;
+}
+
+export interface NavigationItemsTranslation {
+  /** @primaryKey */
+  id: number;
+  navigation_items_id?: NavigationItem | string | null;
+  languages_code?: Language | string | null;
+  /** @required */
+  label: string;
+  description?: string | null;
+}
+
+export interface Navigation {
+  /** @primaryKey */
+  id: string;
+  status?: 'published' | 'draft' | 'archived';
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  /** @required */
+  type: 'header' | 'navigation' | 'footer';
+  /** @required */
+  label: string;
+  key?: string | null;
+  items?: NavigationItem[] | string[];
+}
+
 export interface OtaProductId {
   /** @description The OTA Product ID @primaryKey */
   id: string;
@@ -349,7 +481,7 @@ export interface OtaProductId {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   ota?: Ota | string | null;
-  product_id?: string | null;
+  product_id?: CmmProduct | string | null;
 }
 
 export interface OtaRateId {
@@ -363,7 +495,7 @@ export interface OtaRateId {
   /** @required */
   ota: Ota | string;
   /** @required */
-  rate_id: string;
+  rate_id: CmmRate | string;
 }
 
 export interface OtaRoomId {
@@ -377,7 +509,7 @@ export interface OtaRoomId {
   /** @required */
   ota: Ota | string;
   /** @required */
-  room_id: string;
+  room_id: CmmRoom | string;
 }
 
 export interface Ota {
@@ -403,9 +535,9 @@ export interface Page {
   template?: 'page' | `custom-page` | `dynamic-page` | null;
   image?: DirectusFile | string | null;
   is_home?: boolean | null;
-  blocks?: PagesBlock[] | string[];
   tags?: PagesTag[] | string[];
   translations?: PagesTranslation[] | null;
+  blocks?: PagesBlock[] | string[];
 }
 
 export interface PagesBlock {
@@ -466,9 +598,9 @@ export interface Release {
   stats_deprecated_routes?: number | null;
   stats_fixed_bugs?: number | null;
   stats_new_features?: number | null;
-  related_routes?: ReleasesRoute[] | string[];
-  translations?: ReleasesTranslation[] | null;
   channels?: ReleasesChannel[] | string[];
+  translations?: ReleasesTranslation[] | null;
+  related_routes?: ReleasesRoute[] | string[];
   related_migration_notes?: ReleasesMigrationNote[] | string[];
   tags?: ReleasesTag[] | string[];
 }
@@ -661,11 +793,11 @@ export interface Scenario {
   date_updated?: string | null;
   status?: 'draft' | `ready-to-review` | `ready-to-publish` | 'published' | 'archived' | null;
   steps?: Step[] | string[];
+  attachments?: ScenariosFile[] | string[];
+  tags?: ScenariosTag[] | string[];
   translations?: ScenariosTranslation[] | null;
   /** @required */
   channels: ScenariosChannel[] | string[];
-  attachments?: ScenariosFile[] | string[];
-  tags?: ScenariosTag[] | string[];
 }
 
 export interface ScenariosChannel {
@@ -747,6 +879,15 @@ export interface TagsTranslation {
   /** @required */
   title: string;
   description?: string | null;
+}
+
+export interface DirectusAccess {
+  /** @primaryKey */
+  id: string;
+  role?: DirectusRole | string | null;
+  user?: DirectusUser | string | null;
+  policy?: DirectusPolicy | string;
+  sort?: number | null;
 }
 
 export interface DirectusActivity {
@@ -865,6 +1006,41 @@ export interface DirectusFolder {
   parent?: DirectusFolder | string | null;
 }
 
+export interface DirectusMigration {
+  /** @primaryKey */
+  version: string;
+  name?: string;
+  timestamp?: string | null;
+}
+
+export interface DirectusPermission {
+  /** @primaryKey */
+  id: number;
+  collection?: string;
+  action?: string;
+  permissions?: 'json' | null;
+  validation?: 'json' | null;
+  presets?: 'json' | null;
+  fields?: string[] | null;
+  policy?: DirectusPolicy | string;
+}
+
+export interface DirectusPolicy {
+  /** @primaryKey */
+  id: string;
+  /** @required */
+  name: string;
+  icon?: string;
+  description?: string | null;
+  ip_access?: string[] | null;
+  enforce_tfa?: boolean;
+  admin_access?: boolean;
+  app_access?: boolean;
+  permissions?: DirectusPermission[] | string[];
+  users?: DirectusAccess[] | string[];
+  roles?: DirectusAccess[] | string[];
+}
+
 export interface DirectusPreset {
   /** @primaryKey */
   id: number;
@@ -918,8 +1094,20 @@ export interface DirectusRole {
   description?: string | null;
   parent?: DirectusRole | string | null;
   children?: DirectusRole[] | string[];
-  policies?: string;
+  policies?: DirectusAccess[] | string[];
   users?: DirectusUser[] | string[];
+}
+
+export interface DirectusSession {
+  /** @primaryKey */
+  token: string;
+  user?: DirectusUser | string | null;
+  expires?: string;
+  ip?: string | null;
+  user_agent?: string | null;
+  share?: DirectusShare | string | null;
+  origin?: string | null;
+  next_token?: string | null;
 }
 
 export interface DirectusSettings {
@@ -1057,7 +1245,7 @@ export interface DirectusUser {
   token?: string | null;
   last_access?: string | null;
   last_page?: string | null;
-  provider?: 'clubmed';
+  provider?: string;
   external_identifier?: string | null;
   auth_data?: 'json' | null;
   email_notifications?: boolean | null;
@@ -1067,7 +1255,7 @@ export interface DirectusUser {
   theme_light_overrides?: 'json' | null;
   theme_dark_overrides?: 'json' | null;
   text_direction?: 'auto' | 'ltr' | 'rtl';
-  policies?: string;
+  policies?: DirectusAccess[] | string[];
 }
 
 export interface DirectusDashboard {
@@ -1136,9 +1324,31 @@ export interface DirectusFlow {
   name?: string;
   icon?: string | null;
   color?: string | null;
+  description?: string | null;
   status?: string;
   trigger?: string | null;
+  accountability?: string | null;
   options?: 'json' | null;
+  operation?: DirectusOperation | string | null;
+  date_created?: string | null;
+  user_created?: DirectusUser | string | null;
+  operations?: DirectusOperation[] | string[];
+}
+
+export interface DirectusOperation {
+  /** @primaryKey */
+  id: string;
+  name?: string | null;
+  key?: string;
+  type?: string;
+  position_x?: number;
+  position_y?: number;
+  options?: 'json' | null;
+  resolve?: DirectusOperation | string | null;
+  reject?: DirectusOperation | string | null;
+  flow?: DirectusFlow | string;
+  date_created?: string | null;
+  user_created?: DirectusUser | string | null;
 }
 
 export interface DirectusTranslation {
@@ -1167,7 +1377,59 @@ export interface DirectusVersion {
   delta?: 'json' | null;
 }
 
+export interface DirectusExtension {
+  enabled?: boolean;
+  /** @primaryKey */
+  id: string;
+  folder?: string;
+  source?: string;
+  bundle?: string | null;
+}
+
+export interface DirectusDeployment {
+  /** @primaryKey */
+  id: string;
+  provider?: string;
+  credentials?: string | null;
+  options?: 'json' | null;
+  date_created?: string | null;
+  user_created?: DirectusUser | string | null;
+  webhook_ids?: 'json' | null;
+  webhook_secret?: string | null;
+  last_synced_at?: string | null;
+  projects?: DirectusDeploymentProject[] | string[];
+}
+
+export interface DirectusDeploymentProject {
+  /** @primaryKey */
+  id: string;
+  deployment?: DirectusDeployment | string;
+  external_id?: string;
+  name?: string;
+  date_created?: string | null;
+  user_created?: DirectusUser | string | null;
+  url?: string | null;
+  framework?: string | null;
+  deployable?: boolean;
+  runs?: DirectusDeploymentRun[] | string[];
+}
+
+export interface DirectusDeploymentRun {
+  /** @primaryKey */
+  id: string;
+  project?: DirectusDeploymentProject | string;
+  external_id?: string;
+  target?: string;
+  date_created?: string | null;
+  user_created?: DirectusUser | string | null;
+  status?: string | null;
+  url?: string | null;
+  started_at?: string | null;
+  completed_at?: string | null;
+}
+
 export interface Schema {
+  ai_prompts: AiPrompt[];
   backend_errors: BackendError[];
   backend_properties: BackendProperty[];
   backend_routes: BackendRoute[];
@@ -1191,12 +1453,20 @@ export interface Schema {
   caps_provider_configurations: CapsProviderConfiguration[];
   caps_providers: CapsProvider[];
   channels: Channel[];
+  cmm_confluence: CmmConfluence;
+  cmm_products: CmmProduct[];
+  cmm_rates: CmmRate[];
+  cmm_rooms: CmmRoom[];
   languages: Language[];
   migration_notes: MigrationNote[];
   migration_notes_channels: MigrationNotesChannel[];
   migration_notes_routes: MigrationNotesRoute[];
   migration_notes_tags: MigrationNotesTag[];
   migration_notes_translations: MigrationNotesTranslation[];
+  navigation_items: NavigationItem[];
+  navigation_items_target: NavigationItemsTarget[];
+  navigation_items_translations: NavigationItemsTranslation[];
+  navigations: Navigation[];
   ota_product_ids: OtaProductId[];
   ota_rate_ids: OtaRateId[];
   ota_room_ids: OtaRoomId[];
@@ -1233,16 +1503,21 @@ export interface Schema {
   steps_translations: StepsTranslation[];
   tags: Tag[];
   tags_translations: TagsTranslation[];
+  directus_access: DirectusAccess[];
   directus_activity: DirectusActivity[];
   directus_collections: DirectusCollection[];
   directus_comments: DirectusComment[];
   directus_fields: DirectusField[];
   directus_files: DirectusFile[];
   directus_folders: DirectusFolder[];
+  directus_migrations: DirectusMigration[];
+  directus_permissions: DirectusPermission[];
+  directus_policies: DirectusPolicy[];
   directus_presets: DirectusPreset[];
   directus_relations: DirectusRelation[];
   directus_revisions: DirectusRevision[];
   directus_roles: DirectusRole[];
+  directus_sessions: DirectusSession[];
   directus_settings: DirectusSettings;
   directus_users: DirectusUser[];
   directus_dashboards: DirectusDashboard[];
@@ -1250,11 +1525,17 @@ export interface Schema {
   directus_notifications: DirectusNotification[];
   directus_shares: DirectusShare[];
   directus_flows: DirectusFlow[];
+  directus_operations: DirectusOperation[];
   directus_translations: DirectusTranslation[];
   directus_versions: DirectusVersion[];
+  directus_extensions: DirectusExtension[];
+  directus_deployments: DirectusDeployment[];
+  directus_deployment_projects: DirectusDeploymentProject[];
+  directus_deployment_runs: DirectusDeploymentRun[];
 }
 
 export enum CollectionNames {
+  ai_prompts = 'ai_prompts',
   backend_errors = 'backend_errors',
   backend_properties = 'backend_properties',
   backend_routes = 'backend_routes',
@@ -1278,12 +1559,20 @@ export enum CollectionNames {
   caps_provider_configurations = 'caps_provider_configurations',
   caps_providers = 'caps_providers',
   channels = 'channels',
+  cmm_confluence = 'cmm_confluence',
+  cmm_products = 'cmm_products',
+  cmm_rates = 'cmm_rates',
+  cmm_rooms = 'cmm_rooms',
   languages = 'languages',
   migration_notes = 'migration_notes',
   migration_notes_channels = 'migration_notes_channels',
   migration_notes_routes = 'migration_notes_routes',
   migration_notes_tags = 'migration_notes_tags',
   migration_notes_translations = 'migration_notes_translations',
+  navigation_items = 'navigation_items',
+  navigation_items_target = 'navigation_items_target',
+  navigation_items_translations = 'navigation_items_translations',
+  navigations = 'navigations',
   ota_product_ids = 'ota_product_ids',
   ota_rate_ids = 'ota_rate_ids',
   ota_room_ids = 'ota_room_ids',
@@ -1320,16 +1609,21 @@ export enum CollectionNames {
   steps_translations = 'steps_translations',
   tags = 'tags',
   tags_translations = 'tags_translations',
+  directus_access = 'directus_access',
   directus_activity = 'directus_activity',
   directus_collections = 'directus_collections',
   directus_comments = 'directus_comments',
   directus_fields = 'directus_fields',
   directus_files = 'directus_files',
   directus_folders = 'directus_folders',
+  directus_migrations = 'directus_migrations',
+  directus_permissions = 'directus_permissions',
+  directus_policies = 'directus_policies',
   directus_presets = 'directus_presets',
   directus_relations = 'directus_relations',
   directus_revisions = 'directus_revisions',
   directus_roles = 'directus_roles',
+  directus_sessions = 'directus_sessions',
   directus_settings = 'directus_settings',
   directus_users = 'directus_users',
   directus_dashboards = 'directus_dashboards',
@@ -1337,6 +1631,11 @@ export enum CollectionNames {
   directus_notifications = 'directus_notifications',
   directus_shares = 'directus_shares',
   directus_flows = 'directus_flows',
+  directus_operations = 'directus_operations',
   directus_translations = 'directus_translations',
   directus_versions = 'directus_versions',
+  directus_extensions = 'directus_extensions',
+  directus_deployments = 'directus_deployments',
+  directus_deployment_projects = 'directus_deployment_projects',
+  directus_deployment_runs = 'directus_deployment_runs',
 }

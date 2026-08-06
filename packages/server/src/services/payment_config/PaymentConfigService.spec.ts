@@ -82,35 +82,32 @@ describe('PaymentConfigService', () => {
   });
 
   describe('getPaymentProvidersConfig', () => {
-    it('should exclude inactive providers and never expose is_active', async () => {
+    it('returns all providers and exposes allowed_actions from the resolved variant', async () => {
       const providers = [
         {
           id: 'MCYBERSOURCE',
           default_display_type: 'hosted_field',
-          variants: [{ locale: null, active: true, settings: [], validation: {} }],
+          variants: [
+            { locale: null, allowed_actions: ['PAYMENT_RESA'], settings: [], validation: {} },
+          ],
         },
         {
           id: 'MHIPAY',
           default_display_type: 'redirect',
-          variants: [{ locale: null, active: false, settings: [], validation: {} }],
+          variants: [{ locale: null, allowed_actions: [], settings: [], validation: {} }],
         },
       ] as never;
       vi.spyOn(paymentConfigRepository, 'getProviders').mockResolvedValue(providers);
 
       const result = await service.getPaymentProvidersConfig({ locale: 'fr-FR' });
 
-      expect(Object.keys(result)).toEqual(['MCYBERSOURCE']);
-      expect(result.MCYBERSOURCE).toEqual({
-        display_type: 'hosted_field',
-        confirmation_strategy: 'status',
-        requires_contact_choice: false,
-        settings: {},
-      });
-      expect(result.MHIPAY).toBeUndefined();
+      expect(Object.keys(result)).toEqual(['MCYBERSOURCE', 'MHIPAY']);
+      expect(result.MCYBERSOURCE.allowed_actions).toEqual(['PAYMENT_RESA']);
+      expect(result.MHIPAY.allowed_actions).toEqual([]);
       expect('is_active' in result.MCYBERSOURCE).toBe(false);
     });
 
-    it('should resolve settings from the variants array (global + locale)', async () => {
+    it('resolves the locale-specific variant settings over the global one', async () => {
       const providers = [
         {
           id: 'MHIPAY',
@@ -118,13 +115,13 @@ describe('PaymentConfigService', () => {
           variants: [
             {
               locale: null,
-              active: true,
+              allowed_actions: ['PAYMENT_RESA'],
               settings: [{ key: 'script_url', value: 'https://global/s.js' }],
               validation: {},
             },
             {
               locale: 'fr-FR',
-              active: true,
+              allowed_actions: ['PAYMENT_RESA', 'PAYMENT_SOLDE'],
               settings: [{ key: 'username', value: 'user-fr' }],
               validation: {},
             },
@@ -139,70 +136,52 @@ describe('PaymentConfigService', () => {
         script_url: 'https://global/s.js',
         username: 'user-fr',
       });
-    });
-  });
-
-  describe('getPaymentProvidersConfig - provider activeness', () => {
-    const mockProviders = (variants: unknown[]) =>
-      vi
-        .spyOn(paymentConfigRepository, 'getProviders')
-        .mockResolvedValue([
-          { id: 'MHIPAY', default_display_type: 'hosted_field', variants },
-        ] as never);
-
-    const isActive = async (variants: unknown[], locale: string) => {
-      mockProviders(variants);
-      const result = await service.getPaymentProvidersConfig({ locale });
-      return 'MHIPAY' in result;
-    };
-
-    it('excludes a provider with no variants', async () => {
-      expect(await isActive([], 'fr-FR')).toBe(false);
+      expect(result.MHIPAY.allowed_actions).toEqual(['PAYMENT_RESA', 'PAYMENT_SOLDE']);
     });
 
-    it('excludes a provider with no matching active variant', async () => {
-      expect(
-        await isActive([{ locale: null, active: false, settings: [], validation: {} }], 'fr-FR'),
-      ).toBe(false);
+    it('falls back to the global variant when no locale-specific variant exists', async () => {
+      const providers = [
+        {
+          id: 'MHIPAY',
+          default_display_type: 'hosted_field',
+          variants: [
+            {
+              locale: null,
+              allowed_actions: ['PAYMENT_RESA'],
+              settings: [{ key: 'script_url', value: 'https://global/s.js' }],
+              validation: {},
+            },
+          ],
+        },
+      ] as never;
+      vi.spyOn(paymentConfigRepository, 'getProviders').mockResolvedValue(providers);
+
+      const result = await service.getPaymentProvidersConfig({ locale: 'fr-FR' });
+
+      expect(result.MHIPAY.settings).toEqual({ script_url: 'https://global/s.js' });
+      expect(result.MHIPAY.allowed_actions).toEqual(['PAYMENT_RESA']);
     });
 
-    it('uses the locale-specific variant over the global one', async () => {
-      const variants = [
-        { locale: null, active: false, settings: [], validation: {} },
-        { locale: 'en-US', active: true, settings: [], validation: {} },
-      ];
-      expect(await isActive(variants, 'en-US')).toBe(true);
-      expect(await isActive(variants, 'fr-FR')).toBe(false);
-    });
+    it('returns empty allowed_actions when no variant matches the locale', async () => {
+      const providers = [
+        {
+          id: 'MHIPAY',
+          default_display_type: 'hosted_field',
+          variants: [
+            {
+              locale: 'en-US',
+              allowed_actions: ['PAYMENT_RESA'],
+              settings: [],
+              validation: {},
+            },
+          ],
+        },
+      ] as never;
+      vi.spyOn(paymentConfigRepository, 'getProviders').mockResolvedValue(providers);
 
-    it('falls back to the global variant when no locale matches', async () => {
-      const variants = [{ locale: null, active: false, settings: [], validation: {} }];
-      expect(await isActive(variants, 'fr-FR')).toBe(false);
-      expect(await isActive(variants, 'en-US')).toBe(false);
-    });
+      const result = await service.getPaymentProvidersConfig({ locale: 'fr-FR' });
 
-    it('honors an inactive locale override on an active global variant', async () => {
-      const variants = [
-        { locale: null, active: true, settings: [], validation: {} },
-        { locale: 'fr-CH', active: false, settings: [], validation: {} },
-      ];
-      expect(await isActive(variants, 'fr-FR')).toBe(true);
-      expect(await isActive(variants, 'fr-CH')).toBe(false);
-      expect(await isActive(variants, 'en-US')).toBe(true);
-    });
-
-    it('honors an inactive global variant with multiple active locales', async () => {
-      const variants = [
-        { locale: null, active: false, settings: [], validation: {} },
-        { locale: 'fr-FR', active: true, settings: [], validation: {} },
-        { locale: 'fr-BE', active: true, settings: [], validation: {} },
-        { locale: 'nl-BE', active: true, settings: [], validation: {} },
-      ];
-      expect(await isActive(variants, 'fr-FR')).toBe(true);
-      expect(await isActive(variants, 'fr-BE')).toBe(true);
-      expect(await isActive(variants, 'nl-BE')).toBe(true);
-      expect(await isActive(variants, 'en-US')).toBe(false);
-      expect(await isActive(variants, 'de-DE')).toBe(false);
+      expect(result.MHIPAY.allowed_actions).toEqual([]);
     });
   });
 
@@ -221,7 +200,7 @@ describe('PaymentConfigService', () => {
           variants: [
             {
               locale: null,
-              active: true,
+              allowed_actions: ['PAYMENT_RESA'],
               settings: [{ key: 'script_url', value: 'https://example.com/s.js' }],
               validation: {},
             },
@@ -234,41 +213,8 @@ describe('PaymentConfigService', () => {
         display_type: 'hosted_field',
         confirmation_strategy: 'status',
         requires_contact_choice: false,
+        allowed_actions: ['PAYMENT_RESA'],
         settings: { script_url: 'https://example.com/s.js' },
-      });
-    });
-
-    it('merges global and locale settings, locale taking precedence', async () => {
-      const config = await buildConfig(
-        {
-          id: 'MHIPAY',
-          default_display_type: 'hosted_field',
-          variants: [
-            {
-              locale: null,
-              active: true,
-              settings: [
-                { key: 'script_url', value: 'https://global/s.js' },
-                { key: 'environment', value: 'stage' },
-              ],
-              validation: {},
-            },
-            {
-              locale: 'fr-FR',
-              active: true,
-              settings: [{ key: 'script_url', value: 'https://fr/s.js' }],
-              validation: {},
-            },
-          ],
-        },
-        'fr-FR',
-      );
-
-      expect(config).toEqual({
-        display_type: 'hosted_field',
-        confirmation_strategy: 'status',
-        requires_contact_choice: false,
-        settings: { script_url: 'https://fr/s.js', environment: 'stage' },
       });
     });
 
@@ -277,7 +223,9 @@ describe('PaymentConfigService', () => {
         {
           id: 'MHIPAY',
           default_display_type: 'redirect',
-          variants: [{ locale: null, active: true, settings: [], validation: {} }],
+          variants: [
+            { locale: null, allowed_actions: ['PAYMENT_RESA'], settings: [], validation: {} },
+          ],
         },
         'fr-FR',
       );
@@ -291,7 +239,9 @@ describe('PaymentConfigService', () => {
           id: 'MHIPAY',
           default_display_type: 'redirect',
           confirmation_strategy: 'notify',
-          variants: [{ locale: null, active: true, settings: [], validation: {} }],
+          variants: [
+            { locale: null, allowed_actions: ['PAYMENT_RESA'], settings: [], validation: {} },
+          ],
         },
         'fr-FR',
       );
@@ -307,7 +257,7 @@ describe('PaymentConfigService', () => {
           variants: [
             {
               locale: null,
-              active: true,
+              allowed_actions: ['PAYMENT_RESA'],
               settings: [{ key: 'script_url', value: 'https://example.com/s.js' }],
               validation: { requires_token: true },
             },
@@ -328,7 +278,7 @@ describe('PaymentConfigService', () => {
         variants: [
           {
             locale: null,
-            active: true,
+            allowed_actions: ['PAYMENT_RESA'],
             settings: [],
             validation: { requires_contact_choice: ['GO', 'PARTNERS'] },
           },
@@ -350,7 +300,7 @@ describe('PaymentConfigService', () => {
         variants: [
           {
             locale: null,
-            active: true,
+            allowed_actions: ['PAYMENT_RESA'],
             settings: [],
             validation: { requires_contact_choice: ['GO', 'PARTNERS'] },
           },
@@ -367,7 +317,9 @@ describe('PaymentConfigService', () => {
       const provider = {
         id: 'EVOXPAY',
         default_display_type: 'redirect',
-        variants: [{ locale: null, active: true, settings: [], validation: {} }],
+        variants: [
+          { locale: null, allowed_actions: ['PAYMENT_RESA'], settings: [], validation: {} },
+        ],
       };
 
       expect(
