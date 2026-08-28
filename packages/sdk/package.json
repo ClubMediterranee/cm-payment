@@ -1,6 +1,7 @@
 {
   "name": "@clubmed/caps",
   "version": "1.0.0",
+  "description": "Embedded React SDK for the Club Med CAPS payment experience.",
   "type": "module",
   "author": "Club Med",
   "license": "BSD-3-Clause",
