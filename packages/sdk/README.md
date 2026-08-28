@@ -6,86 +6,111 @@
    <h1>@clubmed/caps</h1>
    <hr />
 
-[![npm version](https://badge.fury.io/js/%40clubmed%2Fpayment-sdk.svg)](https://badge.fury.io/js/%40clubmed%2Fpayment-sdk)
+[![npm version](https://badge.fury.io/js/%40clubmed%2Fcaps.svg)](https://www.npmjs.com/package/@clubmed/caps)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 </div>
 
-## Introduction
+## Overview
 
-`cm-payment` is a React 18 SDK designed to facilitate payment form integration in your application. It utilizes:
+`@clubmed/caps` is the embedded React SDK for the Club Med payment experience. It lets you compose a payment form directly in a React application, while CAPS manages payment data loading, validation, submission, and payment-provider handoff.
 
-- **TanStack Query** for data management
-- **react-hook-form** for form handling
-- **Trident UI** for design
+CAPS also offers a hosted Redirect Mode for non-React or lower-effort integrations. This package is for the embedded React SDK mode.
+
+## Prerequisites
+
+- React and React DOM `^19.2.0`
+- `@clubmed/trident-ui` `1.5.0` (migration to v2 is planed).
+- `@clubmed/trident-icons` `>=1.3.3`
+- CAPS API URL, API key, and OIDC access token supplied by Club Med
 
 ## Installation
 
-To install the SDK, run:
-
 ```sh
-npm install cm-payment @tanstack/react-query react-hook-form @clubmed/trident-ui
+npm install @clubmed/caps @clubmed/trident-ui @clubmed/trident-icons
 ```
 
-## Usage
+`@tanstack/react-query` and `react-hook-form` are installed as package dependencies.
 
-### Initializing the SDK
+## Configure the SDK
 
-Before using the SDK, initialize it by setting up fetch options:
-
-```tsx
-import { paymentSDK } from 'cm-payment';
-
-paymentSDK.setFetchOptions({
-  apiKey: 'YOUR_API_KEY',
-  getAccessToken: getMyAccessToken(),
-  locale: 'YOUR_LOCALE',
-});
-```
-
-### Building the Payment Form
-
-The form must be built using the React components provided by the SDK and wrapped inside the `FormProvider` from `cm-payment`.
+Wrap the payment area with `PaymentConfigProvider`. Provide exactly one payment context: `proposalId` or `bookingId`.
 
 ```tsx
-import { FormProvider, CardNumberField, ExpiryDateField, CVCField, SubmitButton } from 'cm-payment';
+import { OidcIssuerTypes, PaymentConfigProvider } from '@clubmed/caps';
 
-const PaymentForm = () => {
+function Checkout() {
   return (
-    <FormProvider {...props}>
+    <PaymentConfigProvider
+      locale="fr-FR"
+      proposalId="12345"
+      customerId="67890"
+      callbackUrl="https://your-app.com/payment/confirmation"
+      oidc={{
+        issuerType: OidcIssuerTypes.GM,
+        accessToken: 'YOUR_ACCESS_TOKEN',
+      }}
+      api={{
+        url: 'YOUR_CAPS_API_URL',
+        apiKey: 'YOUR_CAPS_API_KEY',
+      }}
+    >
+      {/* Payment form */}
+    </PaymentConfigProvider>
+  );
+}
+```
+
+`PaymentConfigProvider` initializes CAPS data fetching. The `callbackUrl` must be a route in your application that can receive the user after the payment flow completes.
+
+## Build the payment form
+
+Place the payment components inside `Form`. CAPS validates the composition according to the configured OIDC issuer. The example below is the required GM composition.
+
+```tsx
+import {
+  BillingAddress,
+  CardInstallments,
+  Cgv,
+  Donation,
+  Form,
+  PaymentProviders,
+  PaymentSchedule,
+  PaymentWidget,
+  SubmitButton,
+} from '@clubmed/caps';
+
+function PaymentForm() {
+  return (
+    <Form onError={console.error}>
       <PaymentSchedule />
       <PaymentProviders />
+      <CardInstallments />
+      <Donation />
       <Cgv />
-      <SubmitButton label="Pay Now" />
-    </FormProvider>
+      <BillingAddress />
+      <PaymentWidget />
+      <SubmitButton>Pay now</SubmitButton>
+    </Form>
   );
-};
+}
 ```
 
-### Handling Payment Confirmation
+For `GO` and `PARTNERS` issuers, `ContactChoice` is required instead of `PaymentWidget`. Required components are checked at runtime; CAPS throws an error when the composition is incomplete.
 
-Your application should have a dedicated route for payment confirmation. This route will intercept a path parameter called `paymentId` and validate the payment before redirecting to the final confirmation page.
+## Handle the return route
 
-#### Example Route Setup
+Create the route referenced by `callbackUrl` in your application router. CAPS completes payment validation before redirecting the user to this URL. Read the payment-result query parameters there and render the appropriate success, pending, cancellation, or failure state for your journey.
 
-```tsx
-import { usePaymentConfirmation } from 'cm-payment';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+## Documentation
 
-const PaymentConfirmation = () => {
-  const { paymentId } = useParams();
-  const navigate = useNavigate();
+For integration modes, configuration details, complete examples, release notes, and migration information, see the [Club Med Payment SDK documentation](https://portal.api.clubmed/en-US/pages/caps).
 
-  usePaymentConfirmation({ paymentId });
+## License
 
-  return <div>Processing your payment...</div>;
-};
-```
+The MIT License (MIT)
 
-## Conclusion
+Copyright (c) 2026 - Today ClubMed
 
-By following these steps, you can integrate the `cm-payment` SDK seamlessly into your React 18 application. Ensure that you correctly initialize the SDK, use the provided form components, and handle payment confirmation efficiently.
-
-For further details, refer to the official documentation or reach out to support.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

@@ -41,8 +41,6 @@ variables:
   ENV:
     value: "integration"
     options:
-      - "integration-heroku"
-      - "staging-heroku"
       - "integration"
       - "staging"
       - "production"
