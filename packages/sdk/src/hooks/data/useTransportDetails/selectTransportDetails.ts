@@ -2,10 +2,10 @@ import {
   BookingTransportDetailsListModelV2,
   BookingTransportDetailsModelV2,
   ProposalTransportDetailsListModelV5,
-  ProposalTransportDetailsModelV3,
+  ProposalTransportDetailsModelV5,
 } from '../../../__generated__/index.schemas';
 
-type ApiJourney = ProposalTransportDetailsModelV3 | BookingTransportDetailsModelV2;
+type ApiJourney = ProposalTransportDetailsModelV5 | BookingTransportDetailsModelV2;
 type ApiTransportDetails = ProposalTransportDetailsListModelV5 | BookingTransportDetailsListModelV2;
 
 export type FlightSegment = {
@@ -32,8 +32,10 @@ export type TransportDetails = {
 
 const formatDate = (date: string) => date.replace(/-/g, '');
 
+type ApiTravelSection = NonNullable<ApiJourney['travel_sections']>[number];
+
 const mapJourney = (journey: ApiJourney): Journey => {
-  const sections = journey.travel_sections || [];
+  const sections: ApiTravelSection[] = journey.travel_sections ?? [];
   return {
     way: journey.way,
     airlineName: sections[0]?.transport?.company?.operator?.label,

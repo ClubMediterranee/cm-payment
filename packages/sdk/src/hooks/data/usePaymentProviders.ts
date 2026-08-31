@@ -1,7 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { paymentProvidersControllerGetPaymentProviders } from '../../__generated__/bff';
-import { Action } from '../../__generated__/index.schemas';
 import { useCapsConfigContext } from '../utils/useCapsConfigContext';
 import { getResolvedAction } from './useActionResolver';
 
