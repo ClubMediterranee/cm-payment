@@ -187,10 +187,10 @@ describe('fetcher', () => {
       json: async () => mockErrorResponse,
     } as Response);
 
-    const error = await fetcher({ url: '/test', method: 'GET' }).catch((e) => e);
+    const error: unknown = await fetcher({ url: '/test', method: 'GET' }).catch((e) => e);
 
     expect(error).toBeInstanceOf(Error);
-    expect(error.message).toBe('Invalid customer email');
+    expect((error as Error).message).toBe('Invalid customer email');
   });
 
   it('should fallback to json.message when no nested errors', async () => {
@@ -207,10 +207,10 @@ describe('fetcher', () => {
       json: async () => mockErrorResponse,
     } as Response);
 
-    const error = await fetcher({ url: '/test', method: 'GET' }).catch((e) => e);
+    const error: unknown = await fetcher({ url: '/test', method: 'GET' }).catch((e) => e);
 
     expect(error).toBeInstanceOf(Error);
-    expect(error.message).toBe('Bad Request');
+    expect((error as Error).message).toBe('Bad Request');
   });
 
   it('should include custom headers', async () => {
