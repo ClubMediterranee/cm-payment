@@ -65,7 +65,7 @@ export class PaymentConfigService {
         return [
           provider.id,
           {
-            ...validation,
+            ...global?.validation,
             requires_contact_choice: (validation.requires_contact_choice ?? []).includes(
               issuerType!,
             ),

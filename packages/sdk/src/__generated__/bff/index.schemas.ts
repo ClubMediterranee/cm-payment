@@ -264,6 +264,7 @@ export const PaymentProvidersControllerGetPaymentProviders200PaymentProvidersIte
   {
     hosted_field: 'hosted_field',
     iframe: 'iframe',
+    third_party_iframe: 'third_party_iframe',
     redirect: 'redirect',
     custom: 'custom',
   } as const;
@@ -311,6 +312,7 @@ export const PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvi
   {
     hosted_field: 'hosted_field',
     iframe: 'iframe',
+    third_party_iframe: 'third_party_iframe',
     redirect: 'redirect',
     custom: 'custom',
   } as const;

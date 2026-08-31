@@ -70,6 +70,7 @@ describe('usePaymentSubmit', () => {
 
     vi.spyOn(useProviderIntegrationModeModule, 'useProviderIntegrationMode').mockReturnValue({
       iframe: false,
+      thirdPartyIframe: false,
       redirect: true,
       hostedField: false,
       custom: false,

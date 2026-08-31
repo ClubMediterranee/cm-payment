@@ -5,7 +5,8 @@ export const useProviderIntegrationMode = () => {
   const displayType = provider?.configuration?.display_type;
 
   return {
-    iframe: displayType === 'iframe',
+    iframe: displayType === 'iframe' || displayType === 'third_party_iframe',
+    thirdPartyIframe: displayType === 'third_party_iframe',
     redirect: displayType === 'redirect',
     hostedField: displayType === 'hosted_field',
     custom: displayType === 'custom',
