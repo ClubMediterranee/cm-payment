@@ -102,8 +102,8 @@ teams_notification_when_pipeline_failed:
   rules:
     - when: on_failure
       variables:
-        STATUS: 'failed'
-        ICON: '❌'
+        STATUS: "failed"
+        ICON: "❌"
 
 teams_notification_when_pipeline_succeed:
   stage: notify_on_teams
@@ -112,5 +112,5 @@ teams_notification_when_pipeline_succeed:
   rules:
     - when: on_success
       variables:
-        STATUS: 'success'
-        ICON: '✅'
+        STATUS: "success"
+        ICON: "✅"

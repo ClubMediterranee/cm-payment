@@ -2,9 +2,9 @@ html {
   @apply bg-ultramarine;
 }
 
-label > span > input[type="checkbox"]:not([role="switch"]) + span,
-label > span > input[type="checkbox"]:not([role="switch"]):not([disabled]):hover + span,
-label > span > input[type="radio"] + span,
-label > span > input[type="radio"]:not([disabled]):hover + span {
+label > span > input[type='checkbox']:not([role='switch']) + span,
+label > span > input[type='checkbox']:not([role='switch']):not([disabled]):hover + span,
+label > span > input[type='radio'] + span,
+label > span > input[type='radio']:not([disabled]):hover + span {
   @apply bg-white;
 }

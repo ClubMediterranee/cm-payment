@@ -7,10 +7,10 @@ import fs from 'fs-extra';
 @Controller('/version')
 export class VersionController {
   @Constant('version')
-  private version: string;
+  private version!: string;
 
   @Constant('rootDir')
-  private rootDir: string;
+  private rootDir!: string;
 
   @Get('/')
   @(Returns(200)
