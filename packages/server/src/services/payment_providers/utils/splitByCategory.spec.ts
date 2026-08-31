@@ -3,27 +3,30 @@ import { describe, expect, it } from 'vitest';
 import { EnrichedPaymentProvider, PaymentProvidersResponse } from '../types.js';
 import { splitByCategory } from './splitByCategory.js';
 
+const makeConfig = () => ({
+  allowed_actions: [] as EnrichedPaymentProvider['configuration']['allowed_actions'],
+  display_type: 'redirect' as const,
+  confirmation_strategy: 'status' as const,
+  settings: {},
+  requires_contact_choice: false as const,
+});
+
 describe('splitByCategory', () => {
   it('should add Card provider to payment_providers array', () => {
     const acc: PaymentProvidersResponse = {
       payment_providers: [],
       buy_now_pay_later_providers: [],
     };
-    const provider = {
+    const provider: EnrichedPaymentProvider = {
       id: 'CARD_PROVIDER',
       label: 'Card Provider',
       category_payment_method: 'CreditCard',
       connection_type: 'E-commerce',
       required_delay_before_departure: 0,
       billing_address_form: false,
-      configuration: {
-        display_type: 'redirect',
-        confirmation_strategy: 'status',
-        settings: {},
-        requires_contact_choice: false,
-      },
+      configuration: makeConfig(),
       payment_conditions: {},
-    } as const;
+    };
 
     const result = splitByCategory(acc, provider);
 
@@ -37,21 +40,16 @@ describe('splitByCategory', () => {
       payment_providers: [],
       buy_now_pay_later_providers: [],
     };
-    const provider = {
+    const provider: EnrichedPaymentProvider = {
       id: 'BNPL_PROVIDER',
       label: 'BNPL Provider',
       category_payment_method: 'BuyNowPayLater',
       connection_type: 'E-commerce',
       required_delay_before_departure: 0,
       billing_address_form: false,
-      configuration: {
-        display_type: 'redirect',
-        confirmation_strategy: 'status',
-        settings: {},
-        requires_contact_choice: false,
-      },
+      configuration: makeConfig(),
       payment_conditions: {},
-    } as const;
+    };
 
     const result = splitByCategory(acc, provider);
 
@@ -72,14 +70,9 @@ describe('splitByCategory', () => {
       connection_type: 'E-commerce',
       required_delay_before_departure: 0,
       billing_address_form: false,
-      configuration: {
-        display_type: 'redirect',
-        confirmation_strategy: 'status',
-        settings: {},
-        requires_contact_choice: false,
-      },
+      configuration: makeConfig(),
       payment_conditions: {},
-    } as const;
+    };
     const provider2: EnrichedPaymentProvider = {
       id: 'CARD_2',
       label: 'Card 2',
@@ -87,14 +80,9 @@ describe('splitByCategory', () => {
       connection_type: 'E-commerce',
       required_delay_before_departure: 0,
       billing_address_form: false,
-      configuration: {
-        display_type: 'redirect',
-        confirmation_strategy: 'status',
-        settings: {},
-        requires_contact_choice: false,
-      },
+      configuration: makeConfig(),
       payment_conditions: {},
-    } as const;
+    };
 
     acc = splitByCategory(acc, provider1);
     acc = splitByCategory(acc, provider2);
@@ -109,36 +97,26 @@ describe('splitByCategory', () => {
       payment_providers: [],
       buy_now_pay_later_providers: [],
     };
-    const cardProvider = {
+    const cardProvider: EnrichedPaymentProvider = {
       id: 'CARD',
       label: 'Card',
       category_payment_method: 'CreditCard',
       connection_type: 'E-commerce',
       required_delay_before_departure: 0,
       billing_address_form: false,
-      configuration: {
-        display_type: 'redirect',
-        confirmation_strategy: 'status',
-        settings: {},
-        requires_contact_choice: false,
-      },
+      configuration: makeConfig(),
       payment_conditions: {},
-    } as const;
-    const bnplProvider = {
+    };
+    const bnplProvider: EnrichedPaymentProvider = {
       id: 'BNPL',
       label: 'BNPL',
       category_payment_method: 'BuyNowPayLater',
       connection_type: 'E-commerce',
       required_delay_before_departure: 0,
       billing_address_form: false,
-      configuration: {
-        display_type: 'redirect',
-        confirmation_strategy: 'status',
-        settings: {},
-        requires_contact_choice: false,
-      },
+      configuration: makeConfig(),
       payment_conditions: {},
-    } as const;
+    };
 
     acc = splitByCategory(acc, cardProvider);
     acc = splitByCategory(acc, bnplProvider);
@@ -154,21 +132,16 @@ describe('splitByCategory', () => {
       payment_providers: [],
       buy_now_pay_later_providers: [],
     };
-    const provider = {
+    const provider: EnrichedPaymentProvider = {
       id: 'PAYPAL',
       label: 'PayPal',
       category_payment_method: 'Paypal',
       connection_type: 'E-commerce',
       required_delay_before_departure: 0,
       billing_address_form: false,
-      configuration: {
-        display_type: 'redirect',
-        confirmation_strategy: 'status',
-        settings: {},
-        requires_contact_choice: false,
-      },
+      configuration: makeConfig(),
       payment_conditions: {},
-    } as const;
+    };
 
     const result = splitByCategory(acc, provider);
 
@@ -182,21 +155,16 @@ describe('splitByCategory', () => {
       payment_providers: [],
       buy_now_pay_later_providers: [],
     };
-    const provider = {
+    const provider: EnrichedPaymentProvider = {
       id: 'CARD',
       label: 'Card',
       category_payment_method: 'CreditCard',
       connection_type: 'E-commerce',
       required_delay_before_departure: 0,
       billing_address_form: false,
-      configuration: {
-        display_type: 'redirect',
-        confirmation_strategy: 'status',
-        settings: {},
-        requires_contact_choice: false,
-      },
+      configuration: makeConfig(),
       payment_conditions: {},
-    } as const;
+    };
 
     const result = splitByCategory(acc, provider);
 
@@ -212,12 +180,7 @@ describe('splitByCategory', () => {
         connection_type: 'E-commerce',
         required_delay_before_departure: 0,
         billing_address_form: false,
-        configuration: {
-          display_type: 'redirect',
-          confirmation_strategy: 'status',
-          settings: {},
-          requires_contact_choice: false,
-        },
+        configuration: makeConfig(),
         payment_conditions: {},
       },
       {
@@ -227,12 +190,7 @@ describe('splitByCategory', () => {
         connection_type: 'E-commerce',
         required_delay_before_departure: 0,
         billing_address_form: false,
-        configuration: {
-          display_type: 'redirect',
-          confirmation_strategy: 'status',
-          settings: {},
-          requires_contact_choice: false,
-        },
+        configuration: makeConfig(),
         payment_conditions: {},
       },
       {
@@ -242,12 +200,7 @@ describe('splitByCategory', () => {
         connection_type: 'E-commerce',
         required_delay_before_departure: 0,
         billing_address_form: false,
-        configuration: {
-          display_type: 'redirect',
-          confirmation_strategy: 'status',
-          settings: {},
-          requires_contact_choice: false,
-        },
+        configuration: makeConfig(),
         payment_conditions: {},
       },
     ];

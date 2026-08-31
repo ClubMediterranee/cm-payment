@@ -19,3 +19,6 @@ onlyBuiltDependencies:
   - core-js-pure
   - esbuild
   - msw
+
+patchedDependencies:
+  directus-sdk-typegen@0.2.1: patches/directus-sdk-typegen@0.2.1.patch

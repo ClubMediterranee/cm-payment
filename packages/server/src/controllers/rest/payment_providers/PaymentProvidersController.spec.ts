@@ -1,6 +1,7 @@
 import { PlatformTest } from '@tsed/platform-http/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { Action } from '../../../infra/api/__generated__/index.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
 import { PaymentProvidersService } from '../../../services/payment_providers/PaymentProvidersService.js';
 import { PaymentProvidersController } from './PaymentProvidersController.js';
@@ -45,6 +46,7 @@ describe('PaymentProvidersController', () => {
         OidcIssuerTypes.GM,
         undefined,
         undefined,
+        Action.PAYMENT_RESA,
       );
 
       expect(result).toEqual(mockResponse);
@@ -55,6 +57,7 @@ describe('PaymentProvidersController', () => {
         issuerType: OidcIssuerTypes.GM,
         customerId: undefined,
         userAgent: undefined,
+        action: Action.PAYMENT_RESA,
       });
     });
 
@@ -66,6 +69,7 @@ describe('PaymentProvidersController', () => {
         OidcIssuerTypes.GM,
         'test-user-agent',
         '789',
+        Action.PAYMENT_SOLDE,
       );
 
       expect(result).toEqual(mockResponse);
@@ -76,6 +80,7 @@ describe('PaymentProvidersController', () => {
         issuerType: OidcIssuerTypes.GM,
         customerId: '789',
         userAgent: 'test-user-agent',
+        action: Action.PAYMENT_SOLDE,
       });
     });
   });

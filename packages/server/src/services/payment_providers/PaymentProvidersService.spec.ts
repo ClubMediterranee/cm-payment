@@ -26,7 +26,13 @@ describe('PaymentProvidersService', () => {
 
   const setup = (providers: unknown[], config: Record<string, unknown>) => {
     vi.spyOn(generatedApi, 'getV1PaymentProviders').mockResolvedValue(providers as any);
-    vi.spyOn(paymentConfigService, 'getPaymentProvidersConfig').mockResolvedValue(config as any);
+    const enriched = Object.fromEntries(
+      Object.entries(config).map(([k, v]) => [
+        k,
+        { allowed_actions: ['PAYMENT_RESA'], ...(v as object) },
+      ]),
+    );
+    vi.spyOn(paymentConfigService, 'getPaymentProvidersConfig').mockResolvedValue(enriched as any);
   };
 
   describe('getPaymentProviders', () => {
@@ -36,6 +42,7 @@ describe('PaymentProvidersService', () => {
           type: 'booking',
           id: '456',
           locale: 'fr-FR',
+          action: 'PAYMENT_RESA' as never,
           issuerType: OidcIssuerTypes.GM,
         }),
       ).rejects.toThrow('customer_id is required for booking type');
@@ -71,12 +78,13 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
       });
 
       expect(result.payment_providers).toHaveLength(1);
       expect(result.payment_providers[0].id).toBe('MCYBERSOURCE');
-      expect(result.payment_providers[0].configuration).toEqual({
+      expect(result.payment_providers[0].configuration).toMatchObject({
         display_type: 'hosted_field',
         settings: {},
       });
@@ -119,6 +127,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
       });
 
@@ -170,6 +179,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
       });
 
@@ -208,6 +218,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GO,
       });
 
@@ -236,6 +247,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.PARTNERS,
       });
 
@@ -263,6 +275,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GO,
       });
 
@@ -303,6 +316,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GO,
       });
 
@@ -366,6 +380,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
       });
 
@@ -413,6 +428,7 @@ describe('PaymentProvidersService', () => {
         id: '123',
         customerId: '456',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
       });
 
@@ -428,6 +444,7 @@ describe('PaymentProvidersService', () => {
         id: '123',
         customerId: '456',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
       });
 
@@ -454,6 +471,7 @@ describe('PaymentProvidersService', () => {
         id: '123',
         customerId: '456',
         locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
       });
 
@@ -639,6 +657,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'zh-CN',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
         userAgent: MICROMESSENGER_UA,
       });
@@ -653,6 +672,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'zh-CN',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
         userAgent: MOBILE_UA,
       });
@@ -667,6 +687,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'zh-CN',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
         userAgent: MICROMESSENGER_UA,
       });
@@ -681,6 +702,7 @@ describe('PaymentProvidersService', () => {
         type: 'proposal',
         id: '123',
         locale: 'zh-CN',
+        action: 'PAYMENT_RESA' as never,
         issuerType: OidcIssuerTypes.GM,
       });
 
