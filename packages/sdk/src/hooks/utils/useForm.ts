@@ -22,4 +22,16 @@ export const useWatch = <
   name: TName,
 ): FieldPathValue<TFieldValues, TName> => useReactHookFormWatch<TFieldValues, TName>({ name });
 
-export const useFormContext = () => useReactHookFormContext<CapsFormSchema>();
+export const useFormContext = () => {
+  const methods = useReactHookFormContext<CapsFormSchema>();
+
+  const triggerAndTouch = async () => {
+    await methods.trigger();
+    const values = methods.getValues();
+    (Object.keys(values) as (keyof typeof values)[]).forEach((key) => {
+      methods.setValue(key, values[key], { shouldTouch: true });
+    });
+  };
+
+  return { ...methods, triggerAndTouch };
+};

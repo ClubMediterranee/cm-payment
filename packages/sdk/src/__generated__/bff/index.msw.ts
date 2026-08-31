@@ -144,6 +144,7 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
         display_type: faker.helpers.arrayElement([
           'hosted_field',
           'iframe',
+          'third_party_iframe',
           'redirect',
           'custom',
         ] as const),
@@ -269,6 +270,7 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
         display_type: faker.helpers.arrayElement([
           'hosted_field',
           'iframe',
+          'third_party_iframe',
           'redirect',
           'custom',
         ] as const),

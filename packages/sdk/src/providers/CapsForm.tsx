@@ -43,7 +43,7 @@ function CapsFormProvider({
 
   const [
     {
-      data: { paymentProviders },
+      data: { paymentProviders, buyNowPayLaterProviders },
     },
     { data: paymentSchedule },
   ] = useSuspenseQueries({
@@ -70,7 +70,9 @@ function CapsFormProvider({
       isSeller,
       maxAmount,
       getProviderConfiguration: (providerId: string) => {
-        const provider = paymentProviders.find((p) => p.id === providerId);
+        const provider = [...paymentProviders, ...buyNowPayLaterProviders].find(
+          (p) => p.id === providerId,
+        );
         return provider?.configuration;
       },
     },

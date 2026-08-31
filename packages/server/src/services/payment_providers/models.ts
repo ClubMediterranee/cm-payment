@@ -15,7 +15,7 @@ export const EnrichedPaymentProviderSchema: any = {
           properties: {
             display_type: {
               type: 'string',
-              enum: ['hosted_field', 'iframe', 'redirect', 'custom'],
+              enum: ['hosted_field', 'iframe', 'third_party_iframe', 'redirect', 'custom'],
             },
             settings: {
               type: 'object',

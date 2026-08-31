@@ -2,10 +2,10 @@ import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 
-import { GLOBAL_CAPS_SETTINGS } from '../../config';
 import { useFormCallbacks } from '../../contexts/FormCallbacksContext';
 import { usePaymentSubmit } from '../../hooks/usePaymentSubmit';
 import { useFormContext, useWatch } from '../../hooks/utils/useForm';
+import { useProviderIntegrationMode } from '../../hooks/utils/useProviderIntegrationMode';
 import { PspProviders } from '../../types/PspProviders';
 import { IframeMessageType } from '../../utils/iframe/constants';
 import { getIframeHeight } from '../../utils/iframe/getIframeHeight';
@@ -25,16 +25,14 @@ export const IframeView = () => {
 
   const {
     formState: { isValid, errors },
-    trigger,
+    triggerAndTouch,
     setValue,
   } = useFormContext();
 
   const watchedPaymentConditionId = useWatch('payment_condition_id');
   const watchedProviderId = useWatch('provider_id');
 
-  const isThirdPartyIframe = GLOBAL_CAPS_SETTINGS.thirdPartyIframeProviders.includes(
-    watchedProviderId as PspProviders,
-  );
+  const { thirdPartyIframe } = useProviderIntegrationMode();
 
   const { onLoad, onLoadEnd } = useFormCallbacks();
 
@@ -58,13 +56,13 @@ export const IframeView = () => {
   });
 
   useEffect(() => {
-    if (isValid && !isThirdPartyIframe) {
+    if (isValid && !thirdPartyIframe) {
       handleSubmit();
     }
   }, [isValid, watchedPaymentConditionId]);
 
   useEffect(() => {
-    trigger();
+    triggerAndTouch();
   }, []);
 
   const ThirdPartyIframeComponent =

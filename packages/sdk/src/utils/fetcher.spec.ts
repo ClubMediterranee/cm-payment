@@ -160,23 +160,57 @@ describe('fetcher', () => {
     );
   });
 
-  it('should throw error for 404 status with error_description', async () => {
+  it('should throw error with deepest error_description from nested errors', async () => {
     const mockErrorResponse = {
-      status_code: 404,
-      error_description: 'Resource not found',
+      name: 'BAD_REQUEST',
+      message: 'Bad Request',
+      status: 400,
+      errors: [
+        {
+          status_code: 400,
+          error: 'bad_request',
+          errors: [
+            {
+              error_code: 'INVALID_EMAIL',
+              error_description: 'Invalid customer email',
+              status_code: 400,
+            },
+          ],
+          error_description: 'Bad Request',
+        },
+      ],
     };
 
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: false,
+      status: 400,
       json: async () => mockErrorResponse,
     } as Response);
 
-    await expect(
-      fetcher({
-        url: '/test',
-        method: 'GET',
-      }),
-    ).rejects.toThrow('Resource not found');
+    const error: unknown = await fetcher({ url: '/test', method: 'GET' }).catch((e) => e);
+
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toBe('Invalid customer email');
+  });
+
+  it('should fallback to json.message when no nested errors', async () => {
+    const mockErrorResponse = {
+      name: 'BAD_REQUEST',
+      message: 'Bad Request',
+      status: 400,
+      errors: [],
+    };
+
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      json: async () => mockErrorResponse,
+    } as Response);
+
+    const error: unknown = await fetcher({ url: '/test', method: 'GET' }).catch((e) => e);
+
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toBe('Bad Request');
   });
 
   it('should include custom headers', async () => {

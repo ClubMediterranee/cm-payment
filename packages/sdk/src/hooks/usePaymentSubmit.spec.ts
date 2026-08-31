@@ -1,5 +1,4 @@
 import { renderHook } from '@testing-library/react';
-import type { UseFormReturn } from 'react-hook-form';
 import type { Mock } from 'vitest';
 
 import * as FormCallbacksContextModule from '../contexts/FormCallbacksContext';
@@ -57,7 +56,10 @@ describe('usePaymentSubmit', () => {
     vi.spyOn(useFormModule, 'useFormContext').mockReturnValue({
       handleSubmit: mockHandleSubmit,
       getValues: mockGetValues,
-    } as Partial<UseFormReturn<CapsFormSchema>> as UseFormReturn<CapsFormSchema>);
+      triggerAndTouch: vi.fn(),
+    } as Partial<ReturnType<typeof useFormModule.useFormContext>> as ReturnType<
+      typeof useFormModule.useFormContext
+    >);
 
     vi.spyOn(usePaymentRedirectModule, 'usePaymentRedirect').mockReturnValue({
       mutate: mockMutate,
@@ -70,6 +72,7 @@ describe('usePaymentSubmit', () => {
 
     vi.spyOn(useProviderIntegrationModeModule, 'useProviderIntegrationMode').mockReturnValue({
       iframe: false,
+      thirdPartyIframe: false,
       redirect: true,
       hostedField: false,
       custom: false,

@@ -1,9 +1,7 @@
 import { OidcIssuerTypes } from './types/CapsSettings';
-import { PspProviders } from './types/PspProviders';
 import { TOKENS } from './types/Tokens';
 
 export const GLOBAL_CAPS_SETTINGS = Object.freeze({
-  thirdPartyIframeProviders: [PspProviders.MUPLIFT],
   templateIds: {
     email: '6',
     mobilePhone: '4',
