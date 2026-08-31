@@ -13,7 +13,7 @@ parameters:
   env:
     type: enum
     description: "The environment name to deploy tag or branch"
-    enum: [ "", "integration", "staging", "production" ]
+    enum: ["", "integration", "staging", "production"]
     default: ""
 
   version:
@@ -24,7 +24,7 @@ parameters:
   workflow:
     type: enum
     description: "Trigger a specific workflow"
-    enum: [ "build", "deploy", "rebase", "rebase-all" ]
+    enum: ["build", "deploy", "rebase", "rebase-all"]
     default: "build"
 
 executors:
@@ -42,7 +42,7 @@ executors:
     resource_class: large
   cypress-executor:
     docker:
-      - image: 'cypress/browsers:node-20.11.0-chrome-121.0.6167.184-1-ff-123.0-edge-121.0.2277.128-1'
+      - image: "cypress/browsers:node-20.11.0-chrome-121.0.6167.184-1-ff-123.0-edge-121.0.2277.128-1"
     resource_class: large
 commands:
   switch-branch:
@@ -52,7 +52,7 @@ commands:
           condition:
             and:
               - not:
-                  equal: [ << pipeline.git.branch >>, << pipeline.parameters.version >> ]
+                  equal: [<< pipeline.git.branch >>, << pipeline.parameters.version >>]
           steps:
             - run:
                 name: "Checkout"
@@ -86,7 +86,7 @@ commands:
       env:
         type: enum
         description: "The environment name to deploy tag or branch"
-        enum: [ "", "integration",  "staging", "production" ]
+        enum: ["", "integration", "staging", "production"]
         default: "integration"
     steps:
       - dotenv/source:
@@ -100,7 +100,7 @@ commands:
       env:
         type: enum
         description: "The environment name to deploy tag or branch"
-        enum: [ "", "integration",  "staging", "production" ]
+        enum: ["", "integration", "staging", "production"]
         default: "integration"
       version:
         type: string
@@ -199,7 +199,6 @@ jobs:
       - test-update-coverage:
           package: app
 
-
   test-app-cy:
     executor: cypress-executor
     parallelism: 6
@@ -234,7 +233,7 @@ jobs:
       env:
         type: enum
         description: "The environment name to deploy tag or branch"
-        enum: [ "", "integration",  "staging", "production" ]
+        enum: ["", "integration", "staging", "production"]
         default: "integration"
     steps:
       - run:
@@ -245,9 +244,9 @@ jobs:
       - configure-executor
       - checkout
       - switch-branch
-#      - run:
-#          name: Write job data
-#          command: echo "<< parameters.version >>" > packages/server/resources/release.info
+      #      - run:
+      #          name: Write job data
+      #          command: echo "<< parameters.version >>" > packages/server/resources/release.info
       - release-tag:
           env: << parameters.env >>
 
@@ -260,7 +259,7 @@ jobs:
       env:
         type: enum
         description: "The environment name to deploy tag or branch"
-        enum: [ "", "integration",  "staging", "production" ]
+        enum: ["", "integration", "staging", "production"]
         default: "integration"
     steps:
       - run:
@@ -271,9 +270,9 @@ jobs:
       - configure-executor
       - checkout
       - switch-branch
-#      - run:
-#          name: Write job data
-#          command: echo "<< parameters.version >>" > packages/server/resources/release.info
+      #      - run:
+      #          name: Write job data
+      #          command: echo "<< parameters.version >>" > packages/server/resources/release.info
       - deploy-env:
           env: << parameters.env >>
           version: << parameters.version >>
@@ -303,7 +302,7 @@ workflows:
   # rebase all branches
   rebase-all:
     when:
-      equal: [ "rebase-all", << pipeline.parameters.workflow >> ]
+      equal: ["rebase-all", << pipeline.parameters.workflow >>]
     jobs:
       - rebase-all:
           context: api
@@ -311,7 +310,7 @@ workflows:
   # rebase all branches
   rebase:
     when:
-      equal: [ "rebase", << pipeline.parameters.workflow >> ]
+      equal: ["rebase", << pipeline.parameters.workflow >>]
     jobs:
       - rebase:
           filters:
@@ -324,8 +323,8 @@ workflows:
     when:
       or:
         - not:
-            equal: [ "", << pipeline.parameters.env >> ]
-        - equal: [ "deploy", << pipeline.parameters.workflow >> ]
+            equal: ["", << pipeline.parameters.env >>]
+        - equal: ["deploy", << pipeline.parameters.workflow >>]
     jobs:
       - deploy:
           env: << pipeline.parameters.env >>
@@ -334,7 +333,7 @@ workflows:
   # default workflow when a commit is pushed on repository.
   build-and-release:
     when:
-      equal: [ "build", << pipeline.parameters.workflow >> ]
+      equal: ["build", << pipeline.parameters.workflow >>]
     jobs:
       - lint
       - test-app

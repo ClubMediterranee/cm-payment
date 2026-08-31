@@ -24,7 +24,7 @@ export class HttpClient<
 > extends HttpLogClient {
   protected baseURL: string = '';
 
-  #raw: AxiosInstance;
+  #raw!: AxiosInstance;
 
   raw(options: AxiosRequestConfig) {
     if (!this.#raw) {
