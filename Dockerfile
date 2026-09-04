@@ -41,6 +41,7 @@ RUN npm install -g pnpm
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=builder /app/patches/ ./patches/
 
 # Copy server metadata, build artifacts, and runtime dependencies from the builder
 COPY packages/server/package.json ./packages/server/package.json
