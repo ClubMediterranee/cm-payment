@@ -213,6 +213,11 @@
             "key": "payment_mode",
             "type": "string",
             "value": "4x"
+          },
+          {
+            "key": "is_free",
+            "type": "boolean",
+            "value": false
           }
         ],
         "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
@@ -230,6 +235,11 @@
             "key": "payment_mode",
             "type": "string",
             "value": "3x"
+          },
+          {
+            "key": "is_free",
+            "type": "boolean",
+            "value": false
           }
         ],
         "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
@@ -247,6 +257,11 @@
             "key": "payment_mode",
             "type": "string",
             "value": "3x"
+          },
+          {
+            "key": "is_free",
+            "type": "boolean",
+            "value": false
           }
         ],
         "allowed_actions": [
@@ -306,7 +321,7 @@
   {
     "id": "MCYBERSOURCE",
     "default_display_type": "hosted_field",
-    "confirmation_strategy": "status",
+    "confirmation_strategy": "notify",
     "settings": [
       {
         "locale": "*",
