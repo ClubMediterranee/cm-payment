@@ -8,11 +8,7 @@ export function Form({ children }: PropsWithChildren) {
 
   return (
     <>
-      <form
-        id="payment-form"
-        onSubmit={onSubmit}
-        className="w-full flex flex-col justify-center items-center gap-24 text-b4"
-      >
+      <form id="payment-form" onSubmit={onSubmit} className="w-full flex flex-col gap-24 text-b4">
         {children}
       </form>
       <OverpaymentConfirmationPopin

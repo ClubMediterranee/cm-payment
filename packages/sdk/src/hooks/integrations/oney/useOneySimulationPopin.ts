@@ -10,10 +10,11 @@ import { getOneyPopinOptions, loadOneySimulationPopin } from './oney';
 export const useOneySimulationPopin = () => {
   const { language, country } = useCapsConfigContext();
   const watchedAmount = useWatch('amount');
-  const { merchant_id, payment_mode, script_url } = usePaymentProviderSettings<{
+  const { merchant_id, payment_mode, script_url, is_free } = usePaymentProviderSettings<{
     merchant_id: string;
     payment_mode: string;
     script_url: string;
+    is_free: boolean;
   }>(PspProviders.EHIPAYBNPL);
 
   const { isLoaded } = useScriptLoader(script_url);
@@ -27,10 +28,11 @@ export const useOneySimulationPopin = () => {
       country,
       language,
       payment_mode,
+      is_free: String(is_free),
     });
 
     loadOneySimulationPopin(options);
-  }, [isLoaded, watchedAmount, merchant_id, country, language, payment_mode]);
+  }, [isLoaded, watchedAmount, merchant_id, country, language, payment_mode, is_free]);
 
   return { handlePopinClick };
 };

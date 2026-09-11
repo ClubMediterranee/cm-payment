@@ -6,12 +6,14 @@ export const getOneyPopinOptions = ({
   country,
   language,
   payment_mode,
+  is_free,
 }: {
   payment_amount: number;
   merchant_id: string;
   country: string;
   language: string;
   payment_mode: string;
+  is_free: string;
 }) => {
   return {
     payment_amount,
@@ -24,7 +26,7 @@ export const getOneyPopinOptions = ({
         payment_method: 'bnpl',
         payment_method_type: 'split',
         payment_mode,
-        is_free: 'false',
+        is_free,
         with_down_payment: 'true',
       },
     ],
