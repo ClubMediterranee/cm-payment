@@ -31,6 +31,8 @@ export const buildPaymentRedirectPayload = (
     reference,
     token,
     comments,
+    sales_network_id,
+    salesman_id,
     billing_details: { email, mobile_phone, attendee, address },
   } = formData;
 
@@ -63,6 +65,8 @@ export const buildPaymentRedirectPayload = (
     },
     callback_url: callbackUrl,
     callback_url_seller: callbackUrlSeller,
+    sales_network_id,
+    salesman_id,
   };
 };
 

@@ -34,4 +34,6 @@ export type CapsSettings = {
   oidc: OidcSettings;
   content: Content;
   type: 'proposal' | 'booking';
+  salesNetworkId?: string;
+  salesmanId?: string;
 };

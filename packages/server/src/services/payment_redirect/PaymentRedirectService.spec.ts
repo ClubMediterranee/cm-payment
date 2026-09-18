@@ -565,5 +565,52 @@ describe('PaymentRedirectService', () => {
         expect.objectContaining({ donation_amount: 20 }),
       );
     });
+
+    it('forwards sales_network_id to postV1Payments when provided', async () => {
+      const service = await invokeService();
+
+      await service.createPaymentRedirect(
+        { ...baseBody, template_id: '6', sales_network_id: 'OPERA_00_P2T' },
+        context,
+      );
+
+      expect(api.postV1Payments).toHaveBeenCalledWith(
+        expect.objectContaining({ sales_network_id: 'OPERA_00_P2T' }),
+      );
+    });
+
+    it('does not include sales_network_id in postV1Payments when absent', async () => {
+      const service = await invokeService();
+
+      await service.createPaymentRedirect({ ...baseBody, template_id: '6' }, context);
+
+      expect(api.postV1Payments).toHaveBeenCalledWith(
+        expect.not.objectContaining({ sales_network_id: expect.anything() }),
+      );
+    });
+
+    it('passes salesman_id to postV3Bookings when creating from a proposal', async () => {
+      const service = await invokeService();
+      vi.mocked(api.getV2ProposalsProposalId).mockResolvedValue({
+        households: [{ attendees: [{ customer_id: 'CUST_FROM_PROPOSAL' }] }],
+      } as any);
+      vi.mocked(api.postV3Bookings).mockResolvedValue({ booking_id: 'BOOK_FROM_PROPOSAL' } as any);
+
+      await service.createPaymentRedirect(
+        {
+          ...baseBody,
+          type: 'proposal',
+          id: 'PROP1',
+          customer_id: undefined,
+          template_id: '6',
+          salesman_id: 'SALESMAN_42',
+        },
+        context,
+      );
+
+      expect(api.postV3Bookings).toHaveBeenCalledWith(
+        expect.objectContaining({ salesman_id: 'SALESMAN_42' }),
+      );
+    });
   });
 });
