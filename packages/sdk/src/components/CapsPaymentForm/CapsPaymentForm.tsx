@@ -34,6 +34,8 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
     customerId,
     callbackUrl,
     callbackUrlSeller,
+    salesNetworkId,
+    salesmanId,
     action,
     reference,
     uuid,
@@ -67,6 +69,8 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
         oidc={{ issuerType: issuerType as OidcIssuerTypes, accessToken: accessToken || '' }}
         callbackUrl={callbackUrl}
         callbackUrlSeller={callbackUrlSeller}
+        salesNetworkId={salesNetworkId}
+        salesmanId={salesmanId}
         content={content}
         onNavigate={(request: NavigationRequest) => {
           if (latest.current.onRedirect?.(request.url) !== false) {

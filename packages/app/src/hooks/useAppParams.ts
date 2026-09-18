@@ -28,6 +28,8 @@ const ParamsSchema = z.object({
   action: z.string().optional(),
   callbackUrl: z.string().url(),
   callbackUrlSeller: z.string().url().optional(),
+  salesNetworkId: z.string().optional(),
+  salesmanId: z.string().optional(),
 });
 
 export function useAppParams() {
@@ -44,6 +46,8 @@ export function useAppParams() {
     action,
     callback_url: callbackUrl,
     callback_url_seller: callbackUrlSeller,
+    sales_network_id: salesNetworkId,
+    salesman_id: salesmanId,
     ...confirmationParams
   } = useQueryParams<any>();
 
@@ -66,6 +70,8 @@ export function useAppParams() {
       action,
       callbackUrl,
       callbackUrlSeller,
+      salesNetworkId,
+      salesmanId,
     };
 
     const validationResult = ParamsSchema.safeParse(values);

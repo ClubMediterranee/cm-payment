@@ -43,4 +43,6 @@ export type CapsSettings = {
     method?: 'GET' | 'POST';
     fields?: Record<string, string>;
   }) => void;
+  salesNetworkId?: string;
+  salesmanId?: string;
 };

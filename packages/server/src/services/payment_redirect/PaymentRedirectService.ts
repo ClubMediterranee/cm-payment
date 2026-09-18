@@ -38,6 +38,7 @@ export class PaymentRedirectService {
       id: body.id,
       customerId: body.customer_id,
       ...(body.connection_type !== MANUAL_CONNECTION_TYPE ? { comment: body.comments } : {}),
+      ...(body.salesman_id ? { salesman_id: body.salesman_id } : {}),
     });
 
     const proposalId = body.type === 'proposal' ? body.id : undefined;
@@ -67,6 +68,7 @@ export class PaymentRedirectService {
       provider_id: body.provider_id,
       // cast donation_amount to 0 to contourn an api typing issue
       ...(body.donation_amount ? { donation_amount: body.donation_amount as 0 } : {}),
+      ...(body.sales_network_id ? { sales_network_id: body.sales_network_id } : {}),
     });
 
     const providersConfig = await this.paymentConfigService.getPaymentProvidersConfig({ locale });

@@ -99,6 +99,8 @@ export const capsFormSchema = ({
           cardHolder: z.string().optional(),
         })
         .optional(),
+      sales_network_id: z.string().optional(),
+      salesman_id: z.string().optional(),
     })
     .superRefine((data, ctx) => {
       const config = { isSeller, content, getProviderConfiguration };

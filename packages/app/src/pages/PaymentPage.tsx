@@ -83,6 +83,8 @@ export function PaymentPage() {
         accessToken={oidc.accessToken}
         callbackUrl={values.callbackUrl}
         callbackUrlSeller={values.callbackUrlSeller}
+        salesNetworkId={values.salesNetworkId}
+        salesmanId={values.salesmanId}
         action={action}
         reference={reference}
         uuid={uuid}

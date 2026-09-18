@@ -36,7 +36,8 @@ function CapsFormProvider({
   onLoadEnd,
   ...props
 }: CapsFormProps) {
-  const { id, content, locale, type, customerId } = useCapsConfigContext();
+  const { id, content, locale, type, customerId, salesNetworkId, salesmanId } =
+    useCapsConfigContext();
   const { isSeller } = useOidcContext();
 
   const resolvedAction = useActionResolver(action);
@@ -87,6 +88,8 @@ function CapsFormProvider({
           country_code: countryCode as LocaleOrCountry,
         },
       },
+      sales_network_id: salesNetworkId,
+      salesman_id: salesmanId,
     },
   });
 
