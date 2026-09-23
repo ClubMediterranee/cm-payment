@@ -35,13 +35,13 @@ describe('fetcher', () => {
       } as any,
     };
 
-    vi.mocked(constant).mockImplementation((key: string, defaultValue?: string) => {
+    vi.mocked(constant).mockImplementation((key: string, defaultValue?: unknown) => {
       const values: Record<string, string> = {
         CLUBMED_API_URL: 'https://api.clubmed.com',
         CLUBMED_API_KEY: 'test-api-key',
         AKAMAI_CALLER_HEADER: 'X-CLUBMED-CALLER',
       };
-      return values[key] || defaultValue || '';
+      return values[key] ?? defaultValue ?? '';
     });
 
     vi.mocked(inject).mockReturnValue(mockHttpClient as any);

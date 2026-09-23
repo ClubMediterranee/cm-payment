@@ -23,5 +23,6 @@ try {
   process.on('SIGINT', close);
   process.on('SIGTERM', close);
 } catch (error) {
-  $log.error({ event: 'SERVER_BOOTSTRAP_ERROR', message: error.message, stack: error.stack });
+  const err = error as Error;
+  $log.error({ event: 'SERVER_BOOTSTRAP_ERROR', message: err.message, stack: err.stack });
 }

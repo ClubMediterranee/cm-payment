@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [],
+  "overrides": [
+    {
+      "files": ["**/*.yml", "**/*.yaml"],
+      "options": { "singleQuote": false }
+    }
+  ],
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "bracketSameLine": false
+}

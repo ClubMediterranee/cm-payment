@@ -75,10 +75,8 @@ stages:
 lint:
   extends: .node_install_dependencies
   stage: test
-  variables:
-    ESLINT_CODE_QUALITY_REPORT: gl-codequality.json
   script:
-    - pnpm run lint --quiet --format eslint-formatter-gitlab
+    - pnpm run lint --format gitlab > gl-codequality.json
   artifacts:
     when: always
     reports:

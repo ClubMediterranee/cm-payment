@@ -57,9 +57,7 @@ describe('usePaymentSubmit', () => {
       handleSubmit: mockHandleSubmit,
       getValues: mockGetValues,
       triggerAndTouch: vi.fn(),
-    } as Partial<ReturnType<typeof useFormModule.useFormContext>> as ReturnType<
-      typeof useFormModule.useFormContext
-    >);
+    } as unknown as ReturnType<typeof useFormModule.useFormContext>);
 
     vi.spyOn(usePaymentRedirectModule, 'usePaymentRedirect').mockReturnValue({
       mutate: mockMutate,
