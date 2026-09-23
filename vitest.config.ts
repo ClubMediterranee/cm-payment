@@ -31,8 +31,6 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       include: ['packages/*/src/**/*.{tsx,ts}'],
       exclude: [
-        '**/packages/starter/**',
-        '**/packages/docs/**',
         '**/lib/atoms/icons',
         '**/*.spec.{ts,tsx}',
         '**/*.stories.{ts,tsx}',

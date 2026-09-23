@@ -21,9 +21,7 @@ services:
       - "traefik.http.services.payment-apps.loadbalancer.server.port=8080"
       - "app.description=Club Med Payment Applications"
       - "app.app.path=/"
-      - "app.starter.path=/starter"
       - "app.storybook.path=/storybook"
-      - "app.docs.path=/docs"
 
 networks:
   default:

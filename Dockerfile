@@ -9,9 +9,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY patches/ ./patches/
 COPY packages/app/package.json ./packages/app/
-COPY packages/starter/package.json ./packages/starter/
 COPY packages/sdk/package.json ./packages/sdk/
-COPY packages/docs/package.json ./packages/docs/
 COPY packages/server/package.json ./packages/server/
 
 # Install pnpm
