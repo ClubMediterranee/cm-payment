@@ -9,6 +9,7 @@ describe('oney utilities', () => {
         country: 'FR',
         language: 'fr',
         payment_mode: '3x',
+        is_free: 'false',
       };
 
       const result = getOneyPopinOptions(params);
@@ -39,6 +40,7 @@ describe('oney utilities', () => {
         country: 'FR',
         language: 'fr',
         payment_mode: '4x',
+        is_free: 'false',
       };
 
       const result = getOneyPopinOptions(params);
@@ -53,6 +55,7 @@ describe('oney utilities', () => {
         country: 'ES',
         language: 'es',
         payment_mode: '3x',
+        is_free: 'false',
       };
 
       const result = getOneyPopinOptions(params);
@@ -68,6 +71,7 @@ describe('oney utilities', () => {
         country: 'FR',
         language: 'fr',
         payment_mode: '3x',
+        is_free: 'false',
       };
 
       const result = getOneyPopinOptions(params);
@@ -75,18 +79,19 @@ describe('oney utilities', () => {
       expect(result.hide_logo).toBe(true);
     });
 
-    it('should always set is_free to false', () => {
+    it('should pass is_free from params', () => {
       const params = {
         payment_amount: 200,
         merchant_id: 'merchant-def',
         country: 'FR',
         language: 'fr',
         payment_mode: '3x',
+        is_free: 'true',
       };
 
       const result = getOneyPopinOptions(params);
 
-      expect(result.filters[0].is_free).toBe('false');
+      expect(result.filters[0].is_free).toBe('true');
     });
 
     it('should always set with_down_payment to true', () => {
@@ -96,6 +101,7 @@ describe('oney utilities', () => {
         country: 'FR',
         language: 'fr',
         payment_mode: '3x',
+        is_free: 'false',
       };
 
       const result = getOneyPopinOptions(params);

@@ -50,6 +50,7 @@ describe('useOneySimulationPopin', () => {
       merchant_id: 'merchant-123',
       payment_mode: '3x',
       script_url: 'https://oney.com/script.js',
+      is_free: false,
     } as any);
 
     mockUseScriptLoader.mockReturnValue({
@@ -85,6 +86,7 @@ describe('useOneySimulationPopin', () => {
       country: 'FR',
       language: 'fr',
       payment_mode: '3x',
+      is_free: 'false',
     });
   });
 
@@ -139,6 +141,7 @@ describe('useOneySimulationPopin', () => {
       merchant_id: 'merchant-456',
       payment_mode: '4x',
       script_url: 'https://oney.com/script.js',
+      is_free: false,
     } as any);
 
     const { result } = renderHook(() => useOneySimulationPopin());
@@ -151,6 +154,7 @@ describe('useOneySimulationPopin', () => {
       country: 'FR',
       language: 'fr',
       payment_mode: '4x',
+      is_free: 'false',
     });
   });
 
@@ -170,6 +174,7 @@ describe('useOneySimulationPopin', () => {
       country: 'ES',
       language: 'es',
       payment_mode: '3x',
+      is_free: 'false',
     });
   });
 });
