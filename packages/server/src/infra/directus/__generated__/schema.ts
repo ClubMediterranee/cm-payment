@@ -250,7 +250,6 @@ export interface CapsProviderConfiguration {
   /** @primaryKey */
   id: string;
   status?: 'published' | 'draft' | 'archived';
-  sort?: number | null;
   user_created?: string | null;
   date_created?: string | null;
   user_updated?: string | null;
@@ -273,19 +272,19 @@ export interface CapsProviderConfiguration {
     | 'PAYMENT_UPGRADE_ROOM'
     | 'PAYMENT_SERVICES_IN_OPTION'
   > | null;
+  activation_day_range?: 'json' | null;
 }
 
 export interface CapsProvider {
   /** @primaryKey */
   id: string;
   status?: 'published' | 'draft' | 'archived';
-  sort?: number | null;
   user_created?: DirectusUser | string | null;
   date_created?: string | null;
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   /** @required */
-  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom';
+  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom' | 'third_party_iframe';
   image_url?: string | null;
   category_payment_method?:
     | 'credit_card'
@@ -397,6 +396,8 @@ export interface MigrationNotesRoute {
   migration_notes_id?: MigrationNote | string | null;
   routes_id?: Route | string | null;
   sort?: number | null;
+  /** @required */
+  type: 'target' | 'source' | 'legacy';
 }
 
 export interface MigrationNotesTag {
@@ -535,6 +536,8 @@ export interface Page {
   template?: 'page' | `custom-page` | `dynamic-page` | null;
   image?: DirectusFile | string | null;
   is_home?: boolean | null;
+  previous?: Page | string | null;
+  next?: Page | string | null;
   tags?: PagesTag[] | string[];
   translations?: PagesTranslation[] | null;
   blocks?: PagesBlock[] | string[];
@@ -674,6 +677,12 @@ export interface RouteInputProperty {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   source_file?: string | null;
+  /** @description First published API version */
+  first_published_version?: string | null;
+  /** @description Last observed API version */
+  last_published_version?: string | null;
+  /** @description Version where this API property was deprecated */
+  deprecated_version?: string | null;
   targets?: RouteInputPropertiesBackendProperty[] | string[];
 }
 
@@ -709,6 +718,12 @@ export interface RouteOutputProperty {
   /** @required */
   out_type: PredefinedValue | string;
   source_file?: string | null;
+  /** @description First published API version */
+  first_published_version?: string | null;
+  /** @description Last observed API version */
+  last_published_version?: string | null;
+  /** @description Version where this API property was deprecated */
+  deprecated_version?: string | null;
   sources?: RouteOutputPropertiesBackendProperty[] | string[];
 }
 
@@ -731,6 +746,12 @@ export interface Route {
   date_updated?: string | null;
   /** @required */
   deprecated: boolean;
+  /** @description First published API version */
+  first_published_version?: string | null;
+  /** @description Last observed API version */
+  last_published_version?: string | null;
+  /** @description Version where this route was deprecated */
+  deprecated_version?: string | null;
   tags?: RoutesTag[] | string[];
   translations?: RoutesTranslation[] | null;
   /** @description Response payload properties sent to our consumer */

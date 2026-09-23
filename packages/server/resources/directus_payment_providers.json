@@ -39,7 +39,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -54,7 +58,11 @@
         "settings": [],
         "requires_token": true,
         "requires_expiry_date": false,
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       },
       {
         "locale": "en-US",
@@ -134,7 +142,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       },
       {
         "locale": "de-DE",
@@ -191,14 +203,13 @@
             "key": "script_url",
             "type": "string",
             "value": "https://assets-staging.oney.io/build/loader.min.js"
-          },
-          {
-            "key": "min_days_before_departure",
-            "type": "number",
-            "value": 45
           }
         ],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 45,
+          "max": null
+        }
       },
       {
         "locale": "fr-FR",
@@ -278,7 +289,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -299,7 +314,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -314,7 +333,11 @@
         "settings": [],
         "requires_token": true,
         "requires_expiry_date": true,
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       },
       {
         "locale": "en-US",
@@ -363,7 +386,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -384,7 +411,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -405,7 +436,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       },
       {
         "locale": "en-US",
@@ -438,7 +473,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -451,7 +490,11 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -472,7 +515,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -493,7 +540,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -514,7 +565,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -527,7 +582,11 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -548,7 +607,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -570,7 +633,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -592,7 +659,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -614,7 +685,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -627,7 +702,11 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -656,7 +735,11 @@
             "value": 2
           }
         ],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       },
       {
         "locale": "zh-CN",
@@ -706,7 +789,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -727,7 +814,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -748,7 +839,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -769,7 +864,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -790,7 +889,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -811,7 +914,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -833,7 +940,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -855,7 +966,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -877,7 +992,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -899,7 +1018,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -920,7 +1043,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       },
       {
         "locale": "fr-CH",
@@ -947,7 +1074,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -960,7 +1091,11 @@
         "locale": "*",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       },
       {
         "locale": "en-HK",
@@ -1080,7 +1215,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -1115,7 +1254,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -1136,7 +1279,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -1158,7 +1305,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -1180,7 +1331,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -1202,7 +1357,11 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       }
     ]
   },
@@ -1221,7 +1380,11 @@
             "value": true
           }
         ],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "activation_day_range": {
+          "min": 0,
+          "max": null
+        }
       },
       {
         "locale": "zh-CN",

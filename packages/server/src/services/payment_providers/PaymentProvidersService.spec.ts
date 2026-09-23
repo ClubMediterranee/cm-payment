@@ -389,7 +389,7 @@ describe('PaymentProvidersService', () => {
     });
   });
 
-  describe('min_days_before_departure filtering', () => {
+  describe('activation_day_range filtering', () => {
     const daysFromNow = (n: number) => {
       const d = new Date(Date.now() + n * 24 * 60 * 60 * 1000);
       const y = d.getFullYear();
@@ -398,7 +398,7 @@ describe('PaymentProvidersService', () => {
       return `${y}${m}${day}`;
     };
 
-    const setupWithMinDays = (arrivalDate: string) => {
+    const setupWithRange = (arrivalDate: string, range: { min: number; max?: number | null }) => {
       setup(
         [
           {
@@ -413,15 +413,16 @@ describe('PaymentProvidersService', () => {
         {
           MCYBERSOURCE: {
             display_type: 'hosted_field',
-            settings: { min_days_before_departure: '45' },
+            activation_day_range: range,
+            settings: {},
           },
         },
       );
       vi.spyOn(stayService, 'getStay').mockResolvedValue({ resortArrivalDate: arrivalDate } as any);
     };
 
-    it('should keep the provider when departure is within min_days_before_departure', async () => {
-      setupWithMinDays(daysFromNow(10));
+    it('should keep the provider when days >= min', async () => {
+      setupWithRange(daysFromNow(100), { min: 45, max: null });
 
       const result = await service.getPaymentProviders({
         type: 'booking',
@@ -436,8 +437,38 @@ describe('PaymentProvidersService', () => {
       expect(stayService.getStay).toHaveBeenCalled();
     });
 
-    it('should filter out the provider when departure is beyond min_days_before_departure', async () => {
-      setupWithMinDays(daysFromNow(100));
+    it('should filter out the provider when days < min', async () => {
+      setupWithRange(daysFromNow(10), { min: 45, max: null });
+
+      const result = await service.getPaymentProviders({
+        type: 'booking',
+        id: '123',
+        customerId: '456',
+        locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
+        issuerType: OidcIssuerTypes.GM,
+      });
+
+      expect(result.payment_providers).toHaveLength(0);
+    });
+
+    it('should keep the provider when days <= max', async () => {
+      setupWithRange(daysFromNow(5), { min: 0, max: 10 });
+
+      const result = await service.getPaymentProviders({
+        type: 'booking',
+        id: '123',
+        customerId: '456',
+        locale: 'fr-FR',
+        action: 'PAYMENT_RESA' as never,
+        issuerType: OidcIssuerTypes.GM,
+      });
+
+      expect(result.payment_providers).toHaveLength(1);
+    });
+
+    it('should filter out the provider when days > max', async () => {
+      setupWithRange(daysFromNow(20), { min: 0, max: 10 });
 
       const result = await service.getPaymentProviders({
         type: 'booking',

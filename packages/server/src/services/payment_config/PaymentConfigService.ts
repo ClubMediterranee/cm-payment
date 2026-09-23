@@ -3,6 +3,7 @@ import { Inject, Service } from '@tsed/di';
 import { PaymentConfigRepository } from './PaymentConfigRepository.js';
 import { configMatchRules, findByRules, providerMatchRules } from './resolvers.js';
 import { OidcIssuerTypes, PaymentConfigSettings, PaymentFeatureFlips } from './types.js';
+import { mergeActivationDayRange } from './utils/mergeActivationDayRange.js';
 
 @Service()
 export class PaymentConfigService {
@@ -63,6 +64,10 @@ export class PaymentConfigService {
           provider.id,
           {
             ...global?.validation,
+            activation_day_range: mergeActivationDayRange(
+              global?.activation_day_range,
+              local?.activation_day_range,
+            ),
             allowed_actions: resolved?.allowed_actions ?? [],
             requires_contact_choice: (validation.requires_contact_choice ?? []).includes(
               issuerType!,

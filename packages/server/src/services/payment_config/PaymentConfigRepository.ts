@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@tsed/di';
 
 import { GLOBAL_LOCALE } from '../../infra/directus/constants.js';
 import { DirectusClient } from '../../infra/directus/DirectusClient.js';
+import { ActivationDayRange } from './types.js';
 
 type RawProvider = Awaited<ReturnType<DirectusClient['getProviders']>>[number];
 type RawVariant = NonNullable<RawProvider['settings']>[number];
@@ -31,11 +32,12 @@ export class PaymentConfigRepository {
   }
 
   private toVariant(raw: RawVariant) {
-    const { locale, settings, allowed_actions, ...validation } = raw;
+    const { locale, settings, allowed_actions, activation_day_range, ...validation } = raw;
     return {
       locale: locale === GLOBAL_LOCALE ? null : locale,
       allowed_actions: allowed_actions ?? [],
       settings: settings ?? [],
+      activation_day_range: activation_day_range as ActivationDayRange,
       validation,
     };
   }

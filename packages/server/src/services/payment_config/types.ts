@@ -10,6 +10,8 @@ export type PaymentFeatureFlips = {
   is_comments_enabled?: boolean;
 };
 
+export type ActivationDayRange = { min: number; max?: number | null };
+
 export type PaymentConfigSettings = {
   days_before_trip_to_allow_free_deposit?: number | null;
   payment_status_poll_attempts?: number;

@@ -56,7 +56,7 @@ export class PaymentProvidersService {
 
     const paymentProvidersEligibilityRules: Array<(provider: PaymentProvider1) => boolean> = [
       (provider) => this.isAllowedForAction(paymentProvidersConfig[provider.id], action),
-      (provider) => this.isBeforeMinimumDepartureWindow(paymentProvidersConfig[provider.id], stay),
+      (provider) => this.isWithinActivationDayRange(paymentProvidersConfig[provider.id], stay),
       (provider) => this.isValidConnectionType(provider, issuerType),
       (provider) => this.isAllowedForUserAgent(paymentProvidersConfig[provider.id], userAgent),
       (provider) => daysUntilDeparture > provider.required_delay_before_departure,
@@ -116,14 +116,13 @@ export class PaymentProvidersService {
     return !!providerConfig?.allowed_actions.includes(action as Action);
   }
 
-  private isBeforeMinimumDepartureWindow(
+  private isWithinActivationDayRange(
     providerConfig: ProviderConfig | undefined,
     stay: Stay | null,
   ): boolean {
-    const minDays = providerConfig?.settings?.min_days_before_departure;
-    if (!minDays) return true;
-
-    return this.getDaysUntilDeparture(stay) < Number(minDays);
+    const range = providerConfig?.activation_day_range;
+    const days = this.getDaysUntilDeparture(stay);
+    return !range || (days >= range.min && (range.max == null || days <= range.max));
   }
 
   private isValidConnectionType(provider: PaymentProvider1, issuerType?: string): boolean {
@@ -145,7 +144,8 @@ export class PaymentProvidersService {
   ): boolean {
     return providers.some(
       (provider) =>
-        !!config[provider.id]?.settings?.min_days_before_departure ||
+        (config[provider.id]?.activation_day_range?.min ?? 0) > 0 ||
+        config[provider.id]?.activation_day_range?.max != null ||
         provider.required_delay_before_departure > 0 ||
         provider.payment_methods?.some((method) =>
           method.time_payment_conditions?.some(
