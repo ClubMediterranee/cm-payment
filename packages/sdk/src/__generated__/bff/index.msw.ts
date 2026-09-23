@@ -10,8 +10,8 @@ import { HttpResponse, delay, http } from 'msw';
 import type { RequestHandlerOptions } from 'msw';
 
 import type {
+  OverpaymentAllowanceOutputModel,
   PaymentConfig,
-  PaymentMaxAmountOutputModel,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentRedirectRequestResult,
   PaymentScheduleOutputModel,
@@ -347,8 +347,8 @@ export const getPaymentRedirectControllerCreateResponseMock = (
 });
 
 export const getPaymentScheduleControllerGetOverpaymentAllowanceResponseMock = (
-  overrideResponse: Partial<PaymentMaxAmountOutputModel> = {},
-): PaymentMaxAmountOutputModel => ({
+  overrideResponse: Partial<OverpaymentAllowanceOutputModel> = {},
+): OverpaymentAllowanceOutputModel => ({
   amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
   ...overrideResponse,
 });
@@ -495,10 +495,10 @@ export const getPaymentRedirectControllerCreateMockHandler = (
 
 export const getPaymentScheduleControllerGetOverpaymentAllowanceMockHandler = (
   overrideResponse?:
-    | PaymentMaxAmountOutputModel
+    | OverpaymentAllowanceOutputModel
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<PaymentMaxAmountOutputModel> | PaymentMaxAmountOutputModel),
+      ) => Promise<OverpaymentAllowanceOutputModel> | OverpaymentAllowanceOutputModel),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
@@ -530,7 +530,7 @@ export const getPaymentScheduleControllerGetPaymentSchedulesMockHandler = (
   options?: RequestHandlerOptions,
 ) => {
   return http.get(
-    '*/rest/payment_schedules/:type/:id',
+    '*/rest/payment_schedules/:id',
     async (info) => {
       await delay(1000);
 

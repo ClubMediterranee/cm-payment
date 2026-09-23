@@ -83,7 +83,6 @@ export class ActionResolverService {
     let apiDeadline = resortArrivalDate;
     if (shouldUseScheduleDeadline) {
       const schedules = await this.paymentSchedulesService.handlePaymentSchedules({
-        type: 'booking',
         id,
         customer_id: customerId,
         action: Action.PAYMENT_PARTIAL,

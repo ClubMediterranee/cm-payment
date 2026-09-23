@@ -36,17 +36,15 @@ export class PaymentScheduleController {
     });
   }
 
-  @Get('/:type/:id')
-  @Summary('Get payment schedules by type and id')
+  @Get('/:id')
+  @Summary('Get payment schedules by id')
   @(Returns(200, Array).Of(PaymentScheduleOutputModel))
   async getPaymentSchedules(
-    @Enum('booking', 'proposal') @PathParams('type') type: 'booking' | 'proposal',
     @PathParams('id') id: string,
     @Enum(Action) @QueryParams('action') action: Action,
     @QueryParams('customer_id') customer_id?: string,
   ) {
     return await this.paymentSchedulesService.handlePaymentSchedules({
-      type,
       id,
       action,
       customer_id,

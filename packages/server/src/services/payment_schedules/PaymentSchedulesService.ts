@@ -27,32 +27,29 @@ export class PaymentSchedulesService {
   private builder!: PaymentScheduleBuilder;
 
   private actionMap = {
+    [Action.PAYMENT_RESA]: (_: string, id: string) => getV1ProposalsProposalIdPaymentSchedule(id),
     [Action.PAYMENT_OPTION]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
     [Action.PAYMENT_SOLDE]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
     [Action.PAYMENT_PARTIAL]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
     [Action.PAYMENT_CART]: getV1CustomersCustomerIdBookingsBookingIdCart,
     [Action.PAYMENT_UPGRADE_ROOM]: getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
-    [Action.PAYMENT_SERVICES_IN_OPTION]: (customerId: string, bookingId: string) =>
-      getV3CustomersCustomerIdBookingsBookingIdServices(customerId, bookingId, {
+    [Action.PAYMENT_SERVICES_IN_OPTION]: (customerId: string, id: string) =>
+      getV3CustomersCustomerIdBookingsBookingIdServices(customerId, id, {
         status: GetV3CustomersCustomerIdBookingsBookingIdServicesStatus.OPTION,
       }),
   };
 
   async handlePaymentSchedules({
-    type,
     id,
     customer_id,
     action,
   }: PaymentScheduleParams): Promise<PaymentScheduleOutput[]> {
-    this.validateParams({ type, id, customer_id, action });
+    this.validateParams({ id, customer_id, action });
 
-    const response =
-      type === 'proposal'
-        ? await getV1ProposalsProposalIdPaymentSchedule(String(id))
-        : await this.actionMap[action as keyof typeof this.actionMap](
-            String(customer_id),
-            String(id),
-          );
+    const response = await this.actionMap[action as keyof typeof this.actionMap](
+      String(customer_id),
+      String(id),
+    );
 
     const normalizedData = this.normalizer.normalize(response);
 
@@ -65,16 +62,12 @@ export class PaymentSchedulesService {
     return paymentSchedules;
   }
 
-  private validateParams({ type, id, customer_id, action }: PaymentScheduleParams): void {
+  private validateParams({ id, customer_id, action }: PaymentScheduleParams): void {
     if (!id) {
       throw new PaymentScheduleValidationError('id is required');
     }
 
-    if (type === 'booking' && !customer_id) {
-      throw new PaymentScheduleValidationError('customer id is required');
-    }
-
-    if (type === 'booking' && !this.actionMap[action as keyof typeof this.actionMap]) {
+    if (!customer_id && action !== Action.PAYMENT_RESA) {
       throw new UnsupportedActionError(action);
     }
   }

@@ -490,7 +490,7 @@ export const BuyNowPayLaterOney: Story = {
                   display_type: 'iframe',
                   settings: {
                     max_amount: null,
-                    min_days_before_departure: null,
+                    activation_day_range: { min: 0, max: null },
                     merchant_id: '8a3ddbfcd79c44f09882c6e39af07fca',
                     payment_mode: payment_mode,
                     script_url: 'https://assets-staging.oney.io/build/loader.min.js',
@@ -564,7 +564,7 @@ export const BuyNowPayLaterUplift: Story = {
                   display_type: 'hosted_field',
                   settings: {
                     max_amount: null,
-                    min_days_before_departure: null,
+                    activation_day_range: { min: 0, max: null },
                     code: 'UP-75709538-99',
                     api_key: 'MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X',
                   },

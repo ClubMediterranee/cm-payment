@@ -53,7 +53,7 @@ function CapsFormProvider({
         type,
         customerId,
       }),
-      paymentScheduleQueryOptions(id, type, customerId),
+      paymentScheduleQueryOptions(id, customerId),
     ],
   });
 

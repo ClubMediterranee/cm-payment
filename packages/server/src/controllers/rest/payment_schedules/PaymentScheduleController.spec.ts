@@ -39,10 +39,9 @@ describe('PaymentScheduleController', () => {
 
   describe('getPaymentSchedules()', () => {
     it('should perform', async () => {
-      await controller.getPaymentSchedules('proposal', '123456', Action.PAYMENT_SOLDE, '123456');
+      await controller.getPaymentSchedules('123456', Action.PAYMENT_SOLDE, '123456');
 
       expect(mockPaymentService.handlePaymentSchedules).toHaveBeenCalledWith({
-        type: 'proposal',
         id: '123456',
         action: Action.PAYMENT_SOLDE,
         customer_id: '123456',

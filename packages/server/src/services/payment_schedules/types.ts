@@ -6,7 +6,6 @@ import {
   ProposalPaymentScheduleModelV1,
   ServicesV3Model,
 } from '../../infra/api/__generated__/index.js';
-import { ResourceType } from '../../utils/types.js';
 
 export type ApiResponse =
   | ProposalPaymentScheduleModelV1
@@ -32,7 +31,6 @@ export type PaymentScheduleOutput = {
 };
 
 export type PaymentScheduleParams = {
-  type: ResourceType;
   id: string | number;
   customer_id?: string | number;
   action: Action;

@@ -69,7 +69,7 @@ describe('useHipayHostedFields', () => {
       password: 'test-password',
       environment: 'stage',
       max_amount: null,
-      min_days_before_departure: null,
+      activation_day_range: { min: 0, max: null },
     } as any);
 
     vi.spyOn(hipayHelpers, 'createHipayClient').mockReturnValue(mockHipayInstance);
@@ -95,7 +95,7 @@ describe('useHipayHostedFields', () => {
             password: 'test-password',
             environment: 'stage',
             max_amount: null,
-            min_days_before_departure: null,
+            activation_day_range: { min: 0, max: null },
           },
           options: {
             cardHolder: {

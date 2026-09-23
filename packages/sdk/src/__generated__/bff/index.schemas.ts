@@ -102,7 +102,7 @@ export interface PaymentRedirectRequestBody {
   comments?: string;
 }
 
-export interface PaymentMaxAmountOutputModel {
+export interface OverpaymentAllowanceOutputModel {
   amount: number;
 }
 

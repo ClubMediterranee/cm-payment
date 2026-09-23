@@ -38,7 +38,7 @@ describe('hipay utilities', () => {
         password: 'test-password',
         environment: 'stage',
         max_amount: null,
-        min_days_before_departure: null,
+        activation_day_range: { min: 0, max: null },
       };
 
       const result = createHipayClient({

@@ -67,7 +67,7 @@ describe('useHipayPaypal', () => {
       password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
       environment: 'stage',
       max_amount: null,
-      min_days_before_departure: null,
+      activation_day_range: { min: 0, max: null },
     } as any);
 
     vi.spyOn(usePaymentSubmit, 'usePaymentSubmit').mockReturnValue({
@@ -105,7 +105,7 @@ describe('useHipayPaypal', () => {
         password: 'Test_jTQeMVl7R8Om7LTFGZwJV0Q5',
         environment: 'stage',
         max_amount: null,
-        min_days_before_departure: null,
+        activation_day_range: { min: 0, max: null },
       });
     });
   });

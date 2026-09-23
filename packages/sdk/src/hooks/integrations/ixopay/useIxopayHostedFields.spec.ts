@@ -84,7 +84,7 @@ describe('useIxopayHostedFields', () => {
           script_url: 'https://gateway.ixopay.com/js/integrated/payment.1.3.min.js',
           integration_key: 'test-integration-key',
           max_amount: null,
-          min_days_before_departure: null,
+          activation_day_range: { min: 0, max: null },
         },
       },
     } as any);

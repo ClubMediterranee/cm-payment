@@ -38,7 +38,6 @@ describe('PaymentSchedulesService', () => {
 
       await expect(
         service.handlePaymentSchedules({
-          type: 'booking',
           id: undefined,
           customer_id: 123456,
           action: Action.PAYMENT_SOLDE,
@@ -51,7 +50,6 @@ describe('PaymentSchedulesService', () => {
 
       await expect(
         service.handlePaymentSchedules({
-          type: 'booking',
           id: 123456,
           customer_id: undefined,
           action: Action.PAYMENT_SOLDE,
@@ -64,7 +62,6 @@ describe('PaymentSchedulesService', () => {
 
       await expect(
         service.handlePaymentSchedules({
-          type: 'booking',
           id: 123456,
           customer_id: 123456,
           action: 'OTHER',
@@ -107,7 +104,6 @@ describe('PaymentSchedulesService', () => {
       } as any);
 
       const paymentSchedule = await service.handlePaymentSchedules({
-        type: 'proposal',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_SOLDE,
@@ -177,7 +173,6 @@ describe('PaymentSchedulesService', () => {
         ] as HouseholdPaymentScheduleModels,
       } as any);
       const paymentSchedule = await service.handlePaymentSchedules({
-        type: 'proposal',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_SOLDE,
@@ -204,7 +199,6 @@ describe('PaymentSchedulesService', () => {
       } as CustomerBookingPaymentScheduleModel);
 
       const paymentSchedule = await service.handlePaymentSchedules({
-        type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_SOLDE,
@@ -233,7 +227,6 @@ describe('PaymentSchedulesService', () => {
       } as any);
 
       const paymentSchedule = await service.handlePaymentSchedules({
-        type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_SOLDE,
@@ -262,7 +255,6 @@ describe('PaymentSchedulesService', () => {
       } as any);
 
       const schedule = await service.handlePaymentSchedules({
-        type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_CART,
@@ -290,7 +282,6 @@ describe('PaymentSchedulesService', () => {
       } as any);
 
       const schedule = await service.handlePaymentSchedules({
-        type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_CART,
@@ -313,7 +304,6 @@ describe('PaymentSchedulesService', () => {
       });
 
       const schedule = await service.handlePaymentSchedules({
-        type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_UPGRADE_ROOM,
@@ -364,7 +354,6 @@ describe('PaymentSchedulesService', () => {
       ] as any);
 
       const schedule = await service.handlePaymentSchedules({
-        type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_SERVICES_IN_OPTION,
@@ -406,7 +395,6 @@ describe('PaymentSchedulesService', () => {
 
       await expect(
         service.handlePaymentSchedules({
-          type: 'booking',
           id: 123456,
           customer_id: 123456,
           action: Action.PAYMENT_SERVICES_IN_OPTION,
@@ -422,7 +410,6 @@ describe('PaymentSchedulesService', () => {
       } as any);
 
       const schedule = await service.handlePaymentSchedules({
-        type: 'booking',
         id: 999001,
         customer_id: 123456,
         action: Action.PAYMENT_UPGRADE_ROOM,
