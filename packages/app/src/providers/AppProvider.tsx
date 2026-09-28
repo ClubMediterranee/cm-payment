@@ -25,6 +25,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
       callbackUrlSeller={values.callbackUrlSeller}
       salesNetworkId={values.salesNetworkId}
       salesmanId={values.salesmanId}
+      opportunityId={values.opportunityId}
     >
       {children}
     </PaymentConfigProvider>

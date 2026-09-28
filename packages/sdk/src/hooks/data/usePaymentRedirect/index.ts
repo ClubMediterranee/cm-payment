@@ -16,7 +16,11 @@ export const buildPaymentRedirectPayload = (
     customerId,
     callbackUrl,
     callbackUrlSeller,
-  }: Pick<CapsSettings, 'type' | 'id' | 'customerId' | 'callbackUrl' | 'callbackUrlSeller'>,
+    opportunityId,
+  }: Pick<
+    CapsSettings,
+    'type' | 'id' | 'customerId' | 'callbackUrl' | 'callbackUrlSeller' | 'opportunityId'
+  >,
   watchedPaymentProvider?: ReturnType<typeof useWatchedPaymentProvider>,
 ) => {
   const {
@@ -33,6 +37,7 @@ export const buildPaymentRedirectPayload = (
     comments,
     sales_network_id,
     salesman_id,
+    opportunity_id,
     billing_details: { email, mobile_phone, attendee, address },
   } = formData;
 
@@ -67,6 +72,7 @@ export const buildPaymentRedirectPayload = (
     callback_url_seller: callbackUrlSeller,
     sales_network_id,
     salesman_id,
+    opportunity_id: opportunity_id ?? opportunityId,
   };
 };
 

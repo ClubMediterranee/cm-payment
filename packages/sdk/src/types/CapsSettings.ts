@@ -36,4 +36,5 @@ export type CapsSettings = {
   type: 'proposal' | 'booking';
   salesNetworkId?: string;
   salesmanId?: string;
+  opportunityId?: string;
 };
