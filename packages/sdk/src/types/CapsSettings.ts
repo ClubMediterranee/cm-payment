@@ -45,4 +45,5 @@ export type CapsSettings = {
   }) => void;
   salesNetworkId?: string;
   salesmanId?: string;
+  opportunityId?: string;
 };

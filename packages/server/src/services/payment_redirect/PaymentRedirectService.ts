@@ -39,6 +39,7 @@ export class PaymentRedirectService {
       customerId: body.customer_id,
       ...(body.connection_type !== MANUAL_CONNECTION_TYPE ? { comment: body.comments } : {}),
       ...(body.salesman_id ? { salesman_id: body.salesman_id } : {}),
+      ...(body.opportunity_id ? { opportunity_id: body.opportunity_id } : {}),
     });
 
     const proposalId = body.type === 'proposal' ? body.id : undefined;

@@ -58,6 +58,7 @@ type CapsFlowBase = {
   callbackUrlSeller?: string;
   salesNetworkId?: string;
   salesmanId?: string;
+  opportunityId?: string;
   action?: string;
   reference?: string;
   uuid?: string;

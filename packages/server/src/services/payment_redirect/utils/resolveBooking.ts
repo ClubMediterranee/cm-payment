@@ -10,6 +10,7 @@ type ResolveBookingParams = {
   customerId?: string;
   comment?: CreateDirectBookingRequestModel['comment'];
   salesman_id?: string;
+  opportunity_id?: string;
 };
 
 export const resolveBooking = async ({
@@ -18,6 +19,7 @@ export const resolveBooking = async ({
   customerId,
   comment,
   salesman_id,
+  opportunity_id,
 }: ResolveBookingParams) => {
   if (type === 'proposal') {
     const proposal = await getV2ProposalsProposalId(id);
@@ -29,6 +31,7 @@ export const resolveBooking = async ({
       product_id: proposal.product_id,
       ...(comment ? { comment } : {}),
       ...(salesman_id ? { salesman_id } : {}),
+      ...(opportunity_id ? { opportunity_id } : {}),
     });
 
     return { bookingId: booking.booking_id, customerId: customerIdFromProposal };
