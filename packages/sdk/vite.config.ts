@@ -1,6 +1,7 @@
 import { dirname, extname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { globbySync } from 'globby';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -13,6 +14,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 export default defineConfig({
   plugins: [
     react(),
+    tailwindcss(),
     dts({
       entryRoot: 'src',
       include: ['src/**/*.{ts,tsx}'],

@@ -1,4 +1,4 @@
-import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
+import { Button } from '@clubmed/trident-ui/ui/buttons/Button';
 
 import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 import { Popin } from './Popin';

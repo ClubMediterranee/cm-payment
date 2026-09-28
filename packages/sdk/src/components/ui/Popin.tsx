@@ -1,4 +1,4 @@
-import { Button } from '@clubmed/trident-ui/molecules/Buttons/v2/Button';
+import { Button } from '@clubmed/trident-ui/ui/buttons/Button';
 import { type ReactNode } from 'react';
 
 interface PopinProps {

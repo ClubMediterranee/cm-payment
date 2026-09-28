@@ -1,4 +1,4 @@
-import { Breadcrumb } from '@clubmed/trident-ui/molecules/Breadcrumb';
+import { Breadcrumb } from '@clubmed/trident-ui/ui/Breadcrumb';
 import { useSearch } from 'wouter';
 
 import { useProduct } from '../hooks/useProduct';
