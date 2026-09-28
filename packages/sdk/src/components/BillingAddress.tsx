@@ -1,5 +1,5 @@
-import { Select } from '@clubmed/trident-ui/molecules/Forms/Select';
-import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
+import { Select } from '@clubmed/trident-ui/ui/forms/Select';
+import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
 import { PropsWithChildren, Suspense } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 

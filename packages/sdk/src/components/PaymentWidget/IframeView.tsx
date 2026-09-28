@@ -1,4 +1,4 @@
-import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
+import { Spinner } from '@clubmed/trident-ui/ui/Spinner';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 

@@ -1,6 +1,6 @@
 import { Icon } from '@clubmed/trident-icons';
-import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
-import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
+import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
+import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
 import { PropsWithChildren, useState } from 'react';
 
 import { GLOBAL_CAPS_SETTINGS } from '../config';
@@ -45,7 +45,7 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
     );
   };
 
-  const handleCustomAmountChange = (_: string, value: string) => {
+  const handleCustomAmountChange = (_event: Event, value: string) => {
     setValue('donation_amount', Number(value || 0));
   };
 

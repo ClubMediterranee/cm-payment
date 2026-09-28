@@ -1,4 +1,4 @@
-import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
+import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
 import { Controller, get } from 'react-hook-form';
 
 import { useIxopayHostedFields } from '../hooks/useIxopayHostedFields.js';

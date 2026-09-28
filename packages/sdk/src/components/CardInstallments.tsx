@@ -1,4 +1,4 @@
-import { Select } from '@clubmed/trident-ui/molecules/Forms/Select';
+import { Select } from '@clubmed/trident-ui/ui/forms/Select';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 

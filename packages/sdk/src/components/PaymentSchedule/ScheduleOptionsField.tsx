@@ -1,4 +1,4 @@
-import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
+import { Radio, RadioGroup } from '@clubmed/trident-ui/ui/forms/radios/index';
 import type { ControllerRenderProps } from 'react-hook-form';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../../__generated__/index.schemas';
