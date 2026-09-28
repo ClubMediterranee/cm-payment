@@ -1,5 +1,5 @@
-import { Button } from '@clubmed/trident-ui/molecules/Buttons/Button';
-import { type ComponentProps, useEffect } from 'react';
+import { Button, type ButtonProps } from '@clubmed/trident-ui/ui/buttons/Button';
+import { useEffect } from 'react';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
@@ -9,7 +9,7 @@ import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvi
 import { TOKENS } from '../types/Tokens';
 import { HipayPaypalButton } from './PaymentWidget/integrations/HipayPaypalButton';
 
-export const SubmitButton = ({ children, ...props }: ComponentProps<typeof Button>) => {
+export const SubmitButton = ({ children, ...props }: ButtonProps) => {
   const watchedProvider = useWatchedPaymentProvider();
   const { iframe, thirdPartyIframe } = useProviderIntegrationMode();
 

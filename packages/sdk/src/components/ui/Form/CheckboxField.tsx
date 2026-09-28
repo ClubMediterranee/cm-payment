@@ -1,5 +1,5 @@
-import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
-import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
+import { Checkbox } from '@clubmed/trident-ui/ui/forms/checkboxes/index';
+import { FormControl } from '@clubmed/trident-ui/ui/forms/FormControl';
 import { type ReactNode } from 'react';
 import { Controller, type FieldPath, useFormContext } from 'react-hook-form';
 

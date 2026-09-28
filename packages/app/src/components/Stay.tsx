@@ -1,7 +1,9 @@
 import { formatDate, FormPanel as Panel, useCapsConfigContext } from '@clubmed/caps';
-import { Image } from '@clubmed/trident-ui/atoms/Image/Image';
-import { Card } from '@clubmed/trident-ui/molecules/Card';
-import { Tag } from '@clubmed/trident-ui/molecules/Tag';
+import { Icon } from '@clubmed/trident-icons';
+import { Card } from '@clubmed/trident-ui/ui/cards/Card';
+import { Chip } from '@clubmed/trident-ui/ui/Chip';
+import { Image } from '@clubmed/trident-ui/ui/Image';
+import { Tag } from '@clubmed/trident-ui/ui/Tag';
 
 import { useProduct } from '../hooks/useProduct';
 import type { StayModel } from '../hooks/useStay.js';
@@ -9,7 +11,12 @@ import type { StayModel } from '../hooks/useStay.js';
 export const StayPlaceholder = () => {
   return (
     <div className="w-full">
-      <Card title="Stay placeholder" icon="Trident" />
+      <Card>
+        <Chip theme="solid" color="lightSand" size="size-48">
+          <Icon name="Trident" width="24px" />
+        </Chip>
+        <h3 className="text-18 font-bold mt-12 mb-8">Stay placeholder</h3>
+      </Card>
     </div>
   );
 };

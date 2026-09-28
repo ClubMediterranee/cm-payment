@@ -1,5 +1,5 @@
 import { Icon } from '@clubmed/trident-icons';
-import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
+import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 
 import type { PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem } from '../../../__generated__/bff/index.schemas';
 import { useUplift } from '../../../hooks/integrations/uplift/useUplift';

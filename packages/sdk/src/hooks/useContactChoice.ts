@@ -42,7 +42,7 @@ export const useContactChoice = ({ reference, uuid }: UseContactChoiceParams) =>
       templateId: templateIds.mobilePhone,
       input: {
         label: content.contactChoice.choices.mobile_phone,
-        name: 'mobile_phone',
+        name: 'mobile_phone' as const,
         type: 'tel',
       },
       radio: { label: content.contactChoice.choices.mobile_phone },
@@ -50,7 +50,7 @@ export const useContactChoice = ({ reference, uuid }: UseContactChoiceParams) =>
     {
       templateId: templateIds.email,
       radio: { label: content.contactChoice.choices.email },
-      input: { label: content.contactChoice.choices.email, name: 'email', type: 'email' },
+      input: { label: content.contactChoice.choices.email, name: 'email' as const, type: 'email' },
     },
     {
       templateId: templateIds.call,

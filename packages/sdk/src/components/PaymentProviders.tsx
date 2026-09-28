@@ -1,5 +1,5 @@
 import { Icon } from '@clubmed/trident-icons';
-import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
+import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 import clsx from 'clsx';
 import { PropsWithChildren } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
