@@ -6,7 +6,7 @@ variables:
   PNPM_CACHE_FOLDER: "~/.pnpm-store"
 
 .node_configure:
-  image: ${NODE_IMG:-node:${NODE_VERSION}-bullseye}
+  image: ${NODE_IMG:-node:${NODE_VERSION}-bookworm}
   before_script: |
     echo "Node version: $(node -v)"
 
@@ -80,11 +80,11 @@ variables:
 .node_dind:
   image: docker:cli
   variables:
+    DOCKER_BUILDKIT: "1"
     DOCKER_HOST: unix:///var/run/docker.sock
     TESTCONTAINERS_RYUK_DISABLED: "true"
   before_script:
     - !reference [.setup_proxy_linux, script]
-    - export DOCKER_BUILDKIT=0
     - docker --version
     - apk add --no-cache bash nodejs npm
     - node -v && npm -v
