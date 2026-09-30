@@ -24,7 +24,7 @@ COPY . .
 # Build all applications with correct base paths
 RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
 RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
-RUN CI=true NODE_ENV=${NODE_ENV} pnpm build:server
+RUN CI=true NODE_ENV=${NODE_ENV} pnpm --filter @clubmed/server run build
 
 # Production stage with Node + nginx runtime
 FROM node:24.17.0-alpine
