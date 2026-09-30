@@ -27,7 +27,7 @@ RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run
 RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
 # Module Federation remote of the CAPS form, served by the server under /mfe
 RUN CI=true NODE_ENV=${NODE_ENV} pnpm --filter @clubmed/caps-mfe run build
-RUN CI=true NODE_ENV=${NODE_ENV} pnpm build:server
+RUN CI=true NODE_ENV=${NODE_ENV} pnpm --filter @clubmed/server run build
 
 # Production stage with Node + nginx runtime
 FROM node:24.17.0-alpine
