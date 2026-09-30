@@ -36,7 +36,7 @@ include:
 
 variables:
   NODE_VERSION: 24.17.0
-  NODE_IMG: "node:24.17.0-bullseye"
+  NODE_IMG: "node:24.17.0-bookworm"
   SEMANTIC_RELEASE_OPTS: ""
   ENV:
     value: "integration"
@@ -143,6 +143,8 @@ release:
     - if: '$WORKFLOW == "build" && $CI_COMMIT_REF_NAME =~ /main|develop|next-release/'
       when: on_success
     - when: never
+  variables:
+    GIT_DEPTH: 0
   artifacts:
     when: always
     paths:
