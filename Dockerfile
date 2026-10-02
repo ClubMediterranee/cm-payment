@@ -10,6 +10,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY patches/ ./patches/
 COPY packages/app/package.json ./packages/app/
 COPY packages/sdk/package.json ./packages/sdk/
+COPY packages/mfe/package.json ./packages/mfe/
 COPY packages/server/package.json ./packages/server/
 
 # Install pnpm
@@ -24,6 +25,8 @@ COPY . .
 # Build all applications with correct base paths
 RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/ pnpm --filter @clubmed/app run build
 RUN CI=true NODE_ENV=${NODE_ENV} VITE_BASE_PATH=/storybook/ pnpm build:storybook
+# Module Federation remote of the CAPS form, served by the server under /mfe
+RUN CI=true NODE_ENV=${NODE_ENV} pnpm --filter @clubmed/caps-mfe run build
 RUN CI=true NODE_ENV=${NODE_ENV} pnpm build:server
 
 # Production stage with Node + nginx runtime
@@ -52,6 +55,7 @@ COPY --from=builder /app/packages/server/resources ./packages/server/resources
 
 # Copy built applications to nginx html directory
 COPY --from=builder /app/packages/app/dist /app/packages/app/dist
+COPY --from=builder /app/packages/mfe/dist /app/packages/mfe/dist
 COPY --from=builder /app/storybook-static /app/storybook-static
 
 EXPOSE 8083
