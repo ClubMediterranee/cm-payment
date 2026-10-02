@@ -25,6 +25,13 @@ export type CapsEmbedError = {
   message: string;
 };
 
+/**
+ * Regions of the CAPS form that the host can render elsewhere in its page (webcomponent mode).
+ */
+export type CapsFormSlotName = 'donation' | 'submit';
+
+export type CapsFormSlots = Partial<Record<CapsFormSlotName, HTMLElement>>;
+
 export type CapsEnvSelector = {
   /**
    * Target CAPS environment. Defaults to `production`.

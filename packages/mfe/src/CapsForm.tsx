@@ -1,6 +1,7 @@
 import {
   CAPS_PROTOCOL_VERSION,
   type CapsFormProps,
+  type CapsFormSlots,
   defaultNavigate,
   getDefaultLocale,
   type NavigationRequest,
@@ -25,6 +26,10 @@ const ICONS = [Actions, Brand, Utilities];
  */
 export type CapsRemoteFormProps = Omit<CapsFormProps, 'env' | 'url' | 'fallback'> & {
   capsUrl: string;
+  /**
+   * Host elements registered with `CapsFormSlot` (donation, submit button).
+   */
+  slots?: CapsFormSlots;
 };
 
 /**
@@ -61,9 +66,13 @@ function CapsForm(props: CapsRemoteFormProps) {
     reference,
     uuid,
     content,
+    slots,
     className,
     style,
   } = props;
+
+  const containerRef = useRef<HTMLElement>(null);
+  const getForm = () => containerRef.current?.querySelector<HTMLFormElement>('form#payment-form');
 
   const callbacks = useLatest(props);
   const configState = useEmbedConfig(capsUrl, issuerType, type);
@@ -138,6 +147,8 @@ function CapsForm(props: CapsRemoteFormProps) {
       >
         <CapsFlow
           labels={labels}
+          slots={slots}
+          getForm={getForm}
           action={action}
           reference={reference}
           uuid={uuid}
@@ -150,7 +161,13 @@ function CapsForm(props: CapsRemoteFormProps) {
   }
 
   return (
-    <ShadowHost className={className} style={style}>
+    <ShadowHost
+      className={className}
+      style={style}
+      onMount={(container) => {
+        containerRef.current = container;
+      }}
+    >
       <IconsProvider icons={ICONS}>
         <div className="w-full flex flex-col gap-8">{body}</div>
       </IconsProvider>

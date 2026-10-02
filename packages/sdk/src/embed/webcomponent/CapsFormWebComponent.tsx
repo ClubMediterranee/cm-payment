@@ -1,7 +1,14 @@
 'use client';
 
 import { createRemoteAppComponent } from '@module-federation/bridge-react/base';
-import { type ComponentType, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ComponentType,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 
 import { resolveCapsUrl } from '../shared/env';
 import type { CapsEmbedError, CapsFormProps } from '../shared/types';
@@ -11,6 +18,7 @@ import {
   loadCapsRemoteForm,
   toCapsEmbedError,
 } from './loader';
+import { getCapsFormSlots, getServerCapsFormSlots, subscribeCapsFormSlots } from './slots';
 
 type LoadState = { module?: CapsRemoteModule; error?: CapsEmbedError };
 
@@ -42,6 +50,11 @@ function createRemoteForm(
 export function CapsFormWebComponent(props: CapsFormProps) {
   const { env, url, fallback = null, className, style, ...formProps } = props;
   const [state, setState] = useState<LoadState>({});
+  const slots = useSyncExternalStore(
+    subscribeCapsFormSlots,
+    getCapsFormSlots,
+    getServerCapsFormSlots,
+  );
   const onErrorRef = useRef(props.onError);
   onErrorRef.current = props.onError;
 
@@ -95,5 +108,13 @@ export function CapsFormWebComponent(props: CapsFormProps) {
     return <>{fallback}</>;
   }
 
-  return <RemoteForm {...formProps} capsUrl={capsUrl} className={className} style={style} />;
+  return (
+    <RemoteForm
+      {...formProps}
+      capsUrl={capsUrl}
+      slots={slots}
+      className={className}
+      style={style}
+    />
+  );
 }

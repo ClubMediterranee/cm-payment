@@ -2,7 +2,12 @@ import { createInstance } from '@module-federation/runtime';
 import * as React from 'react';
 
 import { isCompatibleProtocolVersion } from '../shared/protocol';
-import type { CapsEmbedError, CapsEmbedErrorCode, CapsFormProps } from '../shared/types';
+import type {
+  CapsEmbedError,
+  CapsEmbedErrorCode,
+  CapsFormProps,
+  CapsFormSlots,
+} from '../shared/types';
 
 export const CAPS_REMOTE_NAME = 'caps';
 export const CAPS_REMOTE_MODULE = `${CAPS_REMOTE_NAME}/CapsForm`;
@@ -19,6 +24,10 @@ export const MIN_REACT_MAJOR = 18;
  */
 export type CapsRemoteFormProps = Omit<CapsFormProps, 'env' | 'url' | 'fallback'> & {
   capsUrl: string;
+  /**
+   * Host elements registered with `CapsFormSlot`: the matching regions of the form are rendered there.
+   */
+  slots?: CapsFormSlots;
 };
 
 /**
