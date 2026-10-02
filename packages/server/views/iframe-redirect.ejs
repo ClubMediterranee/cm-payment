@@ -8,12 +8,19 @@
     <script>
       (function() {
         const redirectUrl = <%- JSON.stringify(redirectUrl) %>;
+        // The parent is the CAPS app (same origin) or an allow-listed webcomponent host.
+        // postMessage silently drops the message for every non-matching target origin.
+        const targetOrigins = [window.location.origin].concat(<%- JSON.stringify(targetOrigins || []) %>);
 
         if (window.parent && window.parent !== window) {
-          window.parent.postMessage({
-            type: 'CAPS_PAYMENT_REDIRECT',
-            url: redirectUrl
-          }, '*');
+          targetOrigins.forEach(function(targetOrigin) {
+            window.parent.postMessage({
+              type: 'CAPS_PAYMENT_REDIRECT',
+              source: 'caps',
+              version: 1,
+              url: redirectUrl
+            }, targetOrigin);
+          });
         }
       })();
     </script>

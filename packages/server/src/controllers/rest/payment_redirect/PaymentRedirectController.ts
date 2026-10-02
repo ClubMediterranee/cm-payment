@@ -4,6 +4,7 @@ import { PlatformViews } from '@tsed/platform-views';
 import { Get, Hidden, Post, Returns, Summary } from '@tsed/schema';
 
 import { Locale } from '../../../decorators/Locale.js';
+import { AllowedOriginsService } from '../../../services/embed/AllowedOriginsService.js';
 import {
   PaymentRedirectQuery,
   PaymentRedirectRequestBody,
@@ -18,6 +19,9 @@ export class PaymentRedirectController {
 
   @Inject()
   protected views!: PlatformViews;
+
+  @Inject()
+  protected allowedOriginsService!: AllowedOriginsService;
 
   @Post('/')
   @Summary('Create a payment and return the provider redirect parameters')
@@ -52,14 +56,20 @@ export class PaymentRedirectController {
     });
 
     if (mode === 'iframe') {
+      // The PSP iframe parent is the CAPS app (same origin) or, in webcomponent mode, an allow-listed host.
+      const { webcomponent: targetOrigins } = await this.allowedOriginsService.getAllowedOrigins();
       const html = await this.views.render('iframe-redirect.ejs', {
         redirectUrl,
+        targetOrigins,
       });
 
       ctx.response.contentType('text/html; charset=utf-8');
       ctx.response.setHeader(
         'Content-Security-Policy',
-        "default-src 'none'; script-src 'unsafe-inline'; frame-ancestors 'self' https://*.clubmed.com",
+        `default-src 'none'; script-src 'unsafe-inline'; ${[
+          "frame-ancestors 'self' https://*.clubmed.com",
+          ...targetOrigins,
+        ].join(' ')}`,
       );
 
       return html;
