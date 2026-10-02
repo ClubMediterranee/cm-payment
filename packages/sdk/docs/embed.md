@@ -71,6 +71,26 @@ import { CapsFormIFrame } from '@clubmed/caps/iframe';
 - PSP and confirmation redirects navigate the host window (`onRedirect` can take over).
 - Use it when the host cannot load a remote at runtime (strict CSP without the CAPS origin in `script-src`), or for non-React hosts later.
 
+## Payment URL (redirect mode)
+
+`getPaymentUrl` (exported by `@clubmed/caps`) builds the URL of the CAPS payment page, to redirect the user to the full-page flow. `CapsFormIFrame` uses it to build its `src`.
+
+```ts
+import { getPaymentUrl } from '@clubmed/caps';
+
+window.location.assign(
+  getPaymentUrl('production', {
+    issuerType: 'GO',
+    proposalId: '123456', // or bookingId
+    customerId: '789', // required for GO and PARTNERS
+    locale: 'fr-FR', // defaults to the browser language, then fr-FR
+    callbackUrl: 'https://host.example/payment/confirmation', // defaults to the CAPS confirmation page
+    backUrl: 'https://host.example/cart', // defaults to the current page
+    extraParams: { action: 'deposit' },
+  }),
+);
+```
+
 ## Host checklist
 
 1. Ask the CAPS team to allow your origin (per environment). Origins are administered in the CMS API (`caps_allowed_origins`, modes `webcomponent` and/or `iframe`).
