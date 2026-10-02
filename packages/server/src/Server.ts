@@ -1,4 +1,5 @@
 import '@tsed/ajv';
+import '@tsed/platform-cache';
 import '@tsed/platform-fastify';
 import '@tsed/platform-log-request';
 import '@tsed/swagger';
@@ -7,6 +8,8 @@ import { Configuration, configuration, constant, logger } from '@tsed/di';
 import { application, type PlatformStaticsOptions } from '@tsed/platform-http';
 
 import { config } from './config/config.js';
+import { checkMfeRoot, MFE_MOUNT_PATH } from './config/embed/mfeStatics.js';
+import { isProduction } from './config/utils/index.js';
 import { ExternalRefResolver } from './infra/spec/ExternalRefResolver.js';
 
 @Configuration(config)
@@ -15,7 +18,25 @@ export class Server {
 
   protected disableRoutesSummary = constant<boolean>('logger.disableRoutesSummary');
 
+  $beforeRoutesInit() {
+    const statics = constant<Record<string, PlatformStaticsOptions>>('statics', {});
+    const result = checkMfeRoot(statics[MFE_MOUNT_PATH]?.root, isProduction);
+
+    if (!result.ok) {
+      logger().warn({ event: 'EMBED_REMOTE_MISSING', message: result.message });
+    }
+  }
+
   $staticsMounted(mountPath: string, options: PlatformStaticsOptions) {
+    if (mountPath === MFE_MOUNT_PATH) {
+      // Takes precedence over the `/*` SPA fallback: a missing remote file must never return the app.
+      this.app
+        .getApp()
+        .get(`${MFE_MOUNT_PATH}/*`, async (_: any, reply: any) =>
+          reply.code(404).send({ name: 'NOT_FOUND', message: 'Not Found', status: 404 }),
+        );
+    }
+
     if (options.isApp) {
       const fallbackRoute = toSpaFallbackRoute(mountPath);
 
