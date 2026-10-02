@@ -25,7 +25,9 @@
       "@storybook/addon-vitest"
     ],
     "paths": {
-      "@clubmed/caps": ["./packages/sdk/src/index.ts"]
+      "@clubmed/caps": ["./packages/sdk/src/index.ts"],
+      "@clubmed/caps/webcomponent": ["./packages/sdk/src/embed/webcomponent/index.ts"],
+      "@clubmed/caps/iframe": ["./packages/sdk/src/embed/iframe/index.ts"]
     }
   },
   "include": ["packages/*/src/**/*.ts", "packages/*/src/**/*.tsx", "./vitest.shims.d.ts"],
