@@ -41,7 +41,6 @@ export default defineConfig({
           path: './src/infra/oney/fetcher.ts',
           name: 'oneyFetcher',
           extension: '.js',
-          options: 'OneyFetcherOptions',
         },
         fetch: {
           includeHttpResponseReturnType: false,
