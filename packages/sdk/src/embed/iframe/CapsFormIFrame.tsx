@@ -2,7 +2,7 @@
 
 import { type IframeHTMLAttributes, useEffect, useMemo, useRef, useState } from 'react';
 
-import { resolveCapsUrl } from '../shared/env';
+import { DEFAULT_CAPS_ENV, resolveCapsUrl } from '../shared/env';
 import {
   type CapsMessage,
   CapsMessageType,
@@ -12,7 +12,7 @@ import {
   isCompatibleProtocolVersion,
 } from '../shared/protocol';
 import type { CapsFormProps } from '../shared/types';
-import { buildCapsFlowUrl } from '../shared/url';
+import { getPaymentUrl } from '../shared/url';
 
 export type CapsFormIFrameProps = CapsFormProps & {
   /**
@@ -117,10 +117,26 @@ export function CapsFormIFrame(props: CapsFormIFrameProps) {
 
     try {
       setReadyCount(0);
+      const { issuerType, type, id, customerId, locale, callbackUrl, callbackUrlSeller } =
+        callbacks.current;
+
       setSrc(
-        buildCapsFlowUrl(capsUrl, callbacks.current, {
-          embedded: '1',
-          parent_origin: window.location.origin,
+        getPaymentUrl(DEFAULT_CAPS_ENV, {
+          url: capsUrl,
+          issuerType,
+          bookingId: type === 'booking' ? id : undefined,
+          proposalId: type === 'proposal' ? id : undefined,
+          customerId,
+          locale,
+          callbackUrl,
+          callbackUrlSeller,
+          extraParams: {
+            action: callbacks.current.action,
+            reference: callbacks.current.reference,
+            uuid: callbacks.current.uuid,
+            embedded: '1',
+            parent_origin: window.location.origin,
+          },
         }),
       );
     } catch (error) {

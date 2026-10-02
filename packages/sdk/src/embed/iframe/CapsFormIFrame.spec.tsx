@@ -56,6 +56,7 @@ describe('CapsFormIFrame', () => {
       locale: 'fr-FR',
       customer_id: '789',
       callback_url: 'https://host.example/cb',
+      back_url: window.location.href,
       embedded: '1',
       parent_origin: window.location.origin,
     });
