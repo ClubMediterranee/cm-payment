@@ -183,11 +183,6 @@
         "status": "published",
         "settings": [
           {
-            "key": "merchant_id",
-            "type": "string",
-            "value": "8a3ddbfcd79c44f09882c6e39af07fca"
-          },
-          {
             "key": "script_url",
             "type": "string",
             "value": "https://assets-staging.oney.io/build/loader.min.js"
@@ -204,6 +199,21 @@
         "locale": "fr-FR",
         "status": "published",
         "settings": [
+          {
+            "key": "merchant_id",
+            "type": "string",
+            "value": "06c9da03e8d944ceb1d5b1448479daf8"
+          },
+          {
+            "key": "psp_guid",
+            "type": "string",
+            "value": "15e77c91b8544a2c8e63048355ee886a"
+          },
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "57fd561153da460498a03636ce12e4e0"
+          },
           {
             "key": "max_amount",
             "type": "number",
@@ -227,6 +237,21 @@
         "status": "published",
         "settings": [
           {
+            "key": "merchant_id",
+            "type": "string",
+            "value": "e1a97f76-8c60-4763-9069-83fea5fd4781"
+          },
+          {
+            "key": "psp_guid",
+            "type": "string",
+            "value": "989e2d3e-1456-4fb0-9276-d78ae039a669"
+          },
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "d87c755fc77e457e866ae82c3ad7cd2f"
+          },
+          {
             "key": "max_amount",
             "type": "number",
             "value": 3000
@@ -248,6 +273,21 @@
         "locale": "nl-BE",
         "status": "published",
         "settings": [
+          {
+            "key": "merchant_id",
+            "type": "string",
+            "value": "e1a97f76-8c60-4763-9069-83fea5fd4781"
+          },
+          {
+            "key": "psp_guid",
+            "type": "string",
+            "value": "989e2d3e-1456-4fb0-9276-d78ae039a669"
+          },
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "d87c755fc77e457e866ae82c3ad7cd2f"
+          },
           {
             "key": "max_amount",
             "type": "number",

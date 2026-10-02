@@ -25,6 +25,9 @@ export const defaultContent: Content = {
       iconLabel: 'I pay in {icon} by credit card',
       priceLabel: 'Pay monthly from {price}',
       unavailable: 'Pay Monthly is currently unavailable',
+      simulationLabel:
+        'I pay in {icon} a total of {total} (incl. {cost} financing cost): {instalments}',
+      instalmentItem: '{amount} on {date}',
     },
   },
   cgv: {

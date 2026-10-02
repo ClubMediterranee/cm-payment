@@ -28,4 +28,25 @@ export default defineConfig({
       },
     },
   },
+  oneyMarketing: {
+    input: {
+      target: 'https://docs.oney.com/content/openapi/marketing-api_v1.1.yaml',
+    },
+    output: {
+      target: join(root, 'src/infra/oney/__generated__/index.ts'),
+      mode: 'single',
+      prettier: true,
+      override: {
+        mutator: {
+          path: './src/infra/oney/fetcher.ts',
+          name: 'oneyFetcher',
+          extension: '.js',
+          options: 'OneyFetcherOptions',
+        },
+        fetch: {
+          includeHttpResponseReturnType: false,
+        },
+      },
+    },
+  },
 });

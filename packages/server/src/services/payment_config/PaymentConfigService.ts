@@ -54,7 +54,7 @@ export class PaymentConfigService {
         const resolved = findByRules(provider.variants, providerMatchRules({ locale }));
 
         const settings = [...(global?.settings || []), ...(local?.settings || [])].reduce<
-          Record<string, unknown>
+          Record<string, string>
         >((acc, setting) => ({ ...acc, [setting.key]: setting.value }), {});
 
         const validation = { ...global?.validation, ...local?.validation };

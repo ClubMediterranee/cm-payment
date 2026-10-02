@@ -7,6 +7,10 @@ import { Locale } from '../../../decorators/Locale.js';
 import { UserAgent } from '../../../decorators/UserAgent.js';
 import { Action } from '../../../infra/api/__generated__/index.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
+import {
+  BnplProviderId,
+  BnplSimulationService,
+} from '../../../services/bnpl/BnplSimulationService.js';
 import { PaymentProvidersResponseSchema } from '../../../services/payment_providers/models.js';
 import { PaymentProvidersService } from '../../../services/payment_providers/PaymentProvidersService.js';
 
@@ -14,6 +18,9 @@ import { PaymentProvidersService } from '../../../services/payment_providers/Pay
 export class PaymentProvidersController {
   @Inject()
   protected paymentProvidersService!: PaymentProvidersService;
+
+  @Inject()
+  protected bnplSimulationService!: BnplSimulationService;
 
   @Get('/:type/:id')
   @Summary('Get payment providers for a booking or proposal')
@@ -35,6 +42,21 @@ export class PaymentProvidersController {
       customerId,
       userAgent,
       action,
+    });
+  }
+
+  @Get('/:providerId/simulation')
+  @Summary('Simulate a BNPL loan for a given provider and amount')
+  @Returns(200)
+  async getBnplSimulation(
+    @Enum(...(['EHIPAYBNPL'] satisfies BnplProviderId[]))
+    @PathParams('providerId')
+    providerId: BnplProviderId,
+    @Locale() locale: string,
+    @QueryParams('payment_amount') paymentAmount: number,
+  ) {
+    return this.bnplSimulationService.simulate(providerId, locale, {
+      payment_amount: paymentAmount,
     });
   }
 }
