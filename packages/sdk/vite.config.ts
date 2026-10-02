@@ -9,6 +9,21 @@ import { defineConfig, type PluginOption } from 'vite';
 import dts from 'vite-plugin-dts';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+/**
+ * The package is published from `dist/`: paths of the published package.json are relative to `dist/`.
+ */
+function toPublishedPackageJson(content: string): string {
+  const pkg = JSON.parse(content);
+  const strip = (value: unknown): unknown =>
+    typeof value === 'string'
+      ? value.replace(/^\.\/dist\//, './')
+      : value && typeof value === 'object'
+        ? Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, strip(entry)]))
+        : value;
+
+  return `${JSON.stringify({ ...pkg, main: './index.js', types: './index.d.ts', exports: strip(pkg.exports), scripts: undefined, devDependencies: undefined }, null, 2)}\n`;
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -27,7 +42,7 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         // {src: './styles', dest: './'}, // ENABLE IT if you want to distribute css files
-        { src: './package.json', dest: '.' },
+        { src: './package.json', dest: '.', transform: toPublishedPackageJson },
         { src: '.npmignore', dest: '.' },
         { src: 'README.md', dest: '.' },
         // { src: 'CHANGELOG.md', dest: '.' },
@@ -58,6 +73,9 @@ export default defineConfig({
         'react-dom',
         'react/jsx-runtime',
         '@react-spring/web',
+        /^react-dom(\/.*)?$/,
+        /^react\/.*/,
+        /^@module-federation\/.*/,
         /@clubmed\/trident-icons.*/,
         /@clubmed\/trident-ui.*/,
       ],
