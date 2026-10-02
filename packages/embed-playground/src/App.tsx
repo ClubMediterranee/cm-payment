@@ -3,6 +3,7 @@ import {
   type CapsEmbedError,
   type CapsEnv,
   type CapsFlowType,
+  CapsFormSlot,
   CapsFormWebComponent,
   type CapsIssuerType,
 } from '@clubmed/caps/webcomponent';
@@ -10,8 +11,14 @@ import { type FormEvent, type ReactNode, useState } from 'react';
 
 type Mode = 'webcomponent' | 'iframe';
 
+/**
+ * `sidebar` emulates the client pages: the donation and the pay button live in a sidebar, outside the form.
+ */
+type Layout = 'sidebar' | 'inline';
+
 type PlaygroundConfig = {
   mode: Mode;
+  layout: Layout;
   /**
    * `local` targets `capsUrl`, other values target the CAPS server of the environment.
    */
@@ -27,6 +34,7 @@ type PlaygroundConfig = {
 
 const DEFAULT_CONFIG: PlaygroundConfig = {
   mode: 'webcomponent',
+  layout: 'sidebar',
   env: 'local',
   capsUrl: 'http://localhost:8083',
   issuerType: 'GM',
@@ -40,6 +48,7 @@ const DEFAULT_CONFIG: PlaygroundConfig = {
 // The token is never stored in the URL.
 const URL_KEYS: Record<Exclude<keyof PlaygroundConfig, 'accessToken'>, string> = {
   mode: 'mode',
+  layout: 'layout',
   env: 'env',
   capsUrl: 'caps_url',
   issuerType: 'issuer',
@@ -144,11 +153,22 @@ function ConfigForm({
 
   return (
     <form onSubmit={submit} className="grid gap-4" data-testid="playground-form">
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         <Field label="Mode">
           <select className={inputClass} value={config.mode} onChange={set('mode')}>
             <option value="webcomponent">Webcomponent</option>
             <option value="iframe">Iframe</option>
+          </select>
+        </Field>
+        <Field label="Layout">
+          <select
+            className={inputClass}
+            value={config.layout}
+            onChange={set('layout')}
+            disabled={config.mode === 'iframe'}
+          >
+            <option value="sidebar">Sidebar (donation + pay)</option>
+            <option value="inline">Inline</option>
           </select>
         </Field>
         <Field label="Issuer">
@@ -264,34 +284,54 @@ export function App() {
     },
   } as Parameters<typeof CapsFormWebComponent>[0];
 
+  const sidebar = config.mode === 'webcomponent' && config.layout === 'sidebar';
+
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-50 bg-slate-900 text-white px-6 py-4">
         <h1 className="text-2xl font-bold">CAPS embed playground (React 19, Tailwind v4)</h1>
       </header>
 
-      <main className="mx-auto max-w-4xl p-6 grid gap-6">
+      <main className="mx-auto w-full max-w-[1600px] p-6 grid gap-6">
         <section className="rounded-(--radius) border p-4">
           <h2>Flow</h2>
           <ConfigForm initial={config} onSubmit={load} />
         </section>
 
         {submitted && (
-          <section
-            className="rounded-lg border p-4"
-            style={{ transform: 'translateZ(0)' }}
-            data-testid="caps-container"
-          >
+          <section data-testid="caps-container">
             <p className="mb-4 text-xs">
-              {config.mode} · {config.issuerType} {config.type} {config.id}
+              {config.mode} · {sidebar ? 'sidebar' : 'inline'} · {config.issuerType} {config.type}{' '}
+              {config.id}
               {config.customerId && ` · customer ${config.customerId}`} ·{' '}
               {config.env === 'local' ? config.capsUrl : config.env}
             </p>
-            {config.mode === 'iframe' ? (
-              <CapsFormIFrame key={loadKey} {...flowProps} />
-            ) : (
-              <CapsFormWebComponent key={loadKey} {...flowProps} />
-            )}
+            <div
+              className={sidebar ? 'grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px] items-start' : ''}
+            >
+              <div className="rounded-lg border p-4" style={{ transform: 'translateZ(0)' }}>
+                {config.mode === 'iframe' ? (
+                  <CapsFormIFrame key={loadKey} {...flowProps} />
+                ) : (
+                  <CapsFormWebComponent key={loadKey} {...flowProps} />
+                )}
+              </div>
+              {sidebar && (
+                <aside
+                  className="sticky top-20 grid gap-4 rounded-lg border bg-slate-50 p-4"
+                  data-testid="caps-sidebar"
+                >
+                  <div>
+                    <h2 className="text-lg font-bold">Your stay</h2>
+                    <p className="text-sm text-slate-600">
+                      Host content: summary, prices, insurance…
+                    </p>
+                  </div>
+                  <CapsFormSlot name="donation" />
+                  <CapsFormSlot name="submit" />
+                </aside>
+              )}
+            </div>
           </section>
         )}
 

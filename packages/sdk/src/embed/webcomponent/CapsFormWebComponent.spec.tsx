@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 
 import type { CapsEnv } from '../shared/types';
+import { CapsFormSlot } from './CapsFormSlot';
 import { CapsFormWebComponent } from './CapsFormWebComponent';
 import { CapsEmbedLoadError, loadCapsRemoteForm } from './loader';
 
@@ -86,6 +87,25 @@ describe('CapsFormWebComponent', () => {
     });
     expect(RemoteForm.mock.lastCall![0]).not.toHaveProperty('env');
     expect(RemoteForm.mock.lastCall![0]).not.toHaveProperty('fallback');
+  });
+
+  it('forwards the host slots to the remote form', async () => {
+    const { container } = render(
+      <>
+        <CapsFormWebComponent {...flowProps} />
+        <aside>
+          <CapsFormSlot name="donation" />
+          <CapsFormSlot name="submit" />
+        </aside>
+      </>,
+    );
+
+    await screen.findByTestId('remote-form');
+
+    expect(RemoteForm.mock.lastCall![0].slots).toEqual({
+      donation: container.querySelector('[data-caps-slot="donation"]'),
+      submit: container.querySelector('[data-caps-slot="submit"]'),
+    });
   });
 
   it('gives precedence to an explicit url', async () => {

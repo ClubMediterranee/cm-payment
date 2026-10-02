@@ -55,6 +55,18 @@ import { CapsFormWebComponent } from '@clubmed/caps/webcomponent';
 - Styles live in a shadow root: host styles do not reach CAPS and CAPS styles do not reach the host. Nothing to add to the host Tailwind configuration.
 - The host owns the authentication and passes `accessToken`.
 - One CAPS form per page.
+- The donation and the submit button can be rendered elsewhere in the page (a sidebar, a sticky footer) with `CapsFormSlot`. They stay part of the CAPS form (same state, same validation) and render in their own style-isolated shadow root; without a slot they render inside the form:
+
+  ```tsx
+  import { CapsFormSlot, CapsFormWebComponent } from '@clubmed/caps/webcomponent';
+
+  <main><CapsFormWebComponent {...flowProps} /></main>
+  <aside>
+    <CapsFormSlot name="donation" />
+    <CapsFormSlot name="submit" />
+  </aside>
+  ```
+
 - webpack 5, Vite and Next.js are supported. With Next.js the server renders `fallback` only; the form is loaded after hydration.
 
 ## Iframe mode

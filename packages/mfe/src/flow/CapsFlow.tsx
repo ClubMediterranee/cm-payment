@@ -1,6 +1,7 @@
 import {
   Action,
   BillingAddress,
+  type CapsFormSlots,
   CardInstallments,
   Cgv,
   Comments,
@@ -12,7 +13,9 @@ import {
   PaymentWidget,
   SubmitButton,
 } from '@clubmed/caps';
-import { useEffect, useRef, useState } from 'react';
+import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+
+import { ShadowSlot } from '../shadow/ShadowHost';
 
 export const DEFAULT_FLOW_LABELS = {
   paymentSchedule: 'Choose your payment schedule',
@@ -62,8 +65,46 @@ function FlowErrorFallback({
   );
 }
 
+/**
+ * Submit button rendered in a host slot. Its `form="payment-form"` attribute cannot reach the form across
+ * shadow roots, so the click submits the form explicitly.
+ */
+export function SubmitSlot({
+  target,
+  getForm,
+  children,
+}: {
+  target?: HTMLElement;
+  getForm?: () => HTMLFormElement | null | undefined;
+  children: ReactNode;
+}) {
+  const onClickCapture = (event: MouseEvent<HTMLDivElement>) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
+      'button[type="submit"]',
+    );
+
+    if (button && !button.form) {
+      event.preventDefault();
+      getForm?.()?.requestSubmit();
+    }
+  };
+
+  return (
+    <ShadowSlot target={target}>
+      <div className="flex flex-col" onClickCapture={onClickCapture}>
+        {children}
+      </div>
+    </ShadowSlot>
+  );
+}
+
 type CapsFlowProps = {
   labels?: Partial<FlowLabels>;
+  /**
+   * Host elements where the donation and the submit button are rendered instead of inside the form.
+   */
+  slots?: CapsFormSlots;
+  getForm?: () => HTMLFormElement | null | undefined;
   action?: string;
   reference?: string;
   uuid?: string;
@@ -77,6 +118,8 @@ type CapsFlowProps = {
  */
 export function CapsFlow({
   labels: labelOverrides,
+  slots,
+  getForm,
   action,
   reference,
   uuid,
@@ -125,9 +168,11 @@ export function CapsFlow({
       <ContactChoice reference={reference} uuid={uuid}>
         <Title>{labels.contactChoice}</Title>
       </ContactChoice>
-      <Donation>
-        <Title>{labels.donation}</Title>
-      </Donation>
+      <ShadowSlot target={slots?.donation}>
+        <Donation>
+          <Title>{labels.donation}</Title>
+        </Donation>
+      </ShadowSlot>
       <Comments>
         <Title>{labels.comments}</Title>
       </Comments>
@@ -145,7 +190,11 @@ export function CapsFlow({
           {error.message}
         </p>
       )}
-      <SubmitButton className="my-8 self-center">{labels.submit}</SubmitButton>
+      <SubmitSlot target={slots?.submit} getForm={getForm}>
+        <SubmitButton className={slots?.submit ? 'w-full' : 'my-8 self-center'}>
+          {labels.submit}
+        </SubmitButton>
+      </SubmitSlot>
     </Form>
   );
 }
