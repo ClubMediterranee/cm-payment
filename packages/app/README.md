@@ -22,7 +22,7 @@ The app is a centralized payment application that provides a testing environment
 **Host Configuration**: Ensure your `/etc/hosts` file is configured with:
 
 ```
-127.0.0.1 payment
+127.0.0.1 cm-payment
 ```
 
 **Create a booking / payment page**: Use the dataviz automated scenarios tool, which creates a booking and builds the associated payment page:
