@@ -10,6 +10,7 @@ import { PspProviders } from '../../types/PspProviders';
 import { IframeMessageType } from '../../utils/iframe/constants';
 import { getIframeHeight } from '../../utils/iframe/getIframeHeight';
 import { useIframeMessageBridge } from '../../utils/iframe/useIframeMessageBridge';
+import { navigate } from '../../utils/navigate';
 import { UpliftForm } from './integrations/UpliftForm';
 
 const thirdPartyIframeRegistry = {
@@ -41,7 +42,7 @@ export const IframeView = () => {
   };
 
   const handlePaymentConfirmationRedirect = (url: string) => {
-    window.location.href = url;
+    navigate({ url });
   };
 
   const handlePaymentCancellation = () => {
