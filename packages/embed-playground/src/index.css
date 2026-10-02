@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+
+/*
+ * Deliberately hostile host styles (shadcn / trident-ui v2 like), used to check the CAPS isolation:
+ * none of them must change the CAPS form, and the CAPS styles must not change this page.
+ */
+:root {
+  --radius: 0.5rem;
+  --primary: 222 47% 11%;
+  /* Same names as trident-ui v1 variables. */
+  --color-sienna: 120deg 100% 30%;
+  --color-lightSand: 300deg 100% 50%;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: 'Comic Sans MS', cursive;
+  color: rgb(128 0 128);
+}
+
+button {
+  background: hotpink;
+  border-radius: 9999px;
+  padding: 2rem;
+}
+
+h2 {
+  text-transform: uppercase;
+  letter-spacing: 0.5em;
+}
