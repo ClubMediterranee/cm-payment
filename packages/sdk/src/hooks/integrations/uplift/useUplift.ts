@@ -3,6 +3,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { PspProviders } from '../../../types/PspProviders';
 import { UpliftChangeEvent, UpliftStatus } from '../../../types/Uplift';
+import { PSP_MOUNT_POINTS } from '../../../utils/integrations/pspMountPoints';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatch } from '../../utils/useForm';
 import { usePaymentProviderSettings } from '../../utils/usePaymentProviderSettings';
@@ -41,7 +42,7 @@ export const useUplift = () => {
       currency: watchedCurrency,
       checkout: true,
       channel: 'desktop',
-      container: '#uplift-container',
+      container: `#${PSP_MOUNT_POINTS.uplift.container}`,
       onChange: setData,
     }),
     [api_key, locale, watchedCurrency],

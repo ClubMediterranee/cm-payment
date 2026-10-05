@@ -4,14 +4,12 @@ import { Controller, get } from 'react-hook-form';
 import { useIxopayHostedFields } from '../../../hooks/integrations/ixopay/useIxopayHostedFields';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../../../hooks/utils/useForm';
+import { PSP_MOUNT_POINTS } from '../../../utils/integrations/pspMountPoints';
 import { FormPanel } from '../../ui/FormPanel';
 import { HostedField } from '../../ui/HostedField';
 import { MonthField } from '../../ui/MonthField';
 
-const fieldSelectors = {
-  cardNumber: 'number',
-  cvc: 'cvv',
-};
+const fieldSelectors = PSP_MOUNT_POINTS.ixopay;
 
 export const IxopayForm = () => {
   const { content } = useCapsConfigContext();

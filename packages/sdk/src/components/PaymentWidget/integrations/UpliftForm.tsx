@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 
+import { PSP_MOUNT_POINTS } from '../../../utils/integrations/pspMountPoints';
+import { PspMountPoint } from '../../ui/PspMountPoint';
+
 export const UpliftForm = () => {
   useEffect(() => {
     if (!window.Uplift) return;
@@ -10,5 +13,5 @@ export const UpliftForm = () => {
     };
   }, []);
 
-  return <div id="uplift-container" className="w-full mt-24" />;
+  return <PspMountPoint id={PSP_MOUNT_POINTS.uplift.container} className="w-full mt-24" />;
 };

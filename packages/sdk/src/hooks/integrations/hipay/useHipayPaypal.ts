@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { HipayInstance } from '../../../types/Hipay';
 import { PspProviders } from '../../../types/PspProviders';
+import { PSP_MOUNT_POINTS } from '../../../utils/integrations/pspMountPoints';
 import { usePaymentSubmit } from '../../usePaymentSubmit';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useFormContext, useWatch } from '../../utils/useForm';
@@ -37,7 +38,7 @@ export const useHipayPaypal = () => {
         amount: Number(watchedAmount),
         currency: watchedCurrency,
         locale: locale.replace('-', '_'),
-        selector: 'paypal-button',
+        selector: PSP_MOUNT_POINTS.hipayPaypal.button,
       },
       events: {
         paymentAuthorized: ({ orderID }) => {

@@ -22,5 +22,6 @@ export * from './types/PspProviders';
 export * from './utils/fetcher';
 export * from './utils/formatCurrency';
 export * from './utils/formatDate';
+export * from './utils/integrations/pspMountPoints';
 export { defaultNavigate } from './utils/navigate';
 export type { NavigationHandler, NavigationRequest } from './utils/navigate';

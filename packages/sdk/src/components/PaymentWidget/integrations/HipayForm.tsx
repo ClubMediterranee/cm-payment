@@ -1,14 +1,10 @@
 import { useHipayHostedFields } from '../../../hooks/integrations/hipay/useHipayHostedFields';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext';
+import { PSP_MOUNT_POINTS } from '../../../utils/integrations/pspMountPoints';
 import { FormPanel } from '../../ui/FormPanel';
 import { HostedField } from '../../ui/HostedField';
 
-const fieldSelectors = {
-  cardHolder: 'hipay-card-holder',
-  cardNumber: 'hipay-card-number',
-  expiryDate: 'hipay-card-expiry',
-  cvc: 'hipay-card-cvc',
-};
+const fieldSelectors = PSP_MOUNT_POINTS.hipay;
 
 export const HipayForm = () => {
   const { content } = useCapsConfigContext();

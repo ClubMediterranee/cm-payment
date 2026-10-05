@@ -3,6 +3,7 @@ import { get } from 'react-hook-form';
 import { useCybersource } from '../../../hooks/integrations/cybersource/useCybersource';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../../../hooks/utils/useForm';
+import { PSP_MOUNT_POINTS } from '../../../utils/integrations/pspMountPoints';
 import { FormPanel } from '../../ui/FormPanel';
 import { HostedField } from '../../ui/HostedField';
 import { MonthField } from '../../ui/MonthField';
@@ -13,11 +14,11 @@ export const CybersourceForm = () => {
 
   const fields = {
     cardNumber: {
-      selector: 'cybersource-card-number',
+      selector: PSP_MOUNT_POINTS.cybersource.cardNumber,
       placeholder: content.creditCardForm.cardNumber,
     },
     cvc: {
-      selector: 'cybersource-card-cvc',
+      selector: PSP_MOUNT_POINTS.cybersource.cvc,
       placeholder: content.creditCardForm.cvc,
     },
   };
