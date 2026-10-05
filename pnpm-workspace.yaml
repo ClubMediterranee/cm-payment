@@ -1,6 +1,9 @@
 packages:
   - packages/*
 
+overrides:
+  "@tsed/hooks": 8.41.2
+
 allowBuilds:
   "@scarf/scarf": false
   "@swc/core": false
