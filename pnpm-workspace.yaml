@@ -2,7 +2,10 @@ packages:
   - packages/*
 
 overrides:
-  "@tsed/hooks": 8.41.2
+  "@tsed/hooks": 8.31.2
+  "@fastify/cookie": 11.0.2
+  "@fastify/static": 9.1.3
+  content-disposition: 2.0.1
 
 allowBuilds:
   "@scarf/scarf": false
