@@ -1,6 +1,11 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": [],
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/coverage/**",
+    "**/storybook-static/**",
+    "**/__generated__/**"
+  ],
   "overrides": [
     {
       "files": ["**/*.yml", "**/*.yaml"],
