@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+import { FormSubmitContext } from '@clubmed/caps';
 import { createContext, useContext } from 'react';
 
 import { SubmitSlot } from '../flow/CapsFlow';
@@ -38,18 +39,35 @@ describe('ShadowSlot', () => {
 });
 
 describe('SubmitSlot', () => {
-  it('submits the form from another shadow root', () => {
-    const form = document.createElement('form');
-    const onSubmit = vi.fn((event: Event) => event.preventDefault());
-    form.addEventListener('submit', onSubmit);
+  it('renders the children in the slot shadow root', () => {
     const target = document.body.appendChild(document.createElement('div'));
 
     render(
-      <SubmitSlot target={target} getForm={() => form}>
-        <button type="submit" form="payment-form">
-          Pay
-        </button>
-      </SubmitSlot>,
+      <FormSubmitContext.Provider value={{ onSubmit: () => {} }}>
+        <SubmitSlot target={target}>
+          <button type="submit" form="payment-form">
+            Pay
+          </button>
+        </SubmitSlot>
+      </FormSubmitContext.Provider>,
+    );
+
+    expect(target.shadowRoot!.querySelector('button')?.textContent).toBe('Pay');
+    target.remove();
+  });
+
+  it('submits through the form context when a slotted submit button is clicked', () => {
+    const onSubmit = vi.fn();
+    const target = document.body.appendChild(document.createElement('div'));
+
+    render(
+      <FormSubmitContext.Provider value={{ onSubmit }}>
+        <SubmitSlot target={target}>
+          <button type="submit" form="payment-form">
+            Pay
+          </button>
+        </SubmitSlot>
+      </FormSubmitContext.Provider>,
     );
 
     target.shadowRoot!.querySelector('button')!.click();

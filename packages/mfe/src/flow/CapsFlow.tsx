@@ -12,8 +12,9 @@ import {
   PaymentSchedule,
   PaymentWidget,
   SubmitButton,
+  useFormSubmit,
 } from '@clubmed/caps';
-import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { type MouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { ShadowSlot } from '../shadow/ShadowHost';
 
@@ -69,15 +70,9 @@ function FlowErrorFallback({
  * Submit button rendered in a host slot. Its `form="payment-form"` attribute cannot reach the form across
  * shadow roots, so the click submits the form explicitly.
  */
-export function SubmitSlot({
-  target,
-  getForm,
-  children,
-}: {
-  target?: HTMLElement;
-  getForm?: () => HTMLFormElement | null | undefined;
-  children: ReactNode;
-}) {
+export function SubmitSlot({ target, children }: { target?: HTMLElement; children: ReactNode }) {
+  const { onSubmit } = useFormSubmit();
+
   const onClickCapture = (event: MouseEvent<HTMLDivElement>) => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
       'button[type="submit"]',
@@ -85,7 +80,7 @@ export function SubmitSlot({
 
     if (button && !button.form) {
       event.preventDefault();
-      getForm?.()?.requestSubmit();
+      onSubmit();
     }
   };
 
@@ -104,7 +99,6 @@ type CapsFlowProps = {
    * Host elements where the donation and the submit button are rendered instead of inside the form.
    */
   slots?: CapsFormSlots;
-  getForm?: () => HTMLFormElement | null | undefined;
   action?: string;
   reference?: string;
   uuid?: string;
@@ -119,7 +113,6 @@ type CapsFlowProps = {
 export function CapsFlow({
   labels: labelOverrides,
   slots,
-  getForm,
   action,
   reference,
   uuid,
@@ -130,6 +123,13 @@ export function CapsFlow({
   const labels = { ...DEFAULT_FLOW_LABELS, ...labelOverrides };
   const [error, setError] = useState<Error>();
   const errorRef = useRef<HTMLParagraphElement>(null);
+  const onLoadingChangeRef = useRef(onLoadingChange);
+  onLoadingChangeRef.current = onLoadingChange;
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
+
+  const onLoad = useCallback(() => onLoadingChangeRef.current?.(true), []);
+  const onLoadEnd = useCallback(() => onLoadingChangeRef.current?.(false), []);
 
   useEffect(() => {
     onReady?.();
@@ -142,19 +142,19 @@ export function CapsFlow({
     }
   }, [error]);
 
-  const handleError = (err: Error) => {
+  const handleError = useCallback((err: Error) => {
     setError(err);
-    onLoadingChange?.(false);
-    onError?.(err);
-  };
+    onLoadingChangeRef.current?.(false);
+    onErrorRef.current?.(err);
+  }, []);
 
   return (
     <Form
       action={action as Action | undefined}
-      errorFallback={(props) => <FlowErrorFallback {...props} onError={onError} />}
+      errorFallback={(props) => <FlowErrorFallback {...props} onError={onErrorRef.current} />}
       onError={handleError}
-      onLoad={() => onLoadingChange?.(true)}
-      onLoadEnd={() => onLoadingChange?.(false)}
+      onLoad={onLoad}
+      onLoadEnd={onLoadEnd}
     >
       <PaymentSchedule>
         <Title>{labels.paymentSchedule}</Title>
@@ -190,7 +190,7 @@ export function CapsFlow({
           {error.message}
         </p>
       )}
-      <SubmitSlot target={slots?.submit} getForm={getForm}>
+      <SubmitSlot target={slots?.submit}>
         <SubmitButton className={slots?.submit ? 'w-full' : 'my-8 self-center'}>
           {labels.submit}
         </SubmitButton>

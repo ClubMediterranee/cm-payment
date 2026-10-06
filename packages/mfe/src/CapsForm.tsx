@@ -13,7 +13,7 @@ import Actions from '@clubmed/trident-ui/atoms/Icons/svg/Actions';
 import Brand from '@clubmed/trident-ui/atoms/Icons/svg/Brand';
 import Utilities from '@clubmed/trident-ui/atoms/Icons/svg/Utilities';
 import { Spinner } from '@clubmed/trident-ui/molecules/Spinner';
-import { type ComponentProps, useEffect, useRef } from 'react';
+import { type ComponentProps, useCallback, useEffect, useRef } from 'react';
 
 import { CapsFlow, type FlowLabels } from './flow/CapsFlow';
 import { useEmbedConfig } from './flow/useEmbedConfig';
@@ -71,25 +71,30 @@ function CapsForm(props: CapsRemoteFormProps) {
     style,
   } = props;
 
-  const containerRef = useRef<HTMLElement>(null);
-  const getForm = () => containerRef.current?.querySelector<HTMLFormElement>('form#payment-form');
-
   const callbacks = useLatest(props);
   const configState = useEmbedConfig(capsUrl, issuerType, type);
 
   const customerId =
     props.customerId ?? (issuerType === 'GM' ? getTokenSubject(accessToken) : undefined);
 
-  const onNavigate = (request: NavigationRequest) => {
+  const onNavigate = useCallback((request: NavigationRequest) => {
     if (callbacks.current.onRedirect?.(request.url) === false) {
       return;
     }
 
     defaultNavigate(request);
-  };
+  }, []);
 
-  const onError = (error: Error) =>
-    callbacks.current.onError?.({ code: 'FLOW_ERROR', message: error.message });
+  const onError = useCallback(
+    (error: Error) => callbacks.current.onError?.({ code: 'FLOW_ERROR', message: error.message }),
+    [],
+  );
+
+  const onReady = useCallback(() => callbacks.current.onReady?.(), []);
+  const onLoadingChange = useCallback(
+    (loading: boolean) => callbacks.current.onLoadingChange?.(loading),
+    [],
+  );
 
   // Bookings and seller flows are authenticated: the host must provide the token (the remote never signs in).
   const authError =
@@ -148,26 +153,19 @@ function CapsForm(props: CapsRemoteFormProps) {
         <CapsFlow
           labels={labels}
           slots={slots}
-          getForm={getForm}
           action={action}
           reference={reference}
           uuid={uuid}
-          onReady={() => callbacks.current.onReady?.()}
-          onLoadingChange={(loading) => callbacks.current.onLoadingChange?.(loading)}
-          onError={(error) => onError(error)}
+          onReady={onReady}
+          onLoadingChange={onLoadingChange}
+          onError={onError}
         />
       </PaymentConfigProvider>
     );
   }
 
   return (
-    <ShadowHost
-      className={className}
-      style={style}
-      onMount={(container) => {
-        containerRef.current = container;
-      }}
-    >
+    <ShadowHost className={className} style={style}>
       <IconsProvider icons={ICONS}>
         <div className="w-full flex flex-col gap-8">{body}</div>
       </IconsProvider>

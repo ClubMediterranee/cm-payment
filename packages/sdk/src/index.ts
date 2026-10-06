@@ -11,6 +11,7 @@ export * from './components/PaymentProviders';
 export * from './components/PaymentSchedule';
 export * from './components/PaymentWidget';
 export * from './components/SubmitButton';
+export { FormSubmitContext, useFormSubmit } from './contexts/FormSubmitContext';
 export * from './components/ui/FormPanel';
 export * from './embed/shared';
 export * from './hooks/utils/useCapsConfigContext';

@@ -278,10 +278,7 @@ export function App() {
     onReady: () => log('ready'),
     onLoadingChange: (loading: boolean) => log(`loading: ${loading}`),
     onError: (error: CapsEmbedError) => log(`error: ${error.code} ${error.message}`),
-    onRedirect: (url: string) => {
-      log(`redirect: ${url}`);
-      return false as const;
-    },
+    onRedirect: (url: string) => log(`redirect: ${url}`),
   } as Parameters<typeof CapsFormWebComponent>[0];
 
   const sidebar = config.mode === 'webcomponent' && config.layout === 'sidebar';

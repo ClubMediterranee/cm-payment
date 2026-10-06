@@ -47,6 +47,9 @@ export default defineConfig({
         'lib/tailwind/**',
         'lib/types/**',
         '**/index.ts',
+        // dev-only hosts and entry points
+        'packages/embed-playground/**',
+        'packages/mfe/src/preview.tsx',
         // deprecated
         'lib/molecules/Tabs/TabsHeader.tsx',
         'lib/molecules/Arrows.tsx',
@@ -57,10 +60,10 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        statements: 88.43,
-        branches: 79.14,
-        functions: 85.32,
-        lines: 88.3,
+        statements: 90.35,
+        branches: 82.01,
+        functions: 87.15,
+        lines: 90.21,
       },
     },
     projects: [
