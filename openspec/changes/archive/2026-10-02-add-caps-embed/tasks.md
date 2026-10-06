@@ -7,6 +7,8 @@
 - [ ] 1.5 Validate the `@font-face` injection, and observe the overlays as they are (the SDK `Popin`, the loading overlay and the Oney popin) in a host with a sticky header and a transformed wrapper, and in a tall auto-resized iframe; record the findings for the D11 follow-up
 - [ ] 1.6 Validate SSO through the iframe on Chrome, Safari and Firefox (an existing IdP session is reused in-frame, the `signinPopup` fallback works, and the `return_url` keeps embedded mode)
 - [ ] 1.7 Record the outcome in `design.md` (Shadow DOM, light-DOM slot for PSP containers, or light-DOM scoping) and update the affected tasks
+- [ ] 1.8 Uplift "pay monthly" offer in the shadow root: the Uplift SDK fills the `data-up-*` price markup of `UpliftOption` from the document. Render this block in the light DOM of the shadow host (portal + `<slot>`, same mechanism as `usePspMountPoint`), with inline layout styles (inherited styles stay on the slot parent), then validate with an Uplift test account (monthly price displayed, tooltip opens); if the SDK reads more than these attributes, instrument its DOM accesses
+- [ ] 1.9 PSP registry (`definePspProvider`), if it has to be made more robust: register the remaining provider UIs through it instead of local registries (`UpliftForm` in `IframeView`, `OneyOption` / `UpliftOption` in `BnplOption`, with dedicated kinds such as `iframe` and `bnpl-option`), and resolve the PayPal button from the selected provider id instead of the hard-coded `HIPAY_PAYPAL` in `SubmitButton` (check first that the API returns `MHIPAYPP` for PayPal)
 
 ## 2. Shared embed contract (`packages/sdk/src/embed/shared`)
 
