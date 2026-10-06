@@ -35,7 +35,7 @@ export type CapsSettings = {
   content: Content;
   type: 'proposal' | 'booking';
   /**
-   * Overrides top-level navigations (PSP redirection, confirmation). Used by the embedded modes.
+   * Overrides top-level navigations (PSP redirection, confirmation). Used by the webcomponent embed.
    * Defaults to `window.location` / form submission.
    */
   onNavigate?: (request: {

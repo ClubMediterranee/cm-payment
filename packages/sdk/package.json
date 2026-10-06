@@ -16,11 +16,6 @@
       "types": "./dist/embed/webcomponent/index.d.ts",
       "import": "./dist/embed/webcomponent/index.js",
       "default": "./dist/embed/webcomponent/index.js"
-    },
-    "./iframe": {
-      "types": "./dist/embed/iframe/index.d.ts",
-      "import": "./dist/embed/iframe/index.js",
-      "default": "./dist/embed/iframe/index.js"
     }
   },
   "scripts": {

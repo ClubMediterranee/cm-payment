@@ -10,7 +10,7 @@ describe('PaymentRedirectController', () => {
 
   beforeEach(() => {
     mockAllowedOriginsService = {
-      getAllowedOrigins: vi.fn().mockResolvedValue({ webcomponent: [], iframe: [] }),
+      getAllowedOrigins: vi.fn().mockResolvedValue([]),
     };
 
     mockPaymentService = {
@@ -208,10 +208,7 @@ describe('PaymentRedirectController', () => {
     });
 
     it('should allow the webcomponent hosts to receive the redirect message', async () => {
-      mockAllowedOriginsService.getAllowedOrigins.mockResolvedValue({
-        webcomponent: ['https://host.example'],
-        iframe: ['https://iframe.example'],
-      });
+      mockAllowedOriginsService.getAllowedOrigins.mockResolvedValue(['https://host.example']);
       mockPaymentService.handlePaymentRedirect.mockResolvedValue('https://example.com/success');
       mockViews.render.mockResolvedValue('<html></html>');
 

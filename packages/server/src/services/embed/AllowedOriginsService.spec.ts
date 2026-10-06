@@ -19,37 +19,34 @@ describe('AllowedOriginsService', () => {
     await PlatformTest.reset();
   });
 
-  it('returns empty lists when nothing is configured', async () => {
+  it('returns an empty list when nothing is configured', async () => {
     repository.getAllowedOrigins.mockResolvedValue([]);
     const service = await create();
 
-    expect(await service.getAllowedOrigins()).toEqual({ webcomponent: [], iframe: [] });
-    expect(await service.isAllowed('https://host.example', 'webcomponent')).toBe(false);
+    expect(await service.getAllowedOrigins()).toEqual([]);
+    expect(await service.isAllowed('https://host.example')).toBe(false);
   });
 
   it('merges Directus entries with the environment variable', async () => {
     repository.getAllowedOrigins.mockResolvedValue([
-      { origin: 'https://seller.example', modes: ['webcomponent'] },
-      { origin: 'https://iframe.example', modes: ['iframe'] },
+      'https://seller.example',
+      'https://env.example',
     ]);
     const service = await create('https://env.example');
 
-    expect(await service.getAllowedOrigins()).toEqual({
-      webcomponent: ['https://env.example', 'https://seller.example'],
-      iframe: ['https://env.example', 'https://iframe.example'],
-    });
-    expect(await service.isAllowed('https://Seller.example/', 'webcomponent')).toBe(true);
-    expect(await service.isAllowed('https://seller.example', 'iframe')).toBe(false);
-    expect(await service.isAllowed(undefined, 'iframe')).toBe(false);
+    expect(await service.getAllowedOrigins()).toEqual([
+      'https://env.example',
+      'https://seller.example',
+    ]);
+    expect(await service.isAllowed('https://Seller.example/')).toBe(true);
+    expect(await service.isAllowed('https://other.example')).toBe(false);
+    expect(await service.isAllowed(undefined)).toBe(false);
   });
 
   it('falls back to the environment variable when Directus is unavailable', async () => {
     repository.getAllowedOrigins.mockRejectedValue(new Error('403'));
     const service = await create('https://env.example');
 
-    expect(await service.getAllowedOrigins()).toEqual({
-      webcomponent: ['https://env.example'],
-      iframe: ['https://env.example'],
-    });
+    expect(await service.getAllowedOrigins()).toEqual(['https://env.example']);
   });
 });

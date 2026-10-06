@@ -102,13 +102,12 @@ For `GO` and `PARTNERS` issuers, `ContactChoice` is required instead of `Payment
 
 Create the route referenced by `callbackUrl` in your application router. CAPS completes payment validation before redirecting the user to this URL. Read the payment-result query parameters there and render the appropriate success, pending, cancellation, or failure state for your journey.
 
-## Embed the whole flow (webcomponent or iframe)
+## Embed the whole flow (webcomponent)
 
 Hosts that do not use trident-ui v1 (legacy journeys, trident-ui v2 / shadcn) can embed the complete CAPS flow with a single component, without any SDK dependency or Tailwind configuration:
 
 ```tsx
 import { CapsFormWebComponent } from '@clubmed/caps/webcomponent'; // React 18+ hosts, shadow DOM
-import { CapsFormIFrame } from '@clubmed/caps/iframe'; // any React version, iframe
 
 <CapsFormWebComponent
   issuerType="GM"

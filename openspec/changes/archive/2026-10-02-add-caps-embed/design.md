@@ -90,7 +90,7 @@ The remote and the embedded app fetch `GET /rest/embed/config`, which returns `a
   - The app waits a short handshake window before starting OIDC, so that a host token wins when it is provided.
 - **In-frame SSO fallback (R9):** when in-frame sign-in cannot complete (third-party cookies blocked, so no IdP session is visible), the app falls back to `signinPopup`. If the popup is blocked, the app posts `CAPS_ERROR { code: 'AUTH_REQUIRED' }` so the host can react.
 
-### D6. Iframe mode reuses the app with `?embedded=1`
+### D6. Iframe mode reuses the app with `?embedded=1` (dropped, see Outcome)
 
 There is no new build. The app reads `embedded` and `parent_origin` and validates `parent_origin` against `allowedOrigins`. It then:
 
@@ -176,6 +176,25 @@ Host bundlers (2026-10-02, `examples/`, installed from `packages/sdk/dist` like 
 - Found and fixed: the published `package.json` exports pointed to `./dist/*` while the package is published from `dist/` (already broken in 1.0.0); a browser language without region (`fr`) produced an invalid `locale`, now `fr-FR`.
 
 Still to validate (tasks 1.4–1.6): PSP integrations and overlays on a real booking or proposal, and SSO through the iframe on Chrome, Safari and Firefox. These need test accounts and flows on staging.
+
+## Outcome (2026-10-06)
+
+The change is closed with the webcomponent (MFE) mode and the redirect mode. Deviations from the decisions above:
+
+- **Shadow DOM kept (D2, D3), with two additions.** PSP SDKs resolve their containers from the global `document`, which cannot see inside a shadow root: every PSP mount point is rendered in the light DOM of the shadow host and projected at its place with a slot (`usePspMountPoint`, `PspMountPoint`, `HostedField`). Validated with the HiPay hosted fields in the playground and by the team tests on the MFE.
+- **Host slots.** The donation and the submit button can be rendered anywhere in the host page (`CapsFormSlot`, names `donation` and `submit`). They are portals of the same React form: no communication between micro-frontends. The submit button submits through the form context, since its `form` attribute cannot cross shadow roots.
+- **Iframe mode dropped (D5 iframe part, D6).** `@clubmed/caps/iframe`, the embedded mode of the app (`?embedded=1`), the `postMessage` protocol and the `frame-ancestors` policy were removed: the MFE and the redirect cover the use cases. The contract keeps `CAPS_PROTOCOL_VERSION` only, between the wrapper and the remote.
+- **Redirect mode.** `getPaymentUrl(env, options)` (exported by `@clubmed/caps`) replaces `buildCapsFlowUrl` and builds the URL of the CAPS payment page.
+- **Allowed origins (D9).** A single list of origins, without modes: `CAPS_ALLOWED_ORIGINS` merged with the Directus collection `caps_allowed_origins` (field `origin`). `GET /rest/embed/config` returns `allowedOrigins: string[]`.
+- **PSP integrations.** Each PSP lives in `packages/sdk/src/integrations/<psp>/`, declared with `defineIntegration` (mount points) and `definePspProvider` (UI registry). See `packages/sdk/docs/integrations.md` and the `create-psp-integration` skill.
+
+Follow-ups, outside this change (GPAY-366):
+
+- remaining PSP cases in the shadow root (GPAY-367) and the Uplift "pay monthly" offer (GPAY-376);
+- overlays and the modal/popin decision, D11 (GPAY-368);
+- Directus types once CMAB-4432 is delivered (GPAY-371);
+- staging run with the pilot host (GPAY-372);
+- hard-coded PSP imports to move to the registry (`packages/sdk/docs/integrations.md`).
 
 ## Risks / Trade-offs
 

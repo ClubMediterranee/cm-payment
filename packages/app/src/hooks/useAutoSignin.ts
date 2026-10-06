@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { hasAuthParams, useAuth } from 'react-oidc-context';
 import { useRoute } from 'wouter';
 
-import { useEmbedded } from '../embedded/EmbeddedProvider';
 import { useAppParams } from './useAppParams';
 
 export const useAutoSignin = () => {
@@ -12,14 +11,8 @@ export const useAutoSignin = () => {
   const [isBookingRoute] = useRoute('/*/booking/*');
   const auth = useAuth();
   const [hasInitSignin, setHasInitSignin] = useState(false);
-  const embedded = useEmbedded();
 
-  // Embedded (iframe) mode: wait for the host token; without it, the SSO runs inside the frame.
-  const isWaitingForHost =
-    embedded.active &&
-    (embedded.status !== 'allowed' || !embedded.handshakeDone || !!embedded.hostToken);
-
-  const isAuthRequired = (isBookingRoute || isSeller) && !isWaitingForHost;
+  const isAuthRequired = isBookingRoute || isSeller;
 
   const isSigningIn = useMemo(
     () =>

@@ -14,6 +14,6 @@ cd examples/webpack-host && npm install && npm run build && npm start
 cd examples/next-host && npm install && npm run build && npm start
 ```
 
-Both pages accept `?caps_url=…&issuer=GM&type=proposal&id=…&customer_id=…&mode=iframe`.
+Both pages accept `?caps_url=…&issuer=GM&type=proposal&id=…&customer_id=…`.
 The CAPS server must allow the example origin, e.g.
 `CAPS_ALLOWED_ORIGINS=http://localhost:4007,http://localhost:4008`.

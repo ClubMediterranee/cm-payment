@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Server side of the CAPS embed: hosting of the Module Federation remote under /mfe, CORS and frame-ancestors from the allowed host origins, and the embed configuration endpoint.
+Server side of the CAPS embed: hosting of the Module Federation remote under /mfe, CORS from the allowed host origins, and the embed configuration endpoint.
 
 ## Requirements
 
@@ -24,20 +24,15 @@ The Ts.ED server SHALL serve `packages/mfe/dist` under `/mfe`. This static mount
 
 The server SHALL build the embed allow-list from two sources:
 
-- the published entries of the Directus collection `caps_allowed_origins` (fields `origin` and `modes`), read through `DirectusClient` (schema evolution tracked in CMAB-4432);
-- the `CAPS_ALLOWED_ORIGINS` environment variable (comma-separated), which applies to both modes and serves as bootstrap and fallback.
+- the published entries of the Directus collection `caps_allowed_origins` (field `origin`), read through `DirectusClient` (schema evolution tracked in CMAB-4432);
+- the `CAPS_ALLOWED_ORIGINS` environment variable (comma-separated), which serves as bootstrap and fallback.
 
-The Directus result SHALL be cached with the Ts.ED `@UseCache()` decorator (in-memory `cache` configuration, TTL of 300 seconds with a background refresh after 60 seconds); no custom cache implementation is allowed. While Directus is unavailable, the cached list SHALL be kept until it expires; after that, the server SHALL use `CAPS_ALLOWED_ORIGINS` only and SHALL log a warning. Origins with the `webcomponent` mode feed CORS. Origins with the `iframe` mode feed `frame-ancestors` and the `parent_origin` validation.
+The Directus result SHALL be cached with the Ts.ED `@UseCache()` decorator (in-memory `cache` configuration, TTL of 300 seconds with a background refresh after 60 seconds); no custom cache implementation is allowed. While Directus is unavailable, the cached list SHALL be kept until it expires; after that, the server SHALL use `CAPS_ALLOWED_ORIGINS` only and SHALL log a warning. The allow-listed origins feed CORS.
 
 #### Scenario: Origin published in the CMS
 
-- **WHEN** a contributor publishes `https://seller.example` with the `webcomponent` mode in `caps_allowed_origins`
+- **WHEN** a contributor publishes `https://seller.example` in `caps_allowed_origins`
 - **THEN** within the cache TTL, preflights from `https://seller.example` receive CORS headers without a CAPS redeploy
-
-#### Scenario: Iframe-only origin
-
-- **WHEN** an origin is published with only the `iframe` mode
-- **THEN** it appears in `frame-ancestors`, but receives no CORS headers
 
 #### Scenario: Directus unavailable
 
@@ -83,25 +78,6 @@ Keys SHALL come from server environment variables. Invalid parameters SHALL retu
 
 - **WHEN** `GET /rest/embed/config?issuer=FOO&type=booking` is called
 - **THEN** the server responds 400
-
-### Requirement: Framing policy
-
-Responses of the app SPA mount (`/`) SHALL include `Content-Security-Policy: frame-ancestors 'self' <iframe origins of the allow-list>`. The server SHALL NOT send `X-Frame-Options: DENY` on these responses.
-
-#### Scenario: Framed by an allowed host
-
-- **WHEN** an allow-listed host frames `/gm/booking/123?embedded=1`
-- **THEN** the browser renders the frame
-
-#### Scenario: Empty allow-list
-
-- **WHEN** the allow-list is empty
-- **THEN** the app responses carry `Content-Security-Policy: frame-ancestors 'self'`
-
-#### Scenario: Framed by an unknown site
-
-- **WHEN** a non-listed site frames the app
-- **THEN** the browser blocks the frame because of `frame-ancestors`
 
 ### Requirement: Packaging
 

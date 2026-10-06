@@ -1,10 +1,8 @@
-import { CapsFormIFrame } from '@clubmed/caps/iframe';
 import { CapsFormWebComponent } from '@clubmed/caps/webcomponent';
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 const params = new URLSearchParams(window.location.search);
-const CapsForm = params.get('mode') === 'iframe' ? CapsFormIFrame : CapsFormWebComponent;
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -13,7 +11,7 @@ function App() {
   return (
     <main style={{ maxWidth: 800, margin: '0 auto', fontFamily: 'sans-serif' }}>
       <h1>webpack 5 host</h1>
-      <CapsForm
+      <CapsFormWebComponent
         url={params.get('caps_url') || 'http://localhost:8083'}
         issuerType={params.get('issuer') || 'GM'}
         type={params.get('type') || 'proposal'}

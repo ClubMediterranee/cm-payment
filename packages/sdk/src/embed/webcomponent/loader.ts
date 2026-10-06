@@ -62,7 +62,7 @@ async function load(capsUrl: string, index: number): Promise<CapsRemoteModule> {
   if (!isSupportedReactVersion()) {
     throw new CapsEmbedLoadError(
       'REACT_VERSION_UNSUPPORTED',
-      `[CAPS] React ${React.version} is not supported (requires React ${MIN_REACT_MAJOR} or later). Use @clubmed/caps/iframe instead.`,
+      `[CAPS] React ${React.version} is not supported (requires React ${MIN_REACT_MAJOR} or later).`,
     );
   }
 

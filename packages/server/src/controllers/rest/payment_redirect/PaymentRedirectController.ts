@@ -56,8 +56,8 @@ export class PaymentRedirectController {
     });
 
     if (mode === 'iframe') {
-      // The PSP iframe parent is the CAPS app (same origin) or, in webcomponent mode, an allow-listed host.
-      const { webcomponent: targetOrigins } = await this.allowedOriginsService.getAllowedOrigins();
+      // The PSP iframe parent is the CAPS app (same origin) or an allow-listed host (webcomponent embed).
+      const targetOrigins = await this.allowedOriginsService.getAllowedOrigins();
       const html = await this.views.render('iframe-redirect.ejs', {
         redirectUrl,
         targetOrigins,

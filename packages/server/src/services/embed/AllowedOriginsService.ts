@@ -1,11 +1,10 @@
 import { Constant, Inject, logger, Service } from '@tsed/di';
 
 import { AllowedOriginsRepository } from './AllowedOriginsRepository.js';
-import type { AllowedOrigin, EmbedMode } from './models.js';
-import { groupOriginsByMode, normalizeOrigin, parseOriginList } from './origins.js';
+import { normalizeOrigin, parseOriginList } from './origins.js';
 
 /**
- * Host origins allowed to embed CAPS (webcomponent and iframe modes).
+ * Host origins allowed to embed the CAPS form (`@clubmed/caps/webcomponent`).
  *
  * Sources: published entries of the Directus collection `caps_allowed_origins` (CMAB-4432),
  * merged with the `CAPS_ALLOWED_ORIGINS` environment variable (bootstrap, local dev, fallback).
@@ -18,24 +17,26 @@ export class AllowedOriginsService {
   @Constant('CAPS_ALLOWED_ORIGINS', '')
   protected envAllowedOrigins!: string;
 
-  async getAllowedOrigins(): Promise<Record<EmbedMode, string[]>> {
-    return groupOriginsByMode([
-      ...parseOriginList(this.envAllowedOrigins),
-      ...(await this.getDirectusOrigins()),
-    ]);
+  async getAllowedOrigins(): Promise<string[]> {
+    return [
+      ...new Set([
+        ...parseOriginList(this.envAllowedOrigins),
+        ...(await this.getDirectusOrigins()),
+      ]),
+    ];
   }
 
-  async isAllowed(origin: string | undefined, mode: EmbedMode): Promise<boolean> {
+  async isAllowed(origin: string | undefined): Promise<boolean> {
     const normalized = normalizeOrigin(origin);
 
     if (!normalized) {
       return false;
     }
 
-    return (await this.getAllowedOrigins())[mode].includes(normalized);
+    return (await this.getAllowedOrigins()).includes(normalized);
   }
 
-  protected async getDirectusOrigins(): Promise<AllowedOrigin[]> {
+  protected async getDirectusOrigins(): Promise<string[]> {
     try {
       return await this.allowedOriginsRepository.getAllowedOrigins();
     } catch (error) {

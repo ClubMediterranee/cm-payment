@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Shared, dependency-free contract of the CAPS embed wrappers: props, environment URLs, flow URL building and the versioned postMessage protocol between the host, the remote form and the iframe.
+Shared, dependency-free contract of the CAPS embed wrappers: props, environment URLs, payment URL building and the version of the contract between the wrapper and the remote form.
 
 ## Requirements
 
 ### Requirement: Dependency-free embed contract
 
-The embed contract module (`packages/sdk/src/embed/shared`) and both wrapper entries (`@clubmed/caps/webcomponent`, `@clubmed/caps/iframe`) SHALL NOT import any module of the SDK outside `src/embed/**`. They also SHALL NOT import trident-ui, trident-icons, Tailwind CSS, react-query, react-hook-form or zod. Only `react`, `react/jsx-runtime` and, for the webcomponent entry only, `@module-federation/runtime` and `@module-federation/bridge-react/base` are allowed as runtime imports.
+The embed contract module (`packages/sdk/src/embed/shared`) and the wrapper entry (`@clubmed/caps/webcomponent`) SHALL NOT import any module of the SDK outside `src/embed/**`. They also SHALL NOT import trident-ui, trident-icons, Tailwind CSS, react-query, react-hook-form or zod. Only `react`, `react/jsx-runtime` and, for the webcomponent entry only, `@module-federation/runtime` and `@module-federation/bridge-react/base` are allowed as runtime imports.
 
 #### Scenario: Lint rejects a forbidden import
 
@@ -92,21 +92,16 @@ It SHALL throw when `issuerType` is not `GM` and `customerId` is missing. It SHA
 - **WHEN** props contain `accessToken`
 - **THEN** the returned URL contains no parameter carrying the token
 
-### Requirement: Versioned message protocol
+### Requirement: Versioned contract
 
-The contract SHALL export `CAPS_PROTOCOL_VERSION` (an integer) and the message type constants:
+The contract SHALL export `CAPS_PROTOCOL_VERSION` (an integer) and `isCompatibleProtocolVersion(version)`, which compares the major version only. The remote SHALL expose the protocol version it implements, and the wrapper SHALL refuse a remote with a different major version.
 
-- `CAPS_READY`, `CAPS_INIT`, `CAPS_RESIZE`, `CAPS_LOADING`, `CAPS_ERROR`;
-- `CAPS_PAYMENT_REDIRECT`, `CAPS_PAYMENT_REDIRECT_LOADING`, `CAPS_PAYMENT_REDIRECT_CANCEL`.
+#### Scenario: Compatible remote
 
-It SHALL also export their payload types. Every message SHALL carry `source: 'caps'` and `version: CAPS_PROTOCOL_VERSION`. The existing SDK `IframeMessageType` constants SHALL be re-exported from this module and keep their current string values.
+- **WHEN** the remote exposes the same major protocol version as the wrapper
+- **THEN** `isCompatibleProtocolVersion` returns true
 
-#### Scenario: Backward compatible redirect message
+#### Scenario: Incompatible remote
 
-- **WHEN** the server view `iframe-redirect.ejs` posts `{ type: 'CAPS_PAYMENT_REDIRECT', url }`
-- **THEN** the SDK `useIframeMessageBridge` still handles it as a payment redirect
-
-#### Scenario: Foreign messages are ignored
-
-- **WHEN** a listener using the contract helper `isCapsMessage` receives a message without `source: 'caps'`
-- **THEN** the helper returns `false` and the message is ignored
+- **WHEN** the remote exposes another major protocol version, or none
+- **THEN** `isCompatibleProtocolVersion` returns false

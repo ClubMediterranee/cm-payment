@@ -14,7 +14,6 @@ export default defineConfig({
     alias: {
       // Use the wrapper sources, like a host would use the published sub-path exports.
       '@clubmed/caps/webcomponent': join(root, '../sdk/src/embed/webcomponent/index.ts'),
-      '@clubmed/caps/iframe': join(root, '../sdk/src/embed/iframe/index.ts'),
     },
   },
 });

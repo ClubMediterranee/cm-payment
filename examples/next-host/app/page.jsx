@@ -8,7 +8,6 @@ export default async function Page({ searchParams }) {
     <main style={{ maxWidth: 800, margin: '0 auto' }}>
       <h1>Next.js host (App Router)</h1>
       <CapsCheckout
-        mode={params.mode === 'iframe' ? 'iframe' : 'webcomponent'}
         url={params.caps_url || 'http://localhost:8083'}
         issuerType={params.issuer || 'GM'}
         type={params.type || 'proposal'}

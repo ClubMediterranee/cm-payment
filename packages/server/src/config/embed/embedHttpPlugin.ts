@@ -2,10 +2,8 @@ import { inject } from '@tsed/di';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
 import { AllowedOriginsService } from '../../services/embed/AllowedOriginsService.js';
-import type { EmbedMode } from '../../services/embed/models.js';
 
 export const EMBED_CORS_PREFIXES = ['/api', '/rest', '/mfe'];
-const NON_APP_PREFIXES = [...EMBED_CORS_PREFIXES, '/oas', '/storybook'];
 
 export const EMBED_CORS_ALLOWED_HEADERS = [
   'content-type',
@@ -18,7 +16,7 @@ export const EMBED_CORS_ALLOWED_HEADERS = [
 
 const EMBED_CORS_ALLOWED_METHODS = 'GET,POST,PUT,PATCH,DELETE,OPTIONS';
 
-type OriginChecker = Pick<AllowedOriginsService, 'getAllowedOrigins' | 'isAllowed'>;
+type OriginChecker = Pick<AllowedOriginsService, 'isAllowed'>;
 
 export type EmbedHttpPluginOptions = {
   /**
@@ -53,13 +51,8 @@ function appendVary(reply: FastifyReply, value: string) {
   reply.header('vary', [...values].join(', '));
 }
 
-export const buildFrameAncestors = (origins: string[]) =>
-  ["frame-ancestors 'self'", ...origins].join(' ');
-
 /**
- * Embed HTTP policies:
- * - CORS on `/api`, `/rest` and `/mfe` for the `webcomponent` allow-listed origins (no credentials),
- * - `Content-Security-Policy: frame-ancestors` on the app responses for the `iframe` allow-listed origins.
+ * Embed HTTP policy: CORS on `/api`, `/rest` and `/mfe` for the allow-listed host origins (no credentials).
  */
 export async function embedHttpPlugin(app: FastifyInstance, options: EmbedHttpPluginOptions = {}) {
   const getService = options.getAllowedOriginsService || (() => inject(AllowedOriginsService));
@@ -72,7 +65,7 @@ export async function embedHttpPlugin(app: FastifyInstance, options: EmbedHttpPl
       return;
     }
 
-    const isAllowed = await getService().isAllowed(origin, 'webcomponent' satisfies EmbedMode);
+    const isAllowed = await getService().isAllowed(origin);
 
     if (isAllowed) {
       allowedCorsOrigins.set(request, origin);
@@ -95,32 +88,22 @@ export async function embedHttpPlugin(app: FastifyInstance, options: EmbedHttpPl
   });
 
   app.addHook('onSend', async (request, reply, payload) => {
-    const path = getPath(request);
-
-    if (matchesPrefix(path, EMBED_CORS_PREFIXES)) {
-      if (request.method !== 'OPTIONS') {
-        removeUpstreamCorsHeaders(reply);
-      }
-
-      const origin = allowedCorsOrigins.get(request);
-
-      if (origin) {
-        reply.header('access-control-allow-origin', origin);
-      }
-
-      if (request.headers.origin) {
-        appendVary(reply, 'Origin');
-      }
-
+    if (!matchesPrefix(getPath(request), EMBED_CORS_PREFIXES)) {
       return payload;
     }
 
-    const contentType = String(reply.getHeader('content-type') || '');
+    if (request.method !== 'OPTIONS') {
+      removeUpstreamCorsHeaders(reply);
+    }
 
-    if (!matchesPrefix(path, NON_APP_PREFIXES) && contentType.includes('text/html')) {
-      const { iframe } = await getService().getAllowedOrigins();
+    const origin = allowedCorsOrigins.get(request);
 
-      reply.header('content-security-policy', buildFrameAncestors(iframe));
+    if (origin) {
+      reply.header('access-control-allow-origin', origin);
+    }
+
+    if (request.headers.origin) {
+      appendVary(reply, 'Origin');
     }
 
     return payload;

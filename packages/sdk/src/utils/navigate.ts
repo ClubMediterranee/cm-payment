@@ -49,7 +49,7 @@ export const defaultNavigate: NavigationHandler = ({ url, method = 'GET', fields
 
 /**
  * Top-level navigation of the payment flow (PSP redirection, confirmation).
- * Delegates to `onNavigate` when the integration provides one (embedded modes), otherwise navigates the window.
+ * Delegates to `onNavigate` when the integration provides one (webcomponent embed), otherwise navigates the window.
  */
 export function navigate(request: NavigationRequest): void {
   const { onNavigate } = getPaymentConfig();

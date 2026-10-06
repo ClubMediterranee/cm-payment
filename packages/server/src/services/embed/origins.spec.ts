@@ -1,4 +1,4 @@
-import { groupOriginsByMode, normalizeOrigin, parseOriginList } from './origins.js';
+import { normalizeOrigin, parseOriginList } from './origins.js';
 
 describe('origins', () => {
   describe('normalizeOrigin', () => {
@@ -27,34 +27,15 @@ describe('origins', () => {
   });
 
   describe('parseOriginList', () => {
-    it('parses a comma separated list for every mode and drops invalid entries', () => {
+    it('parses a comma separated list and drops invalid entries', () => {
       expect(
         parseOriginList(' https://a.example, ,https://b.example/path,https://C.example '),
-      ).toEqual([
-        { origin: 'https://a.example', modes: ['webcomponent', 'iframe'] },
-        { origin: 'https://c.example', modes: ['webcomponent', 'iframe'] },
-      ]);
+      ).toEqual(['https://a.example', 'https://c.example']);
     });
 
     it('returns an empty list when unset', () => {
       expect(parseOriginList(undefined)).toEqual([]);
       expect(parseOriginList('')).toEqual([]);
-    });
-  });
-
-  describe('groupOriginsByMode', () => {
-    it('merges duplicated origins and splits them by mode', () => {
-      expect(
-        groupOriginsByMode([
-          { origin: 'https://a.example', modes: ['webcomponent'] },
-          { origin: 'https://a.example', modes: ['iframe'] },
-          { origin: 'https://b.example', modes: ['iframe'] },
-          { origin: 'https://c.example', modes: [] },
-        ]),
-      ).toEqual({
-        webcomponent: ['https://a.example'],
-        iframe: ['https://a.example', 'https://b.example'],
-      });
     });
   });
 });

@@ -1,17 +1,15 @@
 'use client';
 
-import { CapsFormIFrame } from '@clubmed/caps/iframe';
 import { CapsFormWebComponent } from '@clubmed/caps/webcomponent';
 import { useState } from 'react';
 
-export function CapsCheckout({ mode, ...flow }) {
+export function CapsCheckout(flow) {
   const [events, setEvents] = useState([]);
   const log = (event) => setEvents((current) => [...current, event]);
-  const CapsForm = mode === 'iframe' ? CapsFormIFrame : CapsFormWebComponent;
 
   return (
     <>
-      <CapsForm
+      <CapsFormWebComponent
         {...flow}
         callbackUrl="http://localhost:4008/callback"
         fallback={<p>Loading CAPS…</p>}

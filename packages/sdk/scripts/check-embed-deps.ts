@@ -1,5 +1,5 @@
 /**
- * Post-build guard for the portable embed entries (`@clubmed/caps/webcomponent`, `@clubmed/caps/iframe`).
+ * Post-build guard for the portable embed entries (`@clubmed/caps/webcomponent`).
  *
  * - Follows the import graph of `dist/embed/<entry>/index.js` (including shared chunks) and fails on any
  *   bare import other than React (and `@module-federation/runtime` / `bridge-react` for the webcomponent entry),
@@ -21,7 +21,6 @@ const ENTRIES: Record<string, string[]> = {
     '@module-federation/runtime',
     '@module-federation/bridge-react/base',
   ],
-  'embed/iframe/index.js': REACT_IMPORTS,
 };
 
 const IMPORT_SPECIFIERS = [
@@ -40,7 +39,7 @@ function checkEntry(entry: string, allowed: string[]): string[] {
   const entryFile = join(dist, entry);
 
   if (!existsSync(entryFile)) {
-    return entry.includes('iframe') ? [] : [`${entry}: missing build output`];
+    return [`${entry}: missing build output`];
   }
 
   const errors: string[] = [];

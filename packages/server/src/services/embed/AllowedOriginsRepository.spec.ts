@@ -20,25 +20,23 @@ describe('AllowedOriginsRepository', () => {
 
   afterEach(() => PlatformTest.reset());
 
-  it('normalizes the published origins and keeps the known modes only', async () => {
+  it('normalizes the published origins and drops the invalid ones', async () => {
     vi.spyOn(directusClient, 'getAllowedOrigins').mockResolvedValue([
-      { origin: 'https://Seller.example/', modes: ['webcomponent'] },
-      { origin: 'https://iframe.example', modes: ['iframe', 'unknown'] },
-      { origin: 'https://nomodes.example', modes: null },
-      { origin: 'invalid', modes: ['iframe'] },
+      { origin: 'https://Seller.example/' },
+      { origin: 'https://booking.example' },
+      { origin: 'invalid' },
     ]);
 
     expect(await repository.getAllowedOrigins()).toEqual([
-      { origin: 'https://seller.example', modes: ['webcomponent'] },
-      { origin: 'https://iframe.example', modes: ['iframe'] },
-      { origin: 'https://nomodes.example', modes: [] },
+      'https://seller.example',
+      'https://booking.example',
     ]);
   });
 
   it('caches the Directus result with @UseCache', async () => {
     const getAllowedOrigins = vi
       .spyOn(directusClient, 'getAllowedOrigins')
-      .mockResolvedValue([{ origin: 'https://a.example', modes: ['iframe'] }]);
+      .mockResolvedValue([{ origin: 'https://a.example' }]);
 
     await repository.getAllowedOrigins();
     await repository.getAllowedOrigins();

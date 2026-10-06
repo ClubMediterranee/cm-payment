@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 export type EmbedConfig = {
   apiUrl: string;
   apiKey: string;
-  allowedOrigins: { webcomponent: string[]; iframe: string[] };
+  allowedOrigins: string[];
   protocolVersion: number;
 };
 

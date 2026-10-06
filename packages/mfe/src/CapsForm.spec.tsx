@@ -66,7 +66,7 @@ function mockConfig(response: Partial<Response> & { json?: () => Promise<unknown
       json: async () => ({
         apiUrl: CAPS_URL,
         apiKey: 'api-key',
-        allowedOrigins: { webcomponent: [], iframe: [] },
+        allowedOrigins: [],
         protocolVersion: 1,
       }),
       ...response,

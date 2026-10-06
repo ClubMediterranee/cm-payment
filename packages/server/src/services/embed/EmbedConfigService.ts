@@ -5,7 +5,7 @@ import { AllowedOriginsService } from './AllowedOriginsService.js';
 import { EMBED_PROTOCOL_VERSION, EmbedConfig, EmbedFlowType } from './models.js';
 
 /**
- * Runtime configuration consumed by the embedded CAPS flow (webcomponent remote and iframe mode).
+ * Runtime configuration consumed by the embedded CAPS flow (webcomponent remote).
  */
 @Service()
 export class EmbedConfigService {

@@ -1,7 +1,3 @@
-import type { AllowedOrigin, EmbedMode } from './models.js';
-
-export const EMBED_MODES: EmbedMode[] = ['webcomponent', 'iframe'];
-
 /**
  * Normalize an origin (`protocol://host[:port]`, lower-case, no path nor trailing slash).
  * Returns `undefined` when the value is not a valid origin.
@@ -30,32 +26,10 @@ export function normalizeOrigin(value: unknown): string | undefined {
 
 /**
  * Parse the `CAPS_ALLOWED_ORIGINS` environment variable (comma-separated). Invalid entries are dropped.
- * Environment origins apply to every embed mode.
  */
-export function parseOriginList(value: string | undefined): AllowedOrigin[] {
+export function parseOriginList(value: string | undefined): string[] {
   return (value || '')
     .split(',')
     .map(normalizeOrigin)
-    .filter((origin): origin is string => !!origin)
-    .map((origin) => ({ origin, modes: [...EMBED_MODES] }));
-}
-
-/**
- * Merge origin entries by origin, uniting their modes, then split them by embed mode.
- */
-export function groupOriginsByMode(entries: AllowedOrigin[]): Record<EmbedMode, string[]> {
-  const byOrigin = new Map<string, Set<EmbedMode>>();
-
-  entries.forEach(({ origin, modes }) => {
-    const current = byOrigin.get(origin) || new Set<EmbedMode>();
-    modes.forEach((mode) => current.add(mode));
-    byOrigin.set(origin, current);
-  });
-
-  return Object.fromEntries(
-    EMBED_MODES.map((mode) => [
-      mode,
-      [...byOrigin.entries()].filter(([, modes]) => modes.has(mode)).map(([origin]) => origin),
-    ]),
-  ) as Record<EmbedMode, string[]>;
+    .filter((origin): origin is string => !!origin);
 }

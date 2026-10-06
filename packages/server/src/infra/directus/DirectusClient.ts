@@ -38,19 +38,19 @@ export class DirectusClient {
    * Published host origins allowed to embed CAPS.
    * TODO(CMAB-4432): regenerate the Directus schema types once the collection exists and drop the cast.
    */
-  async getAllowedOrigins(): Promise<{ origin: string; modes: string[] | null }[]> {
+  async getAllowedOrigins(): Promise<{ origin: string }[]> {
     const items = await this.client.request(
       readItems(
         'caps_allowed_origins' as never,
         {
-          fields: ['origin', 'modes'],
+          fields: ['origin'],
           filter: { status: { _eq: 'published' } },
           limit: -1,
         } as never,
       ),
     );
 
-    return items as unknown as { origin: string; modes: string[] | null }[];
+    return items as unknown as { origin: string }[];
   }
 
   getProviders() {

@@ -64,7 +64,7 @@
       }
     },
     {
-      "files": ["packages/sdk/src/embed/shared/**", "packages/sdk/src/embed/iframe/**"],
+      "files": ["packages/sdk/src/embed/shared/**"],
       "rules": {
         "no-restricted-imports": [
           "error",

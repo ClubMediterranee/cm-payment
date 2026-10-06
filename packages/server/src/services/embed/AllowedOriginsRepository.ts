@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@tsed/di';
 import { UseCache } from '@tsed/platform-cache';
 
 import { DirectusClient } from '../../infra/directus/DirectusClient.js';
-import type { AllowedOrigin, EmbedMode } from './models.js';
-import { EMBED_MODES, normalizeOrigin } from './origins.js';
+import { normalizeOrigin } from './origins.js';
 
 @Injectable()
 export class AllowedOriginsRepository {
@@ -16,16 +15,13 @@ export class AllowedOriginsRepository {
    * the previous list is kept until it expires.
    */
   @UseCache({ ttl: 300, refreshThreshold: 240 })
-  async getAllowedOrigins(): Promise<AllowedOrigin[]> {
+  async getAllowedOrigins(): Promise<string[]> {
     const items = await this.directusClient.getAllowedOrigins();
 
-    return items.flatMap(({ origin, modes }) => {
+    return items.flatMap(({ origin }) => {
       const normalized = normalizeOrigin(origin);
-      const validModes = (modes || []).filter((mode): mode is EmbedMode =>
-        EMBED_MODES.includes(mode as EmbedMode),
-      );
 
-      return normalized ? [{ origin: normalized, modes: validModes }] : [];
+      return normalized ? [normalized] : [];
     });
   }
 }

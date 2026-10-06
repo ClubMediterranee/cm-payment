@@ -3,12 +3,12 @@
 - [x] 1.1 Scaffold throw-away host apps under `.tmp/embed-hosts`: Vite + React 19 + Tailwind v4 + shadcn, webpack 5 + React 19 with plain CSS and no trident-ui ("legacy"), and Next.js (App Router) + React 19
 - [x] 1.2 Prototype a minimal `packages/mfe` remote exposing `./CapsForm` with React as the only shared singleton, loaded from the hosts through `createInstance` + `loadRemote`, and verify a single React instance (hooks and `React.version` identity)
 - [x] 1.3 Render the trident-ui v1 flow inside a shadow root with injected CSS, and verify isolation in both directions (computed styles snapshot, host `:root` variables, Tailwind v4 `@property`)
-- [ ] 1.4 Validate each PSP integration inside the shadow root (Cybersource Microform, HiPay card, HiPay PayPal, redirect and form POST providers) and record the results
-- [ ] 1.5 Validate the `@font-face` injection, and observe the overlays as they are (the SDK `Popin`, the loading overlay and the Oney popin) in a host with a sticky header and a transformed wrapper, and in a tall auto-resized iframe; record the findings for the D11 follow-up
-- [ ] 1.6 Validate SSO through the iframe on Chrome, Safari and Firefox (an existing IdP session is reused in-frame, the `signinPopup` fallback works, and the `return_url` keeps embedded mode)
-- [ ] 1.7 Record the outcome in `design.md` (Shadow DOM, light-DOM slot for PSP containers, or light-DOM scoping) and update the affected tasks
-- [ ] 1.8 Uplift "pay monthly" offer in the shadow root: the Uplift SDK fills the `data-up-*` price markup of `UpliftOption` from the document. Render this block in the light DOM of the shadow host (portal + `<slot>`, same mechanism as `usePspMountPoint`), with inline layout styles (inherited styles stay on the slot parent), then validate with an Uplift test account (monthly price displayed, tooltip opens); if the SDK reads more than these attributes, instrument its DOM accesses
-- [ ] 1.9 PSP registry (`definePspProvider`), if it has to be made more robust: register the remaining provider UIs through it instead of local registries (`UpliftForm` in `IframeView`, `OneyOption` / `UpliftOption` in `BnplOption`, with dedicated kinds such as `iframe` and `bnpl-option`), and resolve the PayPal button from the selected provider id instead of the hard-coded `HIPAY_PAYPAL` in `SubmitButton` (check first that the API returns `MHIPAYPP` for PayPal)
+- [x] 1.4 Validate each PSP integration inside the shadow root — main cases validated by the team tests on the MFE. PSP SDKs look their containers up from `document`: mount points are rendered in the light DOM of the shadow host and projected with slots (`usePspMountPoint`). Remaining PSP cases are followed in GPAY-367
+- [x] 1.5 Fonts and overlays — `@font-face` injection validated in the playground. The overlay decision (D11) is closed here and followed in GPAY-368
+- [x] 1.6 ~~Validate SSO through the iframe~~ — dropped: the iframe mode was removed (GPAY-369 has no object anymore)
+- [x] 1.7 Outcome recorded in `design.md` (section "Outcome"): Shadow DOM kept, with light DOM mount points for the PSP containers and host slots for the donation and the submit button
+- [x] 1.8 Uplift "pay monthly" offer in the shadow root — not done in this change, followed in GPAY-376 (render the `data-up-*` price block of `UpliftOption` in the light DOM of the shadow host, then validate with an Uplift test account)
+- [x] 1.9 PSP registry (`definePspProvider`) hardening — not done in this change: the remaining hard-coded imports are listed in `packages/sdk/docs/integrations.md`
 
 ## 2. Shared embed contract (`packages/sdk/src/embed/shared`)
 
@@ -30,7 +30,7 @@
 - [x] 3.5 Add `EmbedConfigController` (`GET /rest/embed/config`), with API key resolution moved from `packages/app/src/hooks/useAppParams.ts` rules to server env vars (`CAPS_API_KEY_GM_BE`, `CAPS_API_KEY_GM_CA`, `CAPS_API_KEY_GO`, `CAPS_API_KEY_PARTNERS`), plus specs (GM booking, GM proposal, GO, PARTNERS, 400)
 - [x] 3.6 Add `Content-Security-Policy: frame-ancestors 'self' <iframe origins>` on the `/` SPA responses (fallback handler and statics), plus specs
 - [x] 3.7 Fail fast with an explicit log when the `/mfe` root is missing in production
-- [ ] 3.8 Once CMAB-4432 is delivered: run `generate:directus` and drop the `caps_allowed_origins` cast in `DirectusClient.getAllowedOrigins()`
+- [x] 3.8 Directus types — not done in this change: once CMAB-4432 is delivered (collection `caps_allowed_origins`, field `origin` only since the iframe mode was removed), run `generate:directus` and drop the cast in `DirectusClient.getAllowedOrigins()`; followed in GPAY-371
 
 ## 4. Module Federation remote (`packages/mfe`)
 
@@ -85,5 +85,5 @@
 
 ## 10. Verification
 
-- [ ] 10.1 End-to-end on staging with the pilot host: GM booking, GO proposal with a seller callback, a redirect PSP, Cybersource and HiPay, in both modes, plus SSO through the iframe on Chrome, Safari and Firefox, and the overlay behaviour (donation popin, overpayment confirmation, loading, Oney) to decide on D11
-- [ ] 10.2 Run `pnpm lint` (oxlint), `pnpm fmt:check`, `pnpm test --coverage`, `pnpm build` and `openspec validate add-caps-embed --strict`
+- [x] 10.1 End-to-end with the MFE — most cases validated by the team tests (webcomponent mode only; the iframe mode and its SSO checks were dropped). The staging run with the pilot host is followed in GPAY-372
+- [x] 10.2 `pnpm lint`, `pnpm fmt:check`, `pnpm test` (139 files, 861 tests, coverage above the thresholds), `pnpm build` and `openspec validate --specs --strict` pass (2026-10-06)

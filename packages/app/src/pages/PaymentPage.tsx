@@ -1,6 +1,5 @@
 import {
   Action,
-  CapsMessageType,
   BillingAddress,
   CardInstallments,
   Cgv,
@@ -18,7 +17,6 @@ import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { Stay, StayPlaceholder } from '../components/Stay';
-import { usePostToHost } from '../embedded/EmbeddedProvider';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useStay } from '../hooks/useStay';
 import { LoadingPage } from './LoadingPage';
@@ -30,18 +28,7 @@ export function PaymentPage() {
     reference?: string;
     uuid?: string;
   }>();
-  const { isOpen: isPaymentLoading, onOpen, onClose } = useDisclosure();
-  const postToHost = usePostToHost();
-
-  const onLoad = () => {
-    onOpen();
-    postToHost(CapsMessageType.LOADING, { loading: true });
-  };
-
-  const onLoadEnd = () => {
-    onClose();
-    postToHost(CapsMessageType.LOADING, { loading: false });
-  };
+  const { isOpen: isPaymentLoading, onOpen: onLoad, onClose: onLoadEnd } = useDisclosure();
 
   const ref = useRef<HTMLParagraphElement | null>(null);
   const [error, setError] = useState<Error>();
@@ -49,7 +36,6 @@ export function PaymentPage() {
   const onError = (error: Error) => {
     setError(error);
     onLoadEnd();
-    postToHost(CapsMessageType.ERROR, { code: 'FLOW_ERROR', message: error.message });
   };
 
   useEffect(() => {

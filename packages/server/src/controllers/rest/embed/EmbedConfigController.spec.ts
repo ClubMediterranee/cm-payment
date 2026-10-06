@@ -22,10 +22,7 @@ describe('EmbedConfigController', () => {
       {
         token: AllowedOriginsService,
         use: {
-          getAllowedOrigins: vi.fn().mockResolvedValue({
-            webcomponent: ['https://host.example'],
-            iframe: [],
-          }),
+          getAllowedOrigins: vi.fn().mockResolvedValue(['https://host.example']),
         },
       },
     ]);
@@ -44,7 +41,7 @@ describe('EmbedConfigController', () => {
     expect(await controller.getConfig(issuerType, type)).toEqual({
       apiUrl: 'https://staging.caps.api.clubmed',
       apiKey,
-      allowedOrigins: { webcomponent: ['https://host.example'], iframe: [] },
+      allowedOrigins: ['https://host.example'],
       protocolVersion: 1,
     });
   });

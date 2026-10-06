@@ -1,15 +1,12 @@
 # Embed the CAPS payment flow
 
-Two portable React wrappers embed the whole CAPS payment flow without installing the SDK dependencies (trident-ui, Tailwind, react-query…) in the host application:
+`CapsFormWebComponent` (`@clubmed/caps/webcomponent`) embeds the whole CAPS payment flow in a React host (React `>=18`) without installing the SDK dependencies (trident-ui, Tailwind, react-query…) in the host application. The form renders in the page, inside a `<caps-form>` shadow root.
 
-| Import                       | Component              | Host requirements                             | Rendering                                       |
-| ---------------------------- | ---------------------- | --------------------------------------------- | ----------------------------------------------- |
-| `@clubmed/caps/webcomponent` | `CapsFormWebComponent` | React `>=18` (nothing shared)                 | In the page, inside a `<caps-form>` shadow root |
-| `@clubmed/caps/iframe`       | `CapsFormIFrame`       | Any React version supported by the peer range | In an `<iframe>` served by CAPS                 |
+The entry imports nothing from the SDK: it only depends on `react`, `@module-federation/runtime` and `@module-federation/bridge-react`. The CAPS form itself is served at runtime by the CAPS server of the selected environment, so CAPS updates reach hosts without a republish.
 
-Neither entry imports anything from the SDK: they only depend on `react` (and `@module-federation/runtime` + `@module-federation/bridge-react` for the webcomponent entry). The CAPS form itself is served at runtime by the CAPS server of the selected environment, so CAPS updates reach hosts without a republish.
+Hosts that cannot load the remote can redirect the user to the CAPS payment page instead, see [Payment URL](#payment-url-redirect-mode).
 
-## Common props
+## Props
 
 ```tsx
 <CapsFormWebComponent
@@ -69,23 +66,9 @@ import { CapsFormWebComponent } from '@clubmed/caps/webcomponent';
 
 - webpack 5, Vite and Next.js are supported. With Next.js the server renders `fallback` only; the form is loaded after hydration.
 
-## Iframe mode
-
-```tsx
-'use client';
-import { CapsFormIFrame } from '@clubmed/caps/iframe';
-
-<CapsFormIFrame {...flowProps} env="production" />;
-```
-
-- The iframe height follows the content (`height` disables the auto-resize).
-- Club Med SSO works inside the frame. When `accessToken` is provided, it is sent to the frame through a `postMessage` handshake and no sign-in happens; without it the frame signs in (popup fallback when third-party cookies block the in-frame sign-in, then `AUTH_REQUIRED`).
-- PSP and confirmation redirects navigate the host window (`onRedirect` can take over).
-- Use it when the host cannot load a remote at runtime (strict CSP without the CAPS origin in `script-src`), or for non-React hosts later.
-
 ## Payment URL (redirect mode)
 
-`getPaymentUrl` (exported by `@clubmed/caps`) builds the URL of the CAPS payment page, to redirect the user to the full-page flow. `CapsFormIFrame` uses it to build its `src`.
+`getPaymentUrl` (exported by `@clubmed/caps`) builds the URL of the CAPS payment page, to redirect the user to the full-page flow.
 
 ```ts
 import { getPaymentUrl } from '@clubmed/caps';
@@ -105,9 +88,7 @@ window.location.assign(
 
 ## Host checklist
 
-1. Ask the CAPS team to allow your origin (per environment). Origins are administered in the CMS API (`caps_allowed_origins`, modes `webcomponent` and/or `iframe`).
-2. Content Security Policy of the host:
-   - webcomponent: `script-src` and `connect-src` the CAPS server, `style-src`/`font-src` `https://fonts.googleapis.com https://fonts.gstatic.com`, and the PSP domains (Cybersource, HiPay, PayPal…);
-   - iframe: `frame-src` the CAPS server.
+1. Ask the CAPS team to allow your origin (per environment). Origins are administered in the CMS API (`caps_allowed_origins`).
+2. Content Security Policy of the host: `script-src` and `connect-src` the CAPS server, `style-src`/`font-src` `https://fonts.googleapis.com https://fonts.gstatic.com`, and the PSP domains (Cybersource, HiPay, PayPal…).
 3. Provide an OIDC access token for seller flows (GO, PARTNERS) and for GM bookings.
 4. Handle the `callbackUrl` (and `callbackUrlSeller`) routes: the user lands there after the payment.

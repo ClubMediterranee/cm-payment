@@ -64,14 +64,3 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
-
-/* Embedded (iframe) mode: the host page owns the background and the layout. */
-html.caps-embedded,
-html.caps-embedded body {
-  background: transparent;
-}
-
-html.caps-embedded body {
-  display: block;
-  min-width: 0;
-}

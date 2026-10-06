@@ -12,7 +12,7 @@ export class EmbedConfigController {
   protected embedConfigService!: EmbedConfigService;
 
   @Get('/config')
-  @Summary('Runtime configuration of the embedded CAPS flow (webcomponent and iframe modes)')
+  @Summary('Runtime configuration of the embedded CAPS flow (webcomponent)')
   @Returns(200, EmbedConfig)
   @Header('Cache-Control', 'no-cache')
   @Returns(400)
