@@ -1,20 +1,12 @@
-import { useWatch } from '../../hooks/utils/useForm';
-import { PspProviders } from '../../types/PspProviders';
-import { CybersourceForm } from './integrations/CybersourceForm';
-import { HipayForm } from './integrations/HipayForm';
-import { IxopayForm } from './integrations/IxopayForm';
-import { WeChatQRView } from './WeChatQRView';
+// Registers the payment provider forms.
+import '../../integrations/ui.js';
 
-const paymentProvidersRegistry = {
-  [PspProviders.HIPAY]: HipayForm,
-  [PspProviders.MCYBERSOURCE]: CybersourceForm,
-  [PspProviders.M99BILLW]: WeChatQRView,
-  [PspProviders.EIXOPAY]: IxopayForm,
-};
+import { useWatch } from '../../hooks/utils/useForm';
+import { getPspComponent } from '../../utils/integrations/definePspProvider.js';
 
 export const IntegratedView = () => {
   const providerId = useWatch('provider_id');
-  const Component = paymentProvidersRegistry[providerId as keyof typeof paymentProvidersRegistry];
+  const Component = getPspComponent(providerId);
 
   if (!Component) {
     return null;

@@ -11,7 +11,7 @@ import { IframeMessageType } from '../../utils/iframe/constants';
 import { getIframeHeight } from '../../utils/iframe/getIframeHeight';
 import { useIframeMessageBridge } from '../../utils/iframe/useIframeMessageBridge';
 import { navigate } from '../../utils/navigate';
-import { UpliftForm } from './integrations/UpliftForm';
+import { UpliftForm } from '../../integrations/uplift/ui/UpliftForm.js';
 
 const thirdPartyIframeRegistry = {
   [PspProviders.MUPLIFT]: UpliftForm,

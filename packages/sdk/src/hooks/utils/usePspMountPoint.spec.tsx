@@ -3,11 +3,13 @@ import { createPortal } from 'react-dom';
 
 import { HostedField } from '../../components/ui/HostedField';
 import { PspMountPoint } from '../../components/ui/PspMountPoint';
-import { PSP_MOUNT_POINT_IDS, PSP_MOUNT_POINTS } from '../../utils/integrations/pspMountPoints';
+import hipayPaypal from '../../integrations/hipay-paypal/integration.config.js';
+import hipay from '../../integrations/hipay/integration.config.js';
+import type { ReactNode } from 'react';
 
-const ID = PSP_MOUNT_POINTS.hipay.cardNumber;
+const ID = hipay.mountPoints.cardNumber;
 
-function renderInShadowRoot(children: React.ReactNode) {
+function renderInShadowRoot(children: ReactNode) {
   const host = document.body.appendChild(document.createElement('caps-form'));
   const shadowRoot = host.attachShadow({ mode: 'open' });
   const view = render(createPortal(children, shadowRoot as unknown as Element));
@@ -18,12 +20,6 @@ function renderInShadowRoot(children: React.ReactNode) {
 describe('PSP mount points', () => {
   afterEach(() => {
     document.body.innerHTML = '';
-  });
-
-  it('lists every mount point id once', () => {
-    expect(PSP_MOUNT_POINT_IDS).toContain('hipay-card-number');
-    expect(PSP_MOUNT_POINT_IDS).toContain('cybersource-card-cvc');
-    expect(new Set(PSP_MOUNT_POINT_IDS).size).toBe(PSP_MOUNT_POINT_IDS.length);
   });
 
   it('renders the mount point in place outside a shadow root', () => {
@@ -52,7 +48,7 @@ describe('PSP mount points', () => {
 
   it('supports plain mount points (PayPal button, Uplift)', () => {
     const { host, shadowRoot } = renderInShadowRoot(
-      <PspMountPoint id={PSP_MOUNT_POINTS.hipayPaypal.button} className="h-45" />,
+      <PspMountPoint id={hipayPaypal.mountPoints.button} className="h-45" />,
     );
 
     expect(document.getElementById('paypal-button')?.parentElement).toBe(host);

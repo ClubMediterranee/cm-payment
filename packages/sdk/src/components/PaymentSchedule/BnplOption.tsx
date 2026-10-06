@@ -1,7 +1,7 @@
 import type { PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem } from '../../__generated__/bff/index.schemas';
 import { PspProviders } from '../../types/PspProviders';
-import { OneyOption } from './integrations/OneyOption';
-import { UpliftOption } from './integrations/UpliftOption';
+import { OneyOption } from '../../integrations/oney/ui/OneyOption.js';
+import { UpliftOption } from '../../integrations/uplift/ui/UpliftOption.js';
 
 const BNPL_OPTION_COMPONENTS = {
   [PspProviders.EHIPAYBNPL]: OneyOption,
