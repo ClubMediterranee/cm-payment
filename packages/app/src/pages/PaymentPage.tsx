@@ -29,6 +29,7 @@ export function PaymentPage() {
     uuid?: string;
   }>();
   const { isOpen: isPaymentLoading, onOpen: onLoad, onClose: onLoadEnd } = useDisclosure();
+  console.log('isPaymentLoading', isPaymentLoading);
 
   const ref = useRef<HTMLParagraphElement | null>(null);
   const [error, setError] = useState<Error>();
@@ -43,6 +44,17 @@ export function PaymentPage() {
       ref.current?.scrollIntoView();
     }
   }, [error]);
+
+  useEffect(() => {
+    const handlePageShow = () => {
+      onLoadEnd();
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, [onLoadEnd]);
 
   if (status === 'error') {
     return (
