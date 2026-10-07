@@ -5,7 +5,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import CapsForm, { type CapsRemoteFormProps } from './CapsForm';
+import RemoteCapsForm, { type CapsRemoteFormProps } from './RemoteCapsForm';
 
 const params = new URLSearchParams(window.location.search);
 
@@ -24,6 +24,6 @@ const props = {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CapsForm {...props} />
+    <RemoteCapsForm {...props} />
   </StrictMode>,
 );

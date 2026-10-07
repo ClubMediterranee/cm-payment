@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { FormSubmitContext } from '@clubmed/caps';
 import { createContext, useContext } from 'react';
 
-import { SubmitSlot } from '../flow/CapsFlow';
+import { SubmitSlot } from '../RemoteCapsForm';
 import { ShadowSlot } from './ShadowHost';
 
 const FormContext = createContext('none');

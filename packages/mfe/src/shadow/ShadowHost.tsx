@@ -13,9 +13,6 @@ import { applyShadowStyles, getCapsStyles, injectDocumentStyles } from './styles
 
 export const CAPS_HOST_TAG = 'caps-form';
 
-/**
- * Open (or reuse) the shadow root of `host`, apply the CAPS styles and return its mount point.
- */
 export function mountShadowRoot(host: HTMLElement): HTMLElement {
   const root = host.shadowRoot ?? host.attachShadow({ mode: 'open' });
   const styles = getCapsStyles();
@@ -37,22 +34,14 @@ export function mountShadowRoot(host: HTMLElement): HTMLElement {
 type ShadowHostProps = PropsWithChildren<{
   className?: string;
   style?: CSSProperties;
-  onMount?: (container: HTMLElement) => void;
 }>;
 
-/**
- * Render children inside the open shadow root of a `<caps-form>` element.
- * The portal keeps the host React tree (context, props updates) while isolating the styles in both directions.
- */
-export function ShadowHost({ className, style, onMount, children }: ShadowHostProps) {
+export function ShadowHost({ className, style, children }: ShadowHostProps) {
   const hostRef = useRef<HTMLElement>(null);
   const [container, setContainer] = useState<HTMLElement | null>(null);
 
   useLayoutEffect(() => {
-    const mountPoint = mountShadowRoot(hostRef.current!);
-
-    setContainer(mountPoint);
-    onMount?.(mountPoint);
+    setContainer(mountShadowRoot(hostRef.current!));
   }, []);
 
   return createElement(
@@ -62,10 +51,6 @@ export function ShadowHost({ className, style, onMount, children }: ShadowHostPr
   );
 }
 
-/**
- * Render children in the shadow root of a host element (`CapsFormSlot`), or in place without target.
- * The children stay in the CAPS React tree: form state and contexts are shared with the form.
- */
 export function ShadowSlot({ target, children }: { target?: HTMLElement; children: ReactNode }) {
   const [container, setContainer] = useState<HTMLElement | null>(null);
 

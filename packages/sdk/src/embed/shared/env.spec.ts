@@ -1,4 +1,4 @@
-import { CAPS_ENV_URLS, resolveCapsUrl } from './env';
+import { CAPS_ENV_URLS, getDefaultLocale, resolveCapsUrl } from './env';
 import type { CapsEnv } from './types';
 
 describe('resolveCapsUrl', () => {
@@ -29,5 +29,23 @@ describe('resolveCapsUrl', () => {
 
   it('should expose a frozen map', () => {
     expect(Object.isFrozen(CAPS_ENV_URLS)).toBe(true);
+  });
+});
+
+describe('getDefaultLocale', () => {
+  const language = navigator.language;
+
+  afterEach(() => {
+    Object.defineProperty(navigator, 'language', { value: language, configurable: true });
+  });
+
+  it('should use the browser language when it has the xx-XX format', () => {
+    Object.defineProperty(navigator, 'language', { value: 'en-US', configurable: true });
+    expect(getDefaultLocale()).toBe('en-US');
+  });
+
+  it('should fall back to fr-FR when the browser language is not xx-XX', () => {
+    Object.defineProperty(navigator, 'language', { value: 'fr', configurable: true });
+    expect(getDefaultLocale()).toBe('fr-FR');
   });
 });

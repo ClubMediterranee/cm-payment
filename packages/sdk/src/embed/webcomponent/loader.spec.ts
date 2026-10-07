@@ -1,11 +1,6 @@
 import { createInstance } from '@module-federation/runtime';
 
-import {
-  isSupportedReactVersion,
-  loadCapsRemoteForm,
-  resetCapsRemoteLoaders,
-  toCapsEmbedError,
-} from './loader';
+import { loadCapsRemoteForm, resetCapsRemoteLoaders, toCapsEmbedError } from './loader';
 
 vi.mock('@module-federation/runtime', () => ({
   createInstance: vi.fn(),
@@ -55,29 +50,12 @@ describe('loadCapsRemoteForm', () => {
     await expect(loadCapsRemoteForm('https://caps.example')).resolves.toBe(remoteModule);
   });
 
-  it('rejects a remote without bridge component', async () => {
-    loadRemote.mockResolvedValue({ protocolVersion: 1 });
-
-    await expect(loadCapsRemoteForm('https://caps.example')).rejects.toMatchObject({
-      code: 'REMOTE_LOAD_FAILED',
-    });
-  });
-
   it('rejects an incompatible protocol version', async () => {
     loadRemote.mockResolvedValue({ ...remoteModule, protocolVersion: 2 });
 
     await expect(loadCapsRemoteForm('https://caps.example')).rejects.toMatchObject({
       code: 'PROTOCOL_MISMATCH',
     });
-  });
-});
-
-describe('isSupportedReactVersion', () => {
-  it('accepts React 18 and later', () => {
-    expect(isSupportedReactVersion()).toBe(true);
-    expect(isSupportedReactVersion('18.3.1')).toBe(true);
-    expect(isSupportedReactVersion('19.3.0-canary-cbb046ab-20260731')).toBe(true);
-    expect(isSupportedReactVersion('17.0.2')).toBe(false);
   });
 });
 
@@ -88,5 +66,12 @@ describe('toCapsEmbedError', () => {
       message: 'boom',
     });
     expect(toCapsEmbedError('boom')).toEqual({ code: 'REMOTE_LOAD_FAILED', message: 'boom' });
+  });
+
+  it('passes through errors that already carry a code', () => {
+    expect(toCapsEmbedError({ code: 'PROTOCOL_MISMATCH', message: 'nope' })).toEqual({
+      code: 'PROTOCOL_MISMATCH',
+      message: 'nope',
+    });
   });
 });

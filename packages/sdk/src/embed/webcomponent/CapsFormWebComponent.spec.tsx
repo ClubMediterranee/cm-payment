@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import type { CapsEnv } from '../shared/types';
 import { CapsFormSlot } from './CapsFormSlot';
 import { CapsFormWebComponent } from './CapsFormWebComponent';
-import { CapsEmbedLoadError, loadCapsRemoteForm } from './loader';
+import { loadCapsRemoteForm } from './loader';
 
 vi.mock('./loader', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./loader')>()),
@@ -127,9 +127,10 @@ describe('CapsFormWebComponent', () => {
 
   it('reports a load failure through onError and renders nothing', async () => {
     const onError = vi.fn();
-    vi.mocked(loadCapsRemoteForm).mockRejectedValue(
-      new CapsEmbedLoadError('REACT_VERSION_UNSUPPORTED', 'React 18 is not supported'),
-    );
+    vi.mocked(loadCapsRemoteForm).mockRejectedValue({
+      code: 'REACT_VERSION_UNSUPPORTED',
+      message: 'React 18 is not supported',
+    });
 
     const { container } = render(
       <CapsFormWebComponent {...flowProps} onError={onError} fallback={<span>loading…</span>} />,

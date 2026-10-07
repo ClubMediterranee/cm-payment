@@ -8,6 +8,16 @@ export const CAPS_ENV_URLS: Readonly<Record<CapsEnv, string>> = Object.freeze({
 
 export const DEFAULT_CAPS_ENV: CapsEnv = 'production';
 
+const DEFAULT_LOCALE = 'fr-FR';
+
+const LOCALE_FORMAT = /^[a-z]{2}-[A-Z]{2}$/;
+
+export const getDefaultLocale = (): string => {
+  const language = typeof navigator !== 'undefined' ? navigator.language : undefined;
+
+  return language && LOCALE_FORMAT.test(language) ? language : DEFAULT_LOCALE;
+};
+
 const stripTrailingSlashes = (url: string) => url.replace(/\/+$/, '');
 
 /**

@@ -11,13 +11,8 @@ import {
 } from 'react';
 
 import { resolveCapsUrl } from '../shared/env';
-import type { CapsEmbedError, CapsFormProps } from '../shared/types';
-import {
-  type CapsRemoteFormProps,
-  type CapsRemoteModule,
-  loadCapsRemoteForm,
-  toCapsEmbedError,
-} from './loader';
+import type { CapsEmbedError, CapsFormProps, CapsRemoteFormProps } from '../shared/types';
+import { type CapsRemoteModule, loadCapsRemoteForm, toCapsEmbedError } from './loader';
 import { getCapsFormSlots, getServerCapsFormSlots, subscribeCapsFormSlots } from './slots';
 
 type LoadState = { module?: CapsRemoteModule; error?: CapsEmbedError };

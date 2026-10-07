@@ -101,3 +101,8 @@ export type CapsFormProps = CapsFlowParams &
      */
     fallback?: ReactNode;
   };
+
+export type CapsRemoteFormProps = Omit<CapsFormProps, 'env' | 'url' | 'fallback'> & {
+  capsUrl: string;
+  slots?: CapsFormSlots;
+};
