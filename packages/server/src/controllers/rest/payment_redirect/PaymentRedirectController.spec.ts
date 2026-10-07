@@ -6,8 +6,13 @@ describe('PaymentRedirectController', () => {
   let controller: PaymentRedirectController;
   let mockPaymentService: any;
   let mockViews: any;
+  let mockAllowedOriginsService: any;
 
   beforeEach(() => {
+    mockAllowedOriginsService = {
+      getAllowedOrigins: vi.fn().mockResolvedValue([]),
+    };
+
     mockPaymentService = {
       handlePaymentRedirect: vi.fn(),
       createPaymentRedirect: vi.fn(),
@@ -26,6 +31,11 @@ describe('PaymentRedirectController', () => {
 
     Object.defineProperty(controller, 'views', {
       get: () => mockViews,
+      configurable: true,
+    });
+
+    Object.defineProperty(controller, 'allowedOriginsService', {
+      get: () => mockAllowedOriginsService,
       configurable: true,
     });
   });
@@ -138,6 +148,7 @@ describe('PaymentRedirectController', () => {
 
       expect(mockViews.render).toHaveBeenCalledWith('iframe-redirect.ejs', {
         redirectUrl: 'https://example.com/success?status=ok',
+        targetOrigins: [],
       });
       expect(mockContext.response.contentType).toHaveBeenCalledWith('text/html; charset=utf-8');
       expect(mockContext.response.setHeader).toHaveBeenCalledWith(
@@ -193,6 +204,35 @@ describe('PaymentRedirectController', () => {
       expect(mockContext.response.setHeader).toHaveBeenCalledWith(
         'Content-Security-Policy',
         "default-src 'none'; script-src 'unsafe-inline'; frame-ancestors 'self' https://*.clubmed.com",
+      );
+    });
+
+    it('should allow the webcomponent hosts to receive the redirect message', async () => {
+      mockAllowedOriginsService.getAllowedOrigins.mockResolvedValue(['https://host.example']);
+      mockPaymentService.handlePaymentRedirect.mockResolvedValue('https://example.com/success');
+      mockViews.render.mockResolvedValue('<html></html>');
+
+      const mockContext = {
+        response: {
+          contentType: vi.fn().mockReturnThis(),
+          setHeader: vi.fn().mockReturnThis(),
+        },
+      };
+
+      await controller.redirect(
+        'payment222',
+        { callback_url: 'https://example.com/callback', mode: 'iframe' },
+        {},
+        mockContext as any,
+      );
+
+      expect(mockViews.render).toHaveBeenCalledWith('iframe-redirect.ejs', {
+        redirectUrl: 'https://example.com/success',
+        targetOrigins: ['https://host.example'],
+      });
+      expect(mockContext.response.setHeader).toHaveBeenCalledWith(
+        'Content-Security-Policy',
+        "default-src 'none'; script-src 'unsafe-inline'; frame-ancestors 'self' https://*.clubmed.com https://host.example",
       );
     });
   });

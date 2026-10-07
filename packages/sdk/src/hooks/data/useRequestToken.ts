@@ -2,7 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { postV0PaymentProvidersProviderIdRequestToken } from '../../__generated__';
 import type { CybersourceTokenRequestParams } from '../../__generated__/index.schemas';
-import type { CybersourceConfig, CybersourceTokenResponse } from '../../types/Cybersource';
+import type {
+  CybersourceConfig,
+  CybersourceTokenResponse,
+} from '../../integrations/cybersource/types/Cybersource.js';
 import { PspProviders } from '../../types/PspProviders';
 import { decodeJwt } from '../../utils/decodeJwt';
 

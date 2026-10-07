@@ -1,3 +1,6 @@
+import './integrations/index.js';
+import './integrations/ui.js';
+
 export * from './components/BillingAddress';
 export * from './components/CardInstallments';
 export * from './components/Cgv';
@@ -8,7 +11,9 @@ export * from './components/PaymentProviders';
 export * from './components/PaymentSchedule';
 export * from './components/PaymentWidget';
 export * from './components/SubmitButton';
+export { FormSubmitContext, useFormSubmit } from './contexts/FormSubmitContext';
 export * from './components/ui/FormPanel';
+export * from './embed/shared';
 export * from './hooks/utils/useCapsConfigContext';
 export * from './hooks/utils/useDisclosure';
 export * from './providers/CapsForm';
@@ -21,3 +26,5 @@ export * from './types/PspProviders';
 export * from './utils/fetcher';
 export * from './utils/formatCurrency';
 export * from './utils/formatDate';
+export { defaultNavigate } from './utils/navigate';
+export type { NavigationHandler, NavigationRequest } from './utils/navigate';

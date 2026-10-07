@@ -11,11 +11,16 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./webcomponent": {
+      "types": "./dist/embed/webcomponent/index.d.ts",
+      "import": "./dist/embed/webcomponent/index.js",
+      "default": "./dist/embed/webcomponent/index.js"
     }
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsx scripts/check-embed-deps.ts",
     "lint": "eslint .",
     "generate:types": "orval",
     "docs:content": "tsx scripts/generate-content-docs.ts",
@@ -23,6 +28,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@module-federation/bridge-react": "^2.9.2",
+    "@module-federation/runtime": "^2.9.1",
     "@tanstack/react-query": "^5.59.13",
     "@types/js-cookie": "^3.0.6",
     "classnames": "^2.5.1",
@@ -41,8 +48,8 @@
   "peerDependencies": {
     "@clubmed/trident-icons": ">=1.3.3",
     "@clubmed/trident-ui": "1.5.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "msw": {
     "workerDirectory": [

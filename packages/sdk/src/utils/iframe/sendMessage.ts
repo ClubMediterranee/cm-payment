@@ -1,5 +1,8 @@
 import { IframeMessage } from './constants';
 
-export const sendIframeMessage = (message: IframeMessage) => {
-  window.parent.postMessage(message, '*');
+/**
+ * Post a message to the parent window. The target origin is mandatory: messages are never broadcast to `'*'`.
+ */
+export const sendIframeMessage = (message: IframeMessage, targetOrigin: string) => {
+  window.parent.postMessage(message, targetOrigin);
 };

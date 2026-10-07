@@ -7,7 +7,8 @@ import { useFormContext } from '../hooks/utils/useForm';
 import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegrationMode';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { TOKENS } from '../types/Tokens';
-import { HipayPaypalButton } from './PaymentWidget/integrations/HipayPaypalButton';
+// TODO voir pour utiliser la registry plutot qu'un import direct
+import { HipayPaypalButton } from '../integrations/hipay-paypal/ui/HipayPaypalButton.js';
 
 export const SubmitButton = ({ children, ...props }: ComponentProps<typeof Button>) => {
   const watchedProvider = useWatchedPaymentProvider();

@@ -19,7 +19,7 @@ CAPS also offers a hosted Redirect Mode for non-React or lower-effort integratio
 
 ## Prerequisites
 
-- React and React DOM `^19.2.0`
+- React and React DOM `^18` or `^19`
 - `@clubmed/trident-ui` `1.5.0` (migration to v2 is planed).
 - `@clubmed/trident-icons` `>=1.3.3`
 - CAPS API URL, API key, and OIDC access token supplied by Club Med
@@ -101,6 +101,25 @@ For `GO` and `PARTNERS` issuers, `ContactChoice` is required instead of `Payment
 ## Handle the return route
 
 Create the route referenced by `callbackUrl` in your application router. CAPS completes payment validation before redirecting the user to this URL. Read the payment-result query parameters there and render the appropriate success, pending, cancellation, or failure state for your journey.
+
+## Embed the whole flow (webcomponent)
+
+Hosts that do not use trident-ui v1 (legacy journeys, trident-ui v2 / shadcn) can embed the complete CAPS flow with a single component, without any SDK dependency or Tailwind configuration:
+
+```tsx
+import { CapsFormWebComponent } from '@clubmed/caps/webcomponent'; // React 18+ hosts, shadow DOM
+
+<CapsFormWebComponent
+  issuerType="GM"
+  type="booking"
+  id="123"
+  callbackUrl={url}
+  accessToken={token}
+  env="production"
+/>;
+```
+
+See [docs/embed.md](./docs/embed.md).
 
 ## Documentation
 

@@ -1,27 +1,7 @@
 import type { RefObject } from 'react';
 
 import type { ProviderParametersModel } from '../__generated__/index.schemas';
-
-const createHiddenInput = (name: string, value: string): HTMLInputElement => {
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = name;
-  input.value = value;
-  return input;
-};
-
-const createPostForm = (url: string, fields: Record<string, string>): HTMLFormElement => {
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = url;
-  form.style.display = 'none';
-
-  Object.entries(fields).forEach(([name, value]) => {
-    form.appendChild(createHiddenInput(name, value));
-  });
-
-  return form;
-};
+import { navigate, submitPostForm } from './navigate';
 
 const handleGetRedirect = (
   url: string,
@@ -39,7 +19,7 @@ const handleGetRedirect = (
     return;
   }
 
-  window.location.href = finalUrl;
+  navigate({ url: finalUrl });
 };
 
 const handlePostRedirect = (
@@ -52,11 +32,14 @@ const handlePostRedirect = (
   }
 
   const fields = Object.fromEntries(new URLSearchParams(body).entries());
-  const form = createPostForm(url, fields);
-  const targetDocument = iframe?.contentDocument ?? iframe?.contentWindow?.document ?? document;
+  const targetDocument = iframe?.contentDocument ?? iframe?.contentWindow?.document;
 
-  targetDocument.body.appendChild(form);
-  form.submit();
+  if (targetDocument) {
+    submitPostForm(url, fields, targetDocument);
+    return;
+  }
+
+  navigate({ url, method: 'POST', fields });
 };
 
 export const loadPaymentProviderUrl = (

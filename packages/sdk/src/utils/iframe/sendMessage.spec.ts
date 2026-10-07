@@ -14,9 +14,9 @@ describe('sendIframeMessage', () => {
       url: 'https://example.com/success',
     };
 
-    sendIframeMessage(message);
+    sendIframeMessage(message, 'https://caps.example');
 
-    expect(window.parent.postMessage).toHaveBeenCalledWith(message, '*');
+    expect(window.parent.postMessage).toHaveBeenCalledWith(message, 'https://caps.example');
   });
 
   it('envoie un message PAYMENT_REDIRECT_LOADING', () => {
@@ -24,9 +24,9 @@ describe('sendIframeMessage', () => {
       type: IframeMessageType.PAYMENT_REDIRECT_LOADING,
     };
 
-    sendIframeMessage(message);
+    sendIframeMessage(message, 'https://caps.example');
 
-    expect(window.parent.postMessage).toHaveBeenCalledWith(message, '*');
+    expect(window.parent.postMessage).toHaveBeenCalledWith(message, 'https://caps.example');
   });
 
   it('envoie un message PAYMENT_REDIRECT_CANCEL', () => {
@@ -34,18 +34,18 @@ describe('sendIframeMessage', () => {
       type: IframeMessageType.PAYMENT_REDIRECT_CANCEL,
     };
 
-    sendIframeMessage(message);
+    sendIframeMessage(message, 'https://caps.example');
 
-    expect(window.parent.postMessage).toHaveBeenCalledWith(message, '*');
+    expect(window.parent.postMessage).toHaveBeenCalledWith(message, 'https://caps.example');
   });
 
-  it('utilise targetOrigin wildcard pour tous les messages', () => {
+  it("n'utilise jamais le targetOrigin wildcard", () => {
     const message = {
       type: IframeMessageType.PAYMENT_REDIRECT_LOADING,
     };
 
-    sendIframeMessage(message);
+    sendIframeMessage(message, 'https://caps.example');
 
-    expect(window.parent.postMessage).toHaveBeenCalledWith(expect.anything(), '*');
+    expect(window.parent.postMessage).not.toHaveBeenCalledWith(expect.anything(), '*');
   });
 });
