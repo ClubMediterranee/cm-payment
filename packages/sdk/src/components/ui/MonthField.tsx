@@ -1,9 +1,9 @@
-import clsx from "clsx";
-import { useState } from "react";
-import { useFormContext } from "react-hook-form";
+import clsx from 'clsx';
+import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
-import { ErrorMessage } from "./ErrorMessage";
-import { FormPanel } from "./FormPanel";
+import { ErrorMessage } from './ErrorMessage';
+import { FormPanel } from './FormPanel';
 
 type Props = {
   label: string;
@@ -14,29 +14,23 @@ type Props = {
 };
 
 const formatMonthDisplay = (input: string) => {
-  const digits = input.replace(/\D/g, "").slice(0, 6);
-  if (digits.length === 0) return "";
+  const digits = input.replace(/\D/g, '').slice(0, 6);
+  if (digits.length === 0) return '';
   if (digits.length <= 2) return digits;
   return `${digits.slice(0, 2)} / ${digits.slice(2)}`;
 };
 
 const formatMonthValue = (display: string) => {
-  const digits = display.replace(/\D/g, "");
-  if (digits.length < 6) return "";
+  const digits = display.replace(/\D/g, '');
+  if (digits.length < 6) return '';
   const month = digits.slice(0, 2);
   const year = digits.slice(2, 6);
   return `${year}-${month}`;
 };
 
-export const MonthField = ({
-  label,
-  name,
-  placeholder,
-  isLoading,
-  error,
-}: Props) => {
+export const MonthField = ({ label, name, placeholder, isLoading, error }: Props) => {
   const { setValue } = useFormContext();
-  const [displayValue, setDisplayValue] = useState("");
+  const [displayValue, setDisplayValue] = useState('');
 
   return (
     <div className="w-full flex flex-col gap-6">
@@ -44,16 +38,16 @@ export const MonthField = ({
 
       <FormPanel
         className={clsx(
-          "text-b3 rounded-pill w-full border overflow-hidden px-20 py-12 font-normal outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 h-48 border-middleGrey focus:border-black active:border-black bg-white text-black",
-          isLoading && "animate-pulsation bg-lightGrey pointer-events-none",
-          error && "border-red",
+          'text-b3 rounded-pill w-full border overflow-hidden px-20 py-12 font-normal outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 h-48 border-middleGrey focus:border-black active:border-black bg-white text-black',
+          isLoading && 'animate-pulsation bg-lightGrey pointer-events-none',
+          error && 'border-red',
         )}
       >
         <input
           name={name}
           type="text"
           disabled={!!isLoading}
-          placeholder={isLoading ? "" : placeholder || "MM / YYYY"}
+          placeholder={isLoading ? '' : placeholder || 'MM / YYYY'}
           inputMode="numeric"
           value={displayValue}
           onChange={(e) => {
@@ -61,13 +55,13 @@ export const MonthField = ({
             setDisplayValue(formatted);
 
             const formValue = formatMonthValue(formatted);
-            setValue(name, formValue || "", {
+            setValue(name, formValue || '', {
               shouldValidate: true,
               shouldTouch: true,
             });
           }}
           onBlur={() => {
-            setValue(name, formatMonthValue(displayValue) || "", {
+            setValue(name, formatMonthValue(displayValue) || '', {
               shouldValidate: true,
               shouldTouch: true,
             });
