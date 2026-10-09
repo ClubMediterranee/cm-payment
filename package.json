@@ -74,6 +74,7 @@
     "@vitest/browser": "4.1.9",
     "@vitest/browser-playwright": "4.1.9",
     "@vitest/coverage-v8": "4.1.9",
+    "autoprefixer": "^10.4.20",
     "chromatic": "^13.2.1",
     "globby": "^14.1.0",
     "husky": "^9.0.11",
