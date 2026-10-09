@@ -1,4 +1,4 @@
-import { Radio, RadioGroup } from '@clubmed/trident-ui/molecules/Forms/Radios';
+import { Radio, RadioGroup } from '@clubmed/trident-ui/ui/forms/radios/index';
 import type { ControllerRenderProps } from 'react-hook-form';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../../__generated__/index.schemas';
@@ -96,7 +96,8 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
           <BnplOption
             key={provider.id}
             provider={provider}
-            name={field.name}
+            name={`${field.name}-bnpl`}
+            checked={value === provider.id}
             onChange={handleScheduleChange}
           />
         ))}

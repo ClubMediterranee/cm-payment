@@ -1,7 +1,5 @@
-@import '@clubmed/trident-ui/style.css';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@source "../node_modules/@clubmed/trident-ui";
+@import '../node_modules/@clubmed/trident-ui/styles/index.css';
 
 /* The shadow host does not inherit anything from the host page but custom properties. */
 :host {

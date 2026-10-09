@@ -1,4 +1,4 @@
-import { FormControl } from '@clubmed/trident-ui/molecules/Forms/FormControl';
+import { FormControl } from '@clubmed/trident-ui/ui/forms/FormControl';
 import clsx from 'clsx';
 
 interface TextareaProps {

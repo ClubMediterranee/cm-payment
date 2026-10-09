@@ -1,5 +1,5 @@
 import { Icon } from '@clubmed/trident-icons';
-import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
+import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 
 import type { PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem } from '../../../__generated__/bff/index.schemas.js';
 import { useOneySimulationPopin } from '../hooks/useOneySimulationPopin.js';
@@ -16,16 +16,17 @@ const ONEY_ICON = {
 type OneyOptionProps = {
   provider: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem;
   name: string;
+  checked: boolean;
   onChange: (value: string) => void;
 };
 
-export const OneyOption = ({ provider, name, onChange }: OneyOptionProps) => {
+export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProps) => {
   const { content } = useCapsConfigContext();
   const payment_mode = provider.configuration?.settings?.payment_mode;
   const { handlePopinClick } = useOneySimulationPopin();
 
   return (
-    <Radio value={provider.id} name={name} onChange={() => onChange(provider.id)}>
+    <Radio value={provider.id} name={name} checked={checked} onChange={() => onChange(provider.id)}>
       <div className="flex items-center gap-4">
         {renderTemplate(content.paymentSchedule.buyNowPayLater.iconLabel, {
           icon: ONEY_ICON[payment_mode as keyof typeof ONEY_ICON],

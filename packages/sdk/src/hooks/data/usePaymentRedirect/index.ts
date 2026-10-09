@@ -72,12 +72,14 @@ type Props = {
   onError?: (error: Error) => void;
   onSuccess?: (params: PaymentRedirectResult) => void;
   onLoadEnd?: () => void;
+  skipLoadEndOnSuccess?: boolean;
 };
 
 export const usePaymentRedirect = ({
   onError = noop,
   onSuccess = noop,
   onLoadEnd = noop,
+  skipLoadEndOnSuccess = false,
 }: Props = {}) => {
   const settings = useCapsConfigContext();
   const watchedPaymentProvider = useWatchedPaymentProvider();
@@ -90,7 +92,11 @@ export const usePaymentRedirect = ({
       ),
     onSuccess,
     onError,
-    onSettled: onLoadEnd,
+    onSettled: (_data, error) => {
+      if (error || !skipLoadEndOnSuccess) {
+        onLoadEnd();
+      }
+    },
   });
 };
 

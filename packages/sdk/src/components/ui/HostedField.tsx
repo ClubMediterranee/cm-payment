@@ -23,7 +23,7 @@ export const HostedField = ({ error, label, id, isLoading, children }: Props) =>
       <FormPanel
         id={slotted ? undefined : id}
         className={clsx(
-          'w-full rounded-pill h-48 relative overflow-hidden m-0 min-h-48 py-10',
+          'text-b3 rounded-pill w-full border overflow-hidden px-20 py-12 font-normal outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 h-48 border-middleGrey focus:border-black active:border-black bg-white text-black',
           isLoading && 'animate-pulsation bg-lightGrey pointer-events-none',
           error && 'border-red',
         )}

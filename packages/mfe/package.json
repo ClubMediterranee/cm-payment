@@ -18,6 +18,9 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@module-federation/vite": "^1.23.0"
+    "@module-federation/vite": "^1.23.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^4.1.18"
   }
 }

@@ -26,6 +26,7 @@ export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) 
       loadPaymentProviderUrl(redirect, targetIframe);
     },
     onLoadEnd,
+    skipLoadEndOnSuccess: !custom,
   });
 
   const { isPending } = mutationProps;

@@ -1,6 +1,6 @@
 import { Icon } from '@clubmed/trident-icons';
-import { Radio } from '@clubmed/trident-ui/molecules/Forms/Radios';
-import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
+import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
+import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
 import { PropsWithChildren, useState } from 'react';
 
 import { GLOBAL_CAPS_SETTINGS } from '../config';
@@ -45,7 +45,7 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
     );
   };
 
-  const handleCustomAmountChange = (_: string, value: string) => {
+  const handleCustomAmountChange = (_event: Event, value: string) => {
     setValue('donation_amount', Number(value || 0));
   };
 
@@ -83,7 +83,11 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
 
                 <div className="flex flex-col md:flex-row justify-between gap-20">
                   {GLOBAL_CAPS_SETTINGS.donation.presetAmounts.map((amount) => {
-                    const formattedAmount = formatCurrency({ amount, currency, locale });
+                    const formattedAmount = formatCurrency({
+                      amount,
+                      currency,
+                      locale,
+                    });
                     return (
                       <Radio
                         key={amount}
@@ -117,7 +121,7 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
                     errorMessage={error}
                     placeholder="0"
                   />
-                  <span className="absolute right-20 top-1/2 -translate-y-1/2 text-b3 text-grey-dark pointer-events-none">
+                  <span className="absolute right-[20px] top-1/2 -translate-y-1/2 text-b3 text-grey-dark pointer-events-none">
                     {getCurrencySymbol({ currency, locale })}
                   </span>
                 </div>

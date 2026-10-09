@@ -29,7 +29,6 @@
     "noEmit": true
   },
   "include": [
-    "**/tailwind.config.ts",
     "**/vite.config.ts",
     "**/orval.config.ts",
     "**/vitest.config.ts",
