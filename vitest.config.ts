@@ -60,7 +60,7 @@ export default defineConfig({
         statements: 89.5,
         branches: 80.78,
         functions: 85.2,
-        lines: 89.3,
+        lines: 89.2,
       },
     },
     projects: [

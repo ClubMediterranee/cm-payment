@@ -1,2 +1,2 @@
-@source "../node_modules/@clubmed/trident-ui/**/*.tsx";
+@source "../node_modules/@clubmed/trident-ui/";
 @import '../node_modules/@clubmed/trident-ui/styles/index.css';
