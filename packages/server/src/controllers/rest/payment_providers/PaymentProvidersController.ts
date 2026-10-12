@@ -8,7 +8,7 @@ import { UserAgent } from '../../../decorators/UserAgent.js';
 import { Action } from '../../../infra/api/__generated__/index.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
 import {
-  BnplProviderId,
+  type BnplProviderId,
   BnplSimulationService,
 } from '../../../services/bnpl/BnplSimulationService.js';
 import { PaymentProvidersResponseSchema } from '../../../services/payment_providers/models.js';
