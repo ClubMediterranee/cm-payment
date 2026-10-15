@@ -1,7 +1,3 @@
-/**
- * Standalone preview of the remote (not part of the federated bundle).
- * Example: /?issuer=GM&type=booking&id=123&callback_url=https://localhost/cb&caps_url=https://localhost:8083
- */
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -11,6 +7,7 @@ const params = new URLSearchParams(window.location.search);
 
 const props = {
   capsUrl: params.get('caps_url') || window.location.origin,
+  apiKey: params.get('api_key') || '',
   issuerType: (params.get('issuer') || 'GM').toUpperCase(),
   type: params.get('type') || 'booking',
   id: params.get('id') || '',

@@ -40,6 +40,35 @@ describe('fetcher', () => {
     expect(result).toEqual(mockResponse);
   });
 
+  it('should use the given config instead of the provider one', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({}),
+    } as Response);
+
+    await fetcher({
+      url: '/test',
+      method: 'GET',
+      config: {
+        locale: 'en-GB',
+        oidc: { accessToken: 'other-token', issuerType: 'GO' },
+        api: { apiKey: 'other-key', url: 'https://other.test.com' },
+      } as any,
+    });
+
+    expect(fetch).toHaveBeenCalledWith(
+      'https://other.test.com/test?',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'Bearer other-token',
+          'x-api-key': 'other-key',
+          'accept-language': 'en-GB',
+          'x-issuer-type': 'GO',
+        }),
+      }),
+    );
+  });
+
   it('should include auth token when accessToken is present', async () => {
     const mockResponse = { data: 'test' };
 

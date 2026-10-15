@@ -25,6 +25,7 @@ type PlaygroundConfig = {
   id: string;
   customerId: string;
   locale: string;
+  apiKey: string;
   accessToken: string;
 };
 
@@ -37,11 +38,11 @@ const DEFAULT_CONFIG: PlaygroundConfig = {
   id: '',
   customerId: '',
   locale: 'fr-FR',
+  apiKey: '',
   accessToken: '',
 };
 
-// The token is never stored in the URL.
-const URL_KEYS: Record<Exclude<keyof PlaygroundConfig, 'accessToken'>, string> = {
+const URL_KEYS: Record<Exclude<keyof PlaygroundConfig, 'accessToken' | 'apiKey'>, string> = {
   layout: 'layout',
   env: 'env',
   capsUrl: 'caps_url',
@@ -91,8 +92,12 @@ function validate(config: PlaygroundConfig): string[] {
     errors.push(`${config.type === 'proposal' ? 'Proposal' : 'Booking'} id is required.`);
   }
 
-  if (config.issuerType !== 'GM' && !config.customerId.trim()) {
-    errors.push(`Customer id is required for ${config.issuerType} flows.`);
+  if ((config.issuerType !== 'GM' || config.type === 'booking') && !config.customerId.trim()) {
+    errors.push(`Customer id is required for ${config.issuerType} ${config.type} flows.`);
+  }
+
+  if (!config.apiKey.trim()) {
+    errors.push('An API key is required.');
   }
 
   if (!config.accessToken && (config.type === 'booking' || config.issuerType !== 'GM')) {
@@ -204,6 +209,15 @@ function ConfigForm({
         )}
       </div>
 
+      <Field label="API key * (never stored in the url)">
+        <input
+          className={`${inputClass} font-mono text-xs`}
+          name="api_key"
+          value={config.apiKey}
+          onChange={set('apiKey')}
+        />
+      </Field>
+
       <Field label="Access token (optional for a GM proposal, never stored in the url)">
         <textarea
           className={`${inputClass} font-mono text-xs`}
@@ -234,12 +248,14 @@ export function App() {
   const [{ config, submitted }, setState] = useState(readConfigFromUrl);
   const [loadKey, setLoadKey] = useState(0);
   const [events, setEvents] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const log = (event: string) =>
     setEvents((current) => [...current, `${new Date().toLocaleTimeString()} ${event}`]);
 
   const load = (next: PlaygroundConfig) => {
     writeConfigToUrl(next);
     setEvents([]);
+    setLoading(false);
     setLoadKey((key) => key + 1);
     setState({ config: next, submitted: true });
   };
@@ -251,11 +267,15 @@ export function App() {
     id: config.id,
     customerId: config.customerId || undefined,
     locale: config.locale || undefined,
+    apiKey: config.apiKey,
     accessToken: config.accessToken || undefined,
     callbackUrl: `${window.location.origin}/callback`,
     fallback: <p data-testid="caps-fallback">Loading CAPS…</p>,
     onReady: () => log('ready'),
-    onLoadingChange: (loading: boolean) => log(`loading: ${loading}`),
+    onLoadingChange: (isLoading: boolean) => {
+      setLoading(isLoading);
+      log(`loading: ${isLoading}`);
+    },
     onError: (error: CapsEmbedError) => log(`error: ${error.code} ${error.message}`),
     onRedirect: (url: string) => log(`redirect: ${url}`),
   } as Parameters<typeof CapsFormWebComponent>[0];
@@ -286,6 +306,11 @@ export function App() {
             >
               <div className="rounded-lg border p-4" style={{ transform: 'translateZ(0)' }}>
                 <CapsFormWebComponent key={loadKey} {...flowProps} />
+                {loading && (
+                  <p className="mt-4 text-sm font-semibold" data-testid="caps-loading">
+                    ...Loading
+                  </p>
+                )}
               </div>
               {sidebar && (
                 <aside

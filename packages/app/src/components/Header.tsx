@@ -1,10 +1,10 @@
-import { useCapsConfigContext } from '@clubmed/caps';
 import { Icon } from '@clubmed/trident-icons';
 
+import { useAppContext } from '../providers/AppProvider';
 import { ImmersiveBreadcrumb } from './ImmersiveBreadcrumb';
 
 export const Header = () => {
-  const { id } = useCapsConfigContext();
+  const { id } = useAppContext();
   return (
     <div className="w-full">
       <header

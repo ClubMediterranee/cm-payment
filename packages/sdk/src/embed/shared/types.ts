@@ -10,13 +10,14 @@ export type CapsEnv = 'integration' | 'staging' | 'production';
  */
 export type CapsIssuerType = 'GM' | 'GO' | 'PARTNERS';
 
+export type CapsTheme = 'legacy' | 'current';
+
 export type CapsFlowType = 'booking' | 'proposal';
 
 export type CapsEmbedErrorCode =
   | 'REMOTE_LOAD_FAILED'
   | 'PROTOCOL_MISMATCH'
   | 'REACT_VERSION_UNSUPPORTED'
-  | 'AUTH_REQUIRED'
   | 'ORIGIN_NOT_ALLOWED'
   | 'FLOW_ERROR';
 
@@ -30,7 +31,7 @@ export type CapsEmbedError = {
  */
 export type CapsFormSlotName = 'donation' | 'submit';
 
-export type CapsFormSlots = Partial<Record<CapsFormSlotName, HTMLElement>>;
+export type CapsFormSlots = Partial<Record<CapsFormSlotName, HTMLElement | null>>;
 
 export type CapsEnvSelector = {
   /**
@@ -61,7 +62,7 @@ type CapsFlowBase = {
 };
 
 /**
- * Parameters identifying a CAPS payment flow. `customerId` is required for sellers (GO, PARTNERS).
+ * Parameters identifying a CAPS payment flow. `customerId` is required for sellers (GO, PARTNERS) and to pay a GM booking.
  */
 export type CapsFlowParams =
   | (CapsFlowBase & { issuerType: 'GM'; customerId?: string })
@@ -86,6 +87,7 @@ export type CapsFormCallbacks = {
 export type CapsFormProps = CapsFlowParams &
   CapsEnvSelector &
   CapsFormCallbacks & {
+    apiKey: string;
     /**
      * Access token provided by the host. Never written to the DOM nor to a URL.
      */
@@ -94,6 +96,7 @@ export type CapsFormProps = CapsFlowParams &
      * Content (labels) overrides. Must be JSON serializable.
      */
     content?: Record<string, unknown>;
+    theme?: CapsTheme;
     className?: string;
     style?: CSSProperties;
     /**

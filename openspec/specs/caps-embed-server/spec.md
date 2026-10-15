@@ -58,27 +58,6 @@ The server SHALL enable CORS on `/api/*`, `/rest/*` and `/mfe/*` for the `webcom
 - **WHEN** `CAPS_ALLOWED_ORIGINS` is unset or empty and `caps_allowed_origins` has no published entry
 - **THEN** the server starts normally, no CORS header is sent for any origin, and the standalone app works as before
 
-### Requirement: Runtime embed configuration endpoint
-
-The server SHALL expose `GET /rest/embed/config?issuer=<GM|GO|PARTNERS>&type=<booking|proposal>`. It returns:
-
-- `apiUrl`, the public origin of the CAPS server;
-- `apiKey`, resolved with the same rules as the app: GM booking → CA key, GM proposal → BE key, GO → GO key, PARTNERS → PARTNERS key;
-- `allowedOrigins`;
-- `protocolVersion`.
-
-Keys SHALL come from server environment variables. Invalid parameters SHALL return 400.
-
-#### Scenario: GM booking key
-
-- **WHEN** `GET /rest/embed/config?issuer=GM&type=booking` is called
-- **THEN** the response contains the GM CA API key
-
-#### Scenario: Invalid issuer
-
-- **WHEN** `GET /rest/embed/config?issuer=FOO&type=booking` is called
-- **THEN** the server responds 400
-
 ### Requirement: Packaging
 
 The Docker image SHALL build `packages/mfe` and copy `packages/mfe/dist` next to `packages/app/dist`. The server SHALL fail fast at startup with an explicit log if the `/mfe` root directory is missing in production.

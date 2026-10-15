@@ -119,7 +119,7 @@ The wrapper SHALL render `fallback` while the remote loads. If loading fails (ne
 
 ### Requirement: Runtime configuration
 
-The remote SHALL call the CAPS API and REST endpoints on the CAPS server origin, not on the host origin. It SHALL obtain its API key and any environment settings from `GET <capsUrl>/rest/embed/config`, not from build-time `VITE_*` variables.
+The remote SHALL call the CAPS API and REST endpoints on the CAPS server origin, not on the host origin. It SHALL use the API key received in the `apiKey` prop, not a key fetched from the CAPS server nor a build-time `VITE_*` variable.
 
 #### Scenario: API calls target the CAPS origin
 

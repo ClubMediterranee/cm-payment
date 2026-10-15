@@ -1,4 +1,10 @@
-import { fetcher as fetchSdk } from '@clubmed/caps';
+import { fetcher as fetchSdk, type FetcherConfig } from '@clubmed/caps';
+
+let config: FetcherConfig;
+
+export const setFetcherConfig = (value: FetcherConfig) => {
+  config = value;
+};
 
 export const fetcher = async <T>(opts: {
   url: string;
@@ -7,5 +13,5 @@ export const fetcher = async <T>(opts: {
   params?: Record<string, unknown>;
   data?: unknown;
 }): Promise<T> => {
-  return fetchSdk({ baseUrl: '/api', ...opts });
+  return fetchSdk({ baseUrl: '/api', config, ...opts });
 };

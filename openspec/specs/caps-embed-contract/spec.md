@@ -25,7 +25,7 @@ The embed contract module (`packages/sdk/src/embed/shared`) and the wrapper entr
 
 The contract SHALL export a `CapsFormProps` type describing a CAPS flow. It contains:
 
-- `issuerType` (`'GM' | 'GO' | 'PARTNERS'`), `type` (`'booking' | 'proposal'`), `id`, `callbackUrl` (required);
+- `issuerType` (`'GM' | 'GO' | 'PARTNERS'`), `type` (`'booking' | 'proposal'`), `id`, `callbackUrl` and `apiKey` (required);
 - `customerId` (required when `issuerType` is `'GO'` or `'PARTNERS'`);
 - optional `locale`, `accessToken`, `callbackUrlSeller`, `action`, `reference`, `uuid` and `content`;
 - the environment selectors `env` and `url`;

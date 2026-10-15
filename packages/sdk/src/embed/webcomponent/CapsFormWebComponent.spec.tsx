@@ -54,6 +54,7 @@ const flowProps = {
   issuerType: 'GM' as const,
   type: 'booking' as const,
   id: '123',
+  apiKey: 'api-key',
   callbackUrl: 'https://host.example/cb',
 };
 

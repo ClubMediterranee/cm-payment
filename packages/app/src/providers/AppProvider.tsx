@@ -1,8 +1,12 @@
-import { PaymentConfigProvider } from '@clubmed/caps';
-import { PropsWithChildren } from 'react';
+import { createContext, PropsWithChildren, useContext } from 'react';
 
 import { useAppParams } from '../hooks/useAppParams.js';
 import { LoadingPage } from '../pages/LoadingPage.js';
+import { setFetcherConfig } from '../utils/fetcher.js';
+
+type AppParams = NonNullable<ReturnType<typeof useAppParams>>;
+
+const AppContext = createContext<AppParams | null>(null);
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
   const params = useAppParams();
@@ -11,20 +15,23 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
     return <LoadingPage />;
   }
 
-  const { values, api, oidc } = params;
+  setFetcherConfig({ locale: params.values.locale, oidc: params.oidc, api: params.api });
 
-  return (
-    <PaymentConfigProvider
-      locale={values.locale}
-      proposalId={values.proposalId}
-      bookingId={values.bookingId}
-      customerId={values.customerId}
-      api={api}
-      oidc={oidc}
-      callbackUrl={values.callbackUrl}
-      callbackUrlSeller={values.callbackUrlSeller}
-    >
-      {children}
-    </PaymentConfigProvider>
-  );
+  return <AppContext.Provider value={params}>{children}</AppContext.Provider>;
+};
+
+export const useAppContext = () => {
+  const params = useContext(AppContext);
+
+  if (!params) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+
+  const { bookingId, proposalId } = params.values;
+
+  return {
+    ...params,
+    id: (bookingId ?? proposalId) as string | undefined,
+    type: bookingId ? ('booking' as const) : ('proposal' as const),
+  };
 };
