@@ -5,7 +5,9 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { Action } from '../__generated__/index.schemas';
+import { Cgv } from './Cgv';
 import { PaymentProviders } from './PaymentProviders';
+import { SubmitButton } from './SubmitButton';
 
 const commonHandlers = [
   http.get('*/rest/payment_schedules/booking/*', () => {
@@ -75,6 +77,7 @@ const handlers = {
             configuration: {
               display_type: 'redirect',
               settings: {},
+              logos: ['Visa', 'Mastercard', 'AmericanExpress', 'Unknown'],
               validation: {
                 requires_token: false,
                 requires_expiry_date: false,
@@ -254,7 +257,10 @@ export const CreditCard: Story = {
       expect(radios.length).toBe(1);
       expect(canvas.getByText('Payer par carte bancaire')).toBeInTheDocument();
 
-      expect(canvas.getByTestId('icon-CreditCard')).toBeInTheDocument();
+      expect(canvas.getByTestId('icon-Visa')).toBeInTheDocument();
+      expect(canvas.getByTestId('icon-Mastercard')).toBeInTheDocument();
+      expect(canvas.getByTestId('icon-AmericanExpress')).toBeInTheDocument();
+      expect(canvas.queryByTestId('icon-Unknown')).not.toBeInTheDocument();
     });
   },
   render(args: any) {
@@ -284,11 +290,6 @@ export const BankTransfer: Story = {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios.length).toBe(1);
       expect(canvas.getByText('Payer par virement bancaire')).toBeInTheDocument();
-
-      expect(
-        canvas.getByText('Secure 100% payment (direct connection with your bank)'),
-      ).toBeInTheDocument();
-      expect(canvas.getByText('No payment limit for standard bank transfers')).toBeInTheDocument();
 
       const creditCardIcon = canvasElement.querySelector('svg[data-icon-name="CreditCard"]');
       expect(creditCardIcon).not.toBeInTheDocument();
@@ -390,6 +391,101 @@ export const RadioSelectionTest: Story = {
         }}
       >
         <PaymentProviders {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+export const CascadePanel: Story = {
+  parameters: {
+    msw: {
+      handlers: handlers.multipleProviders,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const radios = await waitFor(() => {
+      const radioElements = canvasElement.querySelectorAll('input[type="radio"]');
+      expect(radioElements).toHaveLength(3);
+      return radioElements;
+    });
+
+    await waitFor(() => {
+      expect(canvas.getAllByTestId('panel')).toHaveLength(1);
+    });
+    expect(radios[0].closest('[class*="border-black"]')).toContainElement(
+      canvas.getByTestId('panel'),
+    );
+
+    await userEvent.click(radios[2]);
+
+    await waitFor(() => {
+      expect(radios[2].closest('[class*="border-black"]')).toContainElement(
+        canvas.getByTestId('panel'),
+      );
+    });
+    expect(canvas.getAllByTestId('panel')).toHaveLength(1);
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="cascade-panel"
+        {...commonMockedProviderProps}
+        bookingId="12345678"
+        customerId="123456789"
+        defaultValues={{
+          amount: '3000',
+          provider_id: 'PROVIDER_1',
+        }}
+      >
+        <PaymentProviders {...args}>
+          <PaymentProviders.Panel>
+            <p data-testid="panel">Panel</p>
+          </PaymentProviders.Panel>
+        </PaymentProviders>
+      </MockedProvider>
+    );
+  },
+};
+
+export const CascadeCheckout: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        ...handlers.multipleProviders,
+        http.get('*/rest/payment_config', () => Response.json({ feature_flips: {}, settings: {} })),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      expect(canvas.getAllByRole('checkbox')).toHaveLength(1);
+      expect(canvas.getByRole('button', { name: 'Pay' })).toBeInTheDocument();
+    });
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="cascade-checkout"
+        {...commonMockedProviderProps}
+        bookingId="12345678"
+        customerId="123456789"
+        defaultValues={{
+          amount: '3000',
+          provider_id: 'PROVIDER_1',
+        }}
+      >
+        <PaymentProviders {...args}>
+          <PaymentProviders.Panel>
+            <Cgv />
+            <SubmitButton color="saffron" className="self-center">
+              Pay
+            </SubmitButton>
+          </PaymentProviders.Panel>
+        </PaymentProviders>
       </MockedProvider>
     );
   },

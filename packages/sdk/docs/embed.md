@@ -56,9 +56,28 @@ import { CapsPaymentForm } from '@clubmed/caps';
   id="123"
   accessToken={token}
   callbackUrl="https://host.example/payment/confirmation"
-  theme="current" // 'current' (default) | 'legacy'
+  theme="current" // optional: 'current' | 'legacy', overrides the theme set in the CMS
+  stepper // reveals the form section by section (theme 'current' only)
   onError={({ code, message }) => {}} // payment errors are reported here, displaying them is up to the host
 />;
+```
+
+## Theme
+
+Without the `theme` prop, the form renders the theme set in the CMS: the `theme` key (`'legacy'` or `'current'`) of the `caps_configurations` collection, which can be overridden per locale and issuer. `GET /rest/payment_config` returns it as `settings.theme`. When the key is missing or holds another value, the form renders `'legacy'`.
+
+The `theme` prop takes precedence over the CMS and lets the form render without waiting for the payment configuration. The form serves one set of default texts, the one of the resolved theme: the `'legacy'` texts are unchanged, and `content` overrides are merged on top of them. A host that also changes its own layout with the theme can resolve it once and pass it down:
+
+```tsx
+import { useCapsTheme } from '@clubmed/caps';
+
+const theme = useCapsTheme({
+  locale,
+  oidc: { issuerType, accessToken },
+  api: { url, apiKey },
+});
+
+<CapsPaymentForm {...props} theme={theme} />;
 ```
 
 To render the donation or the submit button elsewhere in the page (a price ticket, a sidebar), give `CapsPaymentForm` the host elements with `slots`. They stay part of the form (same state, same validation):

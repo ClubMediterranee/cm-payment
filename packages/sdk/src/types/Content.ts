@@ -6,6 +6,7 @@ export type Content = {
     };
     creditCard: {
       label: `${string}{amount}${string}`;
+      description: string;
     };
     paypal: {
       label: `${string}{amount}${string}`;
@@ -20,6 +21,24 @@ export type Content = {
     heading: string;
     payFullAmount: `${string}{amount}${string}`;
     payDeposit: `${string}{amount}${string}{deadline}${string}{balance}${string}`;
+    cards: {
+      select: string;
+      selected: string;
+      payInFull: {
+        title: string;
+        description: string;
+        caption: string;
+      };
+      payInTwo: {
+        title: string;
+        description: `${string}{deposit}${string}{balance}${string}{deadline}${string}`;
+      };
+      payMonthly: {
+        title: string;
+        from: string;
+        caption: string;
+      };
+    };
     buyNowPayLater: {
       iconLabel: `${string}{icon}${string}`;
       priceLabel: `${string}{price}${string}`;
@@ -177,6 +196,8 @@ export type Content = {
   };
   submit: {
     label: string;
+    pay: `${string}{amount}${string}`;
+    redirect: string;
   };
 };
 

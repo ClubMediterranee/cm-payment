@@ -1,4 +1,6 @@
-import { AdditionalProperties, Nullable, Property } from '@tsed/schema';
+import { AdditionalProperties, Enum, Nullable, Property } from '@tsed/schema';
+
+import { CAPS_THEMES, type CapsTheme } from './types.js';
 
 export class FeatureFlipsConfig {
   @Property()
@@ -16,6 +18,10 @@ export class PaymentSettings {
   @Property()
   @Nullable(Number)
   days_before_trip_to_allow_free_deposit?: number | null;
+
+  @Property()
+  @Enum(...CAPS_THEMES)
+  theme?: CapsTheme;
 }
 
 export class PaymentConfig {

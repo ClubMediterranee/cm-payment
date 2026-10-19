@@ -54,6 +54,10 @@ export const getPaymentConfigControllerGetPaymentConfigResponseMock = (
         ]),
         undefined,
       ]),
+      theme: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(['legacy', 'current'] as const),
+        undefined,
+      ]),
     },
     undefined,
   ]),
@@ -153,6 +157,12 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
         requires_card_holder: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_expiry_date: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_contact_choice: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        logos: faker.helpers.arrayElement([
+          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+          ),
+          undefined,
+        ]),
       },
       payment_conditions: {
         [faker.string.alphanumeric(5)]: Array.from(
@@ -279,6 +289,12 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
         requires_card_holder: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_expiry_date: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_contact_choice: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        logos: faker.helpers.arrayElement([
+          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+          ),
+          undefined,
+        ]),
       },
       payment_conditions: {
         [faker.string.alphanumeric(5)]: Array.from(

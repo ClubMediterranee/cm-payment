@@ -9,43 +9,49 @@ import { PaymentSchedule } from '../PaymentSchedule';
 import { PaymentWidget } from '../PaymentWidget';
 import { SubmitButton } from '../SubmitButton';
 import { FormSlot, SubmitSlot } from './FormSlots';
-import { type FlowLayoutProps, SubmitLabel, Title } from './flowShared';
+import { type FlowLayoutProps, Title } from './flowShared';
+import { PayLabel } from './PayLabel';
+import { Step } from './Step';
 
 export const CurrentFlow = ({ slots, reference, uuid }: FlowLayoutProps) => (
   <>
     <PaymentSchedule>
-      <Title section="paymentSchedule" />
+      <Title section="paymentSchedule" variant="section" />
     </PaymentSchedule>
-    <PaymentProviders>
-      <Title section="paymentProviders" />
-    </PaymentProviders>
-    <CardInstallments>
-      <Title section="cardInstallments" />
-    </CardInstallments>
-    <ContactChoice reference={reference} uuid={uuid}>
-      <Title section="contactChoice" />
-    </ContactChoice>
-    <FormSlot target={slots?.donation}>
-      <Donation>
-        <Title section="donation" />
-      </Donation>
-    </FormSlot>
-    <Comments>
-      <Title section="comments" />
-    </Comments>
-    <Cgv>
-      <Title section="cgv" />
-    </Cgv>
-    <BillingAddress>
-      <Title section="billingAddress" />
-    </BillingAddress>
-    <PaymentWidget>
-      <Title section="paymentWidget" />
-    </PaymentWidget>
-    <SubmitSlot target={slots?.submit}>
-      <SubmitButton className={slots?.submit ? 'w-full' : 'my-8 self-center'}>
-        <SubmitLabel />
-      </SubmitButton>
-    </SubmitSlot>
+    <Step name="providers">
+      <PaymentProviders>
+        <Title section="paymentProviders" variant="section" />
+        <PaymentProviders.Panel>
+          <CardInstallments>
+            <Title section="cardInstallments" variant="label" />
+          </CardInstallments>
+          <BillingAddress>
+            <Title section="billingAddress" variant="label" />
+          </BillingAddress>
+          <PaymentWidget />
+          <ContactChoice reference={reference} uuid={uuid}>
+            <Title section="contactChoice" variant="label" />
+          </ContactChoice>
+          <Comments>
+            <Title section="comments" variant="label" />
+          </Comments>
+          <Cgv className="group-data-cgv-first/panel:-order-1">
+            <Title section="cgv" variant="label" />
+          </Cgv>
+          <Step name="submit">
+            <SubmitSlot target={slots?.submit}>
+              <SubmitButton color="saffron" className={slots?.submit ? 'w-full' : 'self-center'}>
+                <PayLabel />
+              </SubmitButton>
+            </SubmitSlot>
+          </Step>
+        </PaymentProviders.Panel>
+      </PaymentProviders>
+    </Step>
+    <Step name="details">
+      <FormSlot target={slots?.donation}>
+        <Donation />
+      </FormSlot>
+    </Step>
   </>
 );

@@ -1,11 +1,14 @@
 import classNames from 'classnames';
-import { type ReactNode, useEffect, useRef } from 'react';
+import { type ReactNode, Suspense, useEffect, useRef } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import type { Action } from '../../__generated__/index.schemas';
 import { type CapsRemoteFormProps, type CapsTheme, getDefaultLocale } from '../../embed/shared';
+import { useCapsTheme } from '../../hooks/data/usePaymentConfig';
+import { StepperContext } from '../../contexts/StepperContext';
 import { CapsForm } from '../../providers/CapsForm';
 import { PaymentConfigProvider } from '../../providers/PaymentConfigProvider';
-import { OidcIssuerTypes } from '../../types/CapsSettings';
+import { type CapsSettings, OidcIssuerTypes } from '../../types/CapsSettings';
 import type { Content, DeepPartial } from '../../types/Content';
 import { defaultNavigate, type NavigationRequest } from '../../utils/navigate';
 import { CurrentFlow } from './CurrentFlow';
@@ -21,6 +24,29 @@ const FLOWS: Record<CapsTheme, (props: FlowLayoutProps) => ReactNode> = {
   current: CurrentFlow,
   legacy: LegacyFlow,
 };
+
+type ThemeGateProps = {
+  theme?: CapsTheme;
+  config: Pick<CapsSettings, 'locale' | 'oidc' | 'api'>;
+  onError: (error: Error) => void;
+  children: (theme: CapsTheme) => ReactNode;
+};
+
+const ConfiguredTheme = ({ config, children }: Pick<ThemeGateProps, 'config' | 'children'>) =>
+  children(useCapsTheme(config));
+
+const ThemeGate = ({ theme, config, onError, children }: ThemeGateProps) =>
+  theme ? (
+    children(theme)
+  ) : (
+    <ErrorBoundary
+      fallbackRender={(fallbackProps) => <FlowErrorFallback {...fallbackProps} onError={onError} />}
+    >
+      <Suspense fallback={null}>
+        <ConfiguredTheme config={config}>{children}</ConfiguredTheme>
+      </Suspense>
+    </ErrorBoundary>
+  );
 
 export function CapsPaymentForm(props: CapsPaymentFormProps) {
   const {
@@ -41,7 +67,8 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
     reference,
     uuid,
     content,
-    theme = 'current',
+    theme,
+    stepper = false,
     className,
     style,
     slots,
@@ -57,46 +84,60 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
     latest.current.onReady?.();
   }, []);
 
-  const Flow = FLOWS[theme];
+  const oidc = { issuerType: issuerType as OidcIssuerTypes, accessToken: accessToken || '' };
+  const api = { url: capsUrl, apiKey };
 
   return (
     <div className={classNames('w-full', className)} style={style}>
-      <PaymentConfigProvider
-        locale={locale}
-        bookingId={type === 'booking' ? id : undefined}
-        proposalId={type === 'proposal' ? id : undefined}
-        customerId={customerId}
-        api={{ url: capsUrl, apiKey }}
-        oidc={{ issuerType: issuerType as OidcIssuerTypes, accessToken: accessToken || '' }}
-        callbackUrl={callbackUrl}
-        callbackUrlSeller={callbackUrlSeller}
-        salesNetworkId={salesNetworkId}
-        salesmanId={salesmanId}
-        opportunityId={opportunityId}
-        content={content}
-        onNavigate={(request: NavigationRequest) => {
-          if (latest.current.onRedirect?.(request.url) !== false) {
-            defaultNavigate(request);
-          }
+      <ThemeGate theme={theme} config={{ locale, oidc, api }} onError={reportFlowError}>
+        {(resolvedTheme) => {
+          const isStepper = stepper && resolvedTheme === 'current';
+          const Flow = FLOWS[resolvedTheme];
+
+          return (
+            <PaymentConfigProvider
+              theme={resolvedTheme}
+              locale={locale}
+              bookingId={type === 'booking' ? id : undefined}
+              proposalId={type === 'proposal' ? id : undefined}
+              customerId={customerId}
+              api={api}
+              oidc={oidc}
+              callbackUrl={callbackUrl}
+              callbackUrlSeller={callbackUrlSeller}
+              salesNetworkId={salesNetworkId}
+              salesmanId={salesmanId}
+              opportunityId={opportunityId}
+              content={content}
+              onNavigate={(request: NavigationRequest) => {
+                if (latest.current.onRedirect?.(request.url) !== false) {
+                  defaultNavigate(request);
+                }
+              }}
+            >
+              <StepperContext.Provider value={isStepper}>
+                <div className="w-full flex flex-col gap-8">
+                  <CapsForm
+                    action={action as Action | undefined}
+                    stepper={isStepper}
+                    errorFallback={(fallbackProps) => (
+                      <FlowErrorFallback {...fallbackProps} onError={reportFlowError} />
+                    )}
+                    onError={(error: Error) => {
+                      latest.current.onLoadingChange?.(false);
+                      reportFlowError(error);
+                    }}
+                    onLoad={() => latest.current.onLoadingChange?.(true)}
+                    onLoadEnd={() => latest.current.onLoadingChange?.(false)}
+                  >
+                    {Flow({ slots, reference, uuid })}
+                  </CapsForm>
+                </div>
+              </StepperContext.Provider>
+            </PaymentConfigProvider>
+          );
         }}
-      >
-        <div className="w-full flex flex-col gap-8">
-          <CapsForm
-            action={action as Action | undefined}
-            errorFallback={(fallbackProps) => (
-              <FlowErrorFallback {...fallbackProps} onError={reportFlowError} />
-            )}
-            onError={(error: Error) => {
-              latest.current.onLoadingChange?.(false);
-              reportFlowError(error);
-            }}
-            onLoad={() => latest.current.onLoadingChange?.(true)}
-            onLoadEnd={() => latest.current.onLoadingChange?.(false)}
-          >
-            {Flow({ slots, reference, uuid })}
-          </CapsForm>
-        </div>
-      </PaymentConfigProvider>
+      </ThemeGate>
     </div>
   );
 }

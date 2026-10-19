@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { FormSubmitContext } from '../../contexts/FormSubmitContext';
 import { CapsPaymentForm, type CapsPaymentFormProps } from './CapsPaymentForm';
 
+const cmsTheme = vi.hoisted(() => vi.fn(() => 'current'));
 const providerProps = vi.fn();
 const formProps = vi.fn();
 const defaultNavigate = vi.fn();
@@ -12,21 +13,28 @@ vi.mock('../../utils/navigate', () => ({
   defaultNavigate: (request: unknown) => defaultNavigate(request),
 }));
 
+vi.mock('../../hooks/data/usePaymentConfig', () => ({ useCapsTheme: () => cmsTheme() }));
+
 vi.mock('../../providers/PaymentConfigProvider', async () => {
   const { CapsConfigContext } = await import('../../contexts/CapsConfigContext');
-  const { defaultContent } = await import('../../content/default');
+  const { contentByTheme } = await import('../../content/themes');
   const { mergeFromPattern } = await import('../../utils/mergeFromPattern');
 
   return {
     PaymentConfigProvider: ({
       children,
       content,
+      theme,
       ...props
-    }: { children: ReactNode; content?: object } & Record<string, unknown>) => {
-      providerProps({ ...props, content });
+    }: {
+      children: ReactNode;
+      content?: object;
+      theme: keyof typeof contentByTheme;
+    } & Record<string, unknown>) => {
+      providerProps({ ...props, theme, content });
       return (
         <CapsConfigContext.Provider
-          value={{ content: mergeFromPattern(defaultContent, content) } as never}
+          value={{ content: mergeFromPattern(contentByTheme[theme], content) } as never}
         >
           <div data-testid="payment-config-provider">{children}</div>
         </CapsConfigContext.Provider>
@@ -69,10 +77,16 @@ vi.mock('../Cgv', () => ({ Cgv: step('cgv') }));
 vi.mock('../Comments', () => ({ Comments: step('comments') }));
 vi.mock('../ContactChoice', () => ({ ContactChoice: step('contact-choice') }));
 vi.mock('../Donation', () => ({ Donation: step('donation') }));
-vi.mock('../PaymentProviders', () => ({ PaymentProviders: step('payment-providers') }));
+vi.mock('../PaymentProviders', () => ({
+  PaymentProviders: Object.assign(step('payment-providers'), {
+    Panel: step('payment-providers-panel'),
+  }),
+}));
 vi.mock('../PaymentSchedule', () => ({ PaymentSchedule: step('payment-schedule') }));
 vi.mock('../PaymentWidget', () => ({ PaymentWidget: step('payment-widget') }));
 vi.mock('../SubmitButton', () => ({ SubmitButton: submit }));
+vi.mock('./PayLabel', () => ({ PayLabel: () => 'Pay now' }));
+vi.mock('./Step', () => ({ Step: step('step') }));
 vi.mock('../legacy', () => ({
   LegacyBillingAddress: step('legacy-billing-address'),
   LegacyCardInstallments: step('legacy-card-installments'),
@@ -137,18 +151,16 @@ describe('CapsPaymentForm', () => {
       container.querySelector('[data-testid=contact-choice]')!.getAttribute('data-props'),
     ).toBe(JSON.stringify({ reference: 'REF', uuid: 'abc' }));
     [
-      'Choose your payment schedule',
-      'Which payment method would you like to use?',
+      'Choose the payment schedule',
+      'How do you want to pay?',
       'Choose your card installments',
       'How would you like to be contacted?',
-      'Make a donation',
       'Comments',
-      'Terms and conditions',
+      'General Terms and Conditions of Sale',
       'Billing address',
-      'Payment details',
     ].forEach((title) => expect(container.textContent).toContain(title));
-    expect(getByRole('button').className).toBe('my-8 self-center');
-    expect(getByRole('button').textContent).toBe('Pay');
+    expect(getByRole('button').className).toBe('self-center');
+    expect(getByRole('button').textContent).toBe('Pay now');
     expect(lastFormProps().action).toBe('PAYMENT_RESA');
   });
 
@@ -157,6 +169,59 @@ describe('CapsPaymentForm', () => {
 
     expect(container.querySelector('[data-testid=legacy-payment-schedule]')).toBeTruthy();
     expect(container.querySelector('[data-testid=payment-schedule]')).toBeNull();
+  });
+
+  it('resolves the theme from the CMS when the prop is absent', () => {
+    cmsTheme.mockReturnValueOnce('legacy');
+
+    const { container } = render(<CapsPaymentForm {...baseProps} />);
+
+    expect(container.querySelector('[data-testid=legacy-payment-schedule]')).toBeTruthy();
+    expect(container.querySelector('[data-testid=payment-schedule]')).toBeNull();
+  });
+
+  it('gives the provider the resolved theme so it serves a single content', () => {
+    cmsTheme.mockReturnValueOnce('legacy');
+    const { container } = render(<CapsPaymentForm {...baseProps} />);
+
+    expect(providerProps).toHaveBeenLastCalledWith(expect.objectContaining({ theme: 'legacy' }));
+    expect(container.textContent).toContain('Choose your payment schedule');
+    expect(container.textContent).not.toContain('Choose the payment schedule');
+  });
+
+  it('prefers the theme prop over the CMS without reading it', () => {
+    cmsTheme.mockReturnValue('legacy');
+
+    const { container } = render(<CapsPaymentForm {...baseProps} theme="current" />);
+
+    expect(container.querySelector('[data-testid=payment-schedule]')).toBeTruthy();
+    expect(cmsTheme).not.toHaveBeenCalled();
+
+    cmsTheme.mockReturnValue('current');
+  });
+
+  it('reveals the sections step by step in stepper mode', () => {
+    const { container } = render(<CapsPaymentForm {...baseProps} stepper />);
+
+    expect(
+      [...container.querySelectorAll('[data-testid=step]')].map(
+        (element) => JSON.parse(element.getAttribute('data-props')!).name,
+      ),
+    ).toEqual(['providers', 'submit', 'details']);
+    expect(lastFormProps().stepper).toBe(true);
+  });
+
+  it('renders every section at once without the stepper', () => {
+    render(<CapsPaymentForm {...baseProps} />);
+
+    expect(lastFormProps().stepper).toBe(false);
+  });
+
+  it('ignores the stepper with the legacy theme', () => {
+    const { container } = render(<CapsPaymentForm {...baseProps} theme="legacy" stepper />);
+
+    expect(container.querySelector('[data-testid=step]')).toBeNull();
+    expect(lastFormProps().stepper).toBe(false);
   });
 
   it('applies className and style to the container', () => {
@@ -242,7 +307,7 @@ describe('CapsPaymentForm', () => {
     );
 
     expect(container.querySelector('[data-testid=donation]')).toBeTruthy();
-    expect(getByRole('button').className).toBe('my-8 self-center');
+    expect(getByRole('button').className).toBe('self-center');
   });
 
   it('signals that the flow is ready once and mirrors the payment processing state', () => {
@@ -292,6 +357,7 @@ describe('CapsPaymentForm', () => {
     const { container } = render(
       <CapsPaymentForm
         {...baseProps}
+        theme="legacy"
         content={{ submit: { label: 'Payer' }, cgv: { heading: 'CGV' } }}
       />,
     );
@@ -310,7 +376,7 @@ describe('CapsPaymentForm', () => {
       <CapsPaymentForm {...baseProps} content={{ cgv: { heading: '' } }} />,
     );
 
-    expect(container.textContent).not.toContain('Terms and conditions');
+    expect(container.textContent).not.toContain('General Terms and Conditions of Sale');
   });
 
   it('does not require the host to provide any callback', () => {

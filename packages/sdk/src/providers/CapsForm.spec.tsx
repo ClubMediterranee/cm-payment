@@ -59,6 +59,7 @@ vi.mock('../hooks/utils/useCapsConfigContext', () => ({
 
 vi.mock('../hooks/data/usePaymentConfig', () => ({
   usePaymentConfig: () => mockUsePaymentConfig(),
+  paymentConfigQueryOptions: () => ({ queryKey: ['payment-config'], queryFn: vi.fn() }),
 }));
 
 vi.mock('../hooks/data/useActionResolver', () => ({

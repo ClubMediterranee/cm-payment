@@ -201,8 +201,7 @@ export const DepositChoice: Story = {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios).toHaveLength(2);
       expect(canvas.getByText(/2\s?000.*€/)).toBeInTheDocument();
-      expect(canvas.getByText(/^500,00\s?€$/)).toBeInTheDocument();
-      expect(canvas.getByText(/1\s?500.*€/)).toBeInTheDocument();
+      expect(canvas.getByText(/^500,00\s?€\s\+\s1\s?500,00\s?€$/)).toBeInTheDocument();
     });
   },
   render(args: any) {
@@ -212,6 +211,28 @@ export const DepositChoice: Story = {
         action={Action.PAYMENT_OPTION}
         bookingId="booking-deposit"
         customerId="customer-789"
+      >
+        <PaymentSchedule {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+export const DepositWithDonation: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() => {
+      expect(canvas.getByText(/^550,00\s?€\s\+\s1\s?500,00\s?€$/)).toBeInTheDocument();
+    });
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="deposit-with-donation"
+        action={Action.PAYMENT_OPTION}
+        bookingId="booking-deposit"
+        customerId="customer-789"
+        defaultValues={{ donation_amount: 50 }}
       >
         <PaymentSchedule {...args} />
       </MockedProvider>
@@ -472,16 +493,6 @@ export const BuyNowPayLaterOney: Story = {
             settings: {},
           });
         }),
-        http.get('*/rest/payment_providers/EHIPAYBNPL/simulation', () => {
-          return Response.json({
-            cost: 11.35,
-            instalments: [
-              { number: 0, amount: 711.35, date: '2026-11-23T00:00:00.000Z' },
-              { number: 1, amount: 700, date: '2026-12-23T00:00:00.000Z' },
-              { number: 2, amount: 700, date: '2027-01-23T00:00:00.000Z' },
-            ],
-          });
-        }),
         http.get('*/rest/payment_providers/proposal/*', ({ request }) => {
           const url = new URL(request.url);
           const payment_mode = url.searchParams.get('payment_mode') || '3x';
@@ -521,11 +532,8 @@ export const BuyNowPayLaterOney: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await waitFor(() => {
-      expect(
-        canvas.getByRole('radio', { name: /a total of.*financing cost.*,.*,/ }),
-      ).toBeInTheDocument();
+      expect(canvas.getByRole('radio', { name: /I pay in.*by credit card/ })).toBeInTheDocument();
     });
-    await userEvent.click(canvasElement.querySelector('button[type="button"]')!);
   },
   render(args: any) {
     return (

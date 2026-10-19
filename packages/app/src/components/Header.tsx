@@ -1,10 +1,18 @@
 import { Icon } from '@clubmed/trident-icons';
 
+import { useTheme } from '../hooks/useTheme';
 import { useAppContext } from '../providers/AppProvider';
+import { HeaderCurrent } from './HeaderCurrent';
 import { ImmersiveBreadcrumb } from './ImmersiveBreadcrumb';
 
 export const Header = () => {
   const { id } = useAppContext();
+  const theme = useTheme();
+
+  if (theme !== 'legacy') {
+    return <HeaderCurrent />;
+  }
+
   return (
     <div className="w-full">
       <header

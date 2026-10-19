@@ -81,6 +81,57 @@ describe('PaymentConfigService', () => {
     });
   });
 
+  describe('getPaymentConfig theme', () => {
+    const themeConfiguration = (value: unknown, overrides: unknown[] = []) =>
+      [{ key: 'theme', type: 'string', value, overrides }] as never;
+
+    it('should expose the theme in settings', async () => {
+      vi.spyOn(paymentConfigRepository, 'getConfigurations').mockResolvedValue(
+        themeConfiguration('legacy'),
+      );
+
+      const result = await service.getPaymentConfig();
+
+      expect(result.settings).toEqual({ theme: 'legacy' });
+    });
+
+    it('should resolve the theme override by locale and issuer', async () => {
+      vi.spyOn(paymentConfigRepository, 'getConfigurations').mockResolvedValue(
+        themeConfiguration('legacy', [{ locale: 'fr-FR', issuer: 'GM', value: 'current' }]),
+      );
+
+      const result = await service.getPaymentConfig({
+        locale: 'fr-FR',
+        issuerType: OidcIssuerTypes.GM,
+      });
+
+      expect(result.settings.theme).toBe('current');
+    });
+
+    it('should omit a theme that is neither legacy nor current', async () => {
+      vi.spyOn(paymentConfigRepository, 'getConfigurations').mockResolvedValue(
+        themeConfiguration('modern'),
+      );
+
+      const result = await service.getPaymentConfig();
+
+      expect(result.settings).toEqual({});
+    });
+
+    it('should omit an invalid theme override and not fall back to the default', async () => {
+      vi.spyOn(paymentConfigRepository, 'getConfigurations').mockResolvedValue(
+        themeConfiguration('current', [{ locale: 'fr-FR', issuer: 'GM', value: 42 }]),
+      );
+
+      const result = await service.getPaymentConfig({
+        locale: 'fr-FR',
+        issuerType: OidcIssuerTypes.GM,
+      });
+
+      expect(result.settings).toEqual({});
+    });
+  });
+
   describe('getPaymentProvidersConfig', () => {
     it('returns all providers and exposes allowed_actions from the resolved variant', async () => {
       const providers = [
@@ -105,6 +156,29 @@ describe('PaymentConfigService', () => {
       expect(result.MCYBERSOURCE.allowed_actions).toEqual(['PAYMENT_RESA']);
       expect(result.MHIPAY.allowed_actions).toEqual([]);
       expect('is_active' in result.MCYBERSOURCE).toBe(false);
+    });
+
+    it('exposes the logos of the provider and defaults to none', async () => {
+      const providers = [
+        {
+          id: 'MHIPAY',
+          default_display_type: 'hosted_field',
+          logos: ['Visa', 'Mastercard'],
+          variants: [{ locale: null, allowed_actions: [], settings: [], validation: {} }],
+        },
+        {
+          id: 'MUPLIFT',
+          default_display_type: 'third_party_iframe',
+          logos: null,
+          variants: [{ locale: null, allowed_actions: [], settings: [], validation: {} }],
+        },
+      ] as never;
+      vi.spyOn(paymentConfigRepository, 'getProviders').mockResolvedValue(providers);
+
+      const result = await service.getPaymentProvidersConfig({ locale: 'fr-FR' });
+
+      expect(result.MHIPAY.logos).toEqual(['Visa', 'Mastercard']);
+      expect(result.MUPLIFT.logos).toEqual([]);
     });
 
     it('resolves the locale-specific variant settings over the global one', async () => {
@@ -212,6 +286,7 @@ describe('PaymentConfigService', () => {
       expect(config).toEqual({
         display_type: 'hosted_field',
         confirmation_strategy: 'status',
+        logos: [],
         requires_contact_choice: false,
         allowed_actions: ['PAYMENT_RESA'],
         settings: { script_url: 'https://example.com/s.js' },

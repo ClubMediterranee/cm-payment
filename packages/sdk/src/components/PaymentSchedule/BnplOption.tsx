@@ -1,11 +1,11 @@
 import type { PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem } from '../../__generated__/bff/index.schemas';
 import { PspProviders } from '../../types/PspProviders';
-import { OneyOption } from '../../integrations/oney/ui/OneyOption.js';
-import { UpliftOption } from '../../integrations/uplift/ui/UpliftOption.js';
+import { OneyCard } from '../../integrations/oney/ui/OneyCard.js';
+import { UpliftCard } from '../../integrations/uplift/ui/UpliftCard.js';
 
 const BNPL_OPTION_COMPONENTS = {
-  [PspProviders.EHIPAYBNPL]: OneyOption,
-  [PspProviders.MUPLIFT]: UpliftOption,
+  [PspProviders.EHIPAYBNPL]: OneyCard,
+  [PspProviders.MUPLIFT]: UpliftCard,
 } as const;
 
 type BnplOptionProps = {
@@ -21,9 +21,7 @@ export const BnplOption = ({ provider, name, checked, onChange }: BnplOptionProp
 
   if (OptionComponent) {
     return (
-      <div className="mt-32">
-        <OptionComponent provider={provider} name={name} checked={checked} onChange={onChange} />
-      </div>
+      <OptionComponent provider={provider} name={name} checked={checked} onChange={onChange} />
     );
   }
 
