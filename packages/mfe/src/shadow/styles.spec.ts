@@ -16,6 +16,7 @@ describe('splitStyles', () => {
     expect(splitStyles(css)).toEqual({
       documentImports: [GOOGLE_FONTS],
       fontFaces: [],
+      propertyRules: [],
       shadowCss: '\n:host{--color-sienna:13deg 48% 39%}\n.text-h5{font-size:20px}',
     });
   });
@@ -26,7 +27,20 @@ describe('splitStyles', () => {
     expect(splitStyles(`${fontFace}.a{color:red}`)).toEqual({
       documentImports: [],
       fontFaces: [fontFace],
+      propertyRules: [],
       shadowCss: '.a{color:red}',
+    });
+  });
+
+  it('moves @property rules to the document', () => {
+    const border = '@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}';
+    const shadow = '@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}';
+
+    expect(splitStyles(`${border}.a{border-style:var(--tw-border-style)}${shadow}`)).toEqual({
+      documentImports: [],
+      fontFaces: [],
+      propertyRules: [border, shadow],
+      shadowCss: '.a{border-style:var(--tw-border-style)}',
     });
   });
 });
@@ -37,7 +51,11 @@ describe('injectDocumentStyles', () => {
   });
 
   it('injects the web fonts once', () => {
-    const styles = { documentImports: [GOOGLE_FONTS], fontFaces: ['@font-face{font-family:A}'] };
+    const styles = {
+      documentImports: [GOOGLE_FONTS],
+      fontFaces: ['@font-face{font-family:A}'],
+      propertyRules: ['@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}'],
+    };
 
     injectDocumentStyles(styles);
     injectDocumentStyles(styles);
@@ -45,7 +63,7 @@ describe('injectDocumentStyles', () => {
     expect(document.head.querySelectorAll('link[data-caps-styles]')).toHaveLength(1);
     expect(document.head.querySelector('link')?.getAttribute('href')).toBe(GOOGLE_FONTS);
     expect(document.head.querySelector('style[data-caps-styles]')?.textContent).toBe(
-      '@font-face{font-family:A}',
+      '@font-face{font-family:A}\n@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}',
     );
   });
 });

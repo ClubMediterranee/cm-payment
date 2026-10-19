@@ -4,6 +4,7 @@ import rawCss from '../styles/index.css?inline';
 const IMPORT_RULE =
   /@import\s+(?:url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s]*))\s*\)|"([^"]*)"|'([^']*)')[^;]*;/g;
 const FONT_FACE_RULE = /@font-face\s*{[^}]*}/g;
+const PROPERTY_RULE = /@property\s+--[\w-]+\s*{[^}]*}/g;
 
 export type SplitStyles = {
   /**
@@ -18,6 +19,11 @@ export type SplitStyles = {
    * `@font-face` rules are only reliably applied when declared in the document.
    */
   fontFaces: string[];
+  /**
+   * `@property` registrations (Tailwind v4 `--tw-*` initial values) are ignored inside a shadow root: they must be
+   * declared in the document, where they apply to the shadow trees too.
+   */
+  propertyRules: string[];
 };
 
 export function splitStyles(css: string): SplitStyles {
@@ -25,18 +31,26 @@ export function splitStyles(css: string): SplitStyles {
     hrefs.find((href) => href !== undefined),
   ) as string[];
   const fontFaces = css.match(FONT_FACE_RULE) || [];
-  const shadowCss = css.replace(IMPORT_RULE, '').replace(FONT_FACE_RULE, '');
+  const propertyRules = css.match(PROPERTY_RULE) || [];
+  const shadowCss = css
+    .replace(IMPORT_RULE, '')
+    .replace(FONT_FACE_RULE, '')
+    .replace(PROPERTY_RULE, '');
 
-  return { shadowCss, documentImports, fontFaces };
+  return { shadowCss, documentImports, fontFaces, propertyRules };
 }
 
 const DOCUMENT_MARKER = 'data-caps-styles';
 
 /**
- * Inject web fonts in the document `<head>`, once per page.
+ * Inject web fonts and `@property` registrations in the document `<head>`, once per page.
  */
 export function injectDocumentStyles(
-  { documentImports, fontFaces }: Pick<SplitStyles, 'documentImports' | 'fontFaces'>,
+  {
+    documentImports,
+    fontFaces,
+    propertyRules,
+  }: Pick<SplitStyles, 'documentImports' | 'fontFaces' | 'propertyRules'>,
   targetDocument: Document = document,
 ) {
   if (targetDocument.head.querySelector(`[${DOCUMENT_MARKER}]`)) {
@@ -53,7 +67,7 @@ export function injectDocumentStyles(
 
   const style = targetDocument.createElement('style');
   style.setAttribute(DOCUMENT_MARKER, 'fonts');
-  style.textContent = fontFaces.join('\n');
+  style.textContent = [...fontFaces, ...propertyRules].join('\n');
   targetDocument.head.appendChild(style);
 }
 
