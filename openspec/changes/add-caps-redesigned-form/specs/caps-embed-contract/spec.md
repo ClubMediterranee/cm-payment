@@ -26,4 +26,4 @@ The issuer values SHALL be string literals equal to the SDK `OidcIssuerTypes` en
 #### Scenario: theme is optional
 
 - **WHEN** a consumer renders a wrapper without the `theme` prop
-- **THEN** the code type-checks
+- **THEN** the code type-checks and the theme is resolved from the CMS

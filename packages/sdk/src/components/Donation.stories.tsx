@@ -79,6 +79,12 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    const toggle = await canvas.findByRole('button', { name: /Make a donation/i });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(canvas.queryByRole('radio')).not.toBeInTheDocument();
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
     await waitFor(() => {
       expect(
         canvas.getByText(/Make a donation to the Friends of the Foundation/i),
@@ -115,6 +121,8 @@ export const WithInteractions: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    await userEvent.click(await canvas.findByRole('button', { name: /Make a donation/i }));
+
     await waitFor(() => {
       expect(
         canvas.getByText(/Make a donation to the Friends of the Foundation/i),
@@ -132,6 +140,7 @@ export const WithInteractions: Story = {
     await waitFor(() => {
       expect(fiveEuroRadio).toBeChecked();
       expect(notThisTimeRadio).not.toBeChecked();
+      expect(canvas.getByRole('button', { name: /Make a donation.*5,00/ })).toBeInTheDocument();
     });
 
     await userEvent.click(twentyEuroRadio);
@@ -182,6 +191,8 @@ export const InformationModal: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByRole('button', { name: /Make a donation/i }));
 
     await waitFor(() => {
       expect(

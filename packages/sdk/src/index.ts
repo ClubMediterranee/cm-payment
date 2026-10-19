@@ -16,6 +16,7 @@ export * from './components/legacy';
 export { FormSubmitContext, useFormSubmit } from './contexts/FormSubmitContext';
 export * from './components/ui/FormPanel';
 export * from './embed/shared';
+export { useCapsTheme } from './hooks/data/usePaymentConfig';
 export * from './hooks/utils/useCapsConfigContext';
 export * from './hooks/utils/useDisclosure';
 export * from './providers/CapsForm';

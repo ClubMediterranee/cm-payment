@@ -97,6 +97,7 @@ export type CapsFormProps = CapsFlowParams &
      */
     content?: Record<string, unknown>;
     theme?: CapsTheme;
+    stepper?: boolean;
     className?: string;
     style?: CSSProperties;
     /**

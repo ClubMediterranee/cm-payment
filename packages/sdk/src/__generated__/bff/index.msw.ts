@@ -10,8 +10,8 @@ import { HttpResponse, delay, http } from 'msw';
 import type { RequestHandlerOptions } from 'msw';
 
 import type {
+  OverpaymentAllowanceOutputModel,
   PaymentConfig,
-  PaymentMaxAmountOutputModel,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentRedirectRequestResult,
   PaymentScheduleOutputModel,
@@ -52,6 +52,10 @@ export const getPaymentConfigControllerGetPaymentConfigResponseMock = (
           null,
           faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
         ]),
+        undefined,
+      ]),
+      theme: faker.helpers.arrayElement([
+        faker.helpers.arrayElement(['legacy', 'current'] as const),
         undefined,
       ]),
     },
@@ -153,6 +157,12 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
         requires_card_holder: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_expiry_date: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_contact_choice: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        logos: faker.helpers.arrayElement([
+          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+          ),
+          undefined,
+        ]),
       },
       payment_conditions: {
         [faker.string.alphanumeric(5)]: Array.from(
@@ -279,6 +289,12 @@ export const getPaymentProvidersControllerGetPaymentProvidersResponseMock = (
         requires_card_holder: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_expiry_date: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
         requires_contact_choice: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
+        logos: faker.helpers.arrayElement([
+          Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
+            faker.string.alpha({ length: { min: 10, max: 20 } }),
+          ),
+          undefined,
+        ]),
       },
       payment_conditions: {
         [faker.string.alphanumeric(5)]: Array.from(
@@ -347,8 +363,8 @@ export const getPaymentRedirectControllerCreateResponseMock = (
 });
 
 export const getPaymentScheduleControllerGetOverpaymentAllowanceResponseMock = (
-  overrideResponse: Partial<PaymentMaxAmountOutputModel> = {},
-): PaymentMaxAmountOutputModel => ({
+  overrideResponse: Partial<OverpaymentAllowanceOutputModel> = {},
+): OverpaymentAllowanceOutputModel => ({
   amount: faker.number.float({ min: undefined, max: undefined, fractionDigits: 2 }),
   ...overrideResponse,
 });
@@ -495,10 +511,10 @@ export const getPaymentRedirectControllerCreateMockHandler = (
 
 export const getPaymentScheduleControllerGetOverpaymentAllowanceMockHandler = (
   overrideResponse?:
-    | PaymentMaxAmountOutputModel
+    | OverpaymentAllowanceOutputModel
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
-      ) => Promise<PaymentMaxAmountOutputModel> | PaymentMaxAmountOutputModel),
+      ) => Promise<OverpaymentAllowanceOutputModel> | OverpaymentAllowanceOutputModel),
   options?: RequestHandlerOptions,
 ) => {
   return http.get(

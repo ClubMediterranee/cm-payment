@@ -2,12 +2,13 @@ import { Content } from '../types/Content';
 
 export const defaultContent: Content = {
   paymentProviders: {
-    heading: 'Which payment method would you like to use?',
+    heading: 'How do you want to pay?',
     validation: {
       required: 'You must choose a payment method',
     },
     creditCard: {
       label: 'I pay by credit card the amount of {amount}',
+      description: 'Secure payment with possible 3D Secure verification',
     },
     paypal: {
       label: 'I pay by PayPal the amount of {amount}',
@@ -19,10 +20,29 @@ export const defaultContent: Content = {
     },
   },
   paymentSchedule: {
-    heading: 'Choose your payment schedule',
+    heading: 'Choose the payment schedule',
     payFullAmount: 'I pay today the full amount of {amount}',
     payDeposit:
       'I pay today, at no charge, a deposit of {amount} and at the latest on {deadline} the balance of {balance}',
+    cards: {
+      select: 'Select this option',
+      selected: 'Selected option',
+      payInFull: {
+        title: 'Pay in full today',
+        description: 'I pay the total amount of',
+        caption: 'Total price',
+      },
+      payInTwo: {
+        title: 'Pay in 2x',
+        description:
+          'I pay by credit card the deposit of {deposit}, and I agree to an automatic withdrawal of the remaining balance of {balance} on {deadline}',
+      },
+      payMonthly: {
+        title: 'Pay monthly',
+        from: 'from',
+        caption: 'Per month',
+      },
+    },
     buyNowPayLater: {
       iconLabel: 'I pay in {icon} by credit card',
       priceLabel: 'Pay monthly from {price}',
@@ -30,7 +50,7 @@ export const defaultContent: Content = {
     },
   },
   cgv: {
-    heading: 'Terms and conditions',
+    heading: 'General Terms and Conditions of Sale',
     title: 'Terms and Conditions',
     content:
       'Validating my reservation implies a payment obligation. [FBL] I am informed of the obligation to present a negative test result or proof of complete vaccination for Covid-19 to access the Resort between May 21 and September 30, 2021 (details on the Resort page). I accept the General Conditions of Sale and declare that I have also read the Information Form.*',
@@ -182,5 +202,7 @@ export const defaultContent: Content = {
   },
   submit: {
     label: 'Pay',
+    pay: 'Pay {amount} now',
+    redirect: 'Go to our payment partner',
   },
 };

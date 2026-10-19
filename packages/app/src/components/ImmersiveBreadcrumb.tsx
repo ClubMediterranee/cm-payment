@@ -1,12 +1,11 @@
 import { Breadcrumb } from '@clubmed/trident-ui/ui/Breadcrumb';
-import { useSearch } from 'wouter';
 
+import { useBackUrl } from '../hooks/useBackUrl';
 import { useProduct } from '../hooks/useProduct';
 import { useStay } from '../hooks/useStay';
 
 export const ImmersiveBreadcrumb = () => {
-  const search = useSearch();
-  const backUrl = new URLSearchParams(search).get('back_url') || document.referrer;
+  const backUrl = useBackUrl();
   const { stay } = useStay();
 
   const { data: product } = useProduct(stay);

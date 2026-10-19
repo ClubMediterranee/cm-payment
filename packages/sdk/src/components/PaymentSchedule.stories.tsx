@@ -201,8 +201,7 @@ export const DepositChoice: Story = {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios).toHaveLength(2);
       expect(canvas.getByText(/2\s?000.*€/)).toBeInTheDocument();
-      expect(canvas.getByText(/^500,00\s?€$/)).toBeInTheDocument();
-      expect(canvas.getByText(/1\s?500.*€/)).toBeInTheDocument();
+      expect(canvas.getByText(/^500,00\s?€\s\+\s1\s?500,00\s?€$/)).toBeInTheDocument();
     });
   },
   render(args: any) {
@@ -212,6 +211,28 @@ export const DepositChoice: Story = {
         action={Action.PAYMENT_OPTION}
         bookingId="booking-deposit"
         customerId="customer-789"
+      >
+        <PaymentSchedule {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+export const DepositWithDonation: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() => {
+      expect(canvas.getByText(/^550,00\s?€\s\+\s1\s?500,00\s?€$/)).toBeInTheDocument();
+    });
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="deposit-with-donation"
+        action={Action.PAYMENT_OPTION}
+        bookingId="booking-deposit"
+        customerId="customer-789"
+        defaultValues={{ donation_amount: 50 }}
       >
         <PaymentSchedule {...args} />
       </MockedProvider>

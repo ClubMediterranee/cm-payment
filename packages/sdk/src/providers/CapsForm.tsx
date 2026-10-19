@@ -12,12 +12,13 @@ import { GlobalFormSkeleton } from '../components/ui/fallbacks/GlobalFormSkeleto
 import { FormCallbacks, FormCallbacksContext } from '../contexts/FormCallbacksContext';
 import { useActionResolver } from '../hooks/data/useActionResolver';
 import { useOverpaymentAllowance } from '../hooks/data/useOverpaymentAllowance';
+import { paymentConfigQueryOptions } from '../hooks/data/usePaymentConfig';
 import { paymentProvidersQueryOptions } from '../hooks/data/usePaymentProviders';
 import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
 import { useCapsForm } from '../hooks/useCapsForm';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
 import { LocaleOrCountry } from '../types/LocaleOrCountry';
-import { getDefaultPaymentConditionId } from '../utils/paymentProviders';
+import { getDefaultPaymentConditionId, getDefaultSelection } from '../utils/paymentProviders';
 import { validateComponents } from '../utils/validation/validateComponents';
 
 type CapsFormProps = PropsWithChildren<
@@ -25,18 +26,20 @@ type CapsFormProps = PropsWithChildren<
     fallback?: ReactNode;
     action?: Action;
     errorFallback?: (props: FallbackProps) => ReactNode;
+    stepper?: boolean;
   }
 >;
 
 function CapsFormProvider({
   children,
   action,
+  stepper,
   onLoad,
   onError,
   onLoadEnd,
   ...props
 }: CapsFormProps) {
-  const { id, content, locale, type, customerId } = useCapsConfigContext();
+  const { id, content, locale, type, customerId, oidc, api } = useCapsConfigContext();
   const { isSeller } = useOidcContext();
 
   const resolvedAction = useActionResolver(action);
@@ -54,6 +57,7 @@ function CapsFormProvider({
         customerId,
       }),
       paymentScheduleQueryOptions(id, type, customerId),
+      paymentConfigQueryOptions({ locale, oidc, api }),
     ],
   });
 
@@ -61,6 +65,14 @@ function CapsFormProvider({
     enabled: resolvedAction === Action.PAYMENT_PARTIAL,
   });
   const maxAmount = (paymentSchedule?.[0]?.amount ?? 0) + (overpaymentAllowanceData?.amount ?? 0);
+
+  const { amount: defaultAmount, provider: defaultProvider } = getDefaultSelection({
+    stepper,
+    isPartial: resolvedAction === Action.PAYMENT_PARTIAL,
+    paymentSchedule,
+    paymentProviders,
+    buyNowPayLaterProviders,
+  });
 
   const countryCode = locale.split('-')[1] || locale.toUpperCase();
 
@@ -78,10 +90,10 @@ function CapsFormProvider({
     },
     defaultValues: {
       action: resolvedAction,
-      provider_id: paymentProviders?.[0]?.id,
-      amount: paymentSchedule?.[0]?.amount?.toString() || '',
+      provider_id: defaultProvider?.id,
+      amount: defaultAmount,
       currency: paymentSchedule?.[0]?.currency,
-      payment_condition_id: getDefaultPaymentConditionId(paymentProviders?.[0]),
+      payment_condition_id: getDefaultPaymentConditionId(defaultProvider),
       billing_details: {
         address: {
           country_code: countryCode as LocaleOrCountry,

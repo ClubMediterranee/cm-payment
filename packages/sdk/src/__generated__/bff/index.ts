@@ -6,8 +6,8 @@
  */
 import type {
   ActionResolverControllerResolveActionParams,
+  OverpaymentAllowanceOutputModel,
   PaymentConfig,
-  PaymentMaxAmountOutputModel,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentProvidersControllerGetPaymentProvidersParams,
   PaymentRedirectRequestBody,
@@ -79,7 +79,7 @@ export const paymentScheduleControllerGetOverpaymentAllowance = (
   bookingId: string,
   params?: PaymentScheduleControllerGetOverpaymentAllowanceParams,
 ) => {
-  return fetcher<PaymentMaxAmountOutputModel>({
+  return fetcher<OverpaymentAllowanceOutputModel>({
     url: `/rest/payment_schedules/booking/${bookingId}/overpayment_allowance`,
     method: 'GET',
     params,

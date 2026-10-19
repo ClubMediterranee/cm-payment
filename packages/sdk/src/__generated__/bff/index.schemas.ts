@@ -39,8 +39,17 @@ export interface FeatureFlipsConfig {
 
 export type PaymentSettingsDaysBeforeTripToAllowFreeDeposit = null | number;
 
+export type PaymentSettingsTheme = (typeof PaymentSettingsTheme)[keyof typeof PaymentSettingsTheme];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentSettingsTheme = {
+  legacy: 'legacy',
+  current: 'current',
+} as const;
+
 export interface PaymentSettings {
   days_before_trip_to_allow_free_deposit?: PaymentSettingsDaysBeforeTripToAllowFreeDeposit;
+  theme?: PaymentSettingsTheme;
   [key: string]: unknown;
 }
 
@@ -102,7 +111,7 @@ export interface PaymentRedirectRequestBody {
   comments?: string;
 }
 
-export interface PaymentMaxAmountOutputModel {
+export interface OverpaymentAllowanceOutputModel {
   amount: number;
 }
 
@@ -295,6 +304,7 @@ export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem
     requires_card_holder?: boolean;
     requires_expiry_date?: boolean;
     requires_contact_choice?: boolean;
+    logos?: string[];
   };
 
 export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfPaymentConditions =
@@ -343,6 +353,7 @@ export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvid
     requires_card_holder?: boolean;
     requires_expiry_date?: boolean;
     requires_contact_choice?: boolean;
+    logos?: string[];
   };
 
 export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfPaymentConditions =

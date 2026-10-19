@@ -1,161 +1,133 @@
 import { Icon } from '@clubmed/trident-icons';
 import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 import clsx from 'clsx';
-import { PropsWithChildren } from 'react';
+import { Children, isValidElement, PropsWithChildren } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import { usePaymentProviders } from '../hooks/data/usePaymentProviders';
-import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
-import { useWatch } from '../hooks/utils/useForm';
+import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegrationMode';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { TOKENS } from '../types/Tokens';
-import { formatCurrency } from '../utils/formatCurrency';
 import { getDefaultPaymentConditionId } from '../utils/paymentProviders';
-import { renderTemplate } from '../utils/renderTemplate';
-import { PaymentProviderRules } from './PaymentProviders/PaymentProviderRules';
-import { FormPanel } from './ui/FormPanel';
-import { RadioSkeleton } from './ui/skeletons';
+import { BorderlessFormPanels } from './ui/FormPanel';
 
-const PROVIDER_ICON = {
-  [PaymentProvider1CategoryPaymentMethod.CreditCard]: 'CreditCard',
-};
-
-export const PaymentProviders = ({
-  className,
-  children,
-}: PropsWithChildren<{ className?: string }>) => {
-  const { content, locale } = useCapsConfigContext();
-  const {
-    data: { paymentProviders },
-  } = usePaymentProviders();
-  const { control, setValue } = useFormContext();
-
-  const {
-    paymentSchedule: [{ currency }],
-  } = usePaymentSchedule();
-
-  const watchedAmount = useWatch('amount');
-  const watchedDonationAmount = useWatch('donation_amount');
+const PaymentProvidersPanel = ({ children }: PropsWithChildren) => {
   const watchedProvider = useWatchedPaymentProvider();
-
-  const amount = Number(watchedAmount || 0) + Number(watchedDonationAmount || 0);
-
-  const PROVIDER_LABEL = {
-    [PaymentProvider1CategoryPaymentMethod.CreditCard]: content.paymentProviders.creditCard.label,
-    [PaymentProvider1CategoryPaymentMethod.BankTransfer]:
-      content.paymentProviders.bankTransfer.label,
-    [PaymentProvider1CategoryPaymentMethod.Paypal]: content.paymentProviders.paypal.label,
-  };
+  const { iframe } = useProviderIntegrationMode();
 
   const isBuyNowPayLater =
     watchedProvider?.category_payment_method ===
     PaymentProvider1CategoryPaymentMethod.BuyNowPayLater;
 
+  return (
+    <BorderlessFormPanels value={!isBuyNowPayLater}>
+      <div
+        data-cgv-first={isBuyNowPayLater || iframe || undefined}
+        className="group/panel flex flex-col gap-40"
+      >
+        {children}
+      </div>
+    </BorderlessFormPanels>
+  );
+};
+
+const isPanel = (child: unknown) => isValidElement(child) && child.type === PaymentProvidersPanel;
+
+export const PaymentProviders = ({
+  className,
+  children,
+}: PropsWithChildren<{ className?: string }>) => {
+  const { content } = useCapsConfigContext();
+  const {
+    data: { paymentProviders },
+  } = usePaymentProviders();
+  const { control, setValue } = useFormContext();
+
+  const watchedProvider = useWatchedPaymentProvider();
+
+  const isBuyNowPayLater =
+    watchedProvider?.category_payment_method ===
+    PaymentProvider1CategoryPaymentMethod.BuyNowPayLater;
+
+  const childArray = Children.toArray(children);
+  const heading = childArray.filter((child) => !isPanel(child));
+  const panel = childArray.filter(isPanel);
+
   if (isBuyNowPayLater) {
-    return null;
+    return panel.length > 0 ? <div className={className}>{panel}</div> : null;
   }
 
   return (
     <div className={className}>
-      {children}
-      <FormPanel className="p-0">
-        <Controller
-          name="provider_id"
-          control={control}
-          render={({ field: { value, onChange, name } }) => (
-            <div className="flex flex-col pt-12">
-              {paymentProviders.map((provider, index) => {
-                const isLastProvider = index === paymentProviders.length - 1;
+      {heading}
+      <Controller
+        name="provider_id"
+        control={control}
+        render={({ field: { value, onChange, name } }) => (
+          <div className="flex flex-col gap-16">
+            {paymentProviders.map((provider) => {
+              const isCreditCard =
+                provider.category_payment_method ===
+                PaymentProvider1CategoryPaymentMethod.CreditCard;
+              const checked = value === provider.id;
+              const logos = provider.configuration?.logos ?? [];
 
-                return (
-                  <div
-                    key={provider.id}
-                    className={clsx(
-                      'w-full p-20 flex justify-between',
-                      !isLastProvider && 'border-b-1 border-lightGrey',
-                    )}
+              return (
+                <div
+                  key={provider.id}
+                  className={clsx(
+                    'w-full rounded-32 border-2',
+                    checked ? 'border-black' : 'border-lightGrey',
+                  )}
+                >
+                  <Radio
+                    className="w-full cursor-pointer gap-16 p-20"
+                    name={name}
+                    value={provider.id}
+                    checked={checked}
+                    onChange={(_, providerId) => {
+                      onChange(providerId);
+                      const provider = paymentProviders.find(({ id }) => id === providerId);
+                      setValue('payment_condition_id', getDefaultPaymentConditionId(provider));
+                    }}
                   >
-                    <div>
-                      <p className="font-bold text-b3">{provider.description || ''}</p>
-                      {provider.category_payment_method ===
-                        PaymentProvider1CategoryPaymentMethod.BankTransfer && (
-                        <PaymentProviderRules className="mt-12" />
-                      )}
-                      <Radio
-                        className="my-24"
-                        name={name}
-                        value={provider.id}
-                        checked={value === provider.id}
-                        onChange={(_, providerId) => {
-                          onChange(providerId);
-                          const provider = paymentProviders.find(({ id }) => id === providerId);
-                          setValue('payment_condition_id', getDefaultPaymentConditionId(provider));
-                        }}
-                      >
-                        {renderTemplate(
-                          PROVIDER_LABEL[
-                            provider.category_payment_method as keyof typeof PROVIDER_LABEL
-                          ] || content.paymentProviders.creditCard.label,
-                          {
-                            amount: (
-                              <span className="font-bold text-sienna">
-                                {formatCurrency({ amount, currency, locale })}
-                              </span>
-                            ),
-                          },
+                    <div className="flex flex-1 items-center justify-between gap-16">
+                      <div>
+                        <p className="font-bold text-b3">{provider.description || ''}</p>
+                        {isCreditCard && (
+                          <p className="text-b5">
+                            {content.paymentProviders.creditCard.description}
+                          </p>
                         )}
-                      </Radio>
+                      </div>
+                      <div className="flex items-center gap-8">
+                        {logos.map((logo) => (
+                          <Icon key={logo} name={logo} width="2.5rem" />
+                        ))}
+                      </div>
                     </div>
-                    {provider.logo ? (
-                      <img
-                        src={provider.logo}
-                        alt={provider.description || provider.label || ''}
-                        className="w-80 object-contain"
-                      />
-                    ) : (
-                      <Icon
-                        name={
-                          PROVIDER_ICON[
-                            provider.category_payment_method as keyof typeof PROVIDER_ICON
-                          ] || ''
-                        }
-                        width="80px"
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        />
-      </FormPanel>
+                  </Radio>
+                  {checked && panel.length > 0 && <div className="px-20 pb-20">{panel}</div>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      />
     </div>
   );
 };
 
 const PaymentProvidersSkeleton = () => (
-  <FormPanel className="p-0">
-    <div className="flex flex-col pt-12">
-      {[1, 2, 3].map((i) => (
-        <div
-          key={i}
-          className={clsx(
-            'w-full p-20 flex justify-between gap-24',
-            i === 1 && 'border-b-1 border-lightGrey',
-          )}
-        >
-          <div className="flex-1">
-            <div className="h-16 w-1/2 rounded-8 animate-pulsation bg-lightGrey mb-12" />
-            <RadioSkeleton className="my-24" />
-          </div>
-          <div className="w-80 h-80 rounded-8 animate-pulsation bg-lightGrey" />
-        </div>
-      ))}
-    </div>
-  </FormPanel>
+  <div className="flex flex-col gap-16">
+    {[1, 2].map((i) => (
+      <div key={i} className="h-80 rounded-32 animate-pulsation bg-lightGrey" />
+    ))}
+  </div>
 );
 
 PaymentProviders.Skeleton = PaymentProvidersSkeleton;
+PaymentProviders.Panel = PaymentProvidersPanel;
 PaymentProviders.COMPONENT_KEY = TOKENS.PaymentProviders;
