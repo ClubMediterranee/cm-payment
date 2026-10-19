@@ -13,6 +13,7 @@ describe('@clubmed/caps/webcomponent on the server', () => {
         issuerType: 'GM',
         type: 'booking',
         id: '123',
+        apiKey: 'api-key',
         callbackUrl: 'https://host.example/cb',
         fallback: createElement('span', null, 'loading'),
       }),

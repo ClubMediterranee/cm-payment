@@ -103,6 +103,27 @@ describe('usePaymentSubmit', () => {
     expect(onLoadMock).toHaveBeenCalledTimes(1);
   });
 
+  it('should call onLoad once while pending, even when the callback identity changes', () => {
+    vi.spyOn(usePaymentRedirectModule, 'usePaymentRedirect').mockReturnValue({
+      mutate: mockMutate,
+      isPending: true,
+    } as any);
+
+    const { rerender } = renderHook(() => usePaymentSubmit());
+
+    const nextOnLoad = vi.fn();
+    vi.spyOn(FormCallbacksContextModule, 'useFormCallbacks').mockReturnValue({
+      onError: onErrorMock,
+      onLoad: nextOnLoad,
+      onLoadEnd: onLoadEndMock,
+    });
+    rerender();
+    rerender();
+
+    expect(onLoadMock).toHaveBeenCalledTimes(1);
+    expect(nextOnLoad).not.toHaveBeenCalled();
+  });
+
   it('should not call onLoad when isPending is false', () => {
     renderHook(() => usePaymentSubmit());
 

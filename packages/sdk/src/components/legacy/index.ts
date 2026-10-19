@@ -1,0 +1,10 @@
+export { BillingAddress as LegacyBillingAddress } from './BillingAddress';
+export { CardInstallments as LegacyCardInstallments } from './CardInstallments';
+export { Cgv as LegacyCgv } from './Cgv';
+export { Comments as LegacyComments } from './Comments';
+export { ContactChoice as LegacyContactChoice } from './ContactChoice';
+export { Donation as LegacyDonation } from './Donation';
+export { PaymentProviders as LegacyPaymentProviders } from './PaymentProviders';
+export { PaymentSchedule as LegacyPaymentSchedule } from './PaymentSchedule';
+export { PaymentWidget as LegacyPaymentWidget } from './PaymentWidget';
+export { SubmitButton as LegacySubmitButton } from './SubmitButton';

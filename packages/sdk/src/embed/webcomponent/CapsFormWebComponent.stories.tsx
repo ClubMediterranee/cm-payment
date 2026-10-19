@@ -27,6 +27,7 @@ const meta: Meta<typeof CapsFormWebComponent> = {
     type: 'proposal',
     id: '2057923',
     locale: 'fr-FR',
+    apiKey: 'api-key',
     callbackUrl: 'https://host.example/payment/confirmation',
     fallback: <p>Loading CAPS…</p>,
     onRedirect: () => false,

@@ -1,5 +1,5 @@
-@source "../node_modules/@clubmed/trident-ui";
-@import '../node_modules/@clubmed/trident-ui/styles/index.css';
+@import '../../node_modules/@clubmed/trident-ui/styles/index.css';
+@source "../../node_modules/@clubmed/trident-ui";
 
 /* The shadow host does not inherit anything from the host page but custom properties. */
 :host {

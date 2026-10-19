@@ -114,12 +114,13 @@ import { CapsFormWebComponent } from '@clubmed/caps/webcomponent'; // React 18+ 
   type="booking"
   id="123"
   callbackUrl={url}
+  apiKey={apiKey}
   accessToken={token}
   env="production"
 />;
 ```
 
-See [docs/embed.md](./docs/embed.md).
+The same flow is exported as `CapsPaymentForm` for hosts that install the SDK. See [docs/embed.md](./docs/embed.md).
 
 ## Documentation
 

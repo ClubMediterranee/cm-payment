@@ -1,8 +1,8 @@
+import type { CapsFormSlots } from '@clubmed/caps';
 import {
   createElement,
   type CSSProperties,
   type PropsWithChildren,
-  type ReactNode,
   useLayoutEffect,
   useRef,
   useState,
@@ -51,16 +51,16 @@ export function ShadowHost({ className, style, children }: ShadowHostProps) {
   );
 }
 
-export function ShadowSlot({ target, children }: { target?: HTMLElement; children: ReactNode }) {
-  const [container, setContainer] = useState<HTMLElement | null>(null);
+export function useShadowSlots(slots?: CapsFormSlots): CapsFormSlots {
+  const [containers, setContainers] = useState<CapsFormSlots>({});
+  const { donation, submit } = slots ?? {};
 
   useLayoutEffect(() => {
-    setContainer(target ? mountShadowRoot(target) : null);
-  }, [target]);
+    setContainers({
+      donation: donation ? mountShadowRoot(donation) : undefined,
+      submit: submit ? mountShadowRoot(submit) : undefined,
+    });
+  }, [donation, submit]);
 
-  if (!target) {
-    return <>{children}</>;
-  }
-
-  return container ? createPortal(children, container) : null;
+  return containers;
 }

@@ -1,4 +1,4 @@
-import { formatDate, FormPanel as Panel, useCapsConfigContext } from '@clubmed/caps';
+import { formatDate, FormPanel as Panel } from '@clubmed/caps';
 import { Icon } from '@clubmed/trident-icons';
 import { Card } from '@clubmed/trident-ui/ui/cards/Card';
 import { Chip } from '@clubmed/trident-ui/ui/Chip';
@@ -7,6 +7,7 @@ import { Tag } from '@clubmed/trident-ui/ui/Tag';
 
 import { useProduct } from '../hooks/useProduct';
 import type { StayModel } from '../hooks/useStay.js';
+import { useAppContext } from '../providers/AppProvider';
 
 export const StayPlaceholder = () => {
   return (
@@ -36,7 +37,7 @@ const formatStayDate = (date?: string | null) => {
 export const Stay = ({ stay }: StayProps) => {
   const { data: product } = useProduct(stay);
 
-  const { id } = useCapsConfigContext();
+  const { id } = useAppContext();
 
   return (
     <Panel className="bg-white w-full mb-40">

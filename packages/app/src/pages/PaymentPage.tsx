@@ -1,41 +1,28 @@
-import {
-  Action,
-  BillingAddress,
-  CardInstallments,
-  Cgv,
-  Comments,
-  ContactChoice,
-  Donation,
-  Form,
-  PaymentProviders,
-  PaymentSchedule,
-  PaymentWidget,
-  SubmitButton,
-  useDisclosure,
-} from '@clubmed/caps';
+import { Action, CapsPaymentForm, type CapsPaymentFormProps, useDisclosure } from '@clubmed/caps';
 import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { Stay, StayPlaceholder } from '../components/Stay';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useStay } from '../hooks/useStay';
+import { useAppContext } from '../providers/AppProvider';
 import { LoadingPage } from './LoadingPage';
 
 export function PaymentPage() {
   const { stay, status } = useStay();
+  const { api, id, type, values, oidc } = useAppContext();
   const { action, reference, uuid } = useQueryParams<{
     action?: Action;
     reference?: string;
     uuid?: string;
   }>();
   const { isOpen: isPaymentLoading, onOpen: onLoad, onClose: onLoadEnd } = useDisclosure();
-  console.log('isPaymentLoading', isPaymentLoading);
 
   const ref = useRef<HTMLParagraphElement | null>(null);
-  const [error, setError] = useState<Error>();
+  const [error, setError] = useState<string>();
 
-  const onError = (error: Error) => {
-    setError(error);
+  const onError = ({ message }: { message: string }) => {
+    setError(message);
     onLoadEnd();
   };
 
@@ -85,43 +72,29 @@ export function PaymentPage() {
         <Stay stay={stay!} />
       </Suspense>
 
-      <Form onError={onError} onLoad={onLoad} onLoadEnd={onLoadEnd} action={action}>
-        <PaymentSchedule>
-          <h2 className="text-h5 mb-16 font-serif">Choisissez l'échéancier de paiement</h2>
-        </PaymentSchedule>
-        <PaymentProviders>
-          <h2 className="text-h5 mb-16 font-serif">
-            Quel moyen de paiement souhaitez-vous utiliser ?
-          </h2>
-        </PaymentProviders>
-        <CardInstallments>
-          <h2 className="text-h5 mb-16 font-serif">Choisissez votre échéancier de carte</h2>
-        </CardInstallments>
-        <ContactChoice reference={reference} uuid={uuid}>
-          <h2 className="text-h5 mb-16 font-serif">Comment souhaitez-vous être contacté ?</h2>
-        </ContactChoice>
-        <Donation>
-          <h2 className="text-h5 mb-16 font-serif">Faites un don</h2>
-        </Donation>
-        <Comments>
-          <h2 className="text-h5 mb-16 font-serif">Fill your comments</h2>
-        </Comments>
-        <Cgv>
-          <h2 className="text-h5 mb-16 font-serif">Conditions générales de vente</h2>
-        </Cgv>
-        <BillingAddress>
-          <h2 className="text-h5 mb-16 font-serif">Adresse de facturation</h2>
-        </BillingAddress>
-        <PaymentWidget>
-          <h2 className="text-h5 mb-16 font-serif">Informations de paiement</h2>
-        </PaymentWidget>
-        {error?.message && (
-          <p ref={ref} className="text-red font-semibold my-4 text-center">
-            {error?.message}
-          </p>
-        )}
-        <SubmitButton className="my-8 self-center">Payer</SubmitButton>
-      </Form>
+      <CapsPaymentForm
+        capsUrl={api.url}
+        apiKey={api.apiKey}
+        issuerType={oidc.issuerType as CapsPaymentFormProps['issuerType']}
+        type={type}
+        id={id!}
+        customerId={values.customerId}
+        locale={values.locale}
+        accessToken={oidc.accessToken}
+        callbackUrl={values.callbackUrl}
+        callbackUrlSeller={values.callbackUrlSeller}
+        action={action}
+        reference={reference}
+        uuid={uuid}
+        theme="legacy"
+        onLoadingChange={(loading) => (loading ? onLoad() : onLoadEnd())}
+        onError={onError}
+      />
+      {error && (
+        <p ref={ref} className="text-red font-semibold my-4 text-center">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

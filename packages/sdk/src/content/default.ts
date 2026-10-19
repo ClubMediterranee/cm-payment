@@ -2,6 +2,7 @@ import { Content } from '../types/Content';
 
 export const defaultContent: Content = {
   paymentProviders: {
+    heading: 'Which payment method would you like to use?',
     validation: {
       required: 'You must choose a payment method',
     },
@@ -18,6 +19,7 @@ export const defaultContent: Content = {
     },
   },
   paymentSchedule: {
+    heading: 'Choose your payment schedule',
     payFullAmount: 'I pay today the full amount of {amount}',
     payDeposit:
       'I pay today, at no charge, a deposit of {amount} and at the latest on {deadline} the balance of {balance}',
@@ -28,6 +30,7 @@ export const defaultContent: Content = {
     },
   },
   cgv: {
+    heading: 'Terms and conditions',
     title: 'Terms and Conditions',
     content:
       'Validating my reservation implies a payment obligation. [FBL] I am informed of the obligation to present a negative test result or proof of complete vaccination for Covid-19 to access the Resort between May 21 and September 30, 2021 (details on the Resort page). I accept the General Conditions of Sale and declare that I have also read the Information Form.*',
@@ -37,12 +40,14 @@ export const defaultContent: Content = {
     },
   },
   comments: {
+    heading: 'Comments',
     placeholder: 'Enter your comments',
     validation: {
       required: 'Comments are required',
     },
   },
   contactChoice: {
+    heading: 'How would you like to be contacted?',
     title: 'What type of channel?',
     choiceLabel: 'By {label}',
     validation: {
@@ -103,6 +108,7 @@ export const defaultContent: Content = {
     },
   },
   cardInstallments: {
+    heading: 'Choose your card installments',
     title: 'Payment method',
     selectCardType: 'Select your card type',
     selectInstallments: 'Select the number of installments',
@@ -113,6 +119,7 @@ export const defaultContent: Content = {
     },
   },
   billingAddress: {
+    heading: 'Billing address',
     title: 'Billing Address',
     fields: {
       first_name: 'First Name',
@@ -154,6 +161,7 @@ export const defaultContent: Content = {
     },
   },
   donation: {
+    heading: 'Make a donation',
     title: 'Make a donation to the Friends of the Foundation',
     description:
       "Would you like to make a donation to support the Foundation's projects for education and nature conservation around Club Med Villages?",
@@ -168,5 +176,11 @@ export const defaultContent: Content = {
     acceptCGU: 'I accept the donation terms and conditions',
     donationTerms: 'donation terms and conditions',
     linkDonationTerms: '',
+  },
+  paymentWidget: {
+    heading: 'Payment details',
+  },
+  submit: {
+    label: 'Pay',
   },
 };

@@ -1,5 +1,6 @@
 export type Content = {
   paymentProviders: {
+    heading: string;
     validation: {
       required: string;
     };
@@ -16,6 +17,7 @@ export type Content = {
     };
   };
   paymentSchedule: {
+    heading: string;
     payFullAmount: `${string}{amount}${string}`;
     payDeposit: `${string}{amount}${string}{deadline}${string}{balance}${string}`;
     buyNowPayLater: {
@@ -25,6 +27,7 @@ export type Content = {
     };
   };
   cgv: {
+    heading: string;
     title: string;
     content: string;
     validation: {
@@ -33,12 +36,14 @@ export type Content = {
     };
   };
   comments: {
+    heading: string;
     placeholder: string;
     validation: {
       required: string;
     };
   };
   contactChoice: {
+    heading: string;
     validation: {
       required: string;
     };
@@ -96,6 +101,7 @@ export type Content = {
     };
   };
   cardInstallments: {
+    heading: string;
     title: string;
     selectCardType: string;
     selectInstallments: string;
@@ -106,6 +112,7 @@ export type Content = {
     };
   };
   billingAddress: {
+    heading: string;
     title: string;
     fields: {
       first_name: string;
@@ -147,6 +154,7 @@ export type Content = {
     };
   };
   donation: {
+    heading: string;
     title: string;
     description: string;
     notThisTime: string;
@@ -159,4 +167,12 @@ export type Content = {
     donationTerms: string;
     linkDonationTerms: string;
   };
+  paymentWidget: {
+    heading: string;
+  };
+  submit: {
+    label: string;
+  };
 };
+
+export type DeepPartial<T> = { [K in keyof T]?: T[K] extends string ? T[K] : DeepPartial<T[K]> };

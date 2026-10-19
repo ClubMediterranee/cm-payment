@@ -1,5 +1,8 @@
 import type { BadRequestErrorModel, BadRequestModel } from '../__generated__/index.schemas';
 import { getPaymentConfig } from '../providers/PaymentConfigProvider';
+import type { CapsSettings } from '../types/CapsSettings';
+
+export type FetcherConfig = Pick<CapsSettings, 'locale' | 'oidc' | 'api'>;
 
 type ErrorNode = BadRequestModel | BadRequestErrorModel;
 
@@ -16,6 +19,7 @@ export const fetcher = async <T>({
   params = {},
   headers,
   data,
+  config,
 }: {
   baseUrl?: string;
   url: string;
@@ -23,12 +27,13 @@ export const fetcher = async <T>({
   headers?: Record<string, string>;
   params?: Record<string, unknown>;
   data?: unknown;
+  config?: FetcherConfig;
 }): Promise<T> => {
   const {
     locale,
     oidc: { accessToken, issuerType },
     api: { apiKey, url: baseApiUrl },
-  } = getPaymentConfig();
+  } = config ?? getPaymentConfig();
 
   const queryParams = new URLSearchParams();
 

@@ -16,10 +16,6 @@ services:
       - CLUBMED_API_KEY=${CLUBMED_API_KEY}
       - DIRECTUS_API_TOKEN="toto"
       - CAPS_ALLOWED_ORIGINS=${CAPS_ALLOWED_ORIGINS:-}
-      - CAPS_API_KEY_GM_BE
-      - CAPS_API_KEY_GM_CA
-      - CAPS_API_KEY_GO
-      - CAPS_API_KEY_PARTNERS
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.payment-apps.rule=Host(`localhost`)"

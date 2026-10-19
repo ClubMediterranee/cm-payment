@@ -1,5 +1,5 @@
 import type { RefObject } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useFormCallbacks } from '../contexts/FormCallbacksContext';
 import { loadPaymentProviderUrl } from '../utils/loadPaymentProviderUrl';
@@ -31,15 +31,18 @@ export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) 
 
   const { isPending } = mutationProps;
 
+  const onLoadRef = useRef(onLoad);
+  onLoadRef.current = onLoad;
+
   const { handleTokenValidationError } = useTokenRetry({
     onRetry: () => mutate(methods.getValues()),
   });
 
   useEffect(() => {
     if (isPending && !iframe) {
-      onLoad?.();
+      onLoadRef.current?.();
     }
-  }, [iframe, isPending, onLoad]);
+  }, [iframe, isPending]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     await methods.handleSubmit((data) => mutate(data), handleTokenValidationError)(e);
