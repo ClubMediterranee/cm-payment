@@ -21,9 +21,7 @@ Hosts that cannot load the remote can redirect the user to the CAPS payment page
   accessToken={token} // provided by the host, never written to the DOM nor to a URL
   callbackUrl="https://host.example/payment/confirmation"
   callbackUrlSeller="https://host.example/seller/confirmation"
-  onReady={() => {}}
-  onLoadingChange={(loading) => {}}
-  onError={({ code, message }) => {}}
+  onEvent={({ action, name, data }) => {}} // tracking events, see "Tracking"
   onRedirect={(url) => {
     // return false to handle the navigation yourself
   }}
@@ -37,9 +35,32 @@ Hosts that cannot load the remote can redirect the user to the CAPS payment page
 | `staging`     | `https://staging.caps.api.clubmed`     |
 | `integration` | `https://integration.caps.api.clubmed` |
 
-Error codes: `REMOTE_LOAD_FAILED`, `PROTOCOL_MISMATCH`, `REACT_VERSION_UNSUPPORTED`, `ORIGIN_NOT_ALLOWED`, `FLOW_ERROR`.
+Error codes (`data.code` of the `error` event): `REMOTE_LOAD_FAILED`, `PROTOCOL_MISMATCH`, `REACT_VERSION_UNSUPPORTED`, `ORIGIN_NOT_ALLOWED`, `FLOW_ERROR`.
 
 Section headings and the submit label of the webcomponent form can be overridden with `content={{ paymentSchedule: { heading: '…' }, submit: { label: 'Payer' } }}`; the other `content` keys are the SDK content keys.
+
+## Tracking
+
+`onEvent` receives one object, `{ action, name, data }`, for every step of the payment page:
+
+| `action` | `name`     | `data`                              | Emitted                                                                                  |
+| -------- | ---------- | ----------------------------------- | ---------------------------------------------------------------------------------------- |
+| `''`     | `load`     |                                     | The payment request starts                                                               |
+| `''`     | `load_end` |                                     | The payment request ends (error or cancellation)                                         |
+| `click`  | `submit`   | `{ provider_id, amount, currency }` | The user submitted a valid form, right before the payment request. `amount` is a number. |
+| `''`     | `redirect` | `{ url }`                           | The flow is about to navigate (not emitted when `onRedirect` returns `false`)            |
+| `''`     | `error`    | `{ code, message }`                 | A payment or loading error                                                               |
+
+`onEvent` is fire-and-forget: its return value is ignored and an exception thrown by your handler does not interrupt the payment. `onRedirect` stays separate because it can take over the navigation.
+
+`submit` is a click, not a payment: a user can submit and be refused. The result arrives as query parameters on your `callbackUrl`:
+
+```
+https://host.example/confirmation?payment_status=OK&payment_amount=1250.00&payment_currency=EUR
+  &booking_id=…&provider_id=…&proposal_id=…&locale=fr-FR
+```
+
+`payment_status` is one of `OK`, `PENDING`, `REFUSED_PSP`, `REFUSED_CM` or `CANCELED`. Count a conversion from the confirmation page only, to avoid counting a submit that was refused. `payment_amount` is a decimal string, whereas `amount` of `submit` is a number.
 
 ## Without the webcomponent
 
@@ -58,7 +79,7 @@ import { CapsPaymentForm } from '@clubmed/caps';
   callbackUrl="https://host.example/payment/confirmation"
   theme="current" // optional: 'current' | 'legacy', overrides the theme set in the CMS
   stepper // reveals the form section by section (theme 'current' only)
-  onError={({ code, message }) => {}} // payment errors are reported here, displaying them is up to the host
+  onEvent={({ action, name, data }) => {}} // payment errors are reported as `error` events, displaying them is up to the host
 />;
 ```
 

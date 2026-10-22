@@ -1,87 +1,120 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import { FormSchemaContext } from '../../contexts/FormSchemaContext';
 import { StepperContext } from '../../contexts/StepperContext';
 import { Step } from './Step';
 
 const schema = z.object({
-  amount: z.string(),
-  provider_id: z.string(),
+  amount: z.string().min(1),
+  provider_id: z.string().min(1),
+  billing_details: z.object({
+    address: z.object({ city: z.string().min(1) }),
+    attendee: z.object({ first_name: z.string().min(1) }),
+  }),
   cgv: z.boolean().refine((value) => value),
+  donation_amount: z.number().nonnegative().optional(),
 });
 
 type Values = z.infer<typeof schema>;
 
+const valid: Values = {
+  amount: '3000',
+  provider_id: 'card',
+  billing_details: { address: { city: 'Paris' }, attendee: { first_name: 'Ada' } },
+  cgv: true,
+};
+
 const Harness = ({
-  defaultValues,
+  values = {},
   stepper = true,
 }: {
-  defaultValues: Values;
+  values?: Partial<Values>;
   stepper?: boolean;
 }) => {
-  const methods = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
+  const methods = useForm<Values>({ defaultValues: { ...valid, ...values } });
 
   return (
-    <FormProvider {...methods}>
-      <StepperContext.Provider value={stepper}>
-        <button
-          type="button"
-          onClick={() => methods.setValue('cgv', false, { shouldValidate: true })}
-        >
-          refuse
-        </button>
-        <Step name="providers">
-          <span>providers</span>
-        </Step>
-        <Step name="details">
-          <span>details</span>
-        </Step>
-        <Step name="submit">
-          <span>submit</span>
-        </Step>
-      </StepperContext.Provider>
-    </FormProvider>
+    <FormSchemaContext.Provider value={schema as never}>
+      <FormProvider {...methods}>
+        <StepperContext.Provider value={stepper}>
+          <button type="button" onClick={() => methods.setValue('amount', '')}>
+            reset amount
+          </button>
+          <button type="button" onClick={() => methods.setValue('donation_amount', -1)}>
+            invalid donation
+          </button>
+          <Step after="amount">
+            <span>providers</span>
+          </Step>
+          <Step after="provider_id">
+            <span>billing</span>
+          </Step>
+          <Step after={['billing_details.attendee', 'billing_details.address']}>
+            <span>cgv</span>
+          </Step>
+          <Step>
+            <span>submit</span>
+          </Step>
+        </StepperContext.Provider>
+      </FormProvider>
+    </FormSchemaContext.Provider>
   );
 };
 
 const visible = () =>
-  ['providers', 'details', 'submit'].filter((name) => screen.queryByText(name) !== null);
+  ['providers', 'billing', 'cgv', 'submit'].filter((name) => screen.queryByText(name));
 
 describe('Step', () => {
   it('always shows its content without the stepper', () => {
-    render(<Harness stepper={false} defaultValues={{ amount: '', provider_id: '', cgv: false }} />);
+    render(<Harness stepper={false} values={{ amount: '', provider_id: '', cgv: false }} />);
 
-    expect(visible()).toEqual(['providers', 'details', 'submit']);
+    expect(visible()).toEqual(['providers', 'billing', 'cgv', 'submit']);
   });
 
-  it('shows nothing until a schedule is selected', () => {
-    render(<Harness defaultValues={{ amount: '', provider_id: '', cgv: false }} />);
+  it('shows nothing while the first field is invalid', () => {
+    render(<Harness values={{ amount: '' }} />);
 
     expect(visible()).toEqual([]);
   });
 
-  it('shows the payment methods once the amount is set', () => {
-    render(<Harness defaultValues={{ amount: '3000', provider_id: '', cgv: false }} />);
+  it('shows a step once the field it follows and every field before it are valid', () => {
+    render(<Harness values={{ provider_id: '' }} />);
 
     expect(visible()).toEqual(['providers']);
   });
 
-  it('shows the details once a provider is selected', () => {
-    render(<Harness defaultValues={{ amount: '3000', provider_id: 'card', cgv: false }} />);
+  it('waits for every field of the list', () => {
+    render(
+      <Harness
+        values={{ billing_details: { address: { city: '' }, attendee: { first_name: 'Ada' } } }}
+      />,
+    );
 
-    expect(visible()).toEqual(['providers', 'details']);
+    expect(visible()).toEqual(['providers', 'billing']);
   });
 
-  it('shows the submit while the form is valid and hides it when it is not', async () => {
-    render(<Harness defaultValues={{ amount: '3000', provider_id: 'card', cgv: true }} />);
+  it('shows every step when the whole form is valid', () => {
+    render(<Harness />);
 
-    expect(await screen.findByText('submit')).toBeTruthy();
+    expect(visible()).toEqual(['providers', 'billing', 'cgv', 'submit']);
+  });
 
-    fireEvent.click(screen.getByText('refuse'));
+  it('hides the steps again when a previous field becomes invalid', async () => {
+    render(<Harness />);
+
+    fireEvent.click(screen.getByText('reset amount'));
+
+    await vi.waitFor(() => expect(visible()).toEqual([]));
+  });
+
+  it('keeps the step without `after` hidden while any other field is invalid', async () => {
+    render(<Harness />);
+
+    fireEvent.click(screen.getByText('invalid donation'));
 
     await vi.waitFor(() => expect(screen.queryByText('submit')).toBeNull());
-    expect(visible()).toEqual(['providers', 'details']);
+    expect(visible()).toEqual(['providers', 'billing', 'cgv']);
   });
 });

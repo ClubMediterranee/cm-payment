@@ -1,14 +1,11 @@
+import type { PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import type { CapsFormSlots } from '../../embed/shared';
-import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 import type { Content } from '../../types/Content';
 
-type HeadingSection = {
-  [K in keyof Content]: Content[K] extends { heading: string } ? K : never;
-}[keyof Content];
-
 export type FlowLayoutProps = {
+  content: Content;
   slots?: CapsFormSlots;
   reference?: string;
   uuid?: string;
@@ -20,19 +17,10 @@ const TITLE_VARIANTS = {
   label: 'text-b3 mb-12 font-bold',
 };
 
-type TitleProps = {
-  section: HeadingSection;
+type TitleProps = PropsWithChildren<{
   variant?: keyof typeof TITLE_VARIANTS;
   className?: string;
-};
+}>;
 
-export const Title = ({ section, variant = 'default', className }: TitleProps) => {
-  const { content } = useCapsConfigContext();
-  const { heading } = content[section];
-
-  return heading ? (
-    <h2 className={twMerge(TITLE_VARIANTS[variant], className)}>{heading}</h2>
-  ) : null;
-};
-
-export const SubmitLabel = () => useCapsConfigContext().content.submit.label;
+export const Title = ({ variant = 'default', className, children }: TitleProps) =>
+  children ? <h2 className={twMerge(TITLE_VARIANTS[variant], className)}>{children}</h2> : null;

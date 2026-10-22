@@ -13,32 +13,44 @@ import { type FlowLayoutProps, Title } from './flowShared';
 import { PayLabel } from './PayLabel';
 import { Step } from './Step';
 
-export const CurrentFlow = ({ slots, reference, uuid }: FlowLayoutProps) => (
+export const CurrentFlow = ({ content, slots, reference, uuid }: FlowLayoutProps) => (
   <>
     <PaymentSchedule>
-      <Title section="paymentSchedule" variant="section" />
+      <Title variant="section">{content.paymentSchedule.heading}</Title>
     </PaymentSchedule>
-    <Step name="providers">
+    <Step after="amount">
       <PaymentProviders>
-        <Title section="paymentProviders" variant="section" />
+        <Title variant="section">{content.paymentProviders.heading}</Title>
         <PaymentProviders.Panel>
           <CardInstallments>
-            <Title section="cardInstallments" variant="label" />
+            <Title variant="label">{content.cardInstallments.heading}</Title>
           </CardInstallments>
-          <BillingAddress>
-            <Title section="billingAddress" variant="label" />
-          </BillingAddress>
-          <PaymentWidget />
-          <ContactChoice reference={reference} uuid={uuid}>
-            <Title section="contactChoice" variant="label" />
-          </ContactChoice>
-          <Comments>
-            <Title section="comments" variant="label" />
-          </Comments>
-          <Cgv className="group-data-cgv-first/panel:-order-1">
-            <Title section="cgv" variant="label" />
-          </Cgv>
-          <Step name="submit">
+          <Step after="provider_id">
+            <BillingAddress>
+              <Title variant="label">{content.billingAddress.heading}</Title>
+            </BillingAddress>
+          </Step>
+          <Step
+            after={['payment_condition_id', 'billing_details.attendee', 'billing_details.address']}
+          >
+            <PaymentWidget />
+          </Step>
+          <Step after="provider_id">
+            <ContactChoice reference={reference} uuid={uuid}>
+              <Title variant="label">{content.contactChoice.heading}</Title>
+            </ContactChoice>
+          </Step>
+          <Step after={['template_id', 'billing_details.mobile_phone', 'billing_details.email']}>
+            <Comments>
+              <Title variant="label">{content.comments.heading}</Title>
+            </Comments>
+          </Step>
+          <Step after="comments">
+            <Cgv className="group-data-cgv-first/panel:-order-1">
+              <Title variant="label">{content.cgv.heading}</Title>
+            </Cgv>
+          </Step>
+          <Step>
             <SubmitSlot target={slots?.submit}>
               <SubmitButton color="saffron" className={slots?.submit ? 'w-full' : 'self-center'}>
                 <PayLabel />
@@ -48,10 +60,14 @@ export const CurrentFlow = ({ slots, reference, uuid }: FlowLayoutProps) => (
         </PaymentProviders.Panel>
       </PaymentProviders>
     </Step>
-    <Step name="details">
-      <FormSlot target={slots?.donation}>
+    {slots?.donation ? (
+      <FormSlot target={slots.donation}>
         <Donation />
       </FormSlot>
-    </Step>
+    ) : (
+      <Step after="provider_id">
+        <Donation />
+      </Step>
+    )}
   </>
 );

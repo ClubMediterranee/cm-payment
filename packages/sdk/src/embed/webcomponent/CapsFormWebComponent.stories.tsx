@@ -37,9 +37,7 @@ const meta: Meta<typeof CapsFormWebComponent> = {
     issuerType: { control: 'select', options: ['GM', 'GO', 'PARTNERS'] },
     type: { control: 'select', options: ['proposal', 'booking'] },
     accessToken: { control: 'text' },
-    onReady: { action: 'ready' },
-    onLoadingChange: { action: 'loadingChange' },
-    onError: { action: 'error' },
+    onEvent: { action: 'event' },
   },
 };
 
@@ -65,13 +63,15 @@ export const UnknownEnvironment: Story = {
   args: {
     url: undefined,
     env: 'qa' as never,
-    onError: fn(),
+    onEvent: fn(),
   },
   play: async ({ args, canvasElement }) => {
     await waitFor(() =>
-      expect(args.onError).toHaveBeenCalledWith(
-        expect.objectContaining({ code: 'REMOTE_LOAD_FAILED' }),
-      ),
+      expect(args.onEvent).toHaveBeenCalledWith({
+        action: '',
+        name: 'error',
+        data: expect.objectContaining({ code: 'REMOTE_LOAD_FAILED' }),
+      }),
     );
     await expect(canvasElement.querySelector('caps-form')).toBeNull();
   },

@@ -21,7 +21,7 @@ function RemoteCapsForm({
   className,
   style,
   content,
-  onError,
+  onEvent,
   ...props
 }: CapsRemoteFormProps) {
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -34,9 +34,11 @@ function RemoteCapsForm({
           {...props}
           slots={shadowSlots}
           content={content as CapsPaymentFormProps['content']}
-          onError={(error) => {
-            setErrorMessage(error.code === 'FLOW_ERROR' ? error.message : undefined);
-            onError?.(error);
+          onEvent={(event) => {
+            if (event.name === 'error') {
+              setErrorMessage(event.data.code === 'FLOW_ERROR' ? event.data.message : undefined);
+            }
+            onEvent?.(event);
           }}
         />
         <PaymentErrorMessage message={errorMessage} />

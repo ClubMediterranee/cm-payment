@@ -2,6 +2,7 @@ import type { RefObject } from 'react';
 import { useEffect, useRef } from 'react';
 
 import { useFormCallbacks } from '../contexts/FormCallbacksContext';
+import { errorEvent, loadEndEvent, loadEvent, submitEvent } from '../embed/shared/events';
 import { loadPaymentProviderUrl } from '../utils/loadPaymentProviderUrl';
 import { usePaymentRedirect } from './data/usePaymentRedirect';
 import { useTokenRetry } from './useTokenRetry';
@@ -13,26 +14,26 @@ export type UsePaymentSubmitParams = {
 };
 
 export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) => {
-  const { onError, onLoad, onLoadEnd } = useFormCallbacks();
+  const { onEvent } = useFormCallbacks();
   const methods = useFormContext();
   const { iframe, custom } = useProviderIntegrationMode();
 
   const { mutate, ...mutationProps } = usePaymentRedirect({
     onError: (error) => {
-      onError?.(error);
+      onEvent?.(errorEvent({ code: 'FLOW_ERROR', message: error.message }));
     },
     onSuccess: ({ redirect }) => {
       if (custom) return;
       loadPaymentProviderUrl(redirect, targetIframe);
     },
-    onLoadEnd,
+    onLoadEnd: () => onEvent?.(loadEndEvent),
     skipLoadEndOnSuccess: !custom,
   });
 
   const { isPending } = mutationProps;
 
-  const onLoadRef = useRef(onLoad);
-  onLoadRef.current = onLoad;
+  const onEventRef = useRef(onEvent);
+  onEventRef.current = onEvent;
 
   const { handleTokenValidationError } = useTokenRetry({
     onRetry: () => mutate(methods.getValues()),
@@ -40,12 +41,21 @@ export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) 
 
   useEffect(() => {
     if (isPending && !iframe) {
-      onLoadRef.current?.();
+      onEventRef.current?.(loadEvent);
     }
   }, [iframe, isPending]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    await methods.handleSubmit((data) => mutate(data), handleTokenValidationError)(e);
+    await methods.handleSubmit((data) => {
+      onEvent?.(
+        submitEvent({
+          provider_id: data.provider_id,
+          amount: Number(data.amount),
+          currency: data.currency,
+        }),
+      );
+      mutate(data);
+    }, handleTokenValidationError)(e);
   };
 
   return { handleSubmit, ...mutationProps };
