@@ -15,7 +15,7 @@ const props = {
   locale: params.get('locale') || undefined,
   accessToken: params.get('access_token') || undefined,
   callbackUrl: params.get('callback_url') || window.location.href,
-  onError: (error) => console.error('[CAPS preview]', error),
+  onEvent: (event) => console.info('[CAPS preview] event', event),
   onRedirect: (url) => console.info('[CAPS preview] redirect', url),
 } as CapsRemoteFormProps;
 

@@ -1,31 +1,46 @@
 import type { PropsWithChildren } from 'react';
+import { useWatch } from 'react-hook-form';
 
+import { useFormSchema } from '../../contexts/FormSchemaContext';
 import { useStepper } from '../../contexts/StepperContext';
-import { useFormContext, useWatch } from '../../hooks/utils/useForm';
 
-export type StepName = 'providers' | 'details' | 'submit';
+const FIELD_ORDER = [
+  'amount',
+  'provider_id',
+  'payment_condition_id',
+  'billing_details.attendee',
+  'billing_details.address',
+  'creditCard',
+  'token',
+  'template_id',
+  'billing_details.mobile_phone',
+  'billing_details.email',
+  'comments',
+  'cgv',
+] as const;
 
-type StepProps = PropsWithChildren<{ name: StepName }>;
+export type StepField = (typeof FIELD_ORDER)[number];
 
-const useStepVisibility = (name: StepName) => {
-  const amount = useWatch('amount');
-  const providerId = useWatch('provider_id');
-  const { formState } = useFormContext();
-  const isValid = formState.isValid;
+const rankOf = (path: string) => {
+  const rank = FIELD_ORDER.findIndex((field) => `${path}.`.startsWith(`${field}.`));
 
-  const hasSchedule = Number(amount) > 0;
-
-  const visibility: Record<StepName, boolean> = {
-    providers: hasSchedule,
-    details: hasSchedule && !!providerId,
-    submit: hasSchedule && !!providerId && isValid,
-  };
-
-  return visibility[name];
+  return rank < 0 ? FIELD_ORDER.length : rank;
 };
 
-const GatedStep = ({ name, children }: StepProps) =>
-  useStepVisibility(name) ? <>{children}</> : null;
+type StepProps = PropsWithChildren<{ after?: StepField | StepField[] }>;
 
-export const Step = ({ name, children }: StepProps) =>
-  useStepper() ? <GatedStep name={name}>{children}</GatedStep> : <>{children}</>;
+export const Step = ({ after, children }: StepProps) => {
+  const stepper = useStepper();
+  const schema = useFormSchema();
+  const values = useWatch();
+
+  if (!stepper) return <>{children}</>;
+
+  const issues = schema?.safeParse(values).error?.issues ?? [];
+  const firstInvalid = Math.min(...issues.map(({ path }) => rankOf(path.join('.'))), Infinity);
+  const last = after
+    ? Math.max(...[after].flat().map((field) => FIELD_ORDER.indexOf(field)))
+    : FIELD_ORDER.length;
+
+  return firstInvalid > last ? <>{children}</> : null;
+};

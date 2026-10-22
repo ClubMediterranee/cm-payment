@@ -86,3 +86,5 @@ Living specs: `openspec/specs/`. In-flight changes: `openspec/changes/<change-id
 ## Lessons Learned
 
 <!-- One bullet per correction: the mistake pattern and the rule that prevents it. -->
+
+- The embed/SDK public API is unreleased (no users yet): replace callbacks and types directly, no backward-compat shims, deprecations or dual APIs.

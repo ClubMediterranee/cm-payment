@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import type { Mock } from 'vitest';
 
 import * as FormCallbacksContextModule from '../contexts/FormCallbacksContext';
+import type { CapsEvent } from '../embed/shared';
 import { CapsFormSchema } from '../schemas/capsFormSchema';
 import * as usePaymentRedirectModule from './data/usePaymentRedirect';
 import { usePaymentSubmit } from './usePaymentSubmit';
@@ -16,9 +17,7 @@ describe('usePaymentSubmit', () => {
   let mockHandleSubmit: Mock;
   let mockGetValues: Mock;
   let mockHandleTokenValidationError: Mock<(errors: any) => void>;
-  let onErrorMock: Mock<(error: Error) => void>;
-  let onLoadMock: Mock<() => void>;
-  let onLoadEndMock: Mock<() => void>;
+  let onEventMock: Mock<(event: CapsEvent) => void>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,14 +42,10 @@ describe('usePaymentSubmit', () => {
     );
     mockHandleTokenValidationError = vi.fn();
 
-    onErrorMock = vi.fn();
-    onLoadMock = vi.fn();
-    onLoadEndMock = vi.fn();
+    onEventMock = vi.fn();
 
     vi.spyOn(FormCallbacksContextModule, 'useFormCallbacks').mockReturnValue({
-      onError: onErrorMock,
-      onLoad: onLoadMock,
-      onLoadEnd: onLoadEndMock,
+      onEvent: onEventMock,
     });
 
     vi.spyOn(useFormModule, 'useFormContext').mockReturnValue({
@@ -92,7 +87,7 @@ describe('usePaymentSubmit', () => {
     expect(mockMutate).toHaveBeenCalledWith({ amount: '100', currency: 'EUR' });
   });
 
-  it('should call onLoad when isPending becomes true', () => {
+  it('should emit load when isPending becomes true', () => {
     vi.spyOn(usePaymentRedirectModule, 'usePaymentRedirect').mockReturnValue({
       mutate: mockMutate,
       isPending: true,
@@ -100,10 +95,11 @@ describe('usePaymentSubmit', () => {
 
     renderHook(() => usePaymentSubmit());
 
-    expect(onLoadMock).toHaveBeenCalledTimes(1);
+    expect(onEventMock).toHaveBeenCalledTimes(1);
+    expect(onEventMock).toHaveBeenCalledWith({ action: '', name: 'load' });
   });
 
-  it('should call onLoad once while pending, even when the callback identity changes', () => {
+  it('should emit load once while pending, even when the callback identity changes', () => {
     vi.spyOn(usePaymentRedirectModule, 'usePaymentRedirect').mockReturnValue({
       mutate: mockMutate,
       isPending: true,
@@ -111,23 +107,49 @@ describe('usePaymentSubmit', () => {
 
     const { rerender } = renderHook(() => usePaymentSubmit());
 
-    const nextOnLoad = vi.fn();
+    const nextOnEvent = vi.fn();
     vi.spyOn(FormCallbacksContextModule, 'useFormCallbacks').mockReturnValue({
-      onError: onErrorMock,
-      onLoad: nextOnLoad,
-      onLoadEnd: onLoadEndMock,
+      onEvent: nextOnEvent,
     });
     rerender();
     rerender();
 
-    expect(onLoadMock).toHaveBeenCalledTimes(1);
-    expect(nextOnLoad).not.toHaveBeenCalled();
+    expect(onEventMock).toHaveBeenCalledTimes(1);
+    expect(nextOnEvent).not.toHaveBeenCalled();
   });
 
-  it('should not call onLoad when isPending is false', () => {
+  it('should not emit load when isPending is false', () => {
     renderHook(() => usePaymentSubmit());
 
-    expect(onLoadMock).not.toHaveBeenCalled();
+    expect(onEventMock).not.toHaveBeenCalled();
+  });
+
+  it('should emit submit with the amount to pay before the payment request', async () => {
+    mockGetValues.mockReturnValue({ provider_id: 'P1', amount: '1250.00', currency: 'EUR' });
+    const { result } = renderHook(() => usePaymentSubmit());
+
+    await result.current.handleSubmit({ preventDefault: vi.fn() } as any);
+
+    expect(onEventMock).toHaveBeenCalledWith({
+      action: 'click',
+      name: 'submit',
+      data: { provider_id: 'P1', amount: 1250, currency: 'EUR' },
+    });
+    expect(onEventMock.mock.invocationCallOrder[0]).toBeLessThan(
+      mockMutate.mock.invocationCallOrder[0],
+    );
+  });
+
+  it('should not emit submit when the form is invalid', async () => {
+    mockHandleSubmit.mockImplementation(
+      (_onValid: unknown, onInvalid?: (errors: any) => void) => async () => onInvalid?.({}),
+    );
+    const { result } = renderHook(() => usePaymentSubmit());
+
+    await result.current.handleSubmit();
+
+    expect(onEventMock).not.toHaveBeenCalled();
+    expect(mockMutate).not.toHaveBeenCalled();
   });
 
   it('should pass onError to usePaymentRedirect', () => {
@@ -140,7 +162,7 @@ describe('usePaymentSubmit', () => {
     );
   });
 
-  it('should call onError when mutation fails', () => {
+  it('should emit an error event when mutation fails', () => {
     const testError = new Error('Payment failed');
 
     renderHook(() => usePaymentSubmit());
@@ -149,7 +171,11 @@ describe('usePaymentSubmit', () => {
       .calls[0]?.[0];
     paymentRedirectCall?.onError?.(testError);
 
-    expect(onErrorMock).toHaveBeenCalledWith(testError);
+    expect(onEventMock).toHaveBeenCalledWith({
+      action: '',
+      name: 'error',
+      data: { code: 'FLOW_ERROR', message: 'Payment failed' },
+    });
   });
 
   it('should redirect on success by default', () => {
@@ -175,14 +201,14 @@ describe('usePaymentSubmit', () => {
     expect(paymentRedirectCall?.onSuccess).toBeDefined();
   });
 
-  it('should pass onLoadEnd to usePaymentRedirect', () => {
+  it('should emit load_end when the payment request ends', () => {
     renderHook(() => usePaymentSubmit());
 
-    expect(usePaymentRedirectModule.usePaymentRedirect).toHaveBeenCalledWith(
-      expect.objectContaining({
-        onLoadEnd: onLoadEndMock,
-      }),
-    );
+    const paymentRedirectCall = vi.mocked(usePaymentRedirectModule.usePaymentRedirect).mock
+      .calls[0]?.[0];
+    paymentRedirectCall?.onLoadEnd?.();
+
+    expect(onEventMock).toHaveBeenCalledWith({ action: '', name: 'load_end' });
   });
 
   it('should call handleTokenValidationError on form validation error', async () => {
@@ -217,6 +243,7 @@ describe('usePaymentSubmit', () => {
 
     expect(mockGetValues).toHaveBeenCalled();
     expect(mockMutate).toHaveBeenCalledWith({ amount: '100', currency: 'EUR' });
+    expect(onEventMock).not.toHaveBeenCalled();
   });
 
   it('should work without optional callbacks', async () => {

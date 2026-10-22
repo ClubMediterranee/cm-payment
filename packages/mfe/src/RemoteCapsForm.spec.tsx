@@ -92,24 +92,57 @@ describe('RemoteCapsForm (federated)', () => {
   });
 
   it('displays the payment error and reports it to the host', () => {
-    const onError = vi.fn();
-    const { container } = render(<RemoteCapsForm {...baseProps} onError={onError} />);
+    const onEvent = vi.fn();
+    const { container } = render(<RemoteCapsForm {...baseProps} onEvent={onEvent} />);
     const root = getShadowRoot(container);
+    const paymentError = {
+      action: '',
+      name: 'error',
+      data: { code: 'FLOW_ERROR', message: 'Payment refused' },
+    };
 
-    act(() => lastFormProps().onError({ code: 'FLOW_ERROR', message: 'Payment refused' }));
+    act(() => lastFormProps().onEvent(paymentError));
 
     expect(root.querySelector('p')!.textContent).toBe('Payment refused');
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
-    expect(onError).toHaveBeenCalledWith({ code: 'FLOW_ERROR', message: 'Payment refused' });
+    expect(onEvent).toHaveBeenCalledWith(paymentError);
 
-    act(() => lastFormProps().onError({ code: 'ORIGIN_NOT_ALLOWED', message: 'No token' }));
+    act(() =>
+      lastFormProps().onEvent({
+        action: '',
+        name: 'error',
+        data: { code: 'ORIGIN_NOT_ALLOWED', message: 'No token' },
+      }),
+    );
     expect(root.querySelector('p')).toBeNull();
   });
 
-  it('does not require a host error callback', () => {
+  it('keeps the payment error while other events go by', () => {
+    const { container } = render(<RemoteCapsForm {...baseProps} />);
+    const root = getShadowRoot(container);
+
+    act(() =>
+      lastFormProps().onEvent({
+        action: '',
+        name: 'error',
+        data: { code: 'FLOW_ERROR', message: 'Payment refused' },
+      }),
+    );
+    act(() => lastFormProps().onEvent({ action: '', name: 'load_end' }));
+
+    expect(root.querySelector('p')!.textContent).toBe('Payment refused');
+  });
+
+  it('does not require a host event callback', () => {
     const { container } = render(<RemoteCapsForm {...baseProps} />);
 
-    act(() => lastFormProps().onError({ code: 'FLOW_ERROR', message: 'Payment refused' }));
+    act(() =>
+      lastFormProps().onEvent({
+        action: '',
+        name: 'error',
+        data: { code: 'FLOW_ERROR', message: 'Payment refused' },
+      }),
+    );
 
     expect(getShadowRoot(container).textContent).toContain('Payment refused');
   });

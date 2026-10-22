@@ -10,6 +10,7 @@ import { Form } from '../components/Form';
 import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback';
 import { GlobalFormSkeleton } from '../components/ui/fallbacks/GlobalFormSkeleton';
 import { FormCallbacks, FormCallbacksContext } from '../contexts/FormCallbacksContext';
+import { FormSchemaContext } from '../contexts/FormSchemaContext';
 import { useActionResolver } from '../hooks/data/useActionResolver';
 import { useOverpaymentAllowance } from '../hooks/data/useOverpaymentAllowance';
 import { paymentConfigQueryOptions } from '../hooks/data/usePaymentConfig';
@@ -30,15 +31,7 @@ type CapsFormProps = PropsWithChildren<
   }
 >;
 
-function CapsFormProvider({
-  children,
-  action,
-  stepper,
-  onLoad,
-  onError,
-  onLoadEnd,
-  ...props
-}: CapsFormProps) {
+function CapsFormProvider({ children, action, stepper, onEvent, ...props }: CapsFormProps) {
   const { id, content, locale, type, customerId, oidc, api } = useCapsConfigContext();
   const { isSeller } = useOidcContext();
 
@@ -76,7 +69,7 @@ function CapsFormProvider({
 
   const countryCode = locale.split('-')[1] || locale.toUpperCase();
 
-  const methods = useCapsForm({
+  const { schema, ...methods } = useCapsForm({
     config: {
       content,
       isSeller,
@@ -102,13 +95,15 @@ function CapsFormProvider({
     },
   });
 
-  const callbacks: FormCallbacks = { onLoad, onError, onLoadEnd };
+  const callbacks: FormCallbacks = { onEvent };
 
   return (
     <FormCallbacksContext.Provider value={callbacks}>
-      <ReactHookFormProvider {...methods}>
-        <Form {...props}>{children}</Form>
-      </ReactHookFormProvider>
+      <FormSchemaContext.Provider value={schema}>
+        <ReactHookFormProvider {...methods}>
+          <Form {...props}>{children}</Form>
+        </ReactHookFormProvider>
+      </FormSchemaContext.Provider>
     </FormCallbacksContext.Provider>
   );
 }

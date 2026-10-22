@@ -74,7 +74,11 @@ describe('PaymentPage', () => {
     render(<PaymentPage />);
 
     act(() =>
-      formProps.mock.lastCall![0].onError({ code: 'FLOW_ERROR', message: 'Payment refused' }),
+      formProps.mock.lastCall![0].onEvent({
+        action: '',
+        name: 'error',
+        data: { code: 'FLOW_ERROR', message: 'Payment refused' },
+      }),
     );
 
     expect(screen.getByText('Payment refused')).toBeTruthy();

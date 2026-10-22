@@ -1,5 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+import type { CapsEvent } from './events';
+
+export type { CapsEvent } from './events';
+
 /**
  * CAPS deployment environment. Each environment maps to a CAPS server origin (see `CAPS_ENV_URLS`).
  */
@@ -70,14 +74,9 @@ export type CapsFlowParams =
 
 export type CapsFormCallbacks = {
   /**
-   * Called once the flow is interactive.
+   * Receives the tracking events of the flow. Fire-and-forget: the return value is ignored.
    */
-  onReady?: () => void;
-  /**
-   * Mirrors the payment processing state.
-   */
-  onLoadingChange?: (loading: boolean) => void;
-  onError?: (error: CapsEmbedError) => void;
+  onEvent?: (event: CapsEvent) => void;
   /**
    * Called before any top-level navigation. Return `false` to handle the navigation yourself.
    */

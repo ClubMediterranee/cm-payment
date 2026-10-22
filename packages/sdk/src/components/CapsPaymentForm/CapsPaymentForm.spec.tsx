@@ -205,9 +205,18 @@ describe('CapsPaymentForm', () => {
 
     expect(
       [...container.querySelectorAll('[data-testid=step]')].map(
-        (element) => JSON.parse(element.getAttribute('data-props')!).name,
+        (element) => JSON.parse(element.getAttribute('data-props')!).after,
       ),
-    ).toEqual(['providers', 'submit', 'details']);
+    ).toEqual([
+      'amount',
+      'provider_id',
+      ['payment_condition_id', 'billing_details.attendee', 'billing_details.address'],
+      'provider_id',
+      ['template_id', 'billing_details.mobile_phone', 'billing_details.email'],
+      'comments',
+      undefined,
+      'provider_id',
+    ]);
     expect(lastFormProps().stepper).toBe(true);
   });
 
@@ -277,6 +286,26 @@ describe('CapsPaymentForm', () => {
     expect(defaultNavigate).toHaveBeenCalledWith({ url: 'https://psp/2' });
   });
 
+  it('emits the redirect event only when the navigation goes on', () => {
+    const onEvent = vi.fn();
+    const onRedirect = vi.fn().mockReturnValueOnce(false).mockReturnValueOnce(undefined);
+    render(<CapsPaymentForm {...baseProps} onEvent={onEvent} onRedirect={onRedirect} />);
+
+    const { onNavigate } = providerProps.mock.lastCall![0] as {
+      onNavigate: (request: { url: string }) => void;
+    };
+
+    onNavigate({ url: 'https://psp/1' });
+    expect(onEvent).not.toHaveBeenCalled();
+
+    onNavigate({ url: 'https://psp/2' });
+    expect(onEvent).toHaveBeenCalledWith({
+      action: '',
+      name: 'redirect',
+      data: { url: 'https://psp/2' },
+    });
+  });
+
   it('navigates by default when no redirect handler is given', () => {
     render(<CapsPaymentForm {...baseProps} />);
 
@@ -310,47 +339,67 @@ describe('CapsPaymentForm', () => {
     expect(getByRole('button').className).toBe('self-center');
   });
 
-  it('signals that the flow is ready once and mirrors the payment processing state', () => {
-    const onReady = vi.fn();
-    const onLoadingChange = vi.fn();
-    const { rerender } = render(
-      <CapsPaymentForm {...baseProps} onReady={onReady} onLoadingChange={onLoadingChange} />,
-    );
+  it('forwards the events of the form to the host', () => {
+    const onEvent = vi.fn();
+    render(<CapsPaymentForm {...baseProps} onEvent={onEvent} />);
 
-    rerender(
-      <CapsPaymentForm {...baseProps} onReady={onReady} onLoadingChange={onLoadingChange} />,
-    );
-    expect(onReady).toHaveBeenCalledTimes(1);
+    const submit = {
+      action: 'click',
+      name: 'submit',
+      data: { provider_id: 'P1', amount: 1250, currency: 'EUR' },
+    };
+    act(() => lastFormProps().onEvent({ action: '', name: 'load' }));
+    act(() => lastFormProps().onEvent(submit));
+    act(() => lastFormProps().onEvent({ action: '', name: 'load_end' }));
 
-    act(() => lastFormProps().onLoad());
-    act(() => lastFormProps().onLoadEnd());
-    expect(onLoadingChange.mock.calls).toEqual([[true], [false]]);
+    expect(onEvent.mock.calls).toEqual([
+      [{ action: '', name: 'load' }],
+      [submit],
+      [{ action: '', name: 'load_end' }],
+    ]);
   });
 
   it('reports the payment error without displaying it', () => {
-    const onError = vi.fn();
-    const onLoadingChange = vi.fn();
-    const { container } = render(
-      <CapsPaymentForm {...baseProps} onError={onError} onLoadingChange={onLoadingChange} />,
-    );
+    const onEvent = vi.fn();
+    const { container } = render(<CapsPaymentForm {...baseProps} onEvent={onEvent} />);
+    const error = {
+      action: '',
+      name: 'error',
+      data: { code: 'FLOW_ERROR', message: 'Payment refused' },
+    };
 
-    act(() => lastFormProps().onError(new Error('Payment refused')));
+    act(() => lastFormProps().onEvent(error));
 
     expect(container.textContent).not.toContain('Payment refused');
-    expect(onLoadingChange).toHaveBeenCalledWith(false);
-    expect(onError).toHaveBeenCalledWith({ code: 'FLOW_ERROR', message: 'Payment refused' });
+    expect(onEvent).toHaveBeenCalledWith(error);
   });
 
   it('reports a flow loading error through the fallback', () => {
-    const onError = vi.fn();
-    render(<CapsPaymentForm {...baseProps} onError={onError} />);
+    const onEvent = vi.fn();
+    render(<CapsPaymentForm {...baseProps} onEvent={onEvent} />);
 
     const { getByRole } = render(
       <>{lastFormProps().errorFallback({ error: 'boom', resetErrorBoundary: vi.fn() })}</>,
     );
 
     expect(getByRole('alert').textContent).toContain('boom');
-    expect(onError).toHaveBeenLastCalledWith({ code: 'FLOW_ERROR', message: 'boom' });
+    expect(onEvent).toHaveBeenLastCalledWith({
+      action: '',
+      name: 'error',
+      data: { code: 'FLOW_ERROR', message: 'boom' },
+    });
+  });
+
+  it('keeps the flow going when the host handler throws', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const onEvent = vi.fn(() => {
+      throw new Error('host failure');
+    });
+    render(<CapsPaymentForm {...baseProps} onEvent={onEvent} />);
+
+    expect(() => act(() => lastFormProps().onEvent({ action: '', name: 'load' }))).not.toThrow();
+    expect(onEvent).toHaveBeenCalledTimes(1);
+    vi.mocked(console.error).mockRestore();
   });
 
   it('renders the headings and the submit label from the content', () => {
@@ -382,9 +431,8 @@ describe('CapsPaymentForm', () => {
   it('does not require the host to provide any callback', () => {
     render(<CapsPaymentForm {...baseProps} />);
 
-    act(() => lastFormProps().onLoad());
-    act(() => lastFormProps().onLoadEnd());
-    act(() => lastFormProps().onError(new Error('no listener')));
+    act(() => lastFormProps().onEvent({ action: '', name: 'load' }));
+    act(() => lastFormProps().onEvent({ action: '', name: 'load_end' }));
 
     expect(formProps).toHaveBeenCalled();
   });
