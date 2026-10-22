@@ -84,6 +84,7 @@ export type Content = {
       mobile_phone: string;
       call: string;
     };
+    fields: Record<'email' | 'mobile_phone', { label: string; placeholder: string }>;
   };
   creditCardForm: {
     title: string;
