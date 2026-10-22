@@ -222,7 +222,7 @@ deploy:
       if echo "$VERSION" | grep -Eq '^v?[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
         RELEASE_INFO_VERSION="$VERSION"
       else
-        RELEASE_INFO_VERSION="${VERSION}-$(date -u +%Y%m%d%H%M%S)"
+        RELEASE_INFO_VERSION="$(printf '%s' "$VERSION" | tr '/' '-')-$(date -u +%Y%m%d%H%M%S)"
       fi
       export RELEASE_INFO_VERSION
       echo "$RELEASE_INFO_VERSION" > packages/server/resources/release.info
