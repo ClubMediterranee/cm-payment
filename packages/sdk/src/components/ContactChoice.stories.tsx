@@ -198,11 +198,11 @@ export const WithAdditionalInteractions: Story = {
 
     await userEvent.click(emailInput);
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
     expect(canvas.queryByLabelText('Phone')).not.toBeInTheDocument();
 
-    const emailField = canvas.getByLabelText('Email') as HTMLInputElement;
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
     await userEvent.click(emailField);
     await userEvent.type(emailField, 'invalid', { delay: 10 });
     emailField.blur();
@@ -222,7 +222,7 @@ export const WithAdditionalInteractions: Story = {
     await userEvent.click(emailInput);
 
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
   },
 };
@@ -248,10 +248,10 @@ export const ValidationTest: Story = {
     await userEvent.click(emailRadio);
 
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
 
-    const emailField = canvas.getByLabelText('Email') as HTMLInputElement;
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
     expect(emailField).toBeInTheDocument();
 
     await userEvent.click(emailField);
@@ -289,10 +289,10 @@ export const ValidationTest: Story = {
     await userEvent.click(emailRadio);
 
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
 
-    const emailField2 = canvas.getByLabelText('Email') as HTMLInputElement;
+    const emailField2 = canvas.getByLabelText('Email address') as HTMLInputElement;
 
     await new Promise((resolve) => setTimeout(resolve, 300));
 
@@ -362,10 +362,10 @@ export const AccessibilityTest: Story = {
 
     // Vérifier que le champ apparaît et peut recevoir le focus
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
 
-    const emailField = canvas.getByLabelText('Email');
+    const emailField = canvas.getByLabelText('Email address');
     emailField.focus();
     expect(emailField).toHaveFocus();
 
@@ -401,11 +401,11 @@ export const InteractionBetweenOptions: Story = {
 
     await userEvent.click(emailInput);
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
     expect(canvas.queryByLabelText('Phone')).not.toBeInTheDocument();
 
-    const emailField = canvas.getByLabelText('Email') as HTMLInputElement;
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
     await userEvent.click(emailField);
     await userEvent.type(emailField, 'invalid', { delay: 10 });
     emailField.blur();
@@ -422,7 +422,7 @@ export const InteractionBetweenOptions: Story = {
     await userEvent.click(emailInput);
 
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
   },
 };
