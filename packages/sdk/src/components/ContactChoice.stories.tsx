@@ -54,7 +54,7 @@ const ContactChoiceWithFormProvider = (args: any) => {
 };
 
 const meta: Meta<typeof ContactChoice> = {
-  title: 'Components/ContactChoice',
+  title: 'Current/Internals/ContactChoice',
   component: ContactChoice,
   loaders: [mswLoader],
   parameters: {

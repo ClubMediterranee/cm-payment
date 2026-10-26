@@ -123,6 +123,9 @@ MockCgv.COMPONENT_KEY = TOKENS.Cgv;
 const MockContactChoice = () => <div>ContactChoice</div>;
 MockContactChoice.COMPONENT_KEY = TOKENS.ContactChoice;
 
+const MockPaymentPanel = () => <div>PaymentPanel</div>;
+MockPaymentPanel.COMPONENT_KEY = TOKENS.PaymentPanel;
+
 const MockPaymentProviders = () => <div>PaymentProviders</div>;
 MockPaymentProviders.COMPONENT_KEY = TOKENS.PaymentProviders;
 
@@ -415,16 +418,23 @@ describe('CapsForm', () => {
 
       try {
         render(
-          <CapsForm>
-            <MockPaymentSchedule />
-            <MockCgv />
-            <MockPaymentProviders />
-            <MockBillingAddress />
-            <MockPaymentWidget />
-            <MockCardInstallments />
-            <MockSubmitButton>Payer</MockSubmitButton>
-            <MockDonation />
-          </CapsForm>,
+          theme === 'current' ? (
+            <CapsForm>
+              <MockPaymentSchedule />
+              <MockPaymentPanel />
+            </CapsForm>
+          ) : (
+            <CapsForm>
+              <MockPaymentSchedule />
+              <MockCgv />
+              <MockPaymentProviders />
+              <MockBillingAddress />
+              <MockPaymentWidget />
+              <MockCardInstallments />
+              <MockSubmitButton>Payer</MockSubmitButton>
+              <MockDonation />
+            </CapsForm>
+          ),
         );
       } finally {
         consoleErrorSpy.mockRestore();
@@ -446,6 +456,28 @@ describe('CapsForm', () => {
 
       expect(defaultValues.payment_condition_id).toBe('');
       expect(config.requiresPaymentCondition('HIPAY')).toBe(true);
+    });
+
+    it('only requires the schedule and the payment providers choice in the current theme', () => {
+      mockUseCapsConfigContext.mockReturnValue({
+        id: 'PROP001',
+        content: {},
+        theme: 'current',
+        oidc: { issuerType: OidcIssuerTypes.GO, accessToken: 'token' },
+      } as never);
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      try {
+        expect(() =>
+          render(
+            <CapsForm>
+              <MockPaymentSchedule />
+            </CapsForm>,
+          ),
+        ).toThrow('Missing required components: PaymentPanel');
+      } finally {
+        consoleErrorSpy.mockRestore();
+      }
     });
 
     it('keeps the first installments preselected in the legacy theme', () => {

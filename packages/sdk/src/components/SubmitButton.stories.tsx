@@ -86,7 +86,7 @@ const handlers = [
 ];
 
 const meta: Meta = {
-  title: 'Components/SubmitButton',
+  title: 'Current/Internals/SubmitButton',
   component: SubmitButton,
   loaders: [mswLoader],
   parameters: {
@@ -136,7 +136,7 @@ export const Default: Story = {
         proposalId="12345678"
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
-        <SubmitButton>Payer</SubmitButton>
+        <SubmitButton />
       </MockedProvider>
     );
   },
@@ -166,7 +166,7 @@ export const IframeMode: Story = {
         proposalId="12345678"
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
-        <SubmitButton>Payer</SubmitButton>
+        <SubmitButton />
       </MockedProvider>
     );
   },
@@ -198,7 +198,7 @@ export const PaypalButton: Story = {
         proposalId="12345678"
         oidc={{ issuerType: OidcIssuerTypes.GM, accessToken: 'test-token' }}
       >
-        <SubmitButton>Payer</SubmitButton>
+        <SubmitButton />
       </MockedProvider>
     );
   },

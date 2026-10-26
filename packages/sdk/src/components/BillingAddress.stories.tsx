@@ -17,11 +17,10 @@ import {
 } from '../__generated__/index.schemas';
 import { defaultContent } from '../content/default';
 import { FormSchemaContext } from '../contexts/FormSchemaContext';
-import { StepperContext } from '../contexts/StepperContext';
 import { capsFormSchema } from '../schemas/capsFormSchema';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { BillingAddress } from './BillingAddress';
-import { Step } from './CapsPaymentForm/Step';
+import { Step } from './PaymentPanel/Step';
 
 const COMPLETE_PROFILE_FR = {
   email: 'jean.dupont@example.com',
@@ -179,7 +178,7 @@ const countries = [
 ];
 
 const meta = {
-  title: 'Components/BillingAddress',
+  title: 'Current/Internals/BillingAddress',
   component: BillingAddress,
   loaders: [mswLoader],
   parameters: {
@@ -428,12 +427,10 @@ const StepperPreview = () => {
 
   return (
     <FormSchemaContext.Provider value={schema}>
-      <StepperContext.Provider value>
-        <BillingAddress />
-        <Step after="billing_details.address">
-          <p>Next step</p>
-        </Step>
-      </StepperContext.Provider>
+      <BillingAddress />
+      <Step after="billing_details.address">
+        <p>Next step</p>
+      </Step>
     </FormSchemaContext.Provider>
   );
 };

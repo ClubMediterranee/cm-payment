@@ -50,6 +50,8 @@ const CardInstallmentsFields = ({
     );
   };
 
+  const conditionError = formState.errors.payment_condition_id?.message as string | undefined;
+
   if (!hasMultiplePaymentConditions(watchedProvider)) return null;
 
   return (
@@ -62,6 +64,8 @@ const CardInstallmentsFields = ({
             value={selectedCardType}
             onChange={(_, val) => handleCardTypeChange(val as string)}
             label={content.cardInstallments.selectCardType}
+            validationStatus={conditionError && !selectedCardType ? 'error' : 'default'}
+            errorMessage={content.cardInstallments.validation.methodRequired}
           >
             <option value="" disabled>
               {content.cardInstallments.placeholder}
@@ -85,7 +89,8 @@ const CardInstallmentsFields = ({
                 onChange={(_, val) => onChange(val)}
                 label={content.cardInstallments.selectInstallments}
                 disabled={!selectedCardType}
-                errorMessage={formState.errors.payment_condition_id?.message as string}
+                validationStatus={conditionError ? 'error' : 'default'}
+                errorMessage={conditionError}
               >
                 <option value="" disabled>
                   {content.cardInstallments.placeholder}

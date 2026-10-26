@@ -11,7 +11,8 @@ import {
   LegacySubmitButton,
 } from '../legacy';
 import { FormSlot, SubmitSlot } from './FormSlots';
-import { type FlowLayoutProps, Title } from './flowShared';
+import { Title } from '../ui/Title';
+import type { FlowLayoutProps } from './flowShared';
 
 export const LegacyFlow = ({ content, slots, reference, uuid }: FlowLayoutProps) => (
   <>
