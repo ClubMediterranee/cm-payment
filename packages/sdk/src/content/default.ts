@@ -121,9 +121,9 @@ export const defaultContent: Content = {
   },
   freeDeposit: {
     title: 'Pay the amount of your choice without fees',
-    totalRemaining: 'Total remaining to pay',
-    before: 'before',
-    payNowLabel: 'I pay now',
+    totalRemaining: 'Total due :',
+    before: 'Before',
+    payNowLabel: 'Amount desired by the client',
     placeholder: 'Please enter an amount',
     validation: {
       required: 'Please enter an amount',

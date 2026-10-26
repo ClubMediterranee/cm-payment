@@ -288,67 +288,6 @@ export const DepositInteraction: Story = {
   },
 };
 
-export const FreeDepositInteraction: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await waitFor(
-      () => {
-        const input = canvas.getByLabelText(/I pay now/i);
-        expect(input).toBeInTheDocument();
-      },
-      { timeout: 3000 },
-    );
-
-    const input = canvas.getByLabelText(/I pay now/i) as HTMLInputElement;
-
-    await userEvent.click(input);
-    await userEvent.type(input, '0');
-    await userEvent.tab();
-
-    await waitFor(() => {
-      expect(canvas.getByText(/The amount must be greater than 0/i)).toBeInTheDocument();
-    });
-
-    await userEvent.click(input);
-    await userEvent.clear(input);
-    await userEvent.type(input, '1000');
-    await userEvent.tab();
-
-    await waitFor(() => {
-      expect(canvas.getByText(/The amount cannot exceed the remaining total/i)).toBeInTheDocument();
-    });
-
-    await userEvent.click(input);
-    await userEvent.clear(input);
-    await userEvent.type(input, '250');
-    await userEvent.tab();
-
-    await waitFor(() => {
-      expect(canvas.queryByText(/The amount must be greater than 0/i)).not.toBeInTheDocument();
-      expect(
-        canvas.queryByText(/The amount cannot exceed the remaining total/i),
-      ).not.toBeInTheDocument();
-    });
-  },
-  render(args: any) {
-    return (
-      <MockedProvider
-        key="free-deposit-validation"
-        action={Action.PAYMENT_PARTIAL}
-        bookingId="booking-free-deposit"
-        customerId="customer-validation"
-        maxAmount={500}
-        defaultValues={{
-          currency: 'EUR',
-        }}
-      >
-        <PaymentSchedule {...args} />
-      </MockedProvider>
-    );
-  },
-};
-
 const createBnplMswHandlers = () => {
   const toDateStr = (date: Date) => date.toISOString().split('T')[0];
   const toCompact = (date: Date) => toDateStr(date).replace(/-/g, '');

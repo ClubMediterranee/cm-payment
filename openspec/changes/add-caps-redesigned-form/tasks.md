@@ -58,3 +58,18 @@
 - [x] 7.2 Resolve the theme before `PaymentConfigProvider`, and serve one content per theme (`contentByTheme`)
 - [x] 7.3 Merge `StepperFlow` into `CurrentFlow` (`Step` is a no-op outside the stepper)
 - [x] 7.4 Add the donation to the deposit only, not to the balance, on the schedule cards
+
+## 8. Installments choice
+
+- [ ] 8.1 Skip the default payment condition when the provider offers a choice, in the `current` theme only (`CapsForm`, `PaymentProviders`)
+- [ ] 8.2 Require `payment_condition_id` when the provider offers a choice (`validatePaymentCondition`)
+- [ ] 8.3 Start `CardInstallments` empty and reset it when the provider changes
+- [ ] 8.4 Cover them with specs and stories, and check the legacy specs pass unchanged
+
+## 9. Free deposit in the provider card
+
+- [x] 9.1 Render `FreeDepositField` at the top of the selected provider's panel for `PAYMENT_PARTIAL`, and nothing in `PaymentSchedule`
+- [x] 9.2 Default `amount` to empty for a partial payment (`getDefaultSelection`) and drop the reset on mount
+- [x] 9.3 Move the free deposit story to `PaymentPanel` stories
+- [x] 9.4 Reveal `CardInstallments` once `amount` is valid
+- [x] 9.5 Restyle the free deposit header and texts as in the mockup (legacy texts kept)

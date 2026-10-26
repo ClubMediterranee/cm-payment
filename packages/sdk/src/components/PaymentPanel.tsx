@@ -1,6 +1,7 @@
-import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
+import { Action, PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import type { CapsFormSlots } from '../embed/shared';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
+import { useFormContext } from '../hooks/utils/useForm';
 import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegrationMode';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { TOKENS } from '../types/Tokens';
@@ -12,6 +13,7 @@ import { Comments } from './Comments';
 import { ContactChoice } from './ContactChoice';
 import { Donation } from './Donation';
 import { Step } from './PaymentPanel/Step';
+import { FreeDepositField } from './PaymentSchedule/FreeDepositField';
 import { PaymentProviders } from './PaymentProviders';
 import { PaymentWidget } from './PaymentWidget';
 import { SubmitButton } from './SubmitButton';
@@ -27,9 +29,16 @@ export type PaymentPanelProps = {
 
 type PaymentDetailsProps = Pick<PaymentPanelProps, 'reference' | 'uuid' | 'slots'> & {
   isBuyNowPayLater: boolean;
+  isPartialPayment: boolean;
 };
 
-const PaymentDetails = ({ reference, uuid, slots, isBuyNowPayLater }: PaymentDetailsProps) => {
+const PaymentDetails = ({
+  reference,
+  uuid,
+  slots,
+  isBuyNowPayLater,
+  isPartialPayment,
+}: PaymentDetailsProps) => {
   const { content } = useCapsConfigContext();
   const { iframe } = useProviderIntegrationMode();
 
@@ -39,7 +48,10 @@ const PaymentDetails = ({ reference, uuid, slots, isBuyNowPayLater }: PaymentDet
         data-cgv-first={isBuyNowPayLater || iframe || undefined}
         className="group/panel flex flex-col gap-40"
       >
-        <CardInstallments />
+        {isPartialPayment && <FreeDepositField />}
+        <Step after="amount">
+          <CardInstallments />
+        </Step>
         <Step after="provider_id">
           <BillingAddress>
             <Title className="mb-20 text-center">{content.billingAddress.heading}</Title>
@@ -75,34 +87,33 @@ const PaymentDetails = ({ reference, uuid, slots, isBuyNowPayLater }: PaymentDet
 
 export const PaymentPanel = ({ className, reference, uuid, slots }: PaymentPanelProps) => {
   const watchedProvider = useWatchedPaymentProvider();
+  const { getValues } = useFormContext();
+
+  const isPartialPayment = getValues('action') === Action.PAYMENT_PARTIAL;
 
   const isBuyNowPayLater =
     watchedProvider?.category_payment_method ===
     PaymentProvider1CategoryPaymentMethod.BuyNowPayLater;
 
+  const details = (
+    <PaymentDetails
+      reference={reference}
+      uuid={uuid}
+      slots={slots}
+      isBuyNowPayLater={isBuyNowPayLater}
+      isPartialPayment={isPartialPayment}
+    />
+  );
+
+  const panel = isBuyNowPayLater ? (
+    <div className={className}>{details}</div>
+  ) : (
+    <PaymentProviders className={className}>{details}</PaymentProviders>
+  );
+
   return (
     <>
-      <Step after="amount">
-        {isBuyNowPayLater ? (
-          <div className={className}>
-            <PaymentDetails
-              reference={reference}
-              uuid={uuid}
-              slots={slots}
-              isBuyNowPayLater={isBuyNowPayLater}
-            />
-          </div>
-        ) : (
-          <PaymentProviders className={className}>
-            <PaymentDetails
-              reference={reference}
-              uuid={uuid}
-              slots={slots}
-              isBuyNowPayLater={isBuyNowPayLater}
-            />
-          </PaymentProviders>
-        )}
-      </Step>
+      {isPartialPayment ? panel : <Step after="amount">{panel}</Step>}
       {slots?.donation ? (
         <FormSlot target={slots.donation}>
           <Donation />

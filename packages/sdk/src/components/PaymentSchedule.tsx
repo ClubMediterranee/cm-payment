@@ -4,17 +4,17 @@ import { Action } from '../__generated__/index.schemas';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../hooks/utils/useForm';
 import { TOKENS } from '../types/Tokens';
-import { FreeDepositField } from './PaymentSchedule/FreeDepositField';
 import { ScheduleCardSkeleton } from './PaymentSchedule/ScheduleCard';
 import { ScheduleOptionsField } from './PaymentSchedule/ScheduleOptionsField';
-import { FormPanel } from './ui/FormPanel';
 import { Title } from './ui/Title';
 
 export const PaymentSchedule = ({ className }: { className?: string }) => {
   const { content } = useCapsConfigContext();
   const { control, getValues } = useFormContext();
 
-  const isPartialPayment = getValues('action') === Action.PAYMENT_PARTIAL;
+  if (getValues('action') === Action.PAYMENT_PARTIAL) {
+    return null;
+  }
 
   return (
     <div className={className}>
@@ -22,19 +22,7 @@ export const PaymentSchedule = ({ className }: { className?: string }) => {
       <Controller
         name="amount"
         control={control}
-        render={({ field, fieldState }) => {
-          return isPartialPayment ? (
-            <FormPanel>
-              <FreeDepositField
-                field={field}
-                error={fieldState.error}
-                isValid={fieldState.isTouched && !fieldState.error}
-              />
-            </FormPanel>
-          ) : (
-            <ScheduleOptionsField field={field} />
-          );
-        }}
+        render={({ field }) => <ScheduleOptionsField field={field} />}
       />
     </div>
   );

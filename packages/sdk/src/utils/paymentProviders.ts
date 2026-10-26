@@ -42,12 +42,11 @@ export const getDefaultSelection = ({
   const stayAmount = paymentSchedule[0]?.amount?.toString();
   const hasScheduleChoice =
     !!stepper &&
-    !isPartial &&
     (paymentSchedule.length > 1 ||
       getActiveBuyNowPayLaterProviders(buyNowPayLaterProviders, stayAmount).length > 0);
 
   return {
-    amount: hasScheduleChoice ? '' : stayAmount || '',
+    amount: isPartial || hasScheduleChoice ? '' : stayAmount || '',
     provider: stepper && paymentProviders.length > 1 ? undefined : paymentProviders[0],
   };
 };

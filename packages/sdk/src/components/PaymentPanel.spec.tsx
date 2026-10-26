@@ -107,6 +107,7 @@ describe('PaymentPanel', () => {
 
     expect(stepsOf(container)).toEqual([
       'amount',
+      'amount',
       'provider_id',
       ['payment_condition_id', 'billing_details.attendee', 'billing_details.address'],
       'billing_details.address',
@@ -127,7 +128,7 @@ describe('PaymentPanel', () => {
     expect(container.querySelector('button')).toBeNull();
     expect(donation.querySelector('[data-testid=donation]')).toBeTruthy();
     expect(submitSlot.querySelector('button')!.className).toBe('w-full');
-    expect(stepsOf(container)).toHaveLength(7);
+    expect(stepsOf(container)).toHaveLength(8);
 
     donation.remove();
     submitSlot.remove();

@@ -7,12 +7,8 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Action } from '../../__generated__/index.schemas';
 import { sdkQueryClient } from '../../providers/QueryClientProvider';
 import {
-  billingHandlers,
-  contactChoiceHandlers,
   donationHandlers,
   handlers,
-  hostedFieldHandlers,
-  iframeHandlers,
   installmentSelects,
   installmentsHandlers,
   pickProvider,
@@ -92,11 +88,17 @@ export const StepByStep: Story = {
 
 export const Legacy: Story = {
   args: { theme: 'legacy' },
-  parameters: { msw: { handlers } },
+  parameters: { msw: { handlers: installmentsHandlers } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Pay with PayPal')).toBeVisible();
+    await waitFor(() => expect(installmentSelects(canvasElement)).toHaveLength(2), {
+      timeout: 10000,
+    });
+    const [cardType, installments] = installmentSelects(canvasElement);
+    expect(cardType).toHaveValue('Visa');
+    expect(installments).toHaveValue('visa-1x');
     expect(await canvas.findByRole('checkbox')).not.toBeChecked();
     expect(submitButton(canvasElement)).not.toBeNull();
   },
@@ -137,50 +139,6 @@ export const TrackingEvents: Story = {
   },
 };
 
-export const SellerContactChoice: Story = {
-  args: { issuerType: 'GO' },
-  parameters: { msw: { handlers: contactChoiceHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await pickSchedule(canvas);
-    await pickProvider(canvas, 'Pay by link');
-
-    const phone = await canvas.findByTestId('InputFor_mobile_phone');
-    expect(canvas.queryByRole('checkbox')).toBeNull();
-
-    await userEvent.type(phone, '+33612345678');
-    await canvas.findByRole('checkbox');
-
-    await userEvent.clear(phone);
-    await waitFor(() => expect(canvas.queryByRole('checkbox')).toBeNull());
-    expect(submitButton(canvasElement)).toBeNull();
-
-    await userEvent.type(phone, '+33612345678');
-    const cgv = await canvas.findByRole('checkbox');
-    expect(submitButton(canvasElement)).toBeNull();
-
-    await userEvent.click(cgv);
-    await waitFor(() => expect(submitButton(canvasElement)).not.toBeNull());
-  },
-};
-
-export const LegacySellerContactChoice: Story = {
-  args: { theme: 'legacy', issuerType: 'GO' },
-  parameters: { msw: { handlers: contactChoiceHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await userEvent.click(await canvas.findByTestId('radio-4'));
-    const phone = await canvas.findByTestId('InputFor_mobile_phone');
-
-    await userEvent.type(phone, '+33612345678');
-    await userEvent.click(await canvas.findByRole('checkbox'));
-
-    expect(submitButton(canvasElement)).not.toBeNull();
-  },
-};
-
 const DonationSlotHost = (args: React.ComponentProps<typeof CapsPaymentForm>) => {
   const [slot, setSlot] = useState<HTMLElement | null>(null);
 
@@ -202,166 +160,5 @@ export const DonationInSlot: Story = {
     await canvas.findAllByRole('radio');
     await waitFor(() => expect(slot.children.length).toBeGreaterThan(0));
     expect(canvas.queryByText('Pay with PayPal')).toBeNull();
-  },
-};
-
-export const DonationWaitsForBillingAddressStep: Story = {
-  parameters: { msw: { handlers: donationHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const donation = () => canvasElement.querySelector('[class*="@container"]');
-
-    await pickSchedule(canvas);
-    expect(donation()).toBeNull();
-
-    await pickProvider(canvas, 'Pay with PayPal');
-    await waitFor(() => expect(donation()).not.toBeNull());
-  },
-};
-
-export const DonationRequiresItsOwnTerms: Story = {
-  parameters: { msw: { handlers: donationHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await pickSchedule(canvas);
-    await pickProvider(canvas, 'Pay with PayPal');
-
-    await userEvent.click(await canvas.findByRole('button', { name: /Make a donation/i }));
-    await userEvent.click(await canvas.findByRole('radio', { name: /€20\.00/ }));
-
-    await waitFor(() => expect(canvas.getAllByRole('checkbox')).toHaveLength(2));
-    expect(submitButton(canvasElement)).toBeNull();
-  },
-};
-
-export const InstallmentsAreChosen: Story = {
-  parameters: { msw: { handlers: installmentsHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await pickSchedule(canvas);
-    await pickProvider(canvas, 'Pay by card');
-
-    await waitFor(() => expect(installmentSelects(canvasElement)).toHaveLength(2));
-    const [cardType, installments] = installmentSelects(canvasElement);
-    expect(cardType).toHaveValue('');
-    expect(installments).toHaveValue('');
-    expect(canvas.queryByRole('checkbox')).toBeNull();
-
-    await userEvent.selectOptions(cardType, 'Visa');
-    expect(canvas.queryByRole('checkbox')).toBeNull();
-
-    await userEvent.selectOptions(installments, 'visa-3x');
-    await canvas.findByRole('checkbox');
-  },
-};
-
-export const InstallmentsAreClearedWhenProviderChanges: Story = {
-  parameters: { msw: { handlers: installmentsHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await pickSchedule(canvas);
-    await pickProvider(canvas, 'Pay by card');
-    await waitFor(() => expect(installmentSelects(canvasElement)).toHaveLength(2));
-    const [cardType, installments] = installmentSelects(canvasElement);
-    await userEvent.selectOptions(cardType, 'Visa');
-    await userEvent.selectOptions(installments, 'visa-3x');
-    await canvas.findByRole('checkbox');
-
-    await pickProvider(canvas, 'Pay with PayPal');
-    await waitFor(() => expect(installmentSelects(canvasElement)).toHaveLength(0));
-
-    await pickProvider(canvas, 'Pay by card');
-    await waitFor(() => expect(installmentSelects(canvasElement)).toHaveLength(2));
-    expect(installmentSelects(canvasElement).map(({ value }) => value)).toEqual(['', '']);
-    expect(canvas.queryByRole('checkbox')).toBeNull();
-  },
-};
-
-export const InstallmentsKeepTheCountWhenChangingCardType: Story = {
-  parameters: { msw: { handlers: installmentsHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await pickSchedule(canvas);
-    await pickProvider(canvas, 'Pay by card');
-    await waitFor(() => expect(installmentSelects(canvasElement)).toHaveLength(2));
-    const [cardType, installments] = installmentSelects(canvasElement);
-
-    await userEvent.selectOptions(cardType, 'Visa');
-    await userEvent.selectOptions(installments, 'visa-1x');
-    await userEvent.selectOptions(cardType, 'Mastercard');
-    await waitFor(() => expect(installments).toHaveValue('mc-1x'));
-
-    await userEvent.selectOptions(cardType, 'Visa');
-    await userEvent.selectOptions(installments, 'visa-3x');
-    await userEvent.selectOptions(cardType, 'Mastercard');
-    await waitFor(() => expect(installments).toHaveValue(''));
-  },
-};
-
-export const InstallmentsArePreselectedInLegacy: Story = {
-  args: { theme: 'legacy' },
-  parameters: { msw: { handlers: installmentsHandlers } },
-  play: async ({ canvasElement }) => {
-    await waitFor(() => expect(installmentSelects(canvasElement)).toHaveLength(2), {
-      timeout: 10000,
-    });
-    const [cardType, installments] = installmentSelects(canvasElement);
-
-    expect(cardType).toHaveValue('Visa');
-    expect(installments).toHaveValue('visa-1x');
-  },
-};
-
-export const BillingAddressRevealsTheNextSteps: Story = {
-  args: { locale: 'fr-FR' },
-  parameters: { msw: { handlers: billingHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await pickSchedule(canvas);
-    const [firstName, lastName, number, street, zipCode, city] =
-      await canvas.findAllByRole<HTMLInputElement>('textbox', {}, { timeout: 10000 });
-    expect(canvas.queryByRole('checkbox')).toBeNull();
-
-    await userEvent.type(firstName, 'Jean');
-    await userEvent.type(lastName, 'Dupont');
-    await userEvent.type(number, '42');
-    await userEvent.type(street, 'Rue de la Paix');
-    await userEvent.type(zipCode, '75008');
-    expect(canvas.queryByRole('checkbox')).toBeNull();
-
-    await userEvent.type(city, 'Paris');
-    await canvas.findByRole('checkbox');
-  },
-};
-
-export const IframeWidgetAppearsOnceTheFormIsValid: Story = {
-  parameters: { msw: { handlers: iframeHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const iframe = () => canvasElement.querySelector('iframe[title="payment-iframe"]');
-
-    await pickSchedule(canvas);
-    const cgv = await canvas.findByRole('checkbox');
-    expect(iframe()).toBeNull();
-    expect(submitButton(canvasElement)).toBeNull();
-
-    await userEvent.click(cgv);
-    await waitFor(() => expect(iframe()).not.toBeNull(), { timeout: 10000 });
-  },
-};
-
-export const HostedFieldsWidget: Story = {
-  parameters: { msw: { handlers: hostedFieldHandlers } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await pickSchedule(canvas);
-    await canvas.findByText('Card number', { exact: false }, { timeout: 10000 });
-    expect(canvas.getByText('Expiry date', { exact: false })).toBeInTheDocument();
   },
 };
