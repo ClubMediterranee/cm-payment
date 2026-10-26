@@ -14,7 +14,7 @@ export type FlowLayoutProps = {
 const TITLE_VARIANTS = {
   default: 'text-h5 mb-16 font-serif',
   section: 'text-h4 mb-20 text-center font-serif',
-  label: 'text-b3 mb-12 font-bold',
+  label: 'text-b2 mb-12 font-bold',
 };
 
 type TitleProps = PropsWithChildren<{

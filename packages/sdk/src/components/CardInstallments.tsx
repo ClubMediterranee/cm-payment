@@ -1,5 +1,5 @@
 import { Select } from '@clubmed/trident-ui/ui/forms/Select';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { Controller } from 'react-hook-form';
 
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
@@ -8,10 +8,11 @@ import { useFormContext, useWatch } from '../hooks/utils/useForm';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { TOKENS } from '../types/Tokens';
 import { formatCurrency } from '../utils/formatCurrency';
+import { hasMultiplePaymentConditions } from '../utils/paymentProviders';
 import { renderTemplate } from '../utils/renderTemplate';
 import { FormPanel } from './ui/FormPanel';
 
-export const CardInstallments = ({
+const CardInstallmentsFields = ({
   className,
   children,
 }: PropsWithChildren<{ className?: string }>) => {
@@ -28,34 +29,28 @@ export const CardInstallments = ({
   } = usePaymentSchedule();
 
   const amount = useWatch('amount');
-
-  const [selectedCardType, setSelectedCardType] = useState(cardTypes[0]);
   const watchedPaymentConditionId = useWatch('payment_condition_id');
 
-  useEffect(() => {
-    if (cardTypes.length > 0 && !selectedCardType) {
-      setSelectedCardType(cardTypes[0]);
-    }
-  }, [cardTypes, selectedCardType]);
+  const [selectedCardType, setSelectedCardType] = useState(
+    cardTypes.find((cardType) =>
+      paymentConditions[cardType]?.some(({ id }) => id === watchedPaymentConditionId),
+    ) ?? '',
+  );
 
   const handleCardTypeChange = (cardType: string) => {
     setSelectedCardType(cardType);
-
-    const conditions = paymentConditions[cardType];
-    if (!conditions?.length) return;
 
     const currentPaymentCount = Object.values(paymentConditions)
       .flat()
       .find((c) => c?.id === watchedPaymentConditionId)?.payment_count;
 
-    const selectedPaymentConditionId = (
-      conditions.find((c) => c.payment_count === currentPaymentCount) ?? conditions[0]
-    ).id;
-
-    methods.setValue('payment_condition_id', selectedPaymentConditionId);
+    methods.setValue(
+      'payment_condition_id',
+      paymentConditions[cardType]?.find((c) => c.payment_count === currentPaymentCount)?.id ?? '',
+    );
   };
 
-  if ((paymentConditions[selectedCardType] ?? []).length <= 1) return null;
+  if (!hasMultiplePaymentConditions(watchedProvider)) return null;
 
   return (
     <div className={className}>
@@ -68,6 +63,9 @@ export const CardInstallments = ({
             onChange={(_, val) => handleCardTypeChange(val as string)}
             label={content.cardInstallments.selectCardType}
           >
+            <option value="" disabled>
+              {content.cardInstallments.placeholder}
+            </option>
             {cardTypes.map((label) => (
               <option key={label} value={label}>
                 {label}
@@ -83,12 +81,15 @@ export const CardInstallments = ({
             render={({ field: { value, onChange, name } }) => (
               <Select
                 name={name}
-                value={value}
+                value={value ?? ''}
                 onChange={(_, val) => onChange(val)}
                 label={content.cardInstallments.selectInstallments}
                 disabled={!selectedCardType}
                 errorMessage={formState.errors.payment_condition_id?.message as string}
               >
+                <option value="" disabled>
+                  {content.cardInstallments.placeholder}
+                </option>
                 {(paymentConditions[selectedCardType] ?? []).map(
                   ({ payment_count: count, id: timeConditionId }) => {
                     const amountPerInstallment = Number(amount) / (count || 0);
@@ -118,6 +119,12 @@ export const CardInstallments = ({
       </FormPanel>
     </div>
   );
+};
+
+export const CardInstallments = (props: PropsWithChildren<{ className?: string }>) => {
+  const providerId = useWatch('provider_id');
+
+  return <CardInstallmentsFields key={providerId} {...props} />;
 };
 
 const CardInstallmentsSkeleton = () => (

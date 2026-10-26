@@ -1,3 +1,4 @@
+import type { CapsTheme } from '../embed/shared';
 import { Content } from './Content';
 
 export enum OidcIssuerTypes {
@@ -33,6 +34,7 @@ export type CapsSettings = {
   api: ClubMedApiSettings;
   oidc: OidcSettings;
   content: Content;
+  theme?: CapsTheme;
   type: 'proposal' | 'booking';
   /**
    * Overrides top-level navigations (PSP redirection, confirmation). Used by the webcomponent embed.

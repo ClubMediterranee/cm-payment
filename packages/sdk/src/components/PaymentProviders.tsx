@@ -90,7 +90,10 @@ export const PaymentProviders = ({
                     onChange={(_, providerId) => {
                       onChange(providerId);
                       const provider = paymentProviders.find(({ id }) => id === providerId);
-                      setValue('payment_condition_id', getDefaultPaymentConditionId(provider));
+                      setValue(
+                        'payment_condition_id',
+                        getDefaultPaymentConditionId(provider, { requireChoice: true }),
+                      );
                     }}
                   >
                     <div className="flex flex-1 items-center justify-between gap-16">

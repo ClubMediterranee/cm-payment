@@ -153,8 +153,6 @@ describe('CapsPaymentForm', () => {
     [
       'Choose the payment schedule',
       'How do you want to pay?',
-      'Choose your card installments',
-      'How would you like to be contacted?',
       'Comments',
       'General Terms and Conditions of Sale',
       'Billing address',
@@ -211,11 +209,11 @@ describe('CapsPaymentForm', () => {
       'amount',
       'provider_id',
       ['payment_condition_id', 'billing_details.attendee', 'billing_details.address'],
-      'provider_id',
+      'billing_details.address',
       ['template_id', 'billing_details.mobile_phone', 'billing_details.email'],
       'comments',
       undefined,
-      'provider_id',
+      'billing_details.address',
     ]);
     expect(lastFormProps().stepper).toBe(true);
   });

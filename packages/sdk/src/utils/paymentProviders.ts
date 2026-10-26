@@ -1,7 +1,14 @@
 import type { PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem as PaymentProviderItem } from '../__generated__/bff/index.schemas';
 
-export const getDefaultPaymentConditionId = (provider?: PaymentProviderItem) => {
+export const hasMultiplePaymentConditions = (provider?: PaymentProviderItem) =>
+  Object.values(provider?.payment_conditions ?? {}).flat().length > 1;
+
+export const getDefaultPaymentConditionId = (
+  provider?: PaymentProviderItem,
+  { requireChoice = false } = {},
+) => {
   if (!provider?.payment_conditions) return undefined;
+  if (requireChoice && hasMultiplePaymentConditions(provider)) return '';
   return Object.values(provider.payment_conditions)[0]?.[0]?.id;
 };
 

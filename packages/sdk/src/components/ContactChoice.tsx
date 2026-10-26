@@ -1,7 +1,6 @@
 import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
 import clsx from 'clsx';
-import { PropsWithChildren } from 'react';
 
 import { useContactChoice } from '../hooks/useContactChoice';
 import { useProfilePrefill } from '../hooks/useProfilePrefill';
@@ -11,19 +10,19 @@ import { TOKENS } from '../types/Tokens';
 import { renderTemplate } from '../utils/renderTemplate';
 import { RadioSkeleton, TextFieldSkeleton } from './ui/skeletons';
 
-type Props = PropsWithChildren<{
+type Props = {
   className?: string;
   reference?: string;
   uuid?: string;
-}>;
+};
 
-export const ContactChoice = ({ className, reference, uuid, children }: Props) => {
+export const ContactChoice = ({ className, reference, uuid }: Props) => {
   const { content } = useCapsConfigContext();
   const { setValue, formState } = useFormContext();
   const templateId = useWatch('template_id');
   const billingDetails = useWatch('billing_details') || {};
 
-  const { contactChoices, sendLinkText, shouldDisplay, templateIds } = useContactChoice({
+  const { contactChoices, shouldDisplay, templateIds } = useContactChoice({
     reference,
     uuid,
   });
@@ -40,15 +39,13 @@ export const ContactChoice = ({ className, reference, uuid, children }: Props) =
 
   return (
     <div className={className}>
-      {children}
-      <p className="mb-16 text-b5">{sendLinkText}</p>
       <div className="flex flex-wrap gap-20">
         {orderedChoices.map((choice) => {
           const isCurrentTemplate = choice.templateId === templateId;
           const { input } = choice;
           const field = input && content.contactChoice.fields[input.name];
           const fieldError = input && formState.errors.billing_details?.[input.name];
-          const isDirty = input && formState.dirtyFields.billing_details?.[input.name];
+          const isTouched = input && formState.touchedFields.billing_details?.[input.name];
 
           return (
             <div
@@ -76,14 +73,24 @@ export const ContactChoice = ({ className, reference, uuid, children }: Props) =
                 <TextField
                   type={input.type}
                   value={billingDetails[input.name] || ''}
-                  onChange={(_, value) => setValue(`billing_details.${input.name}`, value)}
+                  onChange={(_, value) =>
+                    setValue(`billing_details.${input.name}`, value, {
+                      shouldValidate: !!isTouched,
+                    })
+                  }
+                  onBlur={() =>
+                    setValue(`billing_details.${input.name}`, billingDetails[input.name] || '', {
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    })
+                  }
                   disabled={!isCurrentTemplate}
                   data-name={`InputFor_${input.name}`}
                   data-testid={`InputFor_${input.name}`}
                   label={field.label}
                   placeholder={field.placeholder}
                   errorMessage={fieldError?.message}
-                  validationStatus={fieldError ? 'error' : isDirty ? 'success' : 'default'}
+                  validationStatus={fieldError ? 'error' : isTouched ? 'success' : 'default'}
                 />
               )}
             </div>

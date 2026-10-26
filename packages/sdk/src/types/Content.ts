@@ -130,6 +130,7 @@ export type Content = {
     title: string;
     selectCardType: string;
     selectInstallments: string;
+    placeholder: string;
     installmentLabel: `${string}{count}${string}{amount}${string}`;
     validation: {
       methodRequired: string;
@@ -139,6 +140,11 @@ export type Content = {
   billingAddress: {
     heading: string;
     title: string;
+    additionalInformation: string;
+    hints: {
+      first_name: string;
+      last_name: string;
+    };
     fields: {
       first_name: string;
       last_name: string;
