@@ -31,5 +31,5 @@ export const daysUntilToday = (date: Date) => {
   d.setHours(0, 0, 0, 0);
 
   const diffMs = d.getTime() - today.getTime();
-  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  return Math.round(diffMs / (1000 * 60 * 60 * 24));
 };

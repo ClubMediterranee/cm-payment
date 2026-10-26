@@ -30,6 +30,9 @@ export const defaultContent: Content = {
       simulationLabel:
         'I pay in {icon} a total of {total} (incl. {cost} financing cost): {instalments}',
       instalmentItem: '{amount} on {date}',
+      instalmentFirst: '1st due date on {date}',
+      instalmentOther: '{count}th due date on {date}',
+      feesInclude: '(including {amount} € of costs)',
     },
   },
   cgv: {
