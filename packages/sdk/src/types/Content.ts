@@ -24,6 +24,11 @@ export type Content = {
       iconLabel: `${string}{icon}${string}`;
       priceLabel: `${string}{price}${string}`;
       unavailable: string;
+      simulationLabel: `${string}{icon}${string}{total}${string}{cost}${string}{instalments}${string}`;
+      instalmentItem: `${string}{amount}${string}{date}${string}`;
+      instalmentFirst: `${string}{date}${string}`;
+      instalmentOther: `${string}{count}${string}{date}${string}`;
+      feesInclude: `${string}{amount}${string}`;
     };
   };
   cgv: {

@@ -472,6 +472,16 @@ export const BuyNowPayLaterOney: Story = {
             settings: {},
           });
         }),
+        http.get('*/rest/payment_providers/EHIPAYBNPL/simulation', () => {
+          return Response.json({
+            cost: 11.35,
+            instalments: [
+              { number: 0, amount: 711.35, date: '2026-11-23T00:00:00.000Z' },
+              { number: 1, amount: 700, date: '2026-12-23T00:00:00.000Z' },
+              { number: 2, amount: 700, date: '2027-01-23T00:00:00.000Z' },
+            ],
+          });
+        }),
         http.get('*/rest/payment_providers/proposal/*', ({ request }) => {
           const url = new URL(request.url);
           const payment_mode = url.searchParams.get('payment_mode') || '3x';
@@ -513,6 +523,11 @@ export const BuyNowPayLaterOney: Story = {
     await waitFor(() => {
       expect(canvas.getByRole('radio', { name: /I pay in.*by credit card/ })).toBeInTheDocument();
     });
+    const instalments = await canvas.findByTestId('oney-instalments');
+    expect(within(instalments).getByText(/1st due date on/)).toBeInTheDocument();
+    expect(within(instalments).getByText(/2th due date on/)).toBeInTheDocument();
+    expect(within(instalments).getByText(/3th due date on/)).toBeInTheDocument();
+    expect(within(instalments).getByText(/including 11,35 € of costs/)).toBeInTheDocument();
   },
   render(args: any) {
     return (

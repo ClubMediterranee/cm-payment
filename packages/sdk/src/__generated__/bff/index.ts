@@ -6,8 +6,9 @@
  */
 import type {
   ActionResolverControllerResolveActionParams,
+  OverpaymentAllowanceOutputModel,
   PaymentConfig,
-  PaymentMaxAmountOutputModel,
+  PaymentProvidersControllerGetBnplSimulationParams,
   PaymentProvidersControllerGetPaymentProviders200,
   PaymentProvidersControllerGetPaymentProvidersParams,
   PaymentRedirectRequestBody,
@@ -59,6 +60,20 @@ export const paymentProvidersControllerGetPaymentProviders = (
 };
 
 /**
+ * @summary Simulate a BNPL loan for a given provider and amount
+ */
+export const paymentProvidersControllerGetBnplSimulation = (
+  providerId: 'EHIPAYBNPL',
+  params?: PaymentProvidersControllerGetBnplSimulationParams,
+) => {
+  return fetcher<unknown>({
+    url: `/rest/payment_providers/${providerId}/simulation`,
+    method: 'GET',
+    params,
+  });
+};
+
+/**
  * @summary Create a payment and return the provider redirect parameters
  */
 export const paymentRedirectControllerCreate = (
@@ -79,7 +94,7 @@ export const paymentScheduleControllerGetOverpaymentAllowance = (
   bookingId: string,
   params?: PaymentScheduleControllerGetOverpaymentAllowanceParams,
 ) => {
-  return fetcher<PaymentMaxAmountOutputModel>({
+  return fetcher<OverpaymentAllowanceOutputModel>({
     url: `/rest/payment_schedules/booking/${bookingId}/overpayment_allowance`,
     method: 'GET',
     params,
@@ -117,6 +132,9 @@ export type PaymentConfigControllerGetPaymentConfigResult = NonNullable<
 >;
 export type PaymentProvidersControllerGetPaymentProvidersResult = NonNullable<
   Awaited<ReturnType<typeof paymentProvidersControllerGetPaymentProviders>>
+>;
+export type PaymentProvidersControllerGetBnplSimulationResult = NonNullable<
+  Awaited<ReturnType<typeof paymentProvidersControllerGetBnplSimulation>>
 >;
 export type PaymentRedirectControllerCreateResult = NonNullable<
   Awaited<ReturnType<typeof paymentRedirectControllerCreate>>
