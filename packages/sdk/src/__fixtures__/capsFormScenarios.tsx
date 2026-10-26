@@ -63,6 +63,17 @@ export const contactChoiceHandlers = [
   handlers[3],
 ];
 
+export const freeDepositHandlers = [
+  http.get('*/rest/action_resolver/*', () => Response.json({ action: Action.PAYMENT_PARTIAL })),
+  http.get('*/rest/payment_schedules/booking/*/overpayment_allowance', () =>
+    Response.json({ amount: 0 }),
+  ),
+  http.get('*/rest/payment_schedules/booking/*', () =>
+    Response.json([{ amount: 500, deadline: '20251031', currency: 'EUR' }]),
+  ),
+  ...contactChoiceHandlers.slice(2),
+];
+
 export const submitButton = (canvasElement: HTMLElement) =>
   canvasElement.querySelector('button[type=submit]');
 
@@ -136,26 +147,12 @@ export const billingSchema = {
   },
 };
 
-export const billingHandlers = [
+const billingHandlers = [
   ...handlers.slice(0, 2),
   providersHandler([cardProvider('CARD', 'Pay by card', { billing_address_form: true })]),
   handlers[3],
   http.get('*/v3/schemas/billing/*', () => Response.json(billingSchema)),
   http.get('*/v0/countries*', () => Response.json([{ id: 'FR', label: 'France' }])),
-];
-
-export const iframeHandlers = [
-  ...handlers.slice(0, 2),
-  providersHandler([
-    cardProvider('EPAYGATE', 'Pay by card', {
-      configuration: {
-        display_type: 'iframe',
-        settings: {},
-        validation: { requires_token: false, requires_expiry_date: false },
-      },
-    }),
-  ]),
-  handlers[3],
 ];
 
 const hostedFieldProvider = (overrides: object = {}) =>
@@ -172,12 +169,6 @@ const hostedFieldProvider = (overrides: object = {}) =>
     },
     ...overrides,
   });
-
-export const hostedFieldHandlers = [
-  ...handlers.slice(0, 2),
-  providersHandler([hostedFieldProvider()]),
-  handlers[3],
-];
 
 export const billingWidgetHandlers = [
   ...billingHandlers.slice(0, 2),

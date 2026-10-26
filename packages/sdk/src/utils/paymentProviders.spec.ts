@@ -109,7 +109,7 @@ describe('paymentProviders utils', () => {
       ).toBe('3000');
     });
 
-    it('keeps the amount of a partial payment and a single provider in the stepper', () => {
+    it('leaves the amount of a partial payment empty for the user to enter', () => {
       const { amount, provider: selected } = getDefaultSelection({
         ...base,
         stepper: true,
@@ -118,7 +118,7 @@ describe('paymentProviders utils', () => {
         paymentProviders: [provider('card')],
       });
 
-      expect(amount).toBe('3000');
+      expect(amount).toBe('');
       expect(selected?.id).toBe('card');
     });
   });

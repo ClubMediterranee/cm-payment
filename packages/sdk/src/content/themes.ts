@@ -9,6 +9,11 @@ const legacyContent: Content = mergeFromPattern(defaultContent, {
   paymentProviders: { heading: 'Which payment method would you like to use?' },
   paymentSchedule: { heading: 'Choose your payment schedule' },
   cgv: { heading: 'Terms and conditions' },
+  freeDeposit: {
+    totalRemaining: 'Total remaining to pay',
+    before: 'before',
+    payNowLabel: 'I pay now',
+  },
 });
 
 export const contentByTheme: Record<CapsTheme, Content> = {

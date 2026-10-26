@@ -1,22 +1,15 @@
 import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
-import { useEffect } from 'react';
-import { type ControllerRenderProps, type FieldError } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 
 import { usePaymentSchedule } from '../../hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
-import { useFormContext, useWatch } from '../../hooks/utils/useForm';
-import { CapsFormSchema } from '../../schemas/capsFormSchema';
+import { useWatch } from '../../hooks/utils/useForm';
+import { type CapsFormSchema } from '../../schemas/capsFormSchema';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatDate } from '../../utils/formatDate';
 
-type FreeDepositFieldProps = {
-  field: ControllerRenderProps<CapsFormSchema, 'amount'>;
-  error?: FieldError;
-  isValid?: boolean;
-};
-
-export const FreeDepositField = ({ field, error, isValid }: FreeDepositFieldProps) => {
-  const { setValue } = useFormContext();
+export const FreeDepositField = () => {
+  const { field, fieldState } = useController<CapsFormSchema, 'amount'>({ name: 'amount' });
   const { paymentSchedule } = usePaymentSchedule();
   const { content, locale } = useCapsConfigContext();
 
@@ -31,42 +24,37 @@ export const FreeDepositField = ({ field, error, isValid }: FreeDepositFieldProp
     locale,
   });
 
-  useEffect(() => {
-    setValue('amount', '', { shouldValidate: false });
-  }, [setValue]);
-
-  const validationStatus = isValid ? 'success' : error ? 'error' : 'default';
-
   return (
     <div className="flex flex-col gap-24">
-      <div className="flex justify-between items-center">
-        <div>
-          <span>
-            <span className="text-b3 font-bold">{content.freeDeposit.totalRemaining}</span>
-            {deadline && (
-              <span className="text-sienna">
-                {' '}
-                {content.freeDeposit.before} {formatDate(deadline)}
-              </span>
-            )}
-          </span>
-        </div>
-        <div className="font-bold text-sienna text-b3">{formattedAmount}</div>
+      <div className="flex flex-col gap-4">
+        <p className="flex items-baseline gap-8">
+          <span className="text-b3 font-bold">{content.freeDeposit.totalRemaining}</span>
+          <span className="text-b2 font-bold">{formattedAmount}</span>
+        </p>
+        {deadline && (
+          <p className="text-b4">
+            {content.freeDeposit.before} {formatDate(deadline)}
+          </p>
+        )}
       </div>
 
-      <div className="flex flex-col gap-6">
-        <TextField
-          {...field}
-          label={content.freeDeposit.payNowLabel}
-          className="!text-b6"
-          type="number"
-          onChange={(_, value) => field.onChange(value)}
-          placeholder={content.freeDeposit.placeholder}
-          errorMessage={error?.message}
-          validationStatus={validationStatus}
-          step="0.01"
-        />
-      </div>
+      <TextField
+        {...field}
+        label={content.freeDeposit.payNowLabel}
+        className="text-b6"
+        type="number"
+        onChange={(_, value) => field.onChange(value)}
+        placeholder={content.freeDeposit.placeholder}
+        errorMessage={fieldState.error?.message}
+        validationStatus={
+          fieldState.isTouched && !fieldState.error
+            ? 'success'
+            : fieldState.error
+              ? 'error'
+              : 'default'
+        }
+        step="0.01"
+      />
     </div>
   );
 };
