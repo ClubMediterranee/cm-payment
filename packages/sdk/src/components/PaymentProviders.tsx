@@ -1,39 +1,15 @@
 import { Icon } from '@clubmed/trident-icons';
 import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 import clsx from 'clsx';
-import { Children, isValidElement, PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import { usePaymentProviders } from '../hooks/data/usePaymentProviders';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
-import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegrationMode';
-import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { TOKENS } from '../types/Tokens';
 import { getDefaultPaymentConditionId } from '../utils/paymentProviders';
-import { BorderlessFormPanels } from './ui/FormPanel';
-
-const PaymentProvidersPanel = ({ children }: PropsWithChildren) => {
-  const watchedProvider = useWatchedPaymentProvider();
-  const { iframe } = useProviderIntegrationMode();
-
-  const isBuyNowPayLater =
-    watchedProvider?.category_payment_method ===
-    PaymentProvider1CategoryPaymentMethod.BuyNowPayLater;
-
-  return (
-    <BorderlessFormPanels value={!isBuyNowPayLater}>
-      <div
-        data-cgv-first={isBuyNowPayLater || iframe || undefined}
-        className="group/panel flex flex-col gap-40"
-      >
-        {children}
-      </div>
-    </BorderlessFormPanels>
-  );
-};
-
-const isPanel = (child: unknown) => isValidElement(child) && child.type === PaymentProvidersPanel;
+import { Title } from './ui/Title';
 
 export const PaymentProviders = ({
   className,
@@ -45,23 +21,9 @@ export const PaymentProviders = ({
   } = usePaymentProviders();
   const { control, setValue } = useFormContext();
 
-  const watchedProvider = useWatchedPaymentProvider();
-
-  const isBuyNowPayLater =
-    watchedProvider?.category_payment_method ===
-    PaymentProvider1CategoryPaymentMethod.BuyNowPayLater;
-
-  const childArray = Children.toArray(children);
-  const heading = childArray.filter((child) => !isPanel(child));
-  const panel = childArray.filter(isPanel);
-
-  if (isBuyNowPayLater) {
-    return panel.length > 0 ? <div className={className}>{panel}</div> : null;
-  }
-
   return (
     <div className={className}>
-      {heading}
+      <Title variant="section">{content.paymentProviders.heading}</Title>
       <Controller
         name="provider_id"
         control={control}
@@ -92,7 +54,7 @@ export const PaymentProviders = ({
                       const provider = paymentProviders.find(({ id }) => id === providerId);
                       setValue(
                         'payment_condition_id',
-                        getDefaultPaymentConditionId(provider, { requireChoice: true }),
+                        getDefaultPaymentConditionId(provider, { unselectedIfMultiple: true }),
                       );
                     }}
                   >
@@ -112,7 +74,7 @@ export const PaymentProviders = ({
                       </div>
                     </div>
                   </Radio>
-                  {checked && panel.length > 0 && <div className="px-20 pb-20">{panel}</div>}
+                  {checked && <div className="px-20 pb-20">{children}</div>}
                 </div>
               );
             })}
@@ -132,5 +94,4 @@ const PaymentProvidersSkeleton = () => (
 );
 
 PaymentProviders.Skeleton = PaymentProvidersSkeleton;
-PaymentProviders.Panel = PaymentProvidersPanel;
 PaymentProviders.COMPONENT_KEY = TOKENS.PaymentProviders;

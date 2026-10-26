@@ -5,10 +5,10 @@ export const hasMultiplePaymentConditions = (provider?: PaymentProviderItem) =>
 
 export const getDefaultPaymentConditionId = (
   provider?: PaymentProviderItem,
-  { requireChoice = false } = {},
+  { unselectedIfMultiple = false } = {},
 ) => {
   if (!provider?.payment_conditions) return undefined;
-  if (requireChoice && hasMultiplePaymentConditions(provider)) return '';
+  if (unselectedIfMultiple && hasMultiplePaymentConditions(provider)) return '';
   return Object.values(provider.payment_conditions)[0]?.[0]?.id;
 };
 

@@ -26,13 +26,15 @@ describe('paymentProviders utils', () => {
         },
       } as any;
 
-      expect(getDefaultPaymentConditionId(provider, { requireChoice: true })).toBe('');
+      expect(getDefaultPaymentConditionId(provider, { unselectedIfMultiple: true })).toBe('');
     });
 
     it('keeps the only condition when a choice is required', () => {
       const provider = { payment_conditions: { Visa: [{ id: 'visa-1x' }] } } as any;
 
-      expect(getDefaultPaymentConditionId(provider, { requireChoice: true })).toBe('visa-1x');
+      expect(getDefaultPaymentConditionId(provider, { unselectedIfMultiple: true })).toBe(
+        'visa-1x',
+      );
     });
 
     it('returns undefined when the provider is undefined', () => {

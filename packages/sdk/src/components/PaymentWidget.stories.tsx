@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { delay, http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
 import type { ReactNode } from 'react';
+import { expect, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { Action } from '../__generated__/index.schemas';
@@ -93,11 +94,12 @@ const createHandlers = (delayMs = 0, integrationMode: IntegrationMode = 'redirec
 
 type PaymentWidgetStoryArgs = {
   integrationMode: IntegrationMode;
+  cgv?: boolean;
   children?: ReactNode;
 };
 
 const meta: Meta<PaymentWidgetStoryArgs> = {
-  title: 'Components/PaymentWidget',
+  title: 'Current/Internals/PaymentWidget',
   component: PaymentWidget,
   loaders: [mswLoader],
   parameters: {
@@ -120,7 +122,7 @@ Composant PaymentWidget qui affiche le bon composant de paiement selon le mode d
       description: "Mode d'intégration du fournisseur de paiement",
     },
   },
-  render({ integrationMode = 'iframe' }) {
+  render({ integrationMode = 'iframe', cgv = true }) {
     const provider = getProviderByMode(integrationMode);
 
     return (
@@ -130,7 +132,8 @@ Composant PaymentWidget qui affiche le bon composant de paiement selon le mode d
           provider_id: provider,
           amount: '100',
           currency: 'EUR',
-          cgv: true,
+          cgv,
+          billing_details: { address: { country_code: 'FR' } },
           token: {
             status: 'idle',
           },
@@ -165,6 +168,15 @@ export const Default: Story = {
   },
 };
 
+const settle = () => new Promise((resolve) => setTimeout(resolve, 500));
+
+Default.play = async ({ canvasElement }) => {
+  await settle();
+
+  expect(canvasElement.querySelector('iframe')).toBeNull();
+  expect(within(canvasElement).queryByRole('textbox')).toBeNull();
+};
+
 export const HostedField: Story = {
   args: {
     integrationMode: 'hosted_field',
@@ -181,6 +193,13 @@ export const HostedField: Story = {
   },
 };
 
+HostedField.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await canvas.findByText('Card number', { exact: false }, { timeout: 10000 });
+  expect(canvas.getByText('Expiry date', { exact: false })).toBeInTheDocument();
+};
+
 export const Iframe: Story = {
   args: {
     integrationMode: 'iframe',
@@ -194,5 +213,35 @@ export const Iframe: Story = {
         story: 'PaymentWidget en mode iframe avec Epaygate.',
       },
     },
+  },
+};
+
+Iframe.play = async ({ canvasElement }) => {
+  await waitFor(
+    () => expect(canvasElement.querySelector('iframe[title="payment-iframe"]')).not.toBeNull(),
+    { timeout: 10000 },
+  );
+};
+
+export const IframeWaitsForValidForm: Story = {
+  args: {
+    integrationMode: 'iframe',
+    cgv: false,
+  },
+  parameters: {
+    msw: {
+      handlers: createHandlers(0, 'iframe'),
+    },
+    docs: {
+      description: {
+        story:
+          "L'iframe de paiement n'est pas rendue tant que le formulaire est invalide (CGV non acceptées).",
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await settle();
+
+    expect(canvasElement.querySelector('iframe')).toBeNull();
   },
 };

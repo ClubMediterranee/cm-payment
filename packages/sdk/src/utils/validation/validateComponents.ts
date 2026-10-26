@@ -1,6 +1,7 @@
 import React, { isValidElement } from 'react';
 
 import { GLOBAL_CAPS_SETTINGS } from '../../config';
+import type { CapsTheme } from '../../embed/shared';
 import { OidcIssuerTypes } from '../../types/CapsSettings';
 
 function getAvailableComponent(children: React.ReactNode): symbol[] {
@@ -27,10 +28,17 @@ function getAvailableComponent(children: React.ReactNode): symbol[] {
     .filter((key): key is symbol => Boolean(key));
 }
 
-export function validateComponents(issuer: OidcIssuerTypes, children: React.ReactNode) {
+export function validateComponents(
+  issuer: OidcIssuerTypes,
+  children: React.ReactNode,
+  theme: CapsTheme = 'legacy',
+) {
   const symbols = getAvailableComponent(children);
 
-  const requiredSymbols = GLOBAL_CAPS_SETTINGS.components[issuer];
+  const requiredSymbols =
+    theme === 'current'
+      ? GLOBAL_CAPS_SETTINGS.currentComponents
+      : GLOBAL_CAPS_SETTINGS.components[issuer];
 
   if (!requiredSymbols) {
     throw new Error(`No components defined for issuer type: ${issuer}`);

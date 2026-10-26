@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { Action, PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
@@ -230,7 +230,7 @@ const CardInstallmentsWithProvider = () => {
 };
 
 const meta: Meta<typeof CardInstallments> = {
-  title: 'Components/CardInstallments',
+  title: 'Current/Internals/CardInstallments',
   component: CardInstallments,
   parameters: {
     layout: 'centered',
@@ -255,6 +255,111 @@ export const Default: Story = {
   },
   render() {
     return <CardInstallmentsWithProvider />;
+  },
+};
+
+const InstallmentsWithDefaults = ({
+  defaultValues,
+}: {
+  defaultValues: React.ComponentProps<typeof MockedProvider>['defaultValues'];
+}) => (
+  <MockedProvider
+    bookingId="test-booking"
+    customerId="test-customer"
+    action={Action.PAYMENT_OPTION}
+    defaultValues={{ provider_id: 'EVOXPAY', amount: '1200', ...defaultValues }}
+  >
+    <CardInstallments />
+  </MockedProvider>
+);
+
+const selectsOf = async (canvasElement: HTMLElement) => {
+  const canvas = within(canvasElement);
+
+  await waitFor(() => expect(canvas.getAllByRole('combobox')).toHaveLength(2), { timeout: 5000 });
+
+  return canvas.getAllByRole('combobox') as HTMLSelectElement[];
+};
+
+export const WithoutPreselection: Story = {
+  parameters: {
+    msw: { handlers: defaultHandlersWithInstallments },
+    docs: {
+      description: {
+        story: 'Sans valeur par défaut, le type de carte et les mensualités sont à choisir.',
+      },
+    },
+  },
+  render: () => <InstallmentsWithDefaults defaultValues={{}} />,
+  play: async ({ canvasElement }) => {
+    const [cardType, installments] = await selectsOf(canvasElement);
+
+    expect(cardType).toHaveValue('');
+    expect(installments).toHaveValue('');
+    expect(installments).toBeDisabled();
+  },
+};
+
+export const ChoosingCardTypeThenInstallments: Story = {
+  parameters: {
+    msw: { handlers: defaultHandlersWithInstallments },
+    docs: {
+      description: {
+        story:
+          "Les mensualités restent désactivées tant qu'aucun type de carte n'est choisi, puis listent celles du type choisi.",
+      },
+    },
+  },
+  render: () => <InstallmentsWithDefaults defaultValues={{}} />,
+  play: async ({ canvasElement }) => {
+    const [cardType, installments] = await selectsOf(canvasElement);
+
+    expect(cardType).toHaveDisplayValue('Choose');
+    expect(installments).toBeDisabled();
+
+    await userEvent.selectOptions(cardType, 'Visa');
+    await waitFor(() => expect(installments).toBeEnabled());
+    expect(installments).toHaveDisplayValue('Choose');
+
+    const labels = within(installments)
+      .getAllByRole('option')
+      .map((option) => option.textContent ?? '');
+    expect(labels).toHaveLength(4);
+    expect(labels.slice(1)).toEqual([
+      expect.stringMatching(/^1 X of/),
+      expect.stringMatching(/^3 X of/),
+      expect.stringMatching(/^4 X of/),
+    ]);
+
+    await userEvent.selectOptions(installments, 'visa-3x');
+    expect(installments).toHaveValue('visa-3x');
+  },
+};
+
+export const KeepsInstallmentCountWhenChangingCardType: Story = {
+  parameters: {
+    msw: { handlers: defaultHandlersWithInstallments },
+    docs: {
+      description: {
+        story:
+          'Changer de type de carte garde le même nombre de mensualités quand le nouveau type le propose (Visa 4x → Mastercard 4x), sinon le choix est vidé (Visa 3x → Mastercard).',
+      },
+    },
+  },
+  render: () => <InstallmentsWithDefaults defaultValues={{ payment_condition_id: 'visa-4x' }} />,
+  play: async ({ canvasElement }) => {
+    const [cardType, installments] = await selectsOf(canvasElement);
+
+    expect(cardType).toHaveValue('Visa');
+    expect(installments).toHaveValue('visa-4x');
+
+    await userEvent.selectOptions(cardType, 'Mastercard');
+    await waitFor(() => expect(installments).toHaveValue('mc-4x'));
+
+    await userEvent.selectOptions(cardType, 'Visa');
+    await userEvent.selectOptions(installments, 'visa-3x');
+    await userEvent.selectOptions(cardType, 'Mastercard');
+    await waitFor(() => expect(installments).toHaveValue(''));
   },
 };
 

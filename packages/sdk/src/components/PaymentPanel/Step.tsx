@@ -2,7 +2,6 @@ import type { PropsWithChildren } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { useFormSchema } from '../../contexts/FormSchemaContext';
-import { useStepper } from '../../contexts/StepperContext';
 
 const FIELD_ORDER = [
   'amount',
@@ -30,11 +29,8 @@ const rankOf = (path: string) => {
 type StepProps = PropsWithChildren<{ after?: StepField | StepField[] }>;
 
 export const Step = ({ after, children }: StepProps) => {
-  const stepper = useStepper();
   const schema = useFormSchema();
   const values = useWatch();
-
-  if (!stepper) return <>{children}</>;
 
   const issues = schema?.safeParse(values).error?.issues ?? [];
   const firstInvalid = Math.min(...issues.map(({ path }) => rankOf(path.join('.'))), Infinity);

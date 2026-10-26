@@ -1,22 +1,13 @@
 import './integrations/index.js';
 import './integrations/ui.js';
 
-export * from './components/BillingAddress';
 export * from './components/CapsPaymentForm';
-export * from './components/CardInstallments';
-export * from './components/Cgv';
-export * from './components/Comments';
-export * from './components/ContactChoice';
-export * from './components/Donation';
-export * from './components/PaymentProviders';
+export * from './components/PaymentPanel';
 export * from './components/PaymentSchedule';
-export * from './components/PaymentWidget';
-export * from './components/SubmitButton';
 export * from './components/legacy';
 export { FormSubmitContext, useFormSubmit } from './contexts/FormSubmitContext';
 export * from './components/ui/FormPanel';
 export * from './embed/shared';
-export { useCapsTheme } from './hooks/data/usePaymentConfig';
 export * from './hooks/utils/useCapsConfigContext';
 export * from './hooks/utils/useDisclosure';
 export * from './providers/CapsForm';

@@ -99,7 +99,6 @@ export function PaymentPage() {
       reference={reference}
       uuid={uuid}
       theme={theme}
-      stepper
       slots={isLegacy ? undefined : { donation: donationSlot }}
       onEvent={onEvent}
     />

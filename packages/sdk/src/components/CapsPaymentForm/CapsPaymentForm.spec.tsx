@@ -4,16 +4,14 @@ import type { ReactNode } from 'react';
 import { FormSubmitContext } from '../../contexts/FormSubmitContext';
 import { CapsPaymentForm, type CapsPaymentFormProps } from './CapsPaymentForm';
 
-const cmsTheme = vi.hoisted(() => vi.fn(() => 'current'));
 const providerProps = vi.fn();
 const formProps = vi.fn();
+const choiceProps = vi.fn();
 const defaultNavigate = vi.fn();
 
 vi.mock('../../utils/navigate', () => ({
   defaultNavigate: (request: unknown) => defaultNavigate(request),
 }));
-
-vi.mock('../../hooks/data/usePaymentConfig', () => ({ useCapsTheme: () => cmsTheme() }));
 
 vi.mock('../../providers/PaymentConfigProvider', async () => {
   const { CapsConfigContext } = await import('../../contexts/CapsConfigContext');
@@ -71,22 +69,13 @@ const { step, submit } = await vi.hoisted(async () => {
   };
 });
 
-vi.mock('../BillingAddress', () => ({ BillingAddress: step('billing-address') }));
-vi.mock('../CardInstallments', () => ({ CardInstallments: step('card-installments') }));
-vi.mock('../Cgv', () => ({ Cgv: step('cgv') }));
-vi.mock('../Comments', () => ({ Comments: step('comments') }));
-vi.mock('../ContactChoice', () => ({ ContactChoice: step('contact-choice') }));
-vi.mock('../Donation', () => ({ Donation: step('donation') }));
-vi.mock('../PaymentProviders', () => ({
-  PaymentProviders: Object.assign(step('payment-providers'), {
-    Panel: step('payment-providers-panel'),
-  }),
-}));
 vi.mock('../PaymentSchedule', () => ({ PaymentSchedule: step('payment-schedule') }));
-vi.mock('../PaymentWidget', () => ({ PaymentWidget: step('payment-widget') }));
-vi.mock('../SubmitButton', () => ({ SubmitButton: submit }));
-vi.mock('./PayLabel', () => ({ PayLabel: () => 'Pay now' }));
-vi.mock('./Step', () => ({ Step: step('step') }));
+vi.mock('../PaymentPanel', () => ({
+  PaymentPanel: (props: Record<string, unknown>) => {
+    choiceProps(props);
+    return <section data-testid="payment-providers-choice" />;
+  },
+}));
 vi.mock('../legacy', () => ({
   LegacyBillingAddress: step('legacy-billing-address'),
   LegacyCardInstallments: step('legacy-card-installments'),
@@ -142,93 +131,45 @@ describe('CapsPaymentForm', () => {
     vi.unstubAllGlobals();
   });
 
-  it('renders every step with its title and the default submit button', () => {
-    const { container, getByRole } = render(
-      <CapsPaymentForm {...baseProps} action="PAYMENT_RESA" reference="REF" uuid="abc" />,
+  it('renders the schedule and the payment providers choice with the host props', () => {
+    const slots = { donation: null, submit: null };
+    const { container } = render(
+      <CapsPaymentForm
+        {...baseProps}
+        theme="current"
+        action="PAYMENT_RESA"
+        reference="REF"
+        uuid="abc"
+        slots={slots}
+      />,
     );
 
-    expect(
-      container.querySelector('[data-testid=contact-choice]')!.getAttribute('data-props'),
-    ).toBe(JSON.stringify({ reference: 'REF', uuid: 'abc' }));
-    [
-      'Choose the payment schedule',
-      'How do you want to pay?',
-      'Comments',
-      'General Terms and Conditions of Sale',
-      'Billing address',
-    ].forEach((title) => expect(container.textContent).toContain(title));
-    expect(getByRole('button').className).toBe('self-center');
-    expect(getByRole('button').textContent).toBe('Pay now');
+    expect(container.querySelector('[data-testid=payment-schedule]')).toBeTruthy();
+    expect(container.querySelector('[data-testid=payment-providers-choice]')).toBeTruthy();
+    expect(choiceProps).toHaveBeenLastCalledWith({ reference: 'REF', uuid: 'abc', slots });
     expect(lastFormProps().action).toBe('PAYMENT_RESA');
   });
 
-  it('renders the legacy steps with the legacy theme', () => {
-    const { container } = render(<CapsPaymentForm {...baseProps} theme="legacy" />);
-
-    expect(container.querySelector('[data-testid=legacy-payment-schedule]')).toBeTruthy();
-    expect(container.querySelector('[data-testid=payment-schedule]')).toBeNull();
-  });
-
-  it('resolves the theme from the CMS when the prop is absent', () => {
-    cmsTheme.mockReturnValueOnce('legacy');
-
+  it('renders the legacy theme by default', () => {
     const { container } = render(<CapsPaymentForm {...baseProps} />);
 
     expect(container.querySelector('[data-testid=legacy-payment-schedule]')).toBeTruthy();
     expect(container.querySelector('[data-testid=payment-schedule]')).toBeNull();
   });
 
-  it('gives the provider the resolved theme so it serves a single content', () => {
-    cmsTheme.mockReturnValueOnce('legacy');
+  it('renders the current theme when the prop asks for it', () => {
+    const { container } = render(<CapsPaymentForm {...baseProps} theme="current" />);
+
+    expect(container.querySelector('[data-testid=payment-schedule]')).toBeTruthy();
+    expect(container.querySelector('[data-testid=legacy-payment-schedule]')).toBeNull();
+  });
+
+  it('gives the provider the theme so it serves a single content', () => {
     const { container } = render(<CapsPaymentForm {...baseProps} />);
 
     expect(providerProps).toHaveBeenLastCalledWith(expect.objectContaining({ theme: 'legacy' }));
     expect(container.textContent).toContain('Choose your payment schedule');
     expect(container.textContent).not.toContain('Choose the payment schedule');
-  });
-
-  it('prefers the theme prop over the CMS without reading it', () => {
-    cmsTheme.mockReturnValue('legacy');
-
-    const { container } = render(<CapsPaymentForm {...baseProps} theme="current" />);
-
-    expect(container.querySelector('[data-testid=payment-schedule]')).toBeTruthy();
-    expect(cmsTheme).not.toHaveBeenCalled();
-
-    cmsTheme.mockReturnValue('current');
-  });
-
-  it('reveals the sections step by step in stepper mode', () => {
-    const { container } = render(<CapsPaymentForm {...baseProps} stepper />);
-
-    expect(
-      [...container.querySelectorAll('[data-testid=step]')].map(
-        (element) => JSON.parse(element.getAttribute('data-props')!).after,
-      ),
-    ).toEqual([
-      'amount',
-      'provider_id',
-      ['payment_condition_id', 'billing_details.attendee', 'billing_details.address'],
-      'billing_details.address',
-      ['template_id', 'billing_details.mobile_phone', 'billing_details.email'],
-      'comments',
-      undefined,
-      'billing_details.address',
-    ]);
-    expect(lastFormProps().stepper).toBe(true);
-  });
-
-  it('renders every section at once without the stepper', () => {
-    render(<CapsPaymentForm {...baseProps} />);
-
-    expect(lastFormProps().stepper).toBe(false);
-  });
-
-  it('ignores the stepper with the legacy theme', () => {
-    const { container } = render(<CapsPaymentForm {...baseProps} theme="legacy" stepper />);
-
-    expect(container.querySelector('[data-testid=step]')).toBeNull();
-    expect(lastFormProps().stepper).toBe(false);
   });
 
   it('applies className and style to the container', () => {
@@ -310,31 +251,6 @@ describe('CapsPaymentForm', () => {
     providerProps.mock.lastCall![0].onNavigate({ url: 'https://psp/3' });
 
     expect(defaultNavigate).toHaveBeenCalledWith({ url: 'https://psp/3' });
-  });
-
-  it('renders the donation and the submit button in the host slots', () => {
-    const donation = document.body.appendChild(document.createElement('div'));
-    const submit = document.body.appendChild(document.createElement('div'));
-
-    const { container } = render(<CapsPaymentForm {...baseProps} slots={{ donation, submit }} />);
-
-    expect(container.querySelector('[data-testid=donation]')).toBeNull();
-    expect(container.querySelector('button')).toBeNull();
-    expect(container.querySelector('[data-testid=cgv]')).toBeTruthy();
-    expect(donation.querySelector('[data-testid=donation]')).toBeTruthy();
-    expect(submit.querySelector('button')!.className).toBe('w-full');
-
-    donation.remove();
-    submit.remove();
-  });
-
-  it('keeps the regions in the form while a slot has no host element yet', () => {
-    const { container, getByRole } = render(
-      <CapsPaymentForm {...baseProps} slots={{ donation: null, submit: null }} />,
-    );
-
-    expect(container.querySelector('[data-testid=donation]')).toBeTruthy();
-    expect(getByRole('button').className).toBe('self-center');
   });
 
   it('forwards the events of the form to the host', () => {

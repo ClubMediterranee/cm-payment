@@ -32,11 +32,10 @@ type CapsFormProps = PropsWithChildren<
     fallback?: ReactNode;
     action?: Action;
     errorFallback?: (props: FallbackProps) => ReactNode;
-    stepper?: boolean;
   }
 >;
 
-function CapsFormProvider({ children, action, stepper, onEvent, ...props }: CapsFormProps) {
+function CapsFormProvider({ children, action, onEvent, ...props }: CapsFormProps) {
   const {
     id,
     content,
@@ -50,7 +49,7 @@ function CapsFormProvider({ children, action, stepper, onEvent, ...props }: Caps
     salesmanId,
     opportunityId,
   } = useCapsConfigContext();
-  const requireInstallmentChoice = theme === 'current';
+  const isCurrentTheme = theme === 'current';
   const { isSeller } = useOidcContext();
 
   const resolvedAction = useActionResolver(action);
@@ -78,7 +77,7 @@ function CapsFormProvider({ children, action, stepper, onEvent, ...props }: Caps
   const maxAmount = (paymentSchedule?.[0]?.amount ?? 0) + (overpaymentAllowanceData?.amount ?? 0);
 
   const { amount: defaultAmount, provider: defaultProvider } = getDefaultSelection({
-    stepper,
+    stepper: isCurrentTheme,
     isPartial: resolvedAction === Action.PAYMENT_PARTIAL,
     paymentSchedule,
     paymentProviders,
@@ -93,7 +92,7 @@ function CapsFormProvider({ children, action, stepper, onEvent, ...props }: Caps
       isSeller,
       maxAmount,
       requiresPaymentCondition: (providerId: string) =>
-        requireInstallmentChoice &&
+        isCurrentTheme &&
         hasMultiplePaymentConditions(paymentProviders.find((p) => p.id === providerId)),
       getProviderConfiguration: (providerId: string) => {
         const provider = [...paymentProviders, ...buyNowPayLaterProviders].find(
@@ -108,7 +107,7 @@ function CapsFormProvider({ children, action, stepper, onEvent, ...props }: Caps
       amount: defaultAmount,
       currency: paymentSchedule?.[0]?.currency,
       payment_condition_id: getDefaultPaymentConditionId(defaultProvider, {
-        requireChoice: requireInstallmentChoice,
+        unselectedIfMultiple: isCurrentTheme,
       }),
       billing_details: {
         address: {
@@ -145,12 +144,12 @@ export function CapsForm({
   errorFallback = FormErrorFallback,
   ...props
 }: CapsFormProps) {
-  const { oidc, id } = useCapsConfigContext();
+  const { oidc, id, theme } = useCapsConfigContext();
   if (!id) {
     throw new Error('Either bookingId or proposalId must be provided');
   }
 
-  const symbols = validateComponents(oidc.issuerType, children);
+  const symbols = validateComponents(oidc.issuerType, children, theme);
 
   const defaultFallback = <GlobalFormSkeleton symbols={symbols} />;
 

@@ -96,7 +96,7 @@ type IframeViewStoryArgs = {
 };
 
 const meta: Meta<IframeViewStoryArgs> = {
-  title: 'Components/PaymentWidget/Iframe/IframeView',
+  title: 'Current/Internals/PaymentWidget/IframeView',
   component: IframeView,
   loaders: [mswLoader],
   parameters: {

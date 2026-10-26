@@ -44,7 +44,7 @@ const DonationWithProvider = () => {
 };
 
 const meta: Meta<typeof Donation> = {
-  title: 'Components/Donation',
+  title: 'Current/Internals/Donation',
   component: Donation,
   parameters: {
     layout: 'fullscreen',

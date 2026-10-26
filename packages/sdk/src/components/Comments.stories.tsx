@@ -62,7 +62,7 @@ const CommentsWithProvider = () => {
 };
 
 const meta: Meta<typeof Comments> = {
-  title: 'Components/Comments',
+  title: 'Current/Internals/Comments',
   component: Comments,
   parameters: {
     layout: 'fullscreen',
