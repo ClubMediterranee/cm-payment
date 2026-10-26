@@ -59,7 +59,7 @@ Give the user one table and wait for the confirmation:
 
 - Prefer updating an existing page. Create a page only for a topic no page covers.
 - An obsolete page is reported to the user, never archived or deleted by the skill.
-- Include the planned `previous` / `next` chain and the `seo_url` of new pages.
+- Include the planned `previous` / `next` chain and the `seo_url` of new pages: for each new page, name the page before it, the page after it, and the neighbours that must be updated.
 
 ### 4. Write the drafts
 
@@ -77,7 +77,7 @@ Fetch the Markdown reference first, on every run, and use only its syntaxes: `ht
 
 The Directus MCP server reads a version (`query.version`) but cannot create or save one: `directus_versions` is a core collection it refuses, and `query.version` is **ignored on `update`** (checked on 2026-10-07: the main item is modified). Never rely on it to write a draft. So, for a published page:
 
-1. if `CMS_API_MCP_TOKEN` is set, use the REST API of the same instance with `Authorization: Bearer $CMS_API_MCP_TOKEN`: find the version (`GET /versions?filter[collection][_eq]=pages&filter[item][_eq]={id}`), create it when missing (`POST /versions` with `{ "name": "Draft", "key": "draft", "collection": "pages", "item": "{id}" }`), then save the changes into it (`POST /versions/{versionId}/save` with the changed fields only). Read the page back with `query.version` and without it to check that only the version changed. Never call `/versions/{versionId}/promote`;
+1. if `CMS_API_MCP_TOKEN` is set, use the REST API of the same instance with `Authorization: Bearer $CMS_API_MCP_TOKEN`: find the version (`GET /versions?filter[collection][_eq]=pages&filter[item][_eq]={id}`), create it when missing (`POST /versions` with `{ "name": "Draft", "key": "draft", "collection": "pages", "item": "{id}" }`), then save the changes into it (`POST /versions/{versionId}/save` with the changed fields only). Read the page back with `query.version` and without it to check that only the version changed. Never call `/versions/{versionId}/promote`. Check the token with `GET /users/me` before the first write: on `401`, stop and report. The `translations` delta has the shape `{ "create": [], "update": [{ "id": <translation id>, … }], "delete": [] }`;
 2. otherwise look for a flow made for this (`flows` tool, manual trigger on `pages`) and use it if there is one;
 3. otherwise do not write anything for this page: list it in the report with the change it needs, so that a contributor creates the version in the Data Studio.
 
@@ -171,6 +171,7 @@ The `id` at each level is the id of the junction row (or of the translation row)
 
 - Link the pages of a journey with `pages.previous` and `pages.next` (page uuids). Do not add "Next", "Previous" or "See also" link lists at the end of a page.
 - Keep the chain consistent in both directions: if A.`next` is B, then B.`previous` is A. Inserting a page updates its two neighbours (in their draft version when they are published).
+- A new page is always inserted in the chain, even when it looks standalone: place it after the page it extends, set its own `previous` and `next`, and update both neighbours. Never leave a new page with empty `previous` / `next`.
 - Inline links inside a sentence remain fine when they point to a specific section. Internal links use `/{locale}/pages/{seo_url}` (for example `/en-US/pages/caps-use-redirect-mode`), with the locale of the translation.
 
 **Translations**
@@ -201,5 +202,6 @@ End with:
 - [ ] No published item modified, no status set to `published`, nothing archived or deleted
 - [ ] Only syntaxes of the Markdown reference, no H1
 - [ ] `previous` / `next` consistent in both directions, no link list at the end of pages
+- [ ] Every new page has its `previous` and `next` set, and both neighbours updated (in their draft version when published)
 - [ ] Every page written in every CMS locale, with a `seo_url`
 - [ ] Preview links returned

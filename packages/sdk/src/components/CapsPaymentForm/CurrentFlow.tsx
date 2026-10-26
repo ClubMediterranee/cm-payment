@@ -22,12 +22,10 @@ export const CurrentFlow = ({ content, slots, reference, uuid }: FlowLayoutProps
       <PaymentProviders>
         <Title variant="section">{content.paymentProviders.heading}</Title>
         <PaymentProviders.Panel>
-          <CardInstallments>
-            <Title variant="label">{content.cardInstallments.heading}</Title>
-          </CardInstallments>
+          <CardInstallments />
           <Step after="provider_id">
             <BillingAddress>
-              <Title variant="label">{content.billingAddress.heading}</Title>
+              <Title className="mb-20 text-center">{content.billingAddress.heading}</Title>
             </BillingAddress>
           </Step>
           <Step
@@ -35,10 +33,8 @@ export const CurrentFlow = ({ content, slots, reference, uuid }: FlowLayoutProps
           >
             <PaymentWidget />
           </Step>
-          <Step after="provider_id">
-            <ContactChoice reference={reference} uuid={uuid}>
-              <Title variant="label">{content.contactChoice.heading}</Title>
-            </ContactChoice>
+          <Step after="billing_details.address">
+            <ContactChoice reference={reference} uuid={uuid} />
           </Step>
           <Step after={['template_id', 'billing_details.mobile_phone', 'billing_details.email']}>
             <Comments>
@@ -65,7 +61,7 @@ export const CurrentFlow = ({ content, slots, reference, uuid }: FlowLayoutProps
         <Donation />
       </FormSlot>
     ) : (
-      <Step after="provider_id">
+      <Step after="billing_details.address">
         <Donation />
       </Step>
     )}

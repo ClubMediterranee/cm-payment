@@ -3,6 +3,7 @@ import { http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { Action } from '../__generated__/index.schemas';
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { ContactChoice } from './ContactChoice';
@@ -424,5 +425,50 @@ export const InteractionBetweenOptions: Story = {
     await waitFor(() => {
       expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
+  },
+};
+
+export const ShowsValidationStatus: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Le champ passe au rouge avec son message au blur d'une valeur invalide, puis au vert",
+      },
+    },
+  },
+  render: () => (
+    <MockedProvider
+      bookingId="123"
+      action={Action.PAYMENT_RESA}
+      oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
+      defaultValues={{
+        provider_id: 'EVOXPAY',
+        template_id: '6',
+        amount: '100',
+        currency: 'EUR',
+        billing_details: { address: { country_code: 'FR' } },
+      }}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
+    >
+      <ContactChoice />
+    </MockedProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const email = await canvas.findByLabelText('Email address', {}, { timeout: 10000 });
+
+    await userEvent.type(email, 'abc');
+    expect(email.className).not.toContain('border-red');
+
+    await userEvent.tab();
+    await waitFor(() => expect(email.className).toContain('border-red'));
+    expect(canvas.getByText('Invalid email')).toBeInTheDocument();
+
+    await userEvent.clear(email);
+    await userEvent.type(email, 'jean@example.com');
+    await userEvent.tab();
+    await waitFor(() => expect(email.className).toContain('border-green'));
+    expect(canvas.queryByText('Invalid email')).toBeNull();
   },
 };

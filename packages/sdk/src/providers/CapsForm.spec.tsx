@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Action } from '../__generated__/index.schemas';
 import { OidcIssuerTypes } from '../types/CapsSettings';
@@ -21,26 +21,24 @@ const mockUsePaymentConfig = vi.fn(() => ({
 
 const mockUseActionResolver = vi.fn((action) => action);
 
-const mockUseCapsForm = vi.fn(() => ({
+const mockUseCapsForm = vi.fn((_params?: unknown) => ({
   handleSubmit: vi.fn(),
   watch: vi.fn(),
   setValue: vi.fn(),
   formState: { errors: {} },
 }));
 
-const mockUseSuspenseQueries = vi.fn(() => [
+const paymentProviders = [
   {
-    data: {
-      paymentProviders: [
-        {
-          id: 'HIPAY',
-          name: 'HiPay',
-          integration_mode: 'hosted_field',
-          payment_conditions: [{ id: 'PAYMENT_FULL', name: 'Paiement total' }],
-        },
-      ],
-    },
+    id: 'HIPAY',
+    name: 'HiPay',
+    integration_mode: 'hosted_field',
+    payment_conditions: [{ id: 'PAYMENT_FULL', name: 'Paiement total' }],
   },
+];
+
+const queries = (providers: object[]) => [
+  { data: { paymentProviders: providers, buyNowPayLaterProviders: [] } },
   {
     data: [
       {
@@ -50,7 +48,9 @@ const mockUseSuspenseQueries = vi.fn(() => [
       },
     ],
   },
-]);
+];
+
+const mockUseSuspenseQueries = vi.fn(() => queries(paymentProviders));
 
 vi.mock('../hooks/utils/useCapsConfigContext', () => ({
   useCapsConfigContext: () => mockUseCapsConfigContext(),
@@ -62,12 +62,22 @@ vi.mock('../hooks/data/usePaymentConfig', () => ({
   paymentConfigQueryOptions: () => ({ queryKey: ['payment-config'], queryFn: vi.fn() }),
 }));
 
+vi.mock('../components/BillingAddress', () => ({
+  BillingAddress: {
+    Preload: ({ countryCode }: { countryCode: string }) => <p>preload {countryCode}</p>,
+  },
+}));
+
+vi.mock('../hooks/data/useOverpaymentAllowance', () => ({
+  useOverpaymentAllowance: () => ({ data: undefined }),
+}));
+
 vi.mock('../hooks/data/useActionResolver', () => ({
   useActionResolver: (action: Action) => mockUseActionResolver(action),
 }));
 
 vi.mock('../hooks/useCapsForm', () => ({
-  useCapsForm: () => mockUseCapsForm(),
+  useCapsForm: (params: unknown) => mockUseCapsForm(params),
 }));
 
 vi.mock('../hooks/data/usePaymentProviders', () => ({
@@ -327,5 +337,122 @@ describe('CapsForm', () => {
 
     consoleErrorSpy.mockRestore();
     mockUseCapsConfigContext.mockReset();
+  });
+  describe('billing address preload', () => {
+    beforeEach(() => {
+      mockUseCapsConfigContext.mockReturnValue({
+        id: 'PROP001',
+        locale: 'fr-FR',
+        content: {},
+        oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
+      } as never);
+    });
+
+    afterEach(() => {
+      mockUseSuspenseQueries.mockImplementation(() => queries(paymentProviders));
+    });
+
+    const renderForm = () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      try {
+        return render(
+          <CapsForm>
+            <MockPaymentSchedule />
+            <MockCgv />
+            <MockPaymentProviders />
+            <MockBillingAddress />
+            <MockPaymentWidget />
+            <MockCardInstallments />
+            <MockSubmitButton>Payer</MockSubmitButton>
+            <MockDonation />
+          </CapsForm>,
+        );
+      } finally {
+        consoleErrorSpy.mockRestore();
+      }
+    };
+
+    it('preloads the billing address when a provider asks for the form', () => {
+      mockUseSuspenseQueries.mockImplementation(() =>
+        queries([{ ...paymentProviders[0], billing_address_form: true }]),
+      );
+
+      const { getByText } = renderForm();
+
+      expect(getByText('preload FR')).toBeTruthy();
+    });
+
+    it('does not preload the billing address when no provider asks for the form', () => {
+      const { queryByText } = renderForm();
+
+      expect(queryByText(/preload/)).toBeNull();
+    });
+  });
+  describe('installments choice', () => {
+    const multiConditionProviders = [
+      {
+        ...paymentProviders[0],
+        payment_conditions: {
+          Visa: [
+            { id: 'visa-1x', payment_count: 1 },
+            { id: 'visa-3x', payment_count: 3 },
+          ],
+        },
+      },
+    ];
+
+    const renderWithTheme = (theme?: 'current' | 'legacy') => {
+      mockUseCapsConfigContext.mockReturnValue({
+        id: 'PROP001',
+        locale: 'fr-FR',
+        content: {},
+        theme,
+        oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
+      } as never);
+      mockUseSuspenseQueries.mockImplementation(() => queries(multiConditionProviders));
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      try {
+        render(
+          <CapsForm>
+            <MockPaymentSchedule />
+            <MockCgv />
+            <MockPaymentProviders />
+            <MockBillingAddress />
+            <MockPaymentWidget />
+            <MockCardInstallments />
+            <MockSubmitButton>Payer</MockSubmitButton>
+            <MockDonation />
+          </CapsForm>,
+        );
+      } finally {
+        consoleErrorSpy.mockRestore();
+      }
+
+      return mockUseCapsForm.mock.lastCall?.[0] as {
+        config: { requiresPaymentCondition: (providerId: string) => boolean };
+        defaultValues: { payment_condition_id?: string };
+      };
+    };
+
+    afterEach(() => {
+      mockUseSuspenseQueries.mockImplementation(() => queries(paymentProviders));
+      mockUseCapsConfigContext.mockReset();
+    });
+
+    it('leaves the installments empty and required in the current theme', () => {
+      const { config, defaultValues } = renderWithTheme('current');
+
+      expect(defaultValues.payment_condition_id).toBe('');
+      expect(config.requiresPaymentCondition('HIPAY')).toBe(true);
+    });
+
+    it('keeps the first installments preselected in the legacy theme', () => {
+      const { config, defaultValues } = renderWithTheme('legacy');
+
+      expect(defaultValues.payment_condition_id).toBe('visa-1x');
+      expect(config.requiresPaymentCondition('HIPAY')).toBe(false);
+    });
   });
 });

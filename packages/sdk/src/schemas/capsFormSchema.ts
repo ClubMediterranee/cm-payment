@@ -11,6 +11,7 @@ import { validateDonation } from './validations/validateDonation';
 import { validateEmail } from './validations/validateEmail';
 import { validateExpiryDate } from './validations/validateExpiryDate';
 import { validateMobilePhone } from './validations/validateMobilePhone';
+import { validatePaymentCondition } from './validations/validatePaymentCondition';
 import { validateToken } from './validations/validateToken';
 
 export type ValidationError = {
@@ -20,7 +21,10 @@ export type ValidationError = {
 
 export type Validate = (
   data: CapsFormSchema,
-  config: Pick<CapsFormConfig, 'isSeller' | 'content' | 'getProviderConfiguration'>,
+  config: Pick<
+    CapsFormConfig,
+    'isSeller' | 'content' | 'getProviderConfiguration' | 'requiresPaymentCondition'
+  >,
 ) => ValidationError | ValidationError[] | undefined;
 
 export const capsFormSchema = ({
@@ -28,6 +32,7 @@ export const capsFormSchema = ({
   content,
   maxAmount,
   getProviderConfiguration,
+  requiresPaymentCondition,
 }: CapsFormConfig) =>
   z
     .object({
@@ -104,10 +109,11 @@ export const capsFormSchema = ({
       opportunity_id: z.string().optional(),
     })
     .superRefine((data, ctx) => {
-      const config = { isSeller, content, getProviderConfiguration };
+      const config = { isSeller, content, getProviderConfiguration, requiresPaymentCondition };
 
       const validations = [
         validateToken,
+        validatePaymentCondition,
         validateExpiryDate,
         validateCardHolder,
         validateEmail,
