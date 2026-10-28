@@ -1,0 +1,175 @@
+---
+include:
+  - project: "clubmed/templates"
+    ref: "master"
+    file: "CI/library/docker-aws.yaml"
+
+variables:
+  DOCKER_REGISTRY: "${AWS_ECR_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+  DOCKER_IMAGE: "api-caps"
+  DOCKER_TAG: ""
+  CAPS_BUILD_IMAGE: "false"
+  DTRACK_PROJECT_NAME: "api-caps"
+
+.image_tag:
+  script:
+    - |
+      if [ "$WORKFLOW" = "build" ] && [ "${CI_PIPELINE_SOURCE:-}" = "merge_request_event" ]; then
+        RELEASE_INFO_VERSION="mr-${CI_MERGE_REQUEST_IID}"
+      elif echo "$VERSION" | grep -Eq '^v?[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
+        RELEASE_INFO_VERSION="$VERSION"
+      else
+        RELEASE_INFO_VERSION="${VERSION}-$(date -u +%Y%m%d%H%M%S)"
+      fi
+      export RELEASE_INFO_VERSION
+      export DOCKER_TAG="$RELEASE_INFO_VERSION"
+
+.caps_image_prepare:
+  script:
+    - |
+      set -e
+      if [ "$WORKFLOW" != "deploy" ]; then
+        ENV=integration
+      fi
+      case "$ENV" in
+        integration|staging|production) ;;
+        *) echo "Unsupported image environment: $ENV" >&2; exit 1 ;;
+      esac
+    - !reference [.dotenv-source, script]
+    - |
+      if [ "$WORKFLOW" = "deploy" ] && [ "$PROVIDER" = "aws" ]; then
+    - !reference [.switch-branch, script]
+    - fi
+    - !reference [.image_tag, script]
+    - |
+      if ! printf '%s' "$DOCKER_TAG" | grep -Eq '^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$'; then
+        echo "Invalid image tag" >&2
+        exit 1
+      fi
+      if [ "$PROVIDER" = "aws" ]; then
+        printf '%s\n' "$DOCKER_TAG" > packages/server/resources/release.info
+      fi
+      AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
+      DOCKER_REGISTRY="${AWS_ACCOUNT_ID:-${AWS_ECR_ID:-}}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+      DOCKER_IMAGE="${ECR_REPOSITORY:-$DOCKER_IMAGE}"
+      printf '%s\n' \
+        "DOCKER_TAG=$DOCKER_TAG" \
+        "DOCKER_IMAGE=$DOCKER_IMAGE" \
+        "DOCKER_REGISTRY=$DOCKER_REGISTRY" \
+        "IMAGE_ENV=$ENV" \
+        "NODE_ENV=$NODE_ENV" \
+        "BUILD_ARG_NODE_ENV=$NODE_ENV" \
+        "PROVIDER=$PROVIDER" \
+        "AWS_REGION=$AWS_REGION" > image.env
+
+build:image:
+  extends: .docker_tag_and_push.aws
+  stage: build:image
+  image: docker:cli
+  tags:
+    - xemoy05_heavy
+  variables:
+    DOCKER_HOST: unix:///var/run/docker.sock
+  resource_group: "image-${CI_COMMIT_REF_SLUG}-${ENV}"
+  interruptible: true
+  rules:
+    - if: '$CAPS_BUILD_IMAGE == "true" && ($WORKFLOW == "build" || $WORKFLOW == "deploy")'
+  before_script:
+    - apk add --no-cache bash git
+    - !reference [.caps_image_prepare, script]
+    - set -a; . ./image.env; set +a
+    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
+    - export AWS_ECR_PASS="$DOCKER_REGISTRY"
+    - "{"
+    - !reference [.docker_tag_and_push.aws, before_script]
+    - "} > /dev/null"
+    - export DOCKER_BUILDKIT=1
+    - |
+      if ! aws ecr describe-repositories --repository-names "$DOCKER_IMAGE" --region "$AWS_REGION" >/dev/null 2>&1; then
+        aws ecr create-repository --repository-name "$DOCKER_IMAGE" --region "$AWS_REGION" >/dev/null
+      fi
+  script:
+    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
+    - !reference [.docker_tag_and_push.aws, script]
+    - |
+      if [ "$WORKFLOW" = "deploy" ]; then
+        docker tag "${DOCKER_FULL_NAME}:${DOCKER_TAG}" "${DOCKER_FULL_NAME}:latest"
+        docker push "${DOCKER_FULL_NAME}:latest"
+      fi
+  after_script:
+    - set -a; . ./image.env; set +a
+    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
+    - !reference [.add_registry_if_so, script]
+    - !reference [.docker_tag_and_push.aws, after_script]
+  artifacts:
+    paths:
+      - image.env
+    reports:
+      dotenv: image.env
+    expire_in: 1 week
+
+.caps_ecr_alpine:
+  before_script:
+    - set -a; . ./image.env; set +a
+    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
+    - !reference [.setup_proxy_linux, script]
+    - apk add --no-cache docker-cli
+    - export AWS_ECR_PASS="$DOCKER_REGISTRY"
+    - "{"
+    - !reference [.setup_docker_aws.alpine, script]
+    - "} > /dev/null"
+
+.caps_image_scan:
+  stage: cm-bot:scan
+  interruptible: true
+  needs:
+    - job: build:image
+      artifacts: true
+  artifacts:
+    reports:
+      dotenv: image.env
+  rules:
+    - if: '$CAPS_BUILD_IMAGE == "true" && ($WORKFLOW == "build" || $WORKFLOW == "deploy")'
+
+cm-bot:scan:docker:trivy:
+  extends:
+    - .image-scan:trivy
+    - .caps_image_scan
+  rules: !reference [.caps_image_scan, rules]
+  before_script: !reference [.caps_ecr_alpine, before_script]
+
+cm-bot:scan:docker:dockle:
+  extends:
+    - .image-scan:dockle
+    - .caps_image_scan
+  rules: !reference [.caps_image_scan, rules]
+  before_script: !reference [.caps_ecr_alpine, before_script]
+
+cm-bot:scan:docker:sbom.aws:
+  extends:
+    - .sbom-generation.aws
+    - .caps_image_scan
+  rules: !reference [.caps_image_scan, rules]
+  before_script:
+    - set -a; . ./image.env; set +a
+    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
+    - export AWS_ECR_PASS="$DOCKER_REGISTRY"
+    - "{"
+    - !reference [.sbom-generation.aws, before_script]
+    - "} > /dev/null"
+  script:
+    - !reference [.add_registry_if_so, script]
+    - /usr/local/bin/syft --version
+    - SBOM_REPORT="report-${DOCKER_IMAGE}-${DOCKER_TAG}"
+    - >-
+      /usr/local/bin/syft
+      --output "cyclonedx-json@${CYCLONEDX_VERSION}=${SBOM_REPORT}.cdx.json"
+      --output "cyclonedx@${CYCLONEDX_VERSION}=${SBOM_REPORT}.cdx"
+      "${DOCKER_FULL_NAME}:${DOCKER_TAG}"
+    - >-
+      curl --fail --silent --show-error --request POST "${DTRACK_API}"
+      --header "X-Api-Key: ${DTRACK_API_KEY}"
+      --form "autoCreate=true"
+      --form "projectName=${DOCKER_IMAGE}"
+      --form "projectVersion=${DOCKER_TAG}"
+      --form "bom=@report-${DOCKER_IMAGE}-${DOCKER_TAG}.cdx"

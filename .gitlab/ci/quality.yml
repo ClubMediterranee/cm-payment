@@ -1,0 +1,58 @@
+---
+include:
+  - project: "clubmed/templates"
+    ref: "master"
+    file: "CI-CM-auto/cm-bot-quality.yml"
+
+variables:
+  SONAR_PROVIDER: "sonarcloud"
+  CM_BOT_MAIN_BRANCH: "^main$"
+  CM_BOT_RELEASE_BRANCH: "^next-release$"
+
+.caps_sonar_needs:
+  needs:
+    - job: test
+      artifacts: true
+    - job: cm-bot:lint:dockerfile:hadolint
+      optional: true
+      artifacts: true
+    - job: cm-bot:lint:dockerfile:trivy
+      optional: true
+      artifacts: true
+    - job: cm-bot:scan:docker:trivy
+      optional: true
+      artifacts: true
+    - job: cm-bot:scan:docker:dockle
+      optional: true
+      artifacts: true
+    - job: cm-bot:scan:code
+      optional: true
+      artifacts: true
+
+cm-bot:scan:sonarcloud:branch:
+  needs: !reference [.caps_sonar_needs, needs]
+
+cm-bot:scan:sonarcloud:merge-request:
+  needs: !reference [.caps_sonar_needs, needs]
+
+cm-bot:scan:code:
+  rules:
+    - if: '$WORKFLOW == "build"'
+
+cm-bot:scan:docker:sbom:
+  rules:
+    - when: never
+
+cm-bot:scan:dtrack:mr-comment:
+  rules:
+    - if: '$CAPS_BUILD_IMAGE == "true" && $WORKFLOW == "build" && $CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+
+cm-bot:scan:dtrack:commit-comment:
+  rules:
+    - if: >-
+        $CAPS_BUILD_IMAGE == "true" && $WORKFLOW == "build" &&
+        ($CI_COMMIT_BRANCH =~ /$CM_BOT_MAIN_BRANCH/ ||
+         $CI_COMMIT_BRANCH =~ /$CM_BOT_RELEASE_BRANCH/ ||
+         $CI_COMMIT_BRANCH =~ /$CM_BOT_DEV_BRANCH/)
+      when: always
