@@ -28,7 +28,7 @@ export default defineConfig({
     coverage: {
       enabled: true,
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       include: ['packages/*/src/**/*.{tsx,ts}'],
       exclude: [
         '**/lib/atoms/icons',
