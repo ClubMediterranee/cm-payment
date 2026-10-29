@@ -4,6 +4,7 @@ import { useLocation, useRoute } from 'wouter';
 import { z } from 'zod';
 
 import { AppSettings } from '../config';
+import { isPartners, isSeller } from '../utils/issuer';
 import { useQueryParams } from './useQueryParams.js';
 import { useSessionStorage } from './useSessionStorage';
 
@@ -28,6 +29,9 @@ const ParamsSchema = z.object({
   action: z.string().optional(),
   callbackUrl: z.string().url(),
   callbackUrlSeller: z.string().url().optional(),
+  salesNetworkId: z.string().optional(),
+  salesmanId: z.string().optional(),
+  opportunityId: z.string().optional(),
 });
 
 export function useAppParams() {
@@ -44,8 +48,18 @@ export function useAppParams() {
     action,
     callback_url: callbackUrl,
     callback_url_seller: callbackUrlSeller,
+    sales_network_id: salesNetworkId,
+    salesman_id: salesmanIdParam,
+    opportunity_id: opportunityId,
     ...confirmationParams
   } = useQueryParams<any>();
+
+  const issuer = result?.issuer.toUpperCase();
+  const salesmanId = isPartners(issuer)
+    ? (salesmanIdParam ?? (auth.user?.profile.salesman_id as string | undefined))
+    : isSeller(issuer)
+      ? salesmanIdParam
+      : undefined;
 
   if (auth.isLoading) {
     return null;
@@ -66,6 +80,9 @@ export function useAppParams() {
       action,
       callbackUrl,
       callbackUrlSeller,
+      salesNetworkId,
+      salesmanId,
+      opportunityId,
     };
 
     const validationResult = ParamsSchema.safeParse(values);
