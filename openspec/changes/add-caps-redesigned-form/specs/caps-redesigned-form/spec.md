@@ -91,7 +91,7 @@ The payment method panel SHALL render the existing PSP integrations (hosted fiel
 
 ### Requirement: Stepper mode
 
-When the embed prop `stepper` is true and `theme` is `'current'`, the redesigned form SHALL reveal its sections in order: the payment schedule when the user has a choice, then the payment methods, then the details of the selected method, and finally the submit button. The submit button SHALL be displayed only while the form is valid.
+When the embed prop `stepper` is true and `theme` is `'current'`, the redesigned form SHALL reveal its blocks one after the other: the payment schedule when the user has a choice, then the payment methods, then the blocks of the selected method (billing address, payment widget, contact choice, comments, CGV), and finally the submit button. A block SHALL be displayed only while every form field that comes before it is valid, and SHALL be hidden again as soon as one of them becomes invalid. The submit button SHALL be displayed only while the whole form is valid.
 
 #### Scenario: Schedule first
 
@@ -106,7 +106,12 @@ When the embed prop `stepper` is true and `theme` is `'current'`, the redesigned
 #### Scenario: Details after the payment method
 
 - **WHEN** the user selects a payment method
-- **THEN** its panel, the contact choice, the comments and the donation are displayed, without the submit button
+- **THEN** the first block of its panel and the donation are displayed, without the submit button
+
+#### Scenario: Blocks follow the validity of the previous ones
+
+- **WHEN** the user fills the contact choice, then the CGV block is displayed
+- **AND** the user empties the contact field, then the CGV block and the submit button are hidden again
 
 #### Scenario: Submit button follows validity
 

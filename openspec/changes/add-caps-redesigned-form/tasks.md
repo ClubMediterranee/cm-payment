@@ -25,6 +25,7 @@
 - [x] 3.7 Add stories with `play` functions and Vitest specs for the cascade (credit card, redirect, BNPL) and for `validateComponents`
 - [x] 3.8 Render the `Utilities` icons named by `configuration.logos` on the provider cards
 - [ ] 3.9 Check the PSP integrations (hosted fields, redirect, BNPL) inside the shadow root
+- [x] 3.10 Redesign `ContactChoice` as two cards (email, SMS) from the `Send link Choice` mockups, with field labels and placeholders in the content
 
 ## 4. Stepper mode
 

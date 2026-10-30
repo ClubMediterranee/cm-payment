@@ -84,6 +84,10 @@ export const defaultContent: Content = {
       call: 'Phone',
       mobile_phone: 'SMS',
     },
+    fields: {
+      email: { label: 'Email address', placeholder: 'Ex: client@email.com' },
+      mobile_phone: { label: 'Mobile phone', placeholder: 'Ex: +33 6 12 34 56 78' },
+    },
     call: {
       sendLink:
         'To complete the payment, you will be prompted to request the client’s various payment information. You will be able to track your client’s payment progress in real time.',

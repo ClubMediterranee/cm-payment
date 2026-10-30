@@ -1,5 +1,5 @@
 import {
-  type CapsEmbedError,
+  type CapsEvent,
   type CapsEnv,
   type CapsFlowType,
   CapsFormSlot,
@@ -271,12 +271,12 @@ export function App() {
     accessToken: config.accessToken || undefined,
     callbackUrl: `${window.location.origin}/callback`,
     fallback: <p data-testid="caps-fallback">Loading CAPS…</p>,
-    onReady: () => log('ready'),
-    onLoadingChange: (isLoading: boolean) => {
-      setLoading(isLoading);
-      log(`loading: ${isLoading}`);
+    onEvent: (event: CapsEvent) => {
+      if (event.name === 'load' || event.name === 'load_end') {
+        setLoading(event.name === 'load');
+      }
+      log(`event: ${JSON.stringify(event)}`);
     },
-    onError: (error: CapsEmbedError) => log(`error: ${error.code} ${error.message}`),
     onRedirect: (url: string) => log(`redirect: ${url}`),
   } as Parameters<typeof CapsFormWebComponent>[0];
 

@@ -1,16 +1,15 @@
 import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
+import clsx from 'clsx';
 import { PropsWithChildren } from 'react';
 
 import { useContactChoice } from '../hooks/useContactChoice';
 import { useProfilePrefill } from '../hooks/useProfilePrefill';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext, useWatch } from '../hooks/utils/useForm';
-import { CapsFormSchema } from '../schemas/capsFormSchema';
 import { TOKENS } from '../types/Tokens';
 import { renderTemplate } from '../utils/renderTemplate';
-import { FormPanel } from './ui/FormPanel';
-import { RadioSkeleton, TextFieldSkeleton, TitleSkeleton } from './ui/skeletons';
+import { RadioSkeleton, TextFieldSkeleton } from './ui/skeletons';
 
 type Props = PropsWithChildren<{
   className?: string;
@@ -18,16 +17,13 @@ type Props = PropsWithChildren<{
   uuid?: string;
 }>;
 
-type TemplateId = CapsFormSchema['template_id'];
-type BillingDetailsFieldName = 'email' | 'mobile_phone';
-
 export const ContactChoice = ({ className, reference, uuid, children }: Props) => {
   const { content } = useCapsConfigContext();
   const { setValue, formState } = useFormContext();
   const templateId = useWatch('template_id');
   const billingDetails = useWatch('billing_details') || {};
 
-  const { contactChoices, sendLinkText, shouldDisplay } = useContactChoice({
+  const { contactChoices, sendLinkText, shouldDisplay, templateIds } = useContactChoice({
     reference,
     uuid,
   });
@@ -37,84 +33,78 @@ export const ContactChoice = ({ className, reference, uuid, children }: Props) =
     return null;
   }
 
-  const handleTemplateChange = (newTemplateId: TemplateId) => {
-    setValue('template_id', newTemplateId);
-  };
+  const displayOrder = [templateIds.email, templateIds.mobilePhone, templateIds.call];
+  const orderedChoices = [...contactChoices].sort(
+    (a, b) => displayOrder.indexOf(a.templateId) - displayOrder.indexOf(b.templateId),
+  );
 
   return (
     <div className={className}>
       {children}
-      <FormPanel>
-        <span className="text-sienna text-b3 mb-20">{sendLinkText}</span>
-        <div className="flex flex-row gap-32">
-          {contactChoices.map((choice) => {
-            const isCurrentTemplate = choice.templateId === templateId;
-            const hasTextField = !!choice.input;
-            const inputName = choice.input?.name as BillingDetailsFieldName | undefined;
-            const currentValue = (inputName && billingDetails[inputName]) || '';
-            const fieldError = inputName && formState.errors.billing_details?.[inputName];
+      <p className="mb-16 text-b5">{sendLinkText}</p>
+      <div className="flex flex-wrap gap-20">
+        {orderedChoices.map((choice) => {
+          const isCurrentTemplate = choice.templateId === templateId;
+          const { input } = choice;
+          const field = input && content.contactChoice.fields[input.name];
+          const fieldError = input && formState.errors.billing_details?.[input.name];
+          const isDirty = input && formState.dirtyFields.billing_details?.[input.name];
 
-            return (
-              <div key={choice.templateId} className="flex flex-col space-y-16 w-full">
-                <Radio
-                  key={`radio-${choice.templateId}`}
-                  name="template_id"
-                  value={choice.templateId}
-                  checked={isCurrentTemplate}
-                  disabled={!!choice.radio.disabled}
-                  onChange={() => handleTemplateChange(choice.templateId)}
-                  data-testid={`radio-${choice.templateId}`}
-                >
-                  <span data-textid="ContactChoicesLabel">
-                    {renderTemplate(content.contactChoice.choiceLabel, {
-                      label: choice.radio.label,
-                    })}
-                  </span>
-                </Radio>
-                {hasTextField && (
-                  <TextField
-                    type={choice.input.type}
-                    value={currentValue}
-                    onChange={(_, value) => setValue(`billing_details.${choice.input.name}`, value)}
-                    disabled={!isCurrentTemplate}
-                    data-name={'InputFor_' + choice.input.name}
-                    data-testid={'InputFor_' + choice.input.name}
-                    label={choice.input.label}
-                    aria-describedby={choice.input.label}
-                    errorMessage={fieldError?.message}
-                    validationStatus={
-                      formState.dirtyFields.billing_details?.[
-                        choice.input.name as BillingDetailsFieldName
-                      ] && !fieldError
-                        ? 'success'
-                        : fieldError
-                          ? 'error'
-                          : 'default'
-                    }
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </FormPanel>
+          return (
+            <div
+              key={choice.templateId}
+              className={clsx(
+                'flex min-w-256 flex-1 flex-col gap-16 rounded-16 border-2 bg-white p-16',
+                isCurrentTemplate ? 'border-black' : 'border-lightGrey',
+              )}
+            >
+              <Radio
+                name="template_id"
+                value={choice.templateId}
+                checked={isCurrentTemplate}
+                disabled={!!choice.radio.disabled}
+                onChange={() => setValue('template_id', choice.templateId)}
+                data-testid={`radio-${choice.templateId}`}
+              >
+                <span className="font-bold" data-textid="ContactChoicesLabel">
+                  {renderTemplate(content.contactChoice.choiceLabel, {
+                    label: choice.radio.label,
+                  })}
+                </span>
+              </Radio>
+              {input && field && (
+                <TextField
+                  type={input.type}
+                  value={billingDetails[input.name] || ''}
+                  onChange={(_, value) => setValue(`billing_details.${input.name}`, value)}
+                  disabled={!isCurrentTemplate}
+                  data-name={`InputFor_${input.name}`}
+                  data-testid={`InputFor_${input.name}`}
+                  label={field.label}
+                  placeholder={field.placeholder}
+                  errorMessage={fieldError?.message}
+                  validationStatus={fieldError ? 'error' : isDirty ? 'success' : 'default'}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
 
 const ContactChoiceSkeleton = () => (
-  <div className="w-full flex flex-col gap-16">
-    <TitleSkeleton variant="h3" />
-    <div className="flex flex-col gap-16">
-      {[1, 2].map((i) => (
-        <FormPanel key={i}>
-          <div className="flex flex-col space-y-16 w-full">
-            <RadioSkeleton />
-            <TextFieldSkeleton />
-          </div>
-        </FormPanel>
-      ))}
-    </div>
+  <div className="flex w-full flex-wrap gap-20">
+    {[1, 2].map((i) => (
+      <div
+        key={i}
+        className="flex min-w-256 flex-1 flex-col gap-16 rounded-16 border-2 border-lightGrey p-16"
+      >
+        <RadioSkeleton />
+        <TextFieldSkeleton />
+      </div>
+    ))}
   </div>
 );
 

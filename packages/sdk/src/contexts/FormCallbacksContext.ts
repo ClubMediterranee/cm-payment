@@ -1,9 +1,9 @@
 import { createContext, useContext } from 'react';
 
+import type { CapsEvent } from '../embed/shared';
+
 export type FormCallbacks = {
-  onError?: (error: Error) => void;
-  onLoad?: () => void;
-  onLoadEnd?: () => void;
+  onEvent?: (event: CapsEvent) => void;
 };
 
 export const FormCallbacksContext = createContext<FormCallbacks | null>(null);

@@ -10,6 +10,7 @@ import { PspProviders } from '../../../types/PspProviders';
 import { IframeMessageType } from '../../../utils/iframe/constants';
 import { getIframeHeight } from '../../../utils/iframe/getIframeHeight';
 import { useIframeMessageBridge } from '../../../utils/iframe/useIframeMessageBridge';
+import { loadEndEvent, loadEvent } from '../../../embed/shared/events';
 import { navigate } from '../../../utils/navigate';
 import { UpliftForm } from '../../../integrations/uplift/ui/UpliftForm.js';
 
@@ -35,10 +36,10 @@ export const IframeView = () => {
 
   const { thirdPartyIframe } = useProviderIntegrationMode();
 
-  const { onLoad, onLoadEnd } = useFormCallbacks();
+  const { onEvent } = useFormCallbacks();
 
   const handlePaymentConfirmationLoading = () => {
-    onLoad?.();
+    onEvent?.(loadEvent);
   };
 
   const handlePaymentConfirmationRedirect = (url: string) => {
@@ -47,7 +48,7 @@ export const IframeView = () => {
 
   const handlePaymentCancellation = () => {
     setValue('cgv', false, { shouldValidate: true });
-    onLoadEnd?.();
+    onEvent?.(loadEndEvent);
   };
 
   useIframeMessageBridge({

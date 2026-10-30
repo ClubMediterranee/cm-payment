@@ -1,4 +1,10 @@
-import { Action, CapsPaymentForm, type CapsPaymentFormProps, useDisclosure } from '@clubmed/caps';
+import {
+  Action,
+  type CapsEvent,
+  CapsPaymentForm,
+  type CapsPaymentFormProps,
+  useDisclosure,
+} from '@clubmed/caps';
 import classNames from 'classnames';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
@@ -25,9 +31,17 @@ export function PaymentPage() {
   const [error, setError] = useState<string>();
   const [donationSlot, setDonationSlot] = useState<HTMLElement | null>(null);
 
-  const onError = ({ message }: { message: string }) => {
-    setError(message);
-    onLoadEnd();
+  const onEvent = (event: CapsEvent) => {
+    if (event.name === 'load') {
+      onLoad();
+    }
+    if (event.name === 'load_end') {
+      onLoadEnd();
+    }
+    if (event.name === 'error') {
+      setError(event.data.message);
+      onLoadEnd();
+    }
   };
 
   useEffect(() => {
@@ -87,8 +101,7 @@ export function PaymentPage() {
       theme={theme}
       stepper
       slots={isLegacy ? undefined : { donation: donationSlot }}
-      onLoadingChange={(loading) => (loading ? onLoad() : onLoadEnd())}
-      onError={onError}
+      onEvent={onEvent}
     />
   );
 

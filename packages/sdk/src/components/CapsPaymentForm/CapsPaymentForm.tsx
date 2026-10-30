@@ -1,15 +1,23 @@
 import classNames from 'classnames';
-import { type ReactNode, Suspense, useEffect, useRef } from 'react';
+import { type ReactNode, Suspense, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import type { Action } from '../../__generated__/index.schemas';
-import { type CapsRemoteFormProps, type CapsTheme, getDefaultLocale } from '../../embed/shared';
+import { errorEvent, redirectEvent } from '../../embed/shared/events';
+import {
+  type CapsEvent,
+  type CapsRemoteFormProps,
+  type CapsTheme,
+  getDefaultLocale,
+} from '../../embed/shared';
 import { useCapsTheme } from '../../hooks/data/usePaymentConfig';
 import { StepperContext } from '../../contexts/StepperContext';
 import { CapsForm } from '../../providers/CapsForm';
 import { PaymentConfigProvider } from '../../providers/PaymentConfigProvider';
+import { contentByTheme } from '../../content/themes';
 import { type CapsSettings, OidcIssuerTypes } from '../../types/CapsSettings';
 import type { Content, DeepPartial } from '../../types/Content';
+import { mergeFromPattern } from '../../utils/mergeFromPattern';
 import { defaultNavigate, type NavigationRequest } from '../../utils/navigate';
 import { CurrentFlow } from './CurrentFlow';
 import type { FlowLayoutProps } from './flowShared';
@@ -77,12 +85,16 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
   const latest = useRef(props);
   latest.current = props;
 
-  const reportFlowError = (error: Error) =>
-    latest.current.onError?.({ code: 'FLOW_ERROR', message: error.message });
+  const emit = (event: CapsEvent) => {
+    try {
+      latest.current.onEvent?.(event);
+    } catch (error) {
+      console.error('[CAPS] onEvent handler failed', error);
+    }
+  };
 
-  useEffect(() => {
-    latest.current.onReady?.();
-  }, []);
+  const reportFlowError = (error: Error) =>
+    emit(errorEvent({ code: 'FLOW_ERROR', message: error.message }));
 
   const oidc = { issuerType: issuerType as OidcIssuerTypes, accessToken: accessToken || '' };
   const api = { url: capsUrl, apiKey };
@@ -111,6 +123,7 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
               content={content}
               onNavigate={(request: NavigationRequest) => {
                 if (latest.current.onRedirect?.(request.url) !== false) {
+                  emit(redirectEvent(request.url));
                   defaultNavigate(request);
                 }
               }}
@@ -123,14 +136,14 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
                     errorFallback={(fallbackProps) => (
                       <FlowErrorFallback {...fallbackProps} onError={reportFlowError} />
                     )}
-                    onError={(error: Error) => {
-                      latest.current.onLoadingChange?.(false);
-                      reportFlowError(error);
-                    }}
-                    onLoad={() => latest.current.onLoadingChange?.(true)}
-                    onLoadEnd={() => latest.current.onLoadingChange?.(false)}
+                    onEvent={emit}
                   >
-                    {Flow({ slots, reference, uuid })}
+                    {Flow({
+                      content: mergeFromPattern(contentByTheme[resolvedTheme], content),
+                      slots,
+                      reference,
+                      uuid,
+                    })}
                   </CapsForm>
                 </div>
               </StepperContext.Provider>
