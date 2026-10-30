@@ -1,0 +1,46 @@
+---
+# .hadolint.yaml — hadolint configuration for lint-gitlab-ci-scripts
+# https://github.com/hadolint/hadolint#configure
+#
+# This file is auto-detected by hadolint when placed in the working directory.
+# Adjust to match the conventions of the CI project being linted.
+
+# Minimum severity level to report: error | warning | info | style | ignore | none
+failure-threshold: warning
+
+# Rules to ignore globally
+ignored:
+  # DL3007 - Using latest tag in FROM: acceptable for internal CI images where
+  # the registry controls the tag lifecycle
+  - DL3007
+  # DL3008 - Pin versions in apt-get install: CI runners are ephemeral and
+  # reproducibility is enforced at the image level, not the package level
+  - DL3008
+  # DL3013 - Pin versions in pip install: same rationale as DL3008 for CI
+  - DL3013
+  # DL3016 - Allow unpinned npm installs so pnpm follows the latest release on fresh installs
+  - DL3016
+  # DL3018 - Pin versions in apk add: same rationale as DL3008 for Alpine runners
+  - DL3018
+  # SC2034 - Variable appears unused: CI scripts often export variables that are
+  # used by downstream jobs or injected into the environment
+  - SC2034
+  # DL3003 - Use WORKDIR to switch to a directory
+  - DL3003
+  # SC1072 - Expected 'then'/'fi': generated Dockerfile from gitlab-ci-jobs-linter
+  # may have incomplete syntax fragments that are valid in actual CI context
+  - SC1072
+  # SC1089 - The CI linter flattens multiline scripts and splits matching shell
+  # blocks across separate RUN instructions, causing synthetic parsing errors
+  - SC1089
+  # SC2164 - Allow CI directory changes that rely on the runner's fail-fast
+  # shell behavior rather than an explicit 'cd ... || exit'
+  - SC2164
+  # SC2086 - Double quote to prevent globbing: acceptable in CI scripts where
+  # variables are controlled and deliberate word-splitting is sometimes used
+  - SC2086
+  # SC2001 - Use parameter expansion instead of sed: acceptable style choice
+  # for readability in CI scripts
+  - SC2001
+  # SC2155 - Declare and assign separately: not a hard requirement in CI context
+  - SC2155

@@ -1,0 +1,10 @@
+# .trivyignore — trivy rules to silence globally for lint-gitlab-ci-scripts
+# https://aquasecurity.github.io/trivy/latest/docs/configuration/filtering/#trivyignore
+#
+# Add rule IDs here to suppress false positives inherent to this tool's approach.
+
+# DS-0031: Secrets passed via ENV — false positive: CI predefined variables
+# (CI_JOB_TOKEN, CI_REGISTRY_PASSWORD, etc.) are declared as empty ENV
+# placeholders so shellcheck does not report SC2154 (undefined variable).
+# They do not contain real secrets in the generated Dockerfiles.
+DS-0031

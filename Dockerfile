@@ -60,4 +60,6 @@ COPY --from=builder /app/storybook-static /app/storybook-static
 
 EXPOSE 8083
 
+USER node
+
 CMD ["pnpm", "--filter", "@clubmed/server", "start:prod"]

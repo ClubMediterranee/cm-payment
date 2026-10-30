@@ -9,28 +9,14 @@ variables:
   CM_BOT_MAIN_BRANCH: "^main$"
   CM_BOT_RELEASE_BRANCH: "^next-release$"
 
-.caps_comment_token:
-  script:
-    - export GITLAB_TOKEN="${CM_QUALITY_GITLAB_TOKEN:?Missing comment token}"
+cm-bot:lint:ci:jobs:
+  before_script:
+    # Allow root only when checking synthetic CI-job Dockerfiles.
+    - printf '\n%s\n' 'DS-0002' >> .trivyignore
 
 .caps_sonar_needs:
   needs:
     - job: test
-      artifacts: true
-    - job: cm-bot:lint:dockerfile:hadolint
-      optional: true
-      artifacts: true
-    - job: cm-bot:lint:dockerfile:trivy
-      optional: true
-      artifacts: true
-    - job: cm-bot:scan:docker:trivy
-      optional: true
-      artifacts: true
-    - job: cm-bot:scan:docker:dockle
-      optional: true
-      artifacts: true
-    - job: cm-bot:scan:code
-      optional: true
       artifacts: true
 
 cm-bot:scan:sonarcloud:branch:
@@ -38,16 +24,6 @@ cm-bot:scan:sonarcloud:branch:
 
 cm-bot:scan:sonarcloud:merge-request:
   needs: !reference [.caps_sonar_needs, needs]
-
-cm-bot:scan:sonarcloud:mr-comment:
-  before_script:
-    - !reference [.sonar_cloud_decorator, before_script]
-    - !reference [.caps_comment_token, script]
-
-cm-bot:scan:sonarcloud:commit-comment:
-  before_script:
-    - !reference [.sonar_cloud_decorator, before_script]
-    - !reference [.caps_comment_token, script]
 
 cm-bot:scan:code:
   rules:
@@ -58,21 +34,21 @@ cm-bot:scan:docker:sbom:
     - when: never
 
 cm-bot:scan:dtrack:mr-comment:
-  before_script:
-    - !reference [.dependencytrack_gitlab_decorator, before_script]
-    - !reference [.caps_comment_token, script]
+  needs:
+    - job: cm-bot:scan:docker:sbom.aws
+      artifacts: true
   rules:
     - if: '$CAPS_BUILD_IMAGE == "true" && $WORKFLOW == "build" && $CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: always
+      when: on_success
 
 cm-bot:scan:dtrack:commit-comment:
-  before_script:
-    - !reference [.dependencytrack_gitlab_decorator, before_script]
-    - !reference [.caps_comment_token, script]
+  needs:
+    - job: cm-bot:scan:docker:sbom.aws
+      artifacts: true
   rules:
     - if: >-
         $CAPS_BUILD_IMAGE == "true" && $WORKFLOW == "build" &&
         ($CI_COMMIT_BRANCH =~ /$CM_BOT_MAIN_BRANCH/ ||
          $CI_COMMIT_BRANCH =~ /$CM_BOT_RELEASE_BRANCH/ ||
          $CI_COMMIT_BRANCH =~ /$CM_BOT_DEV_BRANCH/)
-      when: always
+      when: on_success

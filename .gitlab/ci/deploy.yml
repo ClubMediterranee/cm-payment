@@ -1,3 +1,4 @@
+---
 variables:
   CIRCLE_CI_TRIGGER_URL: "https://circleci.com/api/v2/project/gh/ClubMediterranee/infra/pipeline"
   CIRCLE_CI_TRIGGER_TOKEN: ""
@@ -19,9 +20,9 @@ variables:
 .deploy-on-heroku-with-parameters:
   environment:
   script: |
-    if [ "${PROVIDER}" == "heroku" ]; then    
+    if [ "${PROVIDER}" == "heroku" ]; then
       echo "Heroku deploy with parameters"
-      echo "ENV: $ENV"      
+      echo "ENV: $ENV"
       echo "VERSION: $VERSION"
       echo "WORKFLOW: $WORKFLOW"
       echo "HEROKU_APP: $HEROKU_APP"
@@ -33,7 +34,11 @@ variables:
       echo "Docker login & build"
 
       docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
-      docker build . -t registry.heroku.com/${HEROKU_APP}/web --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg NO_PROXY=${NO_PROXY} --build-arg NODE_ENV=${NODE_ENV}
+      docker build . -t registry.heroku.com/${HEROKU_APP}/web \
+        --build-arg HTTP_PROXY=${HTTP_PROXY} \
+        --build-arg HTTPS_PROXY=${HTTPS_PROXY} \
+        --build-arg NO_PROXY=${NO_PROXY} \
+        --build-arg NODE_ENV=${NODE_ENV}
 
       docker push registry.heroku.com/${HEROKU_APP}/web
 
