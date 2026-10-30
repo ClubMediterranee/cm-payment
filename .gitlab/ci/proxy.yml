@@ -1,3 +1,4 @@
+---
 .setup_proxy:
   script:
     - !reference [.setup_proxy_linux, script] # from @clubmed/templates:CI/library/commons.yaml

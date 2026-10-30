@@ -1,3 +1,4 @@
+---
 .switch-branch:
   script: |
     case "$VERSION" in

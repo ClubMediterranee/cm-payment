@@ -1,3 +1,4 @@
+---
 .publish-npm-package:
   script:
     - rm .npmrc 2>/dev/null || true
