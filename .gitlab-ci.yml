@@ -114,6 +114,8 @@ build:
 test:
   extends: .node_install_dependencies
   stage: test
+  tags:
+    - xemoy05_heavy
   variables:
     NODE_IMG: "mcr.microsoft.com/playwright:v1.54.2"
   script:
