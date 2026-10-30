@@ -9,6 +9,10 @@ variables:
   CM_BOT_MAIN_BRANCH: "^main$"
   CM_BOT_RELEASE_BRANCH: "^next-release$"
 
+.caps_comment_token:
+  script:
+    - export GITLAB_TOKEN="${CM_QUALITY_GITLAB_TOKEN:?Missing comment token}"
+
 .caps_sonar_needs:
   needs:
     - job: test
@@ -35,6 +39,16 @@ cm-bot:scan:sonarcloud:branch:
 cm-bot:scan:sonarcloud:merge-request:
   needs: !reference [.caps_sonar_needs, needs]
 
+cm-bot:scan:sonarcloud:mr-comment:
+  before_script:
+    - !reference [.sonar_cloud_decorator, before_script]
+    - !reference [.caps_comment_token, script]
+
+cm-bot:scan:sonarcloud:commit-comment:
+  before_script:
+    - !reference [.sonar_cloud_decorator, before_script]
+    - !reference [.caps_comment_token, script]
+
 cm-bot:scan:code:
   rules:
     - if: '$WORKFLOW == "build"'
@@ -44,11 +58,17 @@ cm-bot:scan:docker:sbom:
     - when: never
 
 cm-bot:scan:dtrack:mr-comment:
+  before_script:
+    - !reference [.dependencytrack_gitlab_decorator, before_script]
+    - !reference [.caps_comment_token, script]
   rules:
     - if: '$CAPS_BUILD_IMAGE == "true" && $WORKFLOW == "build" && $CI_PIPELINE_SOURCE == "merge_request_event"'
       when: always
 
 cm-bot:scan:dtrack:commit-comment:
+  before_script:
+    - !reference [.dependencytrack_gitlab_decorator, before_script]
+    - !reference [.caps_comment_token, script]
   rules:
     - if: >-
         $CAPS_BUILD_IMAGE == "true" && $WORKFLOW == "build" &&
