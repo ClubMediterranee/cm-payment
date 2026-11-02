@@ -263,7 +263,6 @@ deploy:
     - when: never
   script:
     - !reference [.dotenv-source, script]
-    - set -a; . ./image.env; set +a
     - !reference [.deploy-on-aws-with-parameters, script]
 
 deploy:heroku:
