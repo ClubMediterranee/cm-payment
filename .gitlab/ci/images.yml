@@ -109,70 +109,15 @@ build:image:
       dotenv: image.env
     expire_in: 1 week
 
-.caps_ecr_alpine:
-  before_script:
-    - set -a; . ./image.env; set +a
-    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
-    - !reference [.setup_proxy_linux, script]
-    - apk add --no-cache docker-cli
-    - export AWS_ECR_PASS="$DOCKER_REGISTRY"
-    - "{"
-    - !reference [.setup_docker_aws.alpine, script]
-    - "} > /dev/null"
-
-.caps_image_scan:
-  stage: cm-bot:scan
-  interruptible: true
+.caps_image_scan: &caps_image_scan
   needs:
     - job: build:image
       artifacts: true
-  artifacts:
-    reports:
-      dotenv: image.env
   rules:
     - if: '$CAPS_BUILD_IMAGE == "true" && ($WORKFLOW == "build" || $WORKFLOW == "deploy")'
 
-cm-bot:scan:docker:trivy:
-  extends:
-    - .image-scan:trivy
-    - .caps_image_scan
-  rules: !reference [.caps_image_scan, rules]
-  before_script: !reference [.caps_ecr_alpine, before_script]
+cm-bot:scan:docker:trivy: *caps_image_scan
 
-cm-bot:scan:docker:dockle:
-  extends:
-    - .image-scan:dockle
-    - .caps_image_scan
-  rules: !reference [.caps_image_scan, rules]
-  before_script: !reference [.caps_ecr_alpine, before_script]
+cm-bot:scan:docker:dockle: *caps_image_scan
 
-cm-bot:scan:docker:sbom.aws:
-  extends:
-    - .sbom-generation.aws
-    - .caps_image_scan
-  rules: !reference [.caps_image_scan, rules]
-  before_script:
-    - set -a; . ./image.env; set +a
-    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
-    - export AWS_ECR_PASS="$DOCKER_REGISTRY"
-    - "{"
-    - !reference [.sbom-generation.aws, before_script]
-    - "} > /dev/null"
-    - apt-get update && apt-get install --no-install-recommends -y openssl
-    - !reference [.clubmed-ca-cert, script]
-  script:
-    - !reference [.add_registry_if_so, script]
-    - /usr/local/bin/syft --version
-    - SBOM_REPORT="report-${DOCKER_IMAGE}-${DOCKER_TAG}"
-    - >-
-      /usr/local/bin/syft
-      --output "cyclonedx-json@${CYCLONEDX_VERSION}=${SBOM_REPORT}.cdx.json"
-      --output "cyclonedx@${CYCLONEDX_VERSION}=${SBOM_REPORT}.cdx"
-      "${DOCKER_FULL_NAME}:${DOCKER_TAG}"
-    - >-
-      curl --fail --silent --show-error --request POST "${DTRACK_API}"
-      --header "X-Api-Key: ${DTRACK_API_KEY}"
-      --form "autoCreate=true"
-      --form "projectName=${DOCKER_IMAGE}"
-      --form "projectVersion=${DOCKER_TAG}"
-      --form "bom=@report-${DOCKER_IMAGE}-${DOCKER_TAG}.cdx"
+cm-bot:scan:docker:sbom.aws: *caps_image_scan
