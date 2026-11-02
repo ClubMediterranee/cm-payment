@@ -26,82 +26,28 @@ variables:
 
 .caps_image_prepare:
   script:
-    - |
-      set -e
-      if [ "$WORKFLOW" != "deploy" ]; then
-        ENV=integration
-      fi
-      case "$ENV" in
-        integration|staging|production) ;;
-        *) echo "Unsupported image environment: $ENV" >&2; exit 1 ;;
-      esac
+    - if [ "$WORKFLOW" != "deploy" ]; then ENV=integration; fi
     - !reference [.dotenv-source, script]
     - |
-      if [ "$WORKFLOW" = "deploy" ] && [ "$PROVIDER" = "aws" ]; then
+      if [ "$WORKFLOW" = "deploy" ]; then
+        apk add --no-cache git
     - !reference [.switch-branch, script]
     - fi
     - !reference [.image_tag, script]
-    - |
-      if ! printf '%s' "$DOCKER_TAG" | grep -Eq '^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$'; then
-        echo "Invalid image tag" >&2
-        exit 1
-      fi
-      if [ "$PROVIDER" = "aws" ]; then
-        printf '%s\n' "$DOCKER_TAG" > packages/server/resources/release.info
-      fi
-      AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
-      DOCKER_REGISTRY="${AWS_ACCOUNT_ID:-${AWS_ECR_ID:-}}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-      DOCKER_IMAGE="${ECR_REPOSITORY:-$DOCKER_IMAGE}"
-      printf '%s\n' \
-        "DOCKER_TAG=$DOCKER_TAG" \
-        "DTRACK_PROJECT_VERSION=$DOCKER_TAG" \
-        "DOCKER_IMAGE=$DOCKER_IMAGE" \
-        "DOCKER_REGISTRY=$DOCKER_REGISTRY" \
-        "IMAGE_ENV=$ENV" \
-        "NODE_ENV=$NODE_ENV" \
-        "BUILD_ARG_NODE_ENV=$NODE_ENV" \
-        "PROVIDER=$PROVIDER" \
-        "AWS_REGION=$AWS_REGION" > image.env
+    - export BUILD_ARG_NODE_ENV="$NODE_ENV"
+    - printf '%s\n' "$DOCKER_TAG" > packages/server/resources/release.info
+    - printf '%s\n' "DOCKER_TAG=$DOCKER_TAG" "DTRACK_PROJECT_VERSION=$DOCKER_TAG" > image.env
 
 build:image:
   extends: .docker_tag_and_push.aws
   stage: build:image
-  image: docker:cli
   tags:
     - xemoy05_heavy
-  variables:
-    DOCKER_HOST: unix:///var/run/docker.sock
-  resource_group: "image-${CI_COMMIT_REF_SLUG}-${ENV}"
-  interruptible: true
   rules:
     - if: '$CAPS_BUILD_IMAGE == "true" && ($WORKFLOW == "build" || $WORKFLOW == "deploy")'
   before_script:
-    - apk add --no-cache bash git
     - !reference [.caps_image_prepare, script]
-    - set -a; . ./image.env; set +a
-    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
-    - export AWS_ECR_PASS="$DOCKER_REGISTRY"
-    - "{"
     - !reference [.docker_tag_and_push.aws, before_script]
-    - "} > /dev/null"
-    - export DOCKER_BUILDKIT=1
-    - |
-      if ! aws ecr describe-repositories --repository-names "$DOCKER_IMAGE" --region "$AWS_REGION" >/dev/null 2>&1; then
-        aws ecr create-repository --repository-name "$DOCKER_IMAGE" --region "$AWS_REGION" >/dev/null
-      fi
-  script:
-    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
-    - !reference [.docker_tag_and_push.aws, script]
-    - |
-      if [ "$WORKFLOW" = "deploy" ]; then
-        docker tag "${DOCKER_FULL_NAME}:${DOCKER_TAG}" "${DOCKER_FULL_NAME}:latest"
-        docker push "${DOCKER_FULL_NAME}:latest"
-      fi
-  after_script:
-    - set -a; . ./image.env; set +a
-    - if [ "$PROVIDER" != "aws" ]; then exit 0; fi
-    - !reference [.add_registry_if_so, script]
-    - !reference [.docker_tag_and_push.aws, after_script]
   artifacts:
     paths:
       - image.env
