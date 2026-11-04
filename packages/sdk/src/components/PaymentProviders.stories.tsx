@@ -8,6 +8,7 @@ import { Action } from '../__generated__/index.schemas';
 import { PaymentProviders } from './PaymentProviders';
 
 const commonHandlers = [
+  http.get('*/rest/payment_config*', () => Response.json({ feature_flips: {}, settings: {} })),
   http.get('*/rest/payment_schedules/booking/*', () => {
     return Response.json([
       {
@@ -75,6 +76,7 @@ const handlers = {
             configuration: {
               display_type: 'redirect',
               settings: {},
+              logos: ['Visa', 'Mastercard', 'AmericanExpress', 'Unknown'],
               validation: {
                 requires_token: false,
                 requires_expiry_date: false,
@@ -210,7 +212,7 @@ const handlers = {
 };
 
 const meta: Meta<typeof PaymentProviders> = {
-  title: 'Components/PaymentProviders',
+  title: 'Current/Internals/PaymentProviders',
   component: PaymentProviders,
   loaders: [mswLoader],
   parameters: {
@@ -254,7 +256,10 @@ export const CreditCard: Story = {
       expect(radios.length).toBe(1);
       expect(canvas.getByText('Payer par carte bancaire')).toBeInTheDocument();
 
-      expect(canvas.getByTestId('icon-CreditCard')).toBeInTheDocument();
+      expect(canvas.getByTestId('icon-Visa')).toBeInTheDocument();
+      expect(canvas.getByTestId('icon-Mastercard')).toBeInTheDocument();
+      expect(canvas.getByTestId('icon-AmericanExpress')).toBeInTheDocument();
+      expect(canvas.queryByTestId('icon-Unknown')).not.toBeInTheDocument();
     });
   },
   render(args: any) {
@@ -284,11 +289,6 @@ export const BankTransfer: Story = {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios.length).toBe(1);
       expect(canvas.getByText('Payer par virement bancaire')).toBeInTheDocument();
-
-      expect(
-        canvas.getByText('Secure 100% payment (direct connection with your bank)'),
-      ).toBeInTheDocument();
-      expect(canvas.getByText('No payment limit for standard bank transfers')).toBeInTheDocument();
 
       const creditCardIcon = canvasElement.querySelector('svg[data-icon-name="CreditCard"]');
       expect(creditCardIcon).not.toBeInTheDocument();
@@ -390,6 +390,57 @@ export const RadioSelectionTest: Story = {
         }}
       >
         <PaymentProviders {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+export const SelectedProviderPanel: Story = {
+  parameters: {
+    msw: {
+      handlers: handlers.multipleProviders,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const radios = await waitFor(() => {
+      const radioElements = canvasElement.querySelectorAll('input[type="radio"]');
+      expect(radioElements).toHaveLength(3);
+      return radioElements;
+    });
+
+    await waitFor(() => {
+      expect(canvas.getAllByTestId('panel')).toHaveLength(1);
+    });
+    expect(radios[0].closest('[class*="border-black"]')).toContainElement(
+      canvas.getByTestId('panel'),
+    );
+
+    await userEvent.click(radios[2]);
+
+    await waitFor(() => {
+      expect(radios[2].closest('[class*="border-black"]')).toContainElement(
+        canvas.getByTestId('panel'),
+      );
+    });
+    expect(canvas.getAllByTestId('panel')).toHaveLength(1);
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="selected-provider-panel"
+        {...commonMockedProviderProps}
+        bookingId="12345678"
+        customerId="123456789"
+        defaultValues={{
+          amount: '3000',
+          provider_id: 'PROVIDER_1',
+        }}
+      >
+        <PaymentProviders {...args}>
+          <p data-testid="panel">Panel</p>
+        </PaymentProviders>
       </MockedProvider>
     );
   },

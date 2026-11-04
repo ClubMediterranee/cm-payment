@@ -1,12 +1,20 @@
 import classNames from 'classnames';
-import { type ReactNode, useEffect, useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 
 import type { Action } from '../../__generated__/index.schemas';
-import { type CapsRemoteFormProps, type CapsTheme, getDefaultLocale } from '../../embed/shared';
+import { errorEvent, redirectEvent } from '../../embed/shared/events';
+import {
+  type CapsEvent,
+  type CapsRemoteFormProps,
+  type CapsTheme,
+  getDefaultLocale,
+} from '../../embed/shared';
 import { CapsForm } from '../../providers/CapsForm';
 import { PaymentConfigProvider } from '../../providers/PaymentConfigProvider';
+import { contentByTheme, DEFAULT_CAPS_THEME } from '../../content/themes';
 import { OidcIssuerTypes } from '../../types/CapsSettings';
 import type { Content, DeepPartial } from '../../types/Content';
+import { mergeFromPattern } from '../../utils/mergeFromPattern';
 import { defaultNavigate, type NavigationRequest } from '../../utils/navigate';
 import { CurrentFlow } from './CurrentFlow';
 import type { FlowLayoutProps } from './flowShared';
@@ -41,7 +49,7 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
     reference,
     uuid,
     content,
-    theme = 'current',
+    theme = DEFAULT_CAPS_THEME,
     className,
     style,
     slots,
@@ -50,24 +58,31 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
   const latest = useRef(props);
   latest.current = props;
 
+  const emit = (event: CapsEvent) => {
+    try {
+      latest.current.onEvent?.(event);
+    } catch (error) {
+      console.error('[CAPS] onEvent handler failed', error);
+    }
+  };
+
   const reportFlowError = (error: Error) =>
-    latest.current.onError?.({ code: 'FLOW_ERROR', message: error.message });
+    emit(errorEvent({ code: 'FLOW_ERROR', message: error.message }));
 
-  useEffect(() => {
-    latest.current.onReady?.();
-  }, []);
-
+  const oidc = { issuerType: issuerType as OidcIssuerTypes, accessToken: accessToken || '' };
+  const api = { url: capsUrl, apiKey };
   const Flow = FLOWS[theme];
 
   return (
     <div className={classNames('w-full', className)} style={style}>
       <PaymentConfigProvider
+        theme={theme}
         locale={locale}
         bookingId={type === 'booking' ? id : undefined}
         proposalId={type === 'proposal' ? id : undefined}
         customerId={customerId}
-        api={{ url: capsUrl, apiKey }}
-        oidc={{ issuerType: issuerType as OidcIssuerTypes, accessToken: accessToken || '' }}
+        api={api}
+        oidc={oidc}
         callbackUrl={callbackUrl}
         callbackUrlSeller={callbackUrlSeller}
         salesNetworkId={salesNetworkId}
@@ -76,6 +91,7 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
         content={content}
         onNavigate={(request: NavigationRequest) => {
           if (latest.current.onRedirect?.(request.url) !== false) {
+            emit(redirectEvent(request.url));
             defaultNavigate(request);
           }
         }}
@@ -86,14 +102,14 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
             errorFallback={(fallbackProps) => (
               <FlowErrorFallback {...fallbackProps} onError={reportFlowError} />
             )}
-            onError={(error: Error) => {
-              latest.current.onLoadingChange?.(false);
-              reportFlowError(error);
-            }}
-            onLoad={() => latest.current.onLoadingChange?.(true)}
-            onLoadEnd={() => latest.current.onLoadingChange?.(false)}
+            onEvent={emit}
           >
-            {Flow({ slots, reference, uuid })}
+            {Flow({
+              content: mergeFromPattern(contentByTheme[theme], content),
+              slots,
+              reference,
+              uuid,
+            })}
           </CapsForm>
         </div>
       </PaymentConfigProvider>

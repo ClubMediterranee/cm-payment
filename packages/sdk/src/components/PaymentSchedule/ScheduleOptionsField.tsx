@@ -1,4 +1,3 @@
-import { Radio, RadioGroup } from '@clubmed/trident-ui/ui/forms/radios/index';
 import type { ControllerRenderProps } from 'react-hook-form';
 
 import { PaymentProvider1CategoryPaymentMethod } from '../../__generated__/index.schemas';
@@ -8,10 +7,12 @@ import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 import { useFormContext, useWatch } from '../../hooks/utils/useForm';
 import { useWatchedPaymentProvider } from '../../hooks/utils/useWatchedPaymentProvider';
 import type { CapsFormSchema } from '../../schemas/capsFormSchema';
+import { getActiveBuyNowPayLaterProviders } from '../../utils/paymentProviders';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatDate } from '../../utils/formatDate';
 import { renderTemplate } from '../../utils/renderTemplate';
 import { BnplOption } from './BnplOption';
+import { ScheduleCard } from './ScheduleCard';
 
 type ScheduleOptionsFieldProps = {
   field: ControllerRenderProps<CapsFormSchema, 'amount'>;
@@ -27,15 +28,13 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
   const { buyNowPayLaterProviders, paymentProviders } = data;
   const { setValue } = useFormContext();
   const { content, locale } = useCapsConfigContext();
+  const { cards } = content.paymentSchedule;
 
   const stayAmount = paymentSchedule[0]?.amount?.toString();
 
-  const activeBuyNowPayLaterProviders = buyNowPayLaterProviders.filter(
-    ({
-      configuration: {
-        settings: { max_amount },
-      },
-    }) => !max_amount || Number(max_amount) >= Number(stayAmount),
+  const activeBuyNowPayLaterProviders = getActiveBuyNowPayLaterProviders(
+    buyNowPayLaterProviders,
+    stayAmount,
   );
 
   const isBnpl =
@@ -54,54 +53,60 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
   };
 
   return (
-    <div className="flex flex-col py-12">
-      <RadioGroup
-        className="flex flex-col gap-32"
-        value={value}
-        name={field.name}
-        onChange={(_, val) => handleScheduleChange(val)}
-      >
-        {paymentSchedule.map(({ amount, currency, deadline = null, balance }) => {
-          const formattedCurrency = formatCurrency({
-            amount: Number(amount) + Number(watchedDonationAmount || 0),
-            currency,
-            locale,
-          });
-          return (
-            <Radio key={amount} value={amount?.toString()}>
-              {deadline && balance
-                ? renderTemplate(content.paymentSchedule.payDeposit, {
-                    amount: <span className="font-bold text-sienna">{formattedCurrency}</span>,
-                    deadline: <span className="font-bold">{formatDate(deadline)}</span>,
-                    balance: (
-                      <span className="font-bold text-sienna">
-                        {formatCurrency({
-                          amount: Number(balance) + Number(watchedDonationAmount || 0),
-                          currency,
-                          locale,
-                        })}
-                      </span>
-                    ),
-                  })
-                : renderTemplate(content.paymentSchedule.payFullAmount, {
-                    amount: <span className="font-bold text-sienna">{formattedCurrency}</span>,
-                  })}
-            </Radio>
-          );
-        })}
-      </RadioGroup>
+    <div role="radiogroup" className="flex flex-wrap justify-center gap-16">
+      {paymentSchedule.map(({ amount, currency, deadline = null, balance }) => {
+        const formattedAmount = formatCurrency({
+          amount: Number(amount) + Number(watchedDonationAmount || 0),
+          currency,
+          locale,
+        });
+        const isDeposit = deadline && balance;
+        const formattedBalance = isDeposit
+          ? formatCurrency({ amount: Number(balance), currency, locale })
+          : null;
 
-      <div className="flex flex-col gap-32">
-        {activeBuyNowPayLaterProviders.map((provider) => (
-          <BnplOption
-            key={provider.id}
-            provider={provider}
-            name={`${field.name}-bnpl`}
-            checked={value === provider.id}
+        return (
+          <ScheduleCard
+            key={amount}
+            name={field.name}
+            value={amount?.toString() ?? ''}
+            checked={value === amount?.toString()}
             onChange={handleScheduleChange}
-          />
-        ))}
-      </div>
+            title={isDeposit ? cards.payInTwo.title : cards.payInFull.title}
+          >
+            {isDeposit ? (
+              <>
+                <p className="text-b5">
+                  {renderTemplate(cards.payInTwo.description, {
+                    deposit: <span className="font-bold">{formattedAmount}</span>,
+                    balance: <span className="font-bold">{formattedBalance}</span>,
+                    deadline: <span className="font-bold">{formatDate(deadline)}</span>,
+                  })}
+                </p>
+                <p className="text-b2 font-bold">
+                  {formattedAmount} + {formattedBalance}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-b5">{cards.payInFull.description}</p>
+                <p className="text-b2 font-bold">{formattedAmount}</p>
+                <p className="text-b6">{cards.payInFull.caption}</p>
+              </>
+            )}
+          </ScheduleCard>
+        );
+      })}
+
+      {activeBuyNowPayLaterProviders.map((provider) => (
+        <BnplOption
+          key={provider.id}
+          provider={provider}
+          name={field.name}
+          checked={value === provider.id}
+          onChange={handleScheduleChange}
+        />
+      ))}
     </div>
   );
 };

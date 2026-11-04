@@ -8,6 +8,7 @@ const makeConfig = () => ({
   display_type: 'redirect' as const,
   confirmation_strategy: 'status' as const,
   settings: {},
+  logos: [] as EnrichedPaymentProvider['configuration']['logos'],
   requires_contact_choice: false as const,
 });
 

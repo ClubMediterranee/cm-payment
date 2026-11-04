@@ -60,6 +60,7 @@ export class DirectusClient {
           'id',
           'default_display_type',
           'confirmation_strategy',
+          'logos',
           {
             settings: [
               'locale',

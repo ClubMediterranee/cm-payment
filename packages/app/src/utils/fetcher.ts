@@ -6,12 +6,16 @@ export const setFetcherConfig = (value: FetcherConfig) => {
   config = value;
 };
 
-export const fetcher = async <T>(opts: {
+type FetcherOptions = {
   url: string;
   method: string;
   headers?: Record<string, string>;
   params?: Record<string, unknown>;
   data?: unknown;
-}): Promise<T> => {
-  return fetchSdk({ baseUrl: '/api', config, ...opts });
 };
+
+export const bffFetcher = async <T>(opts: FetcherOptions): Promise<T> =>
+  fetchSdk({ config, ...opts });
+
+export const fetcher = async <T>(opts: FetcherOptions): Promise<T> =>
+  fetchSdk({ baseUrl: '/api', config, ...opts });

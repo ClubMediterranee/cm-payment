@@ -126,33 +126,38 @@ describe('CapsFormWebComponent', () => {
     expect(loadCapsRemoteForm).toHaveBeenCalledTimes(1);
   });
 
-  it('reports a load failure through onError and renders nothing', async () => {
-    const onError = vi.fn();
+  it('reports a load failure through onEvent and renders nothing', async () => {
+    const onEvent = vi.fn();
     vi.mocked(loadCapsRemoteForm).mockRejectedValue({
       code: 'REACT_VERSION_UNSUPPORTED',
       message: 'React 18 is not supported',
     });
 
     const { container } = render(
-      <CapsFormWebComponent {...flowProps} onError={onError} fallback={<span>loading…</span>} />,
+      <CapsFormWebComponent {...flowProps} onEvent={onEvent} fallback={<span>loading…</span>} />,
     );
 
     await waitFor(() =>
-      expect(onError).toHaveBeenCalledWith({
-        code: 'REACT_VERSION_UNSUPPORTED',
-        message: 'React 18 is not supported',
+      expect(onEvent).toHaveBeenCalledWith({
+        action: '',
+        name: 'error',
+        data: { code: 'REACT_VERSION_UNSUPPORTED', message: 'React 18 is not supported' },
       }),
     );
     expect(container.innerHTML).toBe('');
   });
 
   it('reports an unknown environment', async () => {
-    const onError = vi.fn();
+    const onEvent = vi.fn();
 
-    render(<CapsFormWebComponent {...flowProps} env={'qa' as CapsEnv} onError={onError} />);
+    render(<CapsFormWebComponent {...flowProps} env={'qa' as CapsEnv} onEvent={onEvent} />);
 
     await waitFor(() =>
-      expect(onError).toHaveBeenCalledWith(expect.objectContaining({ code: 'REMOTE_LOAD_FAILED' })),
+      expect(onEvent).toHaveBeenCalledWith({
+        action: '',
+        name: 'error',
+        data: expect.objectContaining({ code: 'REMOTE_LOAD_FAILED' }),
+      }),
     );
     expect(loadCapsRemoteForm).not.toHaveBeenCalled();
   });
@@ -163,19 +168,23 @@ describe('CapsFormWebComponent', () => {
     expect((await screen.findByTestId('remote-form')).className).toBe('checkout');
   });
 
-  it('reports bridge failures through onError', async () => {
-    const onError = vi.fn();
+  it('reports bridge failures through onEvent', async () => {
+    const onEvent = vi.fn();
     vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.mocked(loadCapsRemoteForm).mockResolvedValue({ ...remoteModule, default: 'crash' } as never);
 
     render(
       <div data-testid="host">
-        <CapsFormWebComponent {...flowProps} onError={onError} />
+        <CapsFormWebComponent {...flowProps} onEvent={onEvent} />
       </div>,
     );
 
     await waitFor(() =>
-      expect(onError).toHaveBeenCalledWith({ code: 'FLOW_ERROR', message: 'remote crashed' }),
+      expect(onEvent).toHaveBeenCalledWith({
+        action: '',
+        name: 'error',
+        data: { code: 'FLOW_ERROR', message: 'remote crashed' },
+      }),
     );
     expect(screen.getByTestId('host').innerHTML).toBe('');
     vi.mocked(console.error).mockRestore();

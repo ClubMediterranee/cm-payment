@@ -3,6 +3,7 @@ import { http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { Action } from '../__generated__/index.schemas';
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { ContactChoice } from './ContactChoice';
@@ -53,7 +54,7 @@ const ContactChoiceWithFormProvider = (args: any) => {
 };
 
 const meta: Meta<typeof ContactChoice> = {
-  title: 'Components/ContactChoice',
+  title: 'Current/Internals/ContactChoice',
   component: ContactChoice,
   loaders: [mswLoader],
   parameters: {
@@ -198,11 +199,11 @@ export const WithAdditionalInteractions: Story = {
 
     await userEvent.click(emailInput);
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
     expect(canvas.queryByLabelText('Phone')).not.toBeInTheDocument();
 
-    const emailField = canvas.getByLabelText('Email') as HTMLInputElement;
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
     await userEvent.click(emailField);
     await userEvent.type(emailField, 'invalid', { delay: 10 });
     emailField.blur();
@@ -222,7 +223,7 @@ export const WithAdditionalInteractions: Story = {
     await userEvent.click(emailInput);
 
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
   },
 };
@@ -248,10 +249,10 @@ export const ValidationTest: Story = {
     await userEvent.click(emailRadio);
 
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
 
-    const emailField = canvas.getByLabelText('Email') as HTMLInputElement;
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
     expect(emailField).toBeInTheDocument();
 
     await userEvent.click(emailField);
@@ -289,10 +290,10 @@ export const ValidationTest: Story = {
     await userEvent.click(emailRadio);
 
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
 
-    const emailField2 = canvas.getByLabelText('Email') as HTMLInputElement;
+    const emailField2 = canvas.getByLabelText('Email address') as HTMLInputElement;
 
     await new Promise((resolve) => setTimeout(resolve, 300));
 
@@ -362,10 +363,10 @@ export const AccessibilityTest: Story = {
 
     // Vérifier que le champ apparaît et peut recevoir le focus
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
 
-    const emailField = canvas.getByLabelText('Email');
+    const emailField = canvas.getByLabelText('Email address');
     emailField.focus();
     expect(emailField).toHaveFocus();
 
@@ -401,11 +402,11 @@ export const InteractionBetweenOptions: Story = {
 
     await userEvent.click(emailInput);
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
     expect(canvas.queryByLabelText('Phone')).not.toBeInTheDocument();
 
-    const emailField = canvas.getByLabelText('Email') as HTMLInputElement;
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
     await userEvent.click(emailField);
     await userEvent.type(emailField, 'invalid', { delay: 10 });
     emailField.blur();
@@ -422,7 +423,52 @@ export const InteractionBetweenOptions: Story = {
     await userEvent.click(emailInput);
 
     await waitFor(() => {
-      expect(canvas.getByLabelText('Email')).toBeInTheDocument();
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
+  },
+};
+
+export const ShowsValidationStatus: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Le champ passe au rouge avec son message au blur d'une valeur invalide, puis au vert",
+      },
+    },
+  },
+  render: () => (
+    <MockedProvider
+      bookingId="123"
+      action={Action.PAYMENT_RESA}
+      oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
+      defaultValues={{
+        provider_id: 'EVOXPAY',
+        template_id: '6',
+        amount: '100',
+        currency: 'EUR',
+        billing_details: { address: { country_code: 'FR' } },
+      }}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
+    >
+      <ContactChoice />
+    </MockedProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const email = await canvas.findByLabelText('Email address', {}, { timeout: 10000 });
+
+    await userEvent.type(email, 'abc');
+    expect(email.className).not.toContain('border-red');
+
+    await userEvent.tab();
+    await waitFor(() => expect(email.className).toContain('border-red'));
+    expect(canvas.getByText('Invalid email')).toBeInTheDocument();
+
+    await userEvent.clear(email);
+    await userEvent.type(email, 'jean@example.com');
+    await userEvent.tab();
+    await waitFor(() => expect(email.className).toContain('border-green'));
+    expect(canvas.queryByText('Invalid email')).toBeNull();
   },
 };

@@ -31,7 +31,7 @@ const CgvWithDonationProvider = () => {
 };
 
 const meta: Meta<typeof Cgv> = {
-  title: 'Components/Cgv',
+  title: 'Current/Internals/Cgv',
   component: Cgv,
   parameters: {
     layout: 'fullscreen',

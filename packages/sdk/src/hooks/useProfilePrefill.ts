@@ -30,7 +30,12 @@ export const useProfilePrefill = (enabled = true) => {
   const { customerId, oidc } = useCapsConfigContext();
 
   const prefillFormWithProfile = useCallback(
-    (profile: ProfileModelV2) => mapProfileToForm(profile, BILLING_DETAILS_MAPPING, setValue),
+    (profile: ProfileModelV2) => {
+      const setValueAndValidate: typeof setValue = (path, value, options) =>
+        setValue(path, value, { ...options, shouldTouch: true, shouldValidate: true });
+
+      return mapProfileToForm(profile, BILLING_DETAILS_MAPPING, setValueAndValidate);
+    },
     [setValue],
   );
 

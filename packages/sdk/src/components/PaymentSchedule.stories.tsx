@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http } from 'msw';
 import { mswLoader } from 'msw-storybook-addon';
-import type { ReactNode } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
@@ -88,11 +87,11 @@ type PaymentScheduleStoryArgs = {
   bookingId?: string;
   customerId?: string;
   payment_mode?: string;
-  children?: ReactNode;
+  className?: string;
 };
 
 const meta: Meta<PaymentScheduleStoryArgs> = {
-  title: 'Components/PaymentSchedule',
+  title: 'Current/PaymentSchedule',
   component: PaymentSchedule,
   loaders: [mswLoader],
   parameters: {
@@ -201,8 +200,7 @@ export const DepositChoice: Story = {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
       expect(radios).toHaveLength(2);
       expect(canvas.getByText(/2\s?000.*€/)).toBeInTheDocument();
-      expect(canvas.getByText(/^500,00\s?€$/)).toBeInTheDocument();
-      expect(canvas.getByText(/1\s?500.*€/)).toBeInTheDocument();
+      expect(canvas.getByText(/^500,00\s?€\s\+\s1\s?500,00\s?€$/)).toBeInTheDocument();
     });
   },
   render(args: any) {
@@ -212,6 +210,28 @@ export const DepositChoice: Story = {
         action={Action.PAYMENT_OPTION}
         bookingId="booking-deposit"
         customerId="customer-789"
+      >
+        <PaymentSchedule {...args} />
+      </MockedProvider>
+    );
+  },
+};
+
+export const DepositWithDonation: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() => {
+      expect(canvas.getByText(/^550,00\s?€\s\+\s1\s?500,00\s?€$/)).toBeInTheDocument();
+    });
+  },
+  render(args: any) {
+    return (
+      <MockedProvider
+        key="deposit-with-donation"
+        action={Action.PAYMENT_OPTION}
+        bookingId="booking-deposit"
+        customerId="customer-789"
+        defaultValues={{ donation_amount: 50 }}
       >
         <PaymentSchedule {...args} />
       </MockedProvider>
@@ -260,67 +280,6 @@ export const DepositInteraction: Story = {
         proposalId="proposal-deposit"
         defaultValues={{
           amount: '2584',
-        }}
-      >
-        <PaymentSchedule {...args} />
-      </MockedProvider>
-    );
-  },
-};
-
-export const FreeDepositInteraction: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await waitFor(
-      () => {
-        const input = canvas.getByLabelText(/I pay now/i);
-        expect(input).toBeInTheDocument();
-      },
-      { timeout: 3000 },
-    );
-
-    const input = canvas.getByLabelText(/I pay now/i) as HTMLInputElement;
-
-    await userEvent.click(input);
-    await userEvent.type(input, '0');
-    await userEvent.tab();
-
-    await waitFor(() => {
-      expect(canvas.getByText(/The amount must be greater than 0/i)).toBeInTheDocument();
-    });
-
-    await userEvent.click(input);
-    await userEvent.clear(input);
-    await userEvent.type(input, '1000');
-    await userEvent.tab();
-
-    await waitFor(() => {
-      expect(canvas.getByText(/The amount cannot exceed the remaining total/i)).toBeInTheDocument();
-    });
-
-    await userEvent.click(input);
-    await userEvent.clear(input);
-    await userEvent.type(input, '250');
-    await userEvent.tab();
-
-    await waitFor(() => {
-      expect(canvas.queryByText(/The amount must be greater than 0/i)).not.toBeInTheDocument();
-      expect(
-        canvas.queryByText(/The amount cannot exceed the remaining total/i),
-      ).not.toBeInTheDocument();
-    });
-  },
-  render(args: any) {
-    return (
-      <MockedProvider
-        key="free-deposit-validation"
-        action={Action.PAYMENT_PARTIAL}
-        bookingId="booking-free-deposit"
-        customerId="customer-validation"
-        maxAmount={500}
-        defaultValues={{
-          currency: 'EUR',
         }}
       >
         <PaymentSchedule {...args} />
@@ -472,16 +431,6 @@ export const BuyNowPayLaterOney: Story = {
             settings: {},
           });
         }),
-        http.get('*/rest/payment_providers/EHIPAYBNPL/simulation', () => {
-          return Response.json({
-            cost: 11.35,
-            instalments: [
-              { number: 0, amount: 711.35, date: '2026-11-23T00:00:00.000Z' },
-              { number: 1, amount: 700, date: '2026-12-23T00:00:00.000Z' },
-              { number: 2, amount: 700, date: '2027-01-23T00:00:00.000Z' },
-            ],
-          });
-        }),
         http.get('*/rest/payment_providers/proposal/*', ({ request }) => {
           const url = new URL(request.url);
           const payment_mode = url.searchParams.get('payment_mode') || '3x';
@@ -521,11 +470,8 @@ export const BuyNowPayLaterOney: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await waitFor(() => {
-      expect(
-        canvas.getByRole('radio', { name: /a total of.*financing cost.*,.*,/ }),
-      ).toBeInTheDocument();
+      expect(canvas.getByRole('radio', { name: /I pay in.*by credit card/ })).toBeInTheDocument();
     });
-    await userEvent.click(canvasElement.querySelector('button[type="button"]')!);
   },
   render(args: any) {
     return (

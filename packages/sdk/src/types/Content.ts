@@ -6,6 +6,7 @@ export type Content = {
     };
     creditCard: {
       label: `${string}{amount}${string}`;
+      description: string;
     };
     paypal: {
       label: `${string}{amount}${string}`;
@@ -20,6 +21,24 @@ export type Content = {
     heading: string;
     payFullAmount: `${string}{amount}${string}`;
     payDeposit: `${string}{amount}${string}{deadline}${string}{balance}${string}`;
+    cards: {
+      select: string;
+      selected: string;
+      payInFull: {
+        title: string;
+        description: string;
+        caption: string;
+      };
+      payInTwo: {
+        title: string;
+        description: `${string}{deposit}${string}{balance}${string}{deadline}${string}`;
+      };
+      payMonthly: {
+        title: string;
+        from: string;
+        caption: string;
+      };
+    };
     buyNowPayLater: {
       iconLabel: `${string}{icon}${string}`;
       priceLabel: `${string}{price}${string}`;
@@ -70,6 +89,7 @@ export type Content = {
       mobile_phone: string;
       call: string;
     };
+    fields: Record<'email' | 'mobile_phone', { label: string; placeholder: string }>;
   };
   creditCardForm: {
     title: string;
@@ -110,6 +130,7 @@ export type Content = {
     title: string;
     selectCardType: string;
     selectInstallments: string;
+    placeholder: string;
     installmentLabel: `${string}{count}${string}{amount}${string}`;
     validation: {
       methodRequired: string;
@@ -119,6 +140,11 @@ export type Content = {
   billingAddress: {
     heading: string;
     title: string;
+    additionalInformation: string;
+    hints: {
+      first_name: string;
+      last_name: string;
+    };
     fields: {
       first_name: string;
       last_name: string;
@@ -177,6 +203,8 @@ export type Content = {
   };
   submit: {
     label: string;
+    pay: `${string}{amount}${string}`;
+    redirect: string;
   };
 };
 

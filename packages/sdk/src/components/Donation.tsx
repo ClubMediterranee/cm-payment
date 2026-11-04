@@ -2,6 +2,7 @@ import { Icon } from '@clubmed/trident-icons';
 import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
 import { PropsWithChildren, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { GLOBAL_CAPS_SETTINGS } from '../config';
 import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
@@ -24,6 +25,7 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
   const { data: paymentConfig } = usePaymentConfig();
 
   const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const [isFreeAmountMode, setIsFreeAmountMode] = useState(false);
 
   const donationAmount = useWatch('donation_amount');
@@ -49,71 +51,87 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
     setValue('donation_amount', Number(value || 0));
   };
 
+  const label = content.donation.heading || content.donation.title;
+
   return (
-    <div className={className}>
+    <div className={twMerge('@container', className)}>
       {children}
-      <div>
-        <FormPanel className="flex flex-row gap-10">
-          <div className="flex flex-col gap-20">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="flex-1">
-                <h3 className="text-h6 font-bold mb-8">{content.donation.title}</h3>
-                <p className="text-b3">
-                  {content.donation.description}{' '}
-                  <Icon
-                    name="Information"
-                    width="1.25rem"
-                    onClick={onOpen}
-                    className="cursor-pointer"
-                    aria-label="Information about donation"
-                  />
-                </p>
-              </div>
+      <div className="rounded-16 border border-lightGrey bg-white text-b4">
+        <button
+          type="button"
+          aria-expanded={isOpen}
+          onClick={() => setIsOpen((open) => !open)}
+          className="flex w-full cursor-pointer items-center justify-between gap-12 px-12 py-8 text-left font-bold"
+        >
+          <span>{label}</span>
+          <span className="flex items-center gap-8">
+            {!!donationAmount && (
+              <span>{formatCurrency({ amount: donationAmount, currency, locale })}</span>
+            )}
+            <span className="grid size-24 shrink-0 place-items-center rounded-full border border-black">
+              <Icon name={isOpen ? 'ArrowDefaultUp' : 'ArrowDefaultDown'} width="0.75rem" />
+            </span>
+          </span>
+        </button>
+
+        {isOpen && (
+          <div className="flex flex-col gap-12 px-12 pb-12">
+            <div>
+              <p className="font-bold">{content.donation.title}</p>
+              <p className="text-b5">
+                {content.donation.description}{' '}
+                <Icon
+                  name="Information"
+                  width="1rem"
+                  onClick={onOpen}
+                  className="cursor-pointer"
+                  aria-label="Information about donation"
+                />
+              </p>
             </div>
-            <div className="flex flex-col gap-10">
-              <div className="flex flex-col gap-20 w-full md:max-w-3/5">
-                <Radio
-                  name="donation_radio"
-                  checked={!donationAmount && !isFreeAmountMode}
-                  onChange={() => handleRadioChange(NOT_THIS_TIME)}
-                  aria-label={content.donation.notThisTime}
-                >
-                  {content.donation.notThisTime}
-                </Radio>
 
-                <div className="flex flex-col md:flex-row justify-between gap-20">
-                  {GLOBAL_CAPS_SETTINGS.donation.presetAmounts.map((amount) => {
-                    const formattedAmount = formatCurrency({
-                      amount,
-                      currency,
-                      locale,
-                    });
-                    return (
-                      <Radio
-                        key={amount}
-                        name="donation_radio"
-                        checked={donationAmount === amount}
-                        onChange={() => handleRadioChange(amount)}
-                        aria-label={formattedAmount}
-                      >
-                        {formattedAmount}
-                      </Radio>
-                    );
-                  })}
-                </div>
+            <div className="flex flex-col gap-12">
+              <Radio
+                name="donation_radio"
+                checked={!donationAmount && !isFreeAmountMode}
+                onChange={() => handleRadioChange(NOT_THIS_TIME)}
+                aria-label={content.donation.notThisTime}
+              >
+                {content.donation.notThisTime}
+              </Radio>
 
-                <Radio
-                  name="donation_radio"
-                  checked={isFreeAmountMode}
-                  onChange={() => handleRadioChange(FREE_AMOUNT)}
-                  aria-label={content.donation.freeAmount}
-                >
-                  {content.donation.freeAmount}
-                </Radio>
+              <div className="flex flex-col @lg:flex-row justify-between gap-12">
+                {GLOBAL_CAPS_SETTINGS.donation.presetAmounts.map((amount) => {
+                  const formattedAmount = formatCurrency({
+                    amount,
+                    currency,
+                    locale,
+                  });
+                  return (
+                    <Radio
+                      key={amount}
+                      name="donation_radio"
+                      checked={donationAmount === amount}
+                      onChange={() => handleRadioChange(amount)}
+                      aria-label={formattedAmount}
+                    >
+                      {formattedAmount}
+                    </Radio>
+                  );
+                })}
               </div>
+
+              <Radio
+                name="donation_radio"
+                checked={isFreeAmountMode}
+                onChange={() => handleRadioChange(FREE_AMOUNT)}
+                aria-label={content.donation.freeAmount}
+              >
+                {content.donation.freeAmount}
+              </Radio>
 
               {isFreeAmountMode && (
-                <div className="w-full md:max-w-1/4 ml-0 md:ml-32 relative">
+                <div className="relative w-full">
                   <TextField
                     type="number"
                     value={donationAmount?.toString() || ''}
@@ -128,8 +146,7 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
               )}
             </div>
           </div>
-          <Icon name="AllInclusiveDonations" width="5rem" />
-        </FormPanel>
+        )}
 
         <Popin isVisible={isModalOpen} onClose={onClose}>
           <img

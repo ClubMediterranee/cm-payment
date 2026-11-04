@@ -225,6 +225,24 @@ export interface ButtonsTranslation {
   alt?: string | null;
 }
 
+export interface CapsAllowedOrigin {
+  /** @primaryKey */
+  id: string;
+  /** @description Only published origins are used by CAPS. */
+  status?: 'published' | 'draft' | 'archived';
+  sort?: number | null;
+  /** @description Host origin allowed to embed CAPS (protocol, host and optional port, lowercase, without path or trailing slash). @required */
+  origin: string;
+  /** @description Name of the host application or journey. @required */
+  name: string;
+  /** @description Context, owner team and contact. */
+  description?: string | null;
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+}
+
 export interface CapsConfiguration {
   /** @primaryKey */
   id: string;
@@ -250,7 +268,6 @@ export interface CapsProviderConfiguration {
   /** @primaryKey */
   id: string;
   status?: 'published' | 'draft' | 'archived';
-  sort?: number | null;
   user_created?: string | null;
   date_created?: string | null;
   user_updated?: string | null;
@@ -259,9 +276,9 @@ export interface CapsProviderConfiguration {
   locale: string;
   display_type?: 'host_fields' | 'iframe' | 'redirect' | 'custom' | null;
   provider_id?: CapsProvider | string | null;
+  settings?: Array<{ key: string; type: 'boolean' | 'number' | 'string'; value: string }> | null;
   requires_token?: boolean | null;
   requires_expiry_date?: boolean | null;
-  settings?: Array<{ key: string; type: 'boolean' | 'number' | 'string'; value: string }> | null;
   requires_card_holder?: boolean | null;
   requires_contact_choice?: Array<'PARTNERS' | 'GO' | 'GM'> | null;
   allowed_actions?: Array<
@@ -273,19 +290,19 @@ export interface CapsProviderConfiguration {
     | 'PAYMENT_UPGRADE_ROOM'
     | 'PAYMENT_SERVICES_IN_OPTION'
   > | null;
+  activation_day_range?: 'json' | null;
 }
 
 export interface CapsProvider {
   /** @primaryKey */
   id: string;
   status?: 'published' | 'draft' | 'archived';
-  sort?: number | null;
   user_created?: DirectusUser | string | null;
   date_created?: string | null;
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   /** @required */
-  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom';
+  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom' | 'third_party_iframe';
   image_url?: string | null;
   category_payment_method?:
     | 'credit_card'
@@ -295,6 +312,29 @@ export interface CapsProvider {
     | 'buy_now_pay_later'
     | null;
   confirmation_strategy?: 'status' | 'notify' | null;
+  logos?: Array<
+    | 'Visa'
+    | 'Mastercard'
+    | 'AmericanExpress'
+    | 'CB'
+    | 'Diners'
+    | 'Discover'
+    | 'JCB'
+    | 'UnionPay'
+    | 'Elo'
+    | 'CreditCard'
+    | 'Paypal'
+    | 'Applepay'
+    | 'GooglePay'
+    | 'Alipay'
+    | 'Wechat'
+    | 'Ideal'
+    | 'IdealWero'
+    | 'Wero'
+    | 'Bancontact'
+    | 'Twint'
+    | 'PIX'
+  > | null;
   settings?: CapsProviderConfiguration[] | string[];
 }
 
@@ -368,7 +408,6 @@ export interface Language {
 export interface MigrationNote {
   /** @primaryKey */
   id: string;
-  status?: 'published' | 'draft' | 'archived';
   deprecated_since?: string | null;
   end_of_support_date?: string | null;
   user_created?: DirectusUser | string | null;
@@ -377,6 +416,7 @@ export interface MigrationNote {
   date_updated?: string | null;
   number?: number | null;
   image?: DirectusFile | string | null;
+  status?: 'published' | 'draft' | 'archived';
   related_routes?: MigrationNotesRoute[] | string[];
   tags?: MigrationNotesTag[] | string[];
   translations?: MigrationNotesTranslation[] | null;
@@ -397,6 +437,8 @@ export interface MigrationNotesRoute {
   migration_notes_id?: MigrationNote | string | null;
   routes_id?: Route | string | null;
   sort?: number | null;
+  /** @required */
+  type: 'target' | 'source' | 'legacy';
 }
 
 export interface MigrationNotesTag {
@@ -521,12 +563,18 @@ export interface Ota {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   label?: string | null;
+  agent_code?: string | null;
+  country_code?: string | null;
+  network_code?: string | null;
+  manager_code?: string | null;
+  currency?: string | null;
+  local?: string | null;
+  is_ducroire?: boolean | null;
 }
 
 export interface Page {
   /** @primaryKey */
   id: string;
-  status?: 'published' | 'draft' | 'archived';
   sort?: number | null;
   user_created?: DirectusUser | string | null;
   date_created?: string | null;
@@ -534,7 +582,10 @@ export interface Page {
   date_updated?: string | null;
   template?: 'page' | `custom-page` | `dynamic-page` | null;
   image?: DirectusFile | string | null;
+  status?: 'published' | 'draft' | 'archived';
   is_home?: boolean | null;
+  previous?: Page | string | null;
+  next?: Page | string | null;
   tags?: PagesTag[] | string[];
   translations?: PagesTranslation[] | null;
   blocks?: PagesBlock[] | string[];
@@ -586,20 +637,20 @@ export interface PredefinedValue {
 export interface Release {
   /** @primaryKey */
   id: string;
-  status?: 'published' | 'draft' | 'archived';
   user_created?: DirectusUser | string | null;
   date_created?: string | null;
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   related_versions?: 'json' | null;
+  status?: 'published' | 'draft' | 'archived';
   stats_deleted_routes?: number | null;
   stats_added_routes?: number | null;
   stats_updated_routes?: number | null;
   stats_deprecated_routes?: number | null;
   stats_fixed_bugs?: number | null;
   stats_new_features?: number | null;
-  channels?: ReleasesChannel[] | string[];
   translations?: ReleasesTranslation[] | null;
+  channels?: ReleasesChannel[] | string[];
   related_routes?: ReleasesRoute[] | string[];
   related_migration_notes?: ReleasesMigrationNote[] | string[];
   tags?: ReleasesTag[] | string[];
@@ -674,6 +725,12 @@ export interface RouteInputProperty {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   source_file?: string | null;
+  /** @description First published API version */
+  first_published_version?: string | null;
+  /** @description Last observed API version */
+  last_published_version?: string | null;
+  /** @description Version where this API property was deprecated */
+  deprecated_version?: string | null;
   targets?: RouteInputPropertiesBackendProperty[] | string[];
 }
 
@@ -709,6 +766,12 @@ export interface RouteOutputProperty {
   /** @required */
   out_type: PredefinedValue | string;
   source_file?: string | null;
+  /** @description First published API version */
+  first_published_version?: string | null;
+  /** @description Last observed API version */
+  last_published_version?: string | null;
+  /** @description Version where this API property was deprecated */
+  deprecated_version?: string | null;
   sources?: RouteOutputPropertiesBackendProperty[] | string[];
 }
 
@@ -731,6 +794,12 @@ export interface Route {
   date_updated?: string | null;
   /** @required */
   deprecated: boolean;
+  /** @description First published API version */
+  first_published_version?: string | null;
+  /** @description Last observed API version */
+  last_published_version?: string | null;
+  /** @description Version where this route was deprecated */
+  deprecated_version?: string | null;
   tags?: RoutesTag[] | string[];
   translations?: RoutesTranslation[] | null;
   /** @description Response payload properties sent to our consumer */
@@ -1449,6 +1518,7 @@ export interface Schema {
   buttons: Button[];
   buttons_target: ButtonsTarget[];
   buttons_translations: ButtonsTranslation[];
+  caps_allowed_origins: CapsAllowedOrigin[];
   caps_configurations: CapsConfiguration[];
   caps_provider_configurations: CapsProviderConfiguration[];
   caps_providers: CapsProvider[];
@@ -1555,6 +1625,7 @@ export enum CollectionNames {
   buttons = 'buttons',
   buttons_target = 'buttons_target',
   buttons_translations = 'buttons_translations',
+  caps_allowed_origins = 'caps_allowed_origins',
   caps_configurations = 'caps_configurations',
   caps_provider_configurations = 'caps_provider_configurations',
   caps_providers = 'caps_providers',

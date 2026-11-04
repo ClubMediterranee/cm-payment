@@ -3,6 +3,7 @@
 import { createRemoteAppComponent } from '@module-federation/bridge-react/base';
 import {
   type ComponentType,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -11,6 +12,7 @@ import {
 } from 'react';
 
 import { resolveCapsUrl } from '../shared/env';
+import { errorEvent } from '../shared/events';
 import type { CapsEmbedError, CapsFormProps, CapsRemoteFormProps } from '../shared/types';
 import { type CapsRemoteModule, loadCapsRemoteForm, toCapsEmbedError } from './loader';
 import { getCapsFormSlots, getServerCapsFormSlots, subscribeCapsFormSlots } from './slots';
@@ -50,8 +52,12 @@ export function CapsFormWebComponent(props: CapsFormProps) {
     getCapsFormSlots,
     getServerCapsFormSlots,
   );
-  const onErrorRef = useRef(props.onError);
-  onErrorRef.current = props.onError;
+  const onEventRef = useRef(props.onEvent);
+  onEventRef.current = props.onEvent;
+  const reportError = useCallback(
+    (error: CapsEmbedError) => onEventRef.current?.(errorEvent(error)),
+    [],
+  );
 
   let capsUrl: string | undefined;
   let resolveError: CapsEmbedError | undefined;
@@ -64,7 +70,7 @@ export function CapsFormWebComponent(props: CapsFormProps) {
 
   useEffect(() => {
     if (!capsUrl) {
-      onErrorRef.current?.(resolveError!);
+      reportError(resolveError!);
       return;
     }
 
@@ -78,21 +84,18 @@ export function CapsFormWebComponent(props: CapsFormProps) {
         if (active) {
           const embedError = toCapsEmbedError(error);
           setState({ error: embedError });
-          onErrorRef.current?.(embedError);
+          reportError(embedError);
         }
       });
 
     return () => {
       active = false;
     };
-  }, [capsUrl]);
+  }, [capsUrl, reportError]);
 
   const RemoteForm = useMemo(
-    () =>
-      state.module
-        ? createRemoteForm(state.module, (error) => onErrorRef.current?.(error))
-        : undefined,
-    [state.module],
+    () => (state.module ? createRemoteForm(state.module, reportError) : undefined),
+    [state.module, reportError],
   );
 
   if (state.error || resolveError) {

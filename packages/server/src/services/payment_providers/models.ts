@@ -33,6 +33,12 @@ export const EnrichedPaymentProviderSchema: any = {
             requires_contact_choice: {
               type: 'boolean',
             },
+            logos: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
           },
           required: ['display_type', 'settings'],
         },

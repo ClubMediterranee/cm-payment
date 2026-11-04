@@ -2,7 +2,12 @@ import { Inject, Service } from '@tsed/di';
 
 import { PaymentConfigRepository } from './PaymentConfigRepository.js';
 import { configMatchRules, findByRules, providerMatchRules } from './resolvers.js';
-import { OidcIssuerTypes, PaymentConfigSettings, PaymentFeatureFlips } from './types.js';
+import {
+  isCapsTheme,
+  OidcIssuerTypes,
+  PaymentConfigSettings,
+  PaymentFeatureFlips,
+} from './types.js';
 
 @Service()
 export class PaymentConfigService {
@@ -27,6 +32,10 @@ export class PaymentConfigService {
         configMatchRules({ locale, issuer: issuerType }),
       );
       const value = override ? override.value : config.value;
+
+      if (config.key === 'theme' && !isCapsTheme(value)) {
+        continue;
+      }
 
       if (config.type === 'boolean') {
         (feature_flips as Record<string, boolean>)[config.key] = value as boolean;
@@ -70,6 +79,7 @@ export class PaymentConfigService {
             settings,
             display_type: provider.default_display_type,
             confirmation_strategy: provider.confirmation_strategy ?? 'status',
+            logos: provider.logos ?? [],
           },
         ] as const;
       }),

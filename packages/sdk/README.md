@@ -82,7 +82,7 @@ import {
 
 function PaymentForm() {
   return (
-    <Form onError={console.error}>
+    <Form onEvent={console.info}>
       <PaymentSchedule />
       <PaymentProviders />
       <CardInstallments />

@@ -6,6 +6,7 @@ import { CapsPaymentForm, type CapsPaymentFormProps } from './CapsPaymentForm';
 
 const providerProps = vi.fn();
 const formProps = vi.fn();
+const choiceProps = vi.fn();
 const defaultNavigate = vi.fn();
 
 vi.mock('../../utils/navigate', () => ({
@@ -14,19 +15,24 @@ vi.mock('../../utils/navigate', () => ({
 
 vi.mock('../../providers/PaymentConfigProvider', async () => {
   const { CapsConfigContext } = await import('../../contexts/CapsConfigContext');
-  const { defaultContent } = await import('../../content/default');
+  const { contentByTheme } = await import('../../content/themes');
   const { mergeFromPattern } = await import('../../utils/mergeFromPattern');
 
   return {
     PaymentConfigProvider: ({
       children,
       content,
+      theme,
       ...props
-    }: { children: ReactNode; content?: object } & Record<string, unknown>) => {
-      providerProps({ ...props, content });
+    }: {
+      children: ReactNode;
+      content?: object;
+      theme: keyof typeof contentByTheme;
+    } & Record<string, unknown>) => {
+      providerProps({ ...props, theme, content });
       return (
         <CapsConfigContext.Provider
-          value={{ content: mergeFromPattern(defaultContent, content) } as never}
+          value={{ content: mergeFromPattern(contentByTheme[theme], content) } as never}
         >
           <div data-testid="payment-config-provider">{children}</div>
         </CapsConfigContext.Provider>
@@ -63,16 +69,13 @@ const { step, submit } = await vi.hoisted(async () => {
   };
 });
 
-vi.mock('../BillingAddress', () => ({ BillingAddress: step('billing-address') }));
-vi.mock('../CardInstallments', () => ({ CardInstallments: step('card-installments') }));
-vi.mock('../Cgv', () => ({ Cgv: step('cgv') }));
-vi.mock('../Comments', () => ({ Comments: step('comments') }));
-vi.mock('../ContactChoice', () => ({ ContactChoice: step('contact-choice') }));
-vi.mock('../Donation', () => ({ Donation: step('donation') }));
-vi.mock('../PaymentProviders', () => ({ PaymentProviders: step('payment-providers') }));
 vi.mock('../PaymentSchedule', () => ({ PaymentSchedule: step('payment-schedule') }));
-vi.mock('../PaymentWidget', () => ({ PaymentWidget: step('payment-widget') }));
-vi.mock('../SubmitButton', () => ({ SubmitButton: submit }));
+vi.mock('../PaymentPanel', () => ({
+  PaymentPanel: (props: Record<string, unknown>) => {
+    choiceProps(props);
+    return <section data-testid="payment-providers-choice" />;
+  },
+}));
 vi.mock('../legacy', () => ({
   LegacyBillingAddress: step('legacy-billing-address'),
   LegacyCardInstallments: step('legacy-card-installments'),
@@ -128,35 +131,45 @@ describe('CapsPaymentForm', () => {
     vi.unstubAllGlobals();
   });
 
-  it('renders every step with its title and the default submit button', () => {
-    const { container, getByRole } = render(
-      <CapsPaymentForm {...baseProps} action="PAYMENT_RESA" reference="REF" uuid="abc" />,
+  it('renders the schedule and the payment providers choice with the host props', () => {
+    const slots = { donation: null, submit: null };
+    const { container } = render(
+      <CapsPaymentForm
+        {...baseProps}
+        theme="current"
+        action="PAYMENT_RESA"
+        reference="REF"
+        uuid="abc"
+        slots={slots}
+      />,
     );
 
-    expect(
-      container.querySelector('[data-testid=contact-choice]')!.getAttribute('data-props'),
-    ).toBe(JSON.stringify({ reference: 'REF', uuid: 'abc' }));
-    [
-      'Choose your payment schedule',
-      'Which payment method would you like to use?',
-      'Choose your card installments',
-      'How would you like to be contacted?',
-      'Make a donation',
-      'Comments',
-      'Terms and conditions',
-      'Billing address',
-      'Payment details',
-    ].forEach((title) => expect(container.textContent).toContain(title));
-    expect(getByRole('button').className).toBe('my-8 self-center');
-    expect(getByRole('button').textContent).toBe('Pay');
+    expect(container.querySelector('[data-testid=payment-schedule]')).toBeTruthy();
+    expect(container.querySelector('[data-testid=payment-providers-choice]')).toBeTruthy();
+    expect(choiceProps).toHaveBeenLastCalledWith({ reference: 'REF', uuid: 'abc', slots });
     expect(lastFormProps().action).toBe('PAYMENT_RESA');
   });
 
-  it('renders the legacy steps with the legacy theme', () => {
-    const { container } = render(<CapsPaymentForm {...baseProps} theme="legacy" />);
+  it('renders the legacy theme by default', () => {
+    const { container } = render(<CapsPaymentForm {...baseProps} />);
 
     expect(container.querySelector('[data-testid=legacy-payment-schedule]')).toBeTruthy();
     expect(container.querySelector('[data-testid=payment-schedule]')).toBeNull();
+  });
+
+  it('renders the current theme when the prop asks for it', () => {
+    const { container } = render(<CapsPaymentForm {...baseProps} theme="current" />);
+
+    expect(container.querySelector('[data-testid=payment-schedule]')).toBeTruthy();
+    expect(container.querySelector('[data-testid=legacy-payment-schedule]')).toBeNull();
+  });
+
+  it('gives the provider the theme so it serves a single content', () => {
+    const { container } = render(<CapsPaymentForm {...baseProps} />);
+
+    expect(providerProps).toHaveBeenLastCalledWith(expect.objectContaining({ theme: 'legacy' }));
+    expect(container.textContent).toContain('Choose your payment schedule');
+    expect(container.textContent).not.toContain('Choose the payment schedule');
   });
 
   it('applies className and style to the container', () => {
@@ -212,6 +225,26 @@ describe('CapsPaymentForm', () => {
     expect(defaultNavigate).toHaveBeenCalledWith({ url: 'https://psp/2' });
   });
 
+  it('emits the redirect event only when the navigation goes on', () => {
+    const onEvent = vi.fn();
+    const onRedirect = vi.fn().mockReturnValueOnce(false).mockReturnValueOnce(undefined);
+    render(<CapsPaymentForm {...baseProps} onEvent={onEvent} onRedirect={onRedirect} />);
+
+    const { onNavigate } = providerProps.mock.lastCall![0] as {
+      onNavigate: (request: { url: string }) => void;
+    };
+
+    onNavigate({ url: 'https://psp/1' });
+    expect(onEvent).not.toHaveBeenCalled();
+
+    onNavigate({ url: 'https://psp/2' });
+    expect(onEvent).toHaveBeenCalledWith({
+      action: '',
+      name: 'redirect',
+      data: { url: 'https://psp/2' },
+    });
+  });
+
   it('navigates by default when no redirect handler is given', () => {
     render(<CapsPaymentForm {...baseProps} />);
 
@@ -220,78 +253,74 @@ describe('CapsPaymentForm', () => {
     expect(defaultNavigate).toHaveBeenCalledWith({ url: 'https://psp/3' });
   });
 
-  it('renders the donation and the submit button in the host slots', () => {
-    const donation = document.body.appendChild(document.createElement('div'));
-    const submit = document.body.appendChild(document.createElement('div'));
+  it('forwards the events of the form to the host', () => {
+    const onEvent = vi.fn();
+    render(<CapsPaymentForm {...baseProps} onEvent={onEvent} />);
 
-    const { container } = render(<CapsPaymentForm {...baseProps} slots={{ donation, submit }} />);
+    const submit = {
+      action: 'click',
+      name: 'submit',
+      data: { provider_id: 'P1', amount: 1250, currency: 'EUR' },
+    };
+    act(() => lastFormProps().onEvent({ action: '', name: 'load' }));
+    act(() => lastFormProps().onEvent(submit));
+    act(() => lastFormProps().onEvent({ action: '', name: 'load_end' }));
 
-    expect(container.querySelector('[data-testid=donation]')).toBeNull();
-    expect(container.querySelector('button')).toBeNull();
-    expect(container.querySelector('[data-testid=cgv]')).toBeTruthy();
-    expect(donation.querySelector('[data-testid=donation]')).toBeTruthy();
-    expect(submit.querySelector('button')!.className).toBe('w-full');
-
-    donation.remove();
-    submit.remove();
-  });
-
-  it('keeps the regions in the form while a slot has no host element yet', () => {
-    const { container, getByRole } = render(
-      <CapsPaymentForm {...baseProps} slots={{ donation: null, submit: null }} />,
-    );
-
-    expect(container.querySelector('[data-testid=donation]')).toBeTruthy();
-    expect(getByRole('button').className).toBe('my-8 self-center');
-  });
-
-  it('signals that the flow is ready once and mirrors the payment processing state', () => {
-    const onReady = vi.fn();
-    const onLoadingChange = vi.fn();
-    const { rerender } = render(
-      <CapsPaymentForm {...baseProps} onReady={onReady} onLoadingChange={onLoadingChange} />,
-    );
-
-    rerender(
-      <CapsPaymentForm {...baseProps} onReady={onReady} onLoadingChange={onLoadingChange} />,
-    );
-    expect(onReady).toHaveBeenCalledTimes(1);
-
-    act(() => lastFormProps().onLoad());
-    act(() => lastFormProps().onLoadEnd());
-    expect(onLoadingChange.mock.calls).toEqual([[true], [false]]);
+    expect(onEvent.mock.calls).toEqual([
+      [{ action: '', name: 'load' }],
+      [submit],
+      [{ action: '', name: 'load_end' }],
+    ]);
   });
 
   it('reports the payment error without displaying it', () => {
-    const onError = vi.fn();
-    const onLoadingChange = vi.fn();
-    const { container } = render(
-      <CapsPaymentForm {...baseProps} onError={onError} onLoadingChange={onLoadingChange} />,
-    );
+    const onEvent = vi.fn();
+    const { container } = render(<CapsPaymentForm {...baseProps} onEvent={onEvent} />);
+    const error = {
+      action: '',
+      name: 'error',
+      data: { code: 'FLOW_ERROR', message: 'Payment refused' },
+    };
 
-    act(() => lastFormProps().onError(new Error('Payment refused')));
+    act(() => lastFormProps().onEvent(error));
 
     expect(container.textContent).not.toContain('Payment refused');
-    expect(onLoadingChange).toHaveBeenCalledWith(false);
-    expect(onError).toHaveBeenCalledWith({ code: 'FLOW_ERROR', message: 'Payment refused' });
+    expect(onEvent).toHaveBeenCalledWith(error);
   });
 
   it('reports a flow loading error through the fallback', () => {
-    const onError = vi.fn();
-    render(<CapsPaymentForm {...baseProps} onError={onError} />);
+    const onEvent = vi.fn();
+    render(<CapsPaymentForm {...baseProps} onEvent={onEvent} />);
 
     const { getByRole } = render(
       <>{lastFormProps().errorFallback({ error: 'boom', resetErrorBoundary: vi.fn() })}</>,
     );
 
     expect(getByRole('alert').textContent).toContain('boom');
-    expect(onError).toHaveBeenLastCalledWith({ code: 'FLOW_ERROR', message: 'boom' });
+    expect(onEvent).toHaveBeenLastCalledWith({
+      action: '',
+      name: 'error',
+      data: { code: 'FLOW_ERROR', message: 'boom' },
+    });
+  });
+
+  it('keeps the flow going when the host handler throws', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const onEvent = vi.fn(() => {
+      throw new Error('host failure');
+    });
+    render(<CapsPaymentForm {...baseProps} onEvent={onEvent} />);
+
+    expect(() => act(() => lastFormProps().onEvent({ action: '', name: 'load' }))).not.toThrow();
+    expect(onEvent).toHaveBeenCalledTimes(1);
+    vi.mocked(console.error).mockRestore();
   });
 
   it('renders the headings and the submit label from the content', () => {
     const { container } = render(
       <CapsPaymentForm
         {...baseProps}
+        theme="legacy"
         content={{ submit: { label: 'Payer' }, cgv: { heading: 'CGV' } }}
       />,
     );
@@ -310,15 +339,14 @@ describe('CapsPaymentForm', () => {
       <CapsPaymentForm {...baseProps} content={{ cgv: { heading: '' } }} />,
     );
 
-    expect(container.textContent).not.toContain('Terms and conditions');
+    expect(container.textContent).not.toContain('General Terms and Conditions of Sale');
   });
 
   it('does not require the host to provide any callback', () => {
     render(<CapsPaymentForm {...baseProps} />);
 
-    act(() => lastFormProps().onLoad());
-    act(() => lastFormProps().onLoadEnd());
-    act(() => lastFormProps().onError(new Error('no listener')));
+    act(() => lastFormProps().onEvent({ action: '', name: 'load' }));
+    act(() => lastFormProps().onEvent({ action: '', name: 'load_end' }));
 
     expect(formProps).toHaveBeenCalled();
   });

@@ -19,12 +19,16 @@ export function useCapsForm({ config, defaultValues = {} }: UseCapsFormParams) {
     ...(isSeller ? { template_id: GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone } : {}),
   };
 
-  return useForm({
+  const schema = capsFormSchema(config);
+
+  const methods = useForm({
     mode: 'onTouched',
-    resolver: zodResolver(capsFormSchema(config)),
+    resolver: zodResolver(schema),
     defaultValues: {
       ...baseDefaultValues,
       ...defaultValues,
     },
   });
+
+  return { ...methods, schema };
 }

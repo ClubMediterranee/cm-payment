@@ -10,6 +10,7 @@ export const GLOBAL_CAPS_SETTINGS = Object.freeze({
   donation: {
     presetAmounts: [5, 20, 50],
   } as const,
+  currentComponents: [TOKENS.PaymentSchedule, TOKENS.PaymentPanel],
   components: {
     [OidcIssuerTypes.GM]: [
       TOKENS.PaymentSchedule,

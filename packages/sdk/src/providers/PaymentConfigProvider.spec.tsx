@@ -1,7 +1,7 @@
 import { render, renderHook } from '@testing-library/react';
 import type { PropsWithChildren } from 'react';
 
-import { defaultContent } from '../content/default';
+import { contentByTheme } from '../content/themes';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { getPaymentConfig, PaymentConfigProvider } from './PaymentConfigProvider';
@@ -69,7 +69,7 @@ describe('PaymentConfigProvider', () => {
     });
 
     expect(result.current.content.cgv.title).toBe('Custom Terms');
-    expect(result.current.content.cgv.content).toBe(defaultContent.cgv.content);
+    expect(result.current.content.cgv.content).toBe(contentByTheme.legacy.cgv.content);
   });
 
   it('should handle undefined content by using default content', () => {
@@ -77,7 +77,21 @@ describe('PaymentConfigProvider', () => {
       wrapper: (props) => <Wrapper {...props} content={undefined} />,
     });
 
-    expect(result.current.content).toEqual(defaultContent);
+    expect(result.current.content).toEqual(contentByTheme.legacy);
+  });
+
+  it('serves a single content matching the theme', () => {
+    const { result: current } = renderHook(() => useCapsConfigContext(), {
+      wrapper: (props) => <Wrapper {...props} theme="current" />,
+    });
+    const { result: legacy } = renderHook(() => useCapsConfigContext(), {
+      wrapper: (props) => <Wrapper {...props} theme="legacy" />,
+    });
+
+    expect(current.current.content).toEqual(contentByTheme.current);
+    expect(legacy.current.content).toEqual(contentByTheme.legacy);
+    expect(current.current.content.paymentSchedule.heading).toBe('Choose the payment schedule');
+    expect(legacy.current.content.paymentSchedule.heading).toBe('Choose your payment schedule');
   });
 
   it('should expose config via getPaymentConfig', () => {
@@ -116,7 +130,7 @@ describe('PaymentConfigProvider', () => {
       wrapper: (props) => <Wrapper {...props} content={{}} />,
     });
 
-    expect(result.current.content).toEqual(defaultContent);
+    expect(result.current.content).toEqual(contentByTheme.legacy);
   });
 
   it('should set type to proposal when only proposalId is provided', () => {
