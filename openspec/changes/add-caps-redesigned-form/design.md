@@ -130,3 +130,11 @@ The new UI's classes and tokens live in the existing Shadow DOM and do not modif
 ### D13. Donation and the deposit
 
 The donation is collected with the first payment. On a deposit card, the donation is added to the deposit only: the balance shown (`{deposit} + {balance}`) is the balance of the schedule, without the donation.
+
+### D14. Installments are chosen, not preselected
+
+In the `current` theme the card type and the number of installments are not preselected when a provider offers a choice (several payment conditions, all card types included). `payment_condition_id` is then required and reset to empty each time the provider changes, and the card type select restarts empty too. A provider with a single payment condition keeps it as default (nothing is displayed). The legacy theme keeps its preselection: `CapsForm` only skips the default for `current` (`requireInstallmentChoice`), and `components/legacy/` is untouched.
+
+### D15. The free deposit sits in the provider card
+
+In the `current` theme, for the partial payment action (`PAYMENT_PARTIAL`), `PaymentSchedule` renders nothing and the free deposit (`FreeDepositField`: total remaining, deadline, `I pay now` field) is the first block of the selected provider's panel, as in the mockups. The panel is then shown without waiting for `amount`, since the amount is entered inside it; `CardInstallments` is wrapped in `Step after="amount"` so the installments appear once the amount is valid (the installment labels divide it). The field owns its `amount` controller and no longer resets the amount on mount (it remounts on each provider change): `getDefaultSelection` leaves `amount` empty for a partial payment instead. `PaymentSchedule` stays in the flow, so `validateComponents` is unchanged. The header follows the mockup: `Total due :` with the amount in bold on one line, `Before {date}` below, field labelled `Amount desired by the client`; `contentByTheme.legacy` restores the former `freeDeposit` texts. The legacy copy is untouched.

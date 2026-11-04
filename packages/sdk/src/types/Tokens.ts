@@ -3,6 +3,7 @@ export const TOKENS = {
   Cgv: Symbol('Cgv'),
   ContactChoice: Symbol('ContactChoice'),
   PaymentProviders: Symbol('PaymentProviders'),
+  PaymentPanel: Symbol('PaymentPanel'),
   BillingAddress: Symbol('BillingAddress'),
   PaymentWidget: Symbol('PaymentWidget'),
   CardInstallments: Symbol('CardInstallments'),

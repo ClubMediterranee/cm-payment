@@ -6,6 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FormProvider as ReactHookFormProvider } from 'react-hook-form';
 
 import { Action } from '../__generated__/index.schemas';
+import { BillingAddress } from '../components/BillingAddress';
 import { Form } from '../components/Form';
 import { FormErrorFallback } from '../components/ui/fallbacks/FormErrorFallback';
 import { GlobalFormSkeleton } from '../components/ui/fallbacks/GlobalFormSkeleton';
@@ -19,7 +20,11 @@ import { paymentScheduleQueryOptions } from '../hooks/data/usePaymentSchedule';
 import { useCapsForm } from '../hooks/useCapsForm';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
 import { LocaleOrCountry } from '../types/LocaleOrCountry';
-import { getDefaultPaymentConditionId, getDefaultSelection } from '../utils/paymentProviders';
+import {
+  getDefaultPaymentConditionId,
+  getDefaultSelection,
+  hasMultiplePaymentConditions,
+} from '../utils/paymentProviders';
 import { validateComponents } from '../utils/validation/validateComponents';
 
 type CapsFormProps = PropsWithChildren<
@@ -27,11 +32,10 @@ type CapsFormProps = PropsWithChildren<
     fallback?: ReactNode;
     action?: Action;
     errorFallback?: (props: FallbackProps) => ReactNode;
-    stepper?: boolean;
   }
 >;
 
-function CapsFormProvider({ children, action, stepper, onEvent, ...props }: CapsFormProps) {
+function CapsFormProvider({ children, action, onEvent, ...props }: CapsFormProps) {
   const {
     id,
     content,
@@ -40,10 +44,12 @@ function CapsFormProvider({ children, action, stepper, onEvent, ...props }: Caps
     customerId,
     oidc,
     api,
+    theme,
     salesNetworkId,
     salesmanId,
     opportunityId,
   } = useCapsConfigContext();
+  const isCurrentTheme = theme === 'current';
   const { isSeller } = useOidcContext();
 
   const resolvedAction = useActionResolver(action);
@@ -71,20 +77,23 @@ function CapsFormProvider({ children, action, stepper, onEvent, ...props }: Caps
   const maxAmount = (paymentSchedule?.[0]?.amount ?? 0) + (overpaymentAllowanceData?.amount ?? 0);
 
   const { amount: defaultAmount, provider: defaultProvider } = getDefaultSelection({
-    stepper,
+    stepper: isCurrentTheme,
     isPartial: resolvedAction === Action.PAYMENT_PARTIAL,
     paymentSchedule,
     paymentProviders,
     buyNowPayLaterProviders,
   });
 
-  const countryCode = locale.split('-')[1] || locale.toUpperCase();
+  const countryCode = (locale.split('-')[1] || locale.toUpperCase()) as LocaleOrCountry;
 
   const { schema, ...methods } = useCapsForm({
     config: {
       content,
       isSeller,
       maxAmount,
+      requiresPaymentCondition: (providerId: string) =>
+        isCurrentTheme &&
+        hasMultiplePaymentConditions(paymentProviders.find((p) => p.id === providerId)),
       getProviderConfiguration: (providerId: string) => {
         const provider = [...paymentProviders, ...buyNowPayLaterProviders].find(
           (p) => p.id === providerId,
@@ -97,10 +106,12 @@ function CapsFormProvider({ children, action, stepper, onEvent, ...props }: Caps
       provider_id: defaultProvider?.id,
       amount: defaultAmount,
       currency: paymentSchedule?.[0]?.currency,
-      payment_condition_id: getDefaultPaymentConditionId(defaultProvider),
+      payment_condition_id: getDefaultPaymentConditionId(defaultProvider, {
+        unselectedIfMultiple: isCurrentTheme,
+      }),
       billing_details: {
         address: {
-          country_code: countryCode as LocaleOrCountry,
+          country_code: countryCode,
         },
       },
       sales_network_id: salesNetworkId,
@@ -111,10 +122,15 @@ function CapsFormProvider({ children, action, stepper, onEvent, ...props }: Caps
 
   const callbacks: FormCallbacks = { onEvent };
 
+  const needsBillingSchema = [...paymentProviders, ...buyNowPayLaterProviders].some(
+    (provider) => provider.billing_address_form,
+  );
+
   return (
     <FormCallbacksContext.Provider value={callbacks}>
       <FormSchemaContext.Provider value={schema}>
         <ReactHookFormProvider {...methods}>
+          {needsBillingSchema && <BillingAddress.Preload countryCode={countryCode} />}
           <Form {...props}>{children}</Form>
         </ReactHookFormProvider>
       </FormSchemaContext.Provider>
@@ -128,12 +144,12 @@ export function CapsForm({
   errorFallback = FormErrorFallback,
   ...props
 }: CapsFormProps) {
-  const { oidc, id } = useCapsConfigContext();
+  const { oidc, id, theme } = useCapsConfigContext();
   if (!id) {
     throw new Error('Either bookingId or proposalId must be provided');
   }
 
-  const symbols = validateComponents(oidc.issuerType, children);
+  const symbols = validateComponents(oidc.issuerType, children, theme);
 
   const defaultFallback = <GlobalFormSkeleton symbols={symbols} />;
 

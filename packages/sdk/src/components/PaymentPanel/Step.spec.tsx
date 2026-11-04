@@ -3,7 +3,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { FormSchemaContext } from '../../contexts/FormSchemaContext';
-import { StepperContext } from '../../contexts/StepperContext';
 import { Step } from './Step';
 
 const schema = z.object({
@@ -26,38 +25,30 @@ const valid: Values = {
   cgv: true,
 };
 
-const Harness = ({
-  values = {},
-  stepper = true,
-}: {
-  values?: Partial<Values>;
-  stepper?: boolean;
-}) => {
+const Harness = ({ values = {} }: { values?: Partial<Values> }) => {
   const methods = useForm<Values>({ defaultValues: { ...valid, ...values } });
 
   return (
     <FormSchemaContext.Provider value={schema as never}>
       <FormProvider {...methods}>
-        <StepperContext.Provider value={stepper}>
-          <button type="button" onClick={() => methods.setValue('amount', '')}>
-            reset amount
-          </button>
-          <button type="button" onClick={() => methods.setValue('donation_amount', -1)}>
-            invalid donation
-          </button>
-          <Step after="amount">
-            <span>providers</span>
-          </Step>
-          <Step after="provider_id">
-            <span>billing</span>
-          </Step>
-          <Step after={['billing_details.attendee', 'billing_details.address']}>
-            <span>cgv</span>
-          </Step>
-          <Step>
-            <span>submit</span>
-          </Step>
-        </StepperContext.Provider>
+        <button type="button" onClick={() => methods.setValue('amount', '')}>
+          reset amount
+        </button>
+        <button type="button" onClick={() => methods.setValue('donation_amount', -1)}>
+          invalid donation
+        </button>
+        <Step after="amount">
+          <span>providers</span>
+        </Step>
+        <Step after="provider_id">
+          <span>billing</span>
+        </Step>
+        <Step after={['billing_details.attendee', 'billing_details.address']}>
+          <span>cgv</span>
+        </Step>
+        <Step>
+          <span>submit</span>
+        </Step>
       </FormProvider>
     </FormSchemaContext.Provider>
   );
@@ -67,10 +58,24 @@ const visible = () =>
   ['providers', 'billing', 'cgv', 'submit'].filter((name) => screen.queryByText(name));
 
 describe('Step', () => {
-  it('always shows its content without the stepper', () => {
-    render(<Harness stepper={false} values={{ amount: '', provider_id: '', cgv: false }} />);
+  it('always shows its content without a form schema', () => {
+    const methods = { amount: '', provider_id: '', cgv: false };
 
-    expect(visible()).toEqual(['providers', 'billing', 'cgv', 'submit']);
+    const Bare = () => {
+      const form = useForm<Values>({ defaultValues: { ...valid, ...methods } });
+
+      return (
+        <FormProvider {...form}>
+          <Step after="amount">
+            <span>providers</span>
+          </Step>
+        </FormProvider>
+      );
+    };
+
+    render(<Bare />);
+
+    expect(screen.queryByText('providers')).not.toBeNull();
   });
 
   it('shows nothing while the first field is invalid', () => {

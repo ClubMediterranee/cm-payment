@@ -77,40 +77,18 @@ import { CapsPaymentForm } from '@clubmed/caps';
   id="123"
   accessToken={token}
   callbackUrl="https://host.example/payment/confirmation"
-  theme="current" // optional: 'current' | 'legacy', overrides the theme set in the CMS
-  stepper // reveals the form section by section (theme 'current' only)
+  theme="current" // optional: 'current' | 'legacy', defaults to 'legacy'
   onEvent={({ action, name, data }) => {}} // payment errors are reported as `error` events, displaying them is up to the host
 />;
 ```
 
 ## Theme
 
-Without the `theme` prop, the form renders the theme set in the CMS: the `theme` key (`'legacy'` or `'current'`) of the `caps_configurations` collection, which can be overridden per locale and issuer. `GET /rest/payment_config` returns it as `settings.theme`. When the key is missing or holds another value, the form renders `'legacy'`.
+The `theme` prop (`'legacy'` or `'current'`) picks the UI the form renders, and defaults to `'legacy'`. The SDK does not read it from anywhere else: the host decides, from its own configuration, a feature flag or a URL parameter.
 
-The `theme` prop takes precedence over the CMS and lets the form render without waiting for the payment configuration. The form serves one set of default texts, the one of the resolved theme: the `'legacy'` texts are unchanged, and `content` overrides are merged on top of them. A host that also changes its own layout with the theme can resolve it once and pass it down:
+The form serves one set of default texts, the one of the theme: the `'legacy'` texts are unchanged, and `content` overrides are merged on top of them.
 
-```tsx
-import { useCapsTheme } from '@clubmed/caps';
-
-const theme = useCapsTheme({
-  locale,
-  oidc: { issuerType, accessToken },
-  api: { url, apiKey },
-});
-
-<CapsPaymentForm {...props} theme={theme} />;
-```
-
-To render the donation or the submit button elsewhere in the page (a price ticket, a sidebar), give `CapsPaymentForm` the host elements with `slots`. They stay part of the form (same state, same validation):
-
-```tsx
-const [submit, setSubmit] = useState<HTMLElement | null>(null);
-
-<CapsPaymentForm {...props} slots={{ submit }} />
-<PriceTicket footer={<div ref={setSubmit} />} />
-```
-
-Until a slot has an element, its region renders in the form.
+The `'current'` theme reveals the form step by step: each block shows once the fields before it are valid, and the submit button shows once the whole form is valid.
 
 ## Webcomponent mode
 

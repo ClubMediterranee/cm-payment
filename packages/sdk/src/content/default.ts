@@ -121,9 +121,9 @@ export const defaultContent: Content = {
   },
   freeDeposit: {
     title: 'Pay the amount of your choice without fees',
-    totalRemaining: 'Total remaining to pay',
-    before: 'before',
-    payNowLabel: 'I pay now',
+    totalRemaining: 'Total due :',
+    before: 'Before',
+    payNowLabel: 'Amount desired by the client',
     placeholder: 'Please enter an amount',
     validation: {
       required: 'Please enter an amount',
@@ -142,6 +142,7 @@ export const defaultContent: Content = {
     title: 'Payment method',
     selectCardType: 'Select your card type',
     selectInstallments: 'Select the number of installments',
+    placeholder: 'Choose',
     installmentLabel: '{count} X of {amount}',
     validation: {
       methodRequired: 'Please select a payment method',
@@ -151,6 +152,11 @@ export const defaultContent: Content = {
   billingAddress: {
     heading: 'Billing address',
     title: 'Billing Address',
+    additionalInformation: 'Additional information',
+    hints: {
+      first_name: 'Matching Passport/ID',
+      last_name: 'Matching Passport/ID',
+    },
     fields: {
       first_name: 'First Name',
       last_name: 'Last Name',

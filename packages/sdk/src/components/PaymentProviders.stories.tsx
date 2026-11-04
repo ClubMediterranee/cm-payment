@@ -5,11 +5,10 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockedProvider } from '../__fixtures__/MockedProvider';
 import { Action } from '../__generated__/index.schemas';
-import { Cgv } from './Cgv';
 import { PaymentProviders } from './PaymentProviders';
-import { SubmitButton } from './SubmitButton';
 
 const commonHandlers = [
+  http.get('*/rest/payment_config*', () => Response.json({ feature_flips: {}, settings: {} })),
   http.get('*/rest/payment_schedules/booking/*', () => {
     return Response.json([
       {
@@ -213,7 +212,7 @@ const handlers = {
 };
 
 const meta: Meta<typeof PaymentProviders> = {
-  title: 'Components/PaymentProviders',
+  title: 'Current/Internals/PaymentProviders',
   component: PaymentProviders,
   loaders: [mswLoader],
   parameters: {
@@ -396,7 +395,7 @@ export const RadioSelectionTest: Story = {
   },
 };
 
-export const CascadePanel: Story = {
+export const SelectedProviderPanel: Story = {
   parameters: {
     msw: {
       handlers: handlers.multipleProviders,
@@ -430,7 +429,7 @@ export const CascadePanel: Story = {
   render(args: any) {
     return (
       <MockedProvider
-        key="cascade-panel"
+        key="selected-provider-panel"
         {...commonMockedProviderProps}
         bookingId="12345678"
         customerId="123456789"
@@ -440,51 +439,7 @@ export const CascadePanel: Story = {
         }}
       >
         <PaymentProviders {...args}>
-          <PaymentProviders.Panel>
-            <p data-testid="panel">Panel</p>
-          </PaymentProviders.Panel>
-        </PaymentProviders>
-      </MockedProvider>
-    );
-  },
-};
-
-export const CascadeCheckout: Story = {
-  parameters: {
-    msw: {
-      handlers: [
-        ...handlers.multipleProviders,
-        http.get('*/rest/payment_config', () => Response.json({ feature_flips: {}, settings: {} })),
-      ],
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await waitFor(() => {
-      expect(canvas.getAllByRole('checkbox')).toHaveLength(1);
-      expect(canvas.getByRole('button', { name: 'Pay' })).toBeInTheDocument();
-    });
-  },
-  render(args: any) {
-    return (
-      <MockedProvider
-        key="cascade-checkout"
-        {...commonMockedProviderProps}
-        bookingId="12345678"
-        customerId="123456789"
-        defaultValues={{
-          amount: '3000',
-          provider_id: 'PROVIDER_1',
-        }}
-      >
-        <PaymentProviders {...args}>
-          <PaymentProviders.Panel>
-            <Cgv />
-            <SubmitButton color="saffron" className="self-center">
-              Pay
-            </SubmitButton>
-          </PaymentProviders.Panel>
+          <p data-testid="panel">Panel</p>
         </PaymentProviders>
       </MockedProvider>
     );

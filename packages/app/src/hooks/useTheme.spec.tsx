@@ -1,11 +1,13 @@
-import { renderHook } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+import { type PropsWithChildren, Suspense } from 'react';
 
 import { useTheme } from './useTheme';
 
-const useCapsTheme = vi.fn((_config: unknown) => 'current');
+const getPaymentConfig = vi.hoisted(() => vi.fn());
 
-vi.mock('@clubmed/caps', () => ({
-  useCapsTheme: (config: unknown) => useCapsTheme(config),
+vi.mock('../__generated__/bff', () => ({
+  paymentConfigControllerGetPaymentConfig: getPaymentConfig,
 }));
 
 const api = { url: 'https://caps.example', apiKey: 'key' };
@@ -15,11 +17,31 @@ vi.mock('../providers/AppProvider', () => ({
   useAppContext: () => ({ api, oidc, values: { locale: 'fr-FR' } }),
 }));
 
-describe('useTheme', () => {
-  it('resolves the theme from the CMS with the app configuration', () => {
-    const { result } = renderHook(() => useTheme());
+const renderTheme = () => {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const wrapper = ({ children }: PropsWithChildren) => (
+    <QueryClientProvider client={client}>
+      <Suspense fallback={null}>{children}</Suspense>
+    </QueryClientProvider>
+  );
 
-    expect(result.current).toBe('current');
-    expect(useCapsTheme).toHaveBeenCalledWith({ locale: 'fr-FR', oidc, api });
+  return renderHook(() => useTheme(), { wrapper });
+};
+
+describe('useTheme', () => {
+  it('resolves the theme from the payment configuration', async () => {
+    getPaymentConfig.mockResolvedValue({ settings: { theme: 'current' } });
+
+    const { result } = renderTheme();
+
+    await waitFor(() => expect(result.current).toBe('current'));
+  });
+
+  it('falls back to the legacy theme when the configuration has no theme', async () => {
+    getPaymentConfig.mockResolvedValue({ settings: {} });
+
+    const { result } = renderTheme();
+
+    await waitFor(() => expect(result.current).toBe('legacy'));
   });
 });

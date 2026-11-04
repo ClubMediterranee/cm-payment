@@ -1,4 +1,8 @@
-import { getDefaultPaymentConditionId, getDefaultSelection } from './paymentProviders';
+import {
+  getDefaultPaymentConditionId,
+  getDefaultSelection,
+  hasMultiplePaymentConditions,
+} from './paymentProviders';
 
 describe('paymentProviders utils', () => {
   describe('getDefaultPaymentConditionId', () => {
@@ -15,12 +19,48 @@ describe('paymentProviders utils', () => {
       expect(getDefaultPaymentConditionId(provider)).toBe('visa-1x');
     });
 
+    it('returns an empty id when a choice is required and the provider offers several conditions', () => {
+      const provider = {
+        payment_conditions: {
+          Visa: [{ id: 'visa-1x' }, { id: 'visa-3x' }],
+        },
+      } as any;
+
+      expect(getDefaultPaymentConditionId(provider, { unselectedIfMultiple: true })).toBe('');
+    });
+
+    it('keeps the only condition when a choice is required', () => {
+      const provider = { payment_conditions: { Visa: [{ id: 'visa-1x' }] } } as any;
+
+      expect(getDefaultPaymentConditionId(provider, { unselectedIfMultiple: true })).toBe(
+        'visa-1x',
+      );
+    });
+
     it('returns undefined when the provider is undefined', () => {
       expect(getDefaultPaymentConditionId(undefined as any)).toBeUndefined();
     });
 
     it('returns undefined when payment_conditions has no entries', () => {
       expect(getDefaultPaymentConditionId({ payment_conditions: {} } as any)).toBeUndefined();
+    });
+  });
+
+  describe('hasMultiplePaymentConditions', () => {
+    it('counts the conditions of every card type', () => {
+      expect(
+        hasMultiplePaymentConditions({
+          payment_conditions: { Visa: [{ id: 'visa-1x' }], Mastercard: [{ id: 'mc-1x' }] },
+        } as any),
+      ).toBe(true);
+    });
+
+    it('is false with a single condition or none', () => {
+      expect(
+        hasMultiplePaymentConditions({ payment_conditions: { Visa: [{ id: 'visa-1x' }] } } as any),
+      ).toBe(false);
+      expect(hasMultiplePaymentConditions({ payment_conditions: {} } as any)).toBe(false);
+      expect(hasMultiplePaymentConditions(undefined)).toBe(false);
     });
   });
 
@@ -69,7 +109,7 @@ describe('paymentProviders utils', () => {
       ).toBe('3000');
     });
 
-    it('keeps the amount of a partial payment and a single provider in the stepper', () => {
+    it('leaves the amount of a partial payment empty for the user to enter', () => {
       const { amount, provider: selected } = getDefaultSelection({
         ...base,
         stepper: true,
@@ -78,7 +118,7 @@ describe('paymentProviders utils', () => {
         paymentProviders: [provider('card')],
       });
 
-      expect(amount).toBe('3000');
+      expect(amount).toBe('');
       expect(selected?.id).toBe('card');
     });
   });

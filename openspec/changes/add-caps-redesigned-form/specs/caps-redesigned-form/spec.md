@@ -119,3 +119,37 @@ When the embed prop `stepper` is true and `theme` is `'current'`, the redesigned
 - **THEN** the submit button is displayed
 - **AND WHEN** a field becomes invalid
 - **THEN** the submit button is hidden
+
+### Requirement: Installments are chosen by the user
+
+In the `current` theme, when the selected payment method offers several payment conditions, the card type and the number of installments SHALL NOT be preselected, and the user SHALL choose a number of installments before the form is valid. Changing the payment method SHALL clear the chosen installments. When the payment method offers a single payment condition, it SHALL be applied without being displayed. The legacy theme SHALL keep its preselection.
+
+#### Scenario: No preselection
+
+- **WHEN** the user selects a payment method that offers several payment conditions
+- **THEN** both installment selects are empty and the form is invalid
+
+#### Scenario: Provider change clears the choice
+
+- **WHEN** the user has chosen installments and selects another payment method
+- **THEN** the installments are cleared
+
+#### Scenario: Single condition
+
+- **WHEN** the selected payment method offers a single payment condition
+- **THEN** it is applied and no installment select is displayed
+
+#### Scenario: Legacy unchanged
+
+- **WHEN** the theme is `'legacy'`
+- **THEN** the first payment condition is preselected as before
+
+### Requirement: Free deposit inside the payment panel
+
+In the `current` theme, for a partial payment, the free deposit SHALL be displayed at the top of the selected payment method's panel, and the payment schedule section SHALL NOT be displayed. The amount SHALL start empty and SHALL be kept when the payment method changes.
+
+#### Scenario: Partial payment
+
+- **WHEN** the action is `PAYMENT_PARTIAL`
+- **THEN** the total remaining and the `I pay now` field are displayed inside the selected payment method's card, with an empty amount
+- **AND** the `Choose the payment schedule` section is not displayed
