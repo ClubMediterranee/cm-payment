@@ -1,0 +1,68 @@
+import { formatCurrency, FormPanel as Panel } from '@clubmed/caps';
+import { Icon } from '@clubmed/trident-icons';
+
+import { useAppParams } from '../hooks/useAppParams';
+
+const translations = {
+  paymentConfirmation: 'Payment confirmation',
+  myBooking: 'My booking',
+  amount: 'Amount',
+  paymentValidated: 'Your payment has been validated',
+  paymentFailed: 'Your payment has failed',
+};
+
+const getStatusConfig = (status: string) => {
+  if (status === 'OK') {
+    return {
+      icon: 'CheckOutlined',
+      iconColor: 'text-green',
+      bgColor: 'bg-green-light',
+      title: translations.paymentValidated,
+      titleColor: 'text-green',
+    };
+  }
+  return {
+    icon: 'CrossOutlined',
+    iconColor: 'text-red',
+    bgColor: 'bg-red-light',
+    title: translations.paymentFailed,
+    titleColor: 'text-red',
+  };
+};
+
+export const ConfirmationPage = () => {
+  const { oidc: { issuerType } = {}, values } = useAppParams() || {};
+  const { payment_status, booking_id, payment_amount, payment_currency } = values;
+
+  const statusConfig = getStatusConfig(payment_status);
+  const formattedAmount = formatCurrency({
+    amount: Number(payment_amount),
+    currency: payment_currency,
+    locale: values.locale,
+  });
+
+  return (
+    <div className="flex flex-col gap-20 mx-auto w-10/12 md:max-w-[49rem] py-40">
+      <h1 className="text-h3 font-serif text-center">
+        {translations.paymentConfirmation} - {issuerType}
+      </h1>
+
+      <Panel className="bg-white w-full p-0">
+        <div className="flex flex-col font-bold">
+          <div className="flex justify-between items-center px-20 py-12">
+            <span className="text-b3 text-grey-dark">{translations.myBooking}</span>
+            <span className="text-b3 font-mono">{booking_id}</span>
+          </div>
+          <div className="flex justify-between items-center bg-sienna text-white px-20 py-12">
+            <span className="text-b3 ">{translations.amount}</span>
+            <span className="text-h5 ">{formattedAmount}</span>
+          </div>
+        </div>
+      </Panel>
+      <div className={`flex flex-row items-center gap-16 ${statusConfig.titleColor}`}>
+        <Icon className="font-bold" name={statusConfig.icon} width="4em" />
+        <h2 className="text-h5 font-serif">{statusConfig.title}</h2>
+      </div>
+    </div>
+  );
+};

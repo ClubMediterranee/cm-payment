@@ -1,9 +1,12 @@
-import type { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
+import { Action, OidcIssuerTypes } from '@clubmed/caps';
 
 export interface AppState {
   issuerType: OidcIssuerTypes;
-  bookingId?: string | undefined;
-  proposalId?: string | undefined;
+  bookingId?: string;
+  proposalId?: string;
   customerId: string;
   locale: string;
+  action?: Action;
+  callbackUrl: string;
+  callbackUrlSeller?: string;
 }

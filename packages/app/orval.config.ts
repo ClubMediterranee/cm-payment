@@ -27,4 +27,24 @@ export default defineConfig({
       },
     },
   },
+  bff: {
+    input: {
+      target: 'http://localhost:8083/oas/swagger.json',
+      filters: { tags: ['PaymentConfigController'] },
+    },
+    output: {
+      target: join(root, 'src/__generated__/bff.ts'),
+      mode: 'single',
+      prettier: true,
+      override: {
+        mutator: {
+          path: './src/utils/fetcher.ts',
+          name: 'bffFetcher',
+        },
+        fetch: {
+          includeHttpResponseReturnType: false,
+        },
+      },
+    },
+  },
 });

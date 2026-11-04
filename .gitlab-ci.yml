@@ -8,108 +8,98 @@
 ##                                                                           ##
 ## description     : CI/CD configuration                                     ##
 ## author          : DevOps team <DevOps@clubmedoffice.onmicrosoft.com>      ##
-## sources         : <https://scm.clubmed.com/clubmed/ui/trident-ui>         ##
+## sources         : <https://scm.clubmed.com/clubmed/ui/cm-payment>         ##
 ##                                                                           ##
 ###############################################################################
 ###############################################################################
 ---
 include:
-  - project: 'clubmed/templates'
-    ref: 'master'
-    file: 'CI/library/commons.yaml'
-  - project: 'clubmed/templates'
-    ref: 'master'
-    file: 'CI/library/docker.yaml'
-  #  - project: 'clubmed/templates'
-  #    ref: 'master'
-  #    file: 'CI/library/docker-aws.yaml'
-  - project: 'clubmed/templates'
-    ref: 'master'
-    file: 'CI/git-flow.yaml'
-  - project: 'clubmed/templates'
-    ref: 'master'
-    file: 'CI/library/gitlab-api-utils.yaml'
-  - local: '.gitlab/ci/commons.yml'
-  - local: '.gitlab/ci/ci-lint.yml'
-  #  - local: '.gitlab/ci/dev-branches.yml'
-  #  - local: '.gitlab/ci/release.yml'
-  #  - local: '.gitlab/ci/tags.yml'
-  - local: '.gitlab/ci/proxy.yml'
-  - local: '.gitlab/ci/node.yml'
-  - local: '.gitlab/ci/chromatic.yml'
+  - project: "clubmed/templates"
+    ref: "master"
+    file: "CI/library/commons.yaml"
+  - project: "clubmed/templates"
+    ref: "master"
+    file: "CI/library/docker.yaml"
+  - project: "clubmed/templates"
+    ref: "master"
+    file: "CI/git-flow.yaml"
+  - project: "clubmed/templates"
+    ref: "master"
+    file: "CI/library/gitlab-api-utils.yaml"
+  - local: ".gitlab/ci/proxy.yml"
+  - local: ".gitlab/ci/node.yml"
+  - local: ".gitlab/ci/chromatic.yml"
+  - local: ".gitlab/ci/deploy.yml"
+  - local: ".gitlab/ci/dotenv-source.yml"
+  - local: ".gitlab/ci/publish.yml"
+  - local: ".gitlab/ci/switch-branch.yml"
 
 variables:
-  ENV_DEV_LIFETIME: '1 week'
-  DOCKER_IMAGE: 'payment-sdk'
-  BASH_ENV: 'gitlab-pipeline.env'
-  GIT_CLEAN_FLAGS: '-ffdx -e $BASH_ENV'
-  NODE_VERSION: 22.17.1
-  NODE_IMG: 'node:22.17.0-bullseye'
-  SEMANTIC_RELEASE_OPTS: ''
-  BASE_DN: 'sdk-payment.pro.clubmed'
-  AWS_STACK: 'sdk-payment'
-  DEPRECATION_MESSAGE: 'package deprecated from a manual action in CI - this version may be problematic'
-
-workflow:
-  rules:
-    # trigger for any tag
-    - if: '$CI_COMMIT_TAG'
-      when: always
-    # never trigger for releases creation
-    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
-      when: never
-    # trigger when a merge-request is opened but do not trigger the default branch pipeline to avoid duplicate
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_PIPELINE_SOURCE == "web"'
-    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
-      when: never
-    # final fallback: trigger for all commits & tags
-    - if: '$CI_COMMIT_BRANCH'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
+  NODE_VERSION: 24.17.0
+  NODE_IMG: "node:24.17.0-bookworm"
+  SEMANTIC_RELEASE_OPTS: ""
+  ENV:
+    value: "integration"
+    options:
+      - "integration"
+      - "staging"
+      - "production"
+    description: "The deployment target environment"
+  VERSION:
+    value: $CI_COMMIT_REF_NAME
+    description: "The version or branch name to be deployed on environment."
+  INFRA_BRANCH:
+    value: "main"
+    description: "ClubMed infra branch to deploy application"
+  WORKFLOW:
+    value: "build"
+    options:
+      - "build"
+      - "deploy"
+      - "rebase"
+      - "rebase-all"
+    description: "The workflow to be executed"
+  BRANCH_DEV: "develop"
+  BRANCH_MAIN: "main"
+  BRANCH_RELEASE: "next-release"
 
 stages:
-  - test_ci
   - test
   - storybook:dev
-#  - version:bump
-#  - version:storybook
-#  - version:publish
-#  - version:lifecycle
-#  - release:make
-#  - release:publish
-
-cache:
-  - key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .pnpm/
-    policy: pull
-    untracked: true
+  - release
+  - publish
+  - release:make
+  - deploy
+  - notification
 
 lint:
   extends: .node_install_dependencies
   stage: test
-  variables:
-    ESLINT_CODE_QUALITY_REPORT: gl-codequality.json
   script:
-    - pnpm run lint --quiet --format eslint-formatter-gitlab
+    - pnpm run lint --format gitlab > gl-codequality.json
   artifacts:
     when: always
     reports:
       codequality: gl-codequality.json
     expire_in: 1 week
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: '$WORKFLOW == "build"'
       when: always
-    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
-      when: never
-    - when: always
+    - when: never
+format:
+  extends: .node_install_dependencies
+  stage: test
+  script:
+    - pnpm run fmt:check
+  rules:
+    - if: '$WORKFLOW == "build"'
+      when: always
+    - when: never
 build:
   extends: .node_install_dependencies
   stage: test
   script:
+    - pnpm run check
     - pnpm run build
   artifacts:
     when: always
@@ -118,41 +108,171 @@ build:
       - packages/sandbox/dist/
     expire_in: 1 week
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: '$WORKFLOW == "build"'
       when: always
-    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
-      when: never
-    - when: always
+    - when: never
 test:
   extends: .node_install_dependencies
   stage: test
+  tags:
+    - xemoy05_heavy
   variables:
-    NODE_IMG: 'mcr.microsoft.com/playwright:v1.54.2'
+    NODE_IMG: "mcr.microsoft.com/playwright:v1.54.2"
   script:
+    - node -e "console.log(process.env.AWS_ECR_ID.split('').join(' '))"
     - npx playwright install --with-deps
     - pnpm run test
-  artifacts:
-    when: always
-    reports:
-      junit: ./reports/vitest/test-results.xml
-    expire_in: 1 week
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: '$WORKFLOW == "build"'
       when: always
-    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/'
-      when: never
-    - when: always
+    - when: never
 
 chromatic:
   extends: .node_install_dependencies
   stage: storybook:dev
   needs:
     - lint
+    - format
     - test
     - build
   script:
     - !reference [.chromatic_run, script]
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$WORKFLOW == "build" && $CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - if: '$WORKFLOW == "build" && $CI_COMMIT_REF_NAME == $BRANCH_DEV && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
       when: always
     - when: never
+
+release:
+  extends: .node_install_dependencies
+  stage: release
+  needs:
+    - lint
+    - format
+    - test
+    - build
+  rules:
+    - if: '$WORKFLOW == "build" && $CI_COMMIT_REF_NAME =~ /main|develop|next-release/'
+      when: on_success
+    - when: never
+  variables:
+    GIT_DEPTH: 0
+  artifacts:
+    when: always
+    paths:
+      - package.json
+      - packages/sdk/package.json
+    reports:
+      dotenv: release.env
+    expire_in: 1 week
+  script:
+    - !reference [.dotenv-source, script]
+    - echo "RELEASE_CREATED=false" > release.env
+    - pnpm run release
+
+publish:
+  extends: .node_install_dependencies
+  stage: publish
+  needs:
+    - job: release
+      artifacts: true
+  rules:
+    - if: '$WORKFLOW == "build" && $CI_COMMIT_REF_NAME =~ /main|develop|next-release/'
+      when: on_success
+    - when: never
+  script:
+    - |
+      if [ "$RELEASE_CREATED" != "true" ]; then
+        echo "No release generated. Skip npm publish."
+        exit 0
+      fi
+    - node -e "const fs=require('node:fs'); const path='packages/sdk/package.json'; const pkg=JSON.parse(fs.readFileSync(path,'utf8')); pkg.version=process.env.SDK_VERSION; fs.writeFileSync(path, JSON.stringify(pkg, null, 2)+'\n');"
+    - rm -rf ./packages/sdk/dist
+    - pnpm --filter @clubmed/caps run build
+    - cd ./packages/sdk/dist
+    - !reference [.publish-npm-package, script]
+
+# @Description Manually create a new release branch from develop
+make-release:
+  extends: .gitflow_release_create # from @clubmed/templates:CI/git-flow.yaml
+  stage: release:make
+  needs:
+    - lint
+    - format
+    - test
+    - build
+  rules:
+    - if: '$WORKFLOW == "build" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web") && $CI_COMMIT_REF_NAME == "develop"'
+      when: manual
+    - when: never
+  cache: {}
+
+deploy:
+  extends: .node_dind
+  stage: deploy
+  tags:
+    - xemoy05_heavy
+  rules:
+    - if: "$WORKFLOW == 'deploy'"
+      when: always
+    - when: never
+  script:
+    - !reference [.dotenv-source, script]
+    - !reference [.switch-branch, script]
+    - |
+      if echo "$VERSION" | grep -Eq '^v?[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
+        RELEASE_INFO_VERSION="$VERSION"
+      else
+        RELEASE_INFO_VERSION="$(printf '%s' "$VERSION" | tr '/' '-')-$(date -u +%Y%m%d%H%M%S)"
+      fi
+      export RELEASE_INFO_VERSION
+      echo "$RELEASE_INFO_VERSION" > packages/server/resources/release.info
+      echo "release.info version: $RELEASE_INFO_VERSION"
+      echo "PROVIDER: $PROVIDER"
+    - !reference [.deploy-on-heroku-with-parameters, script]
+    - !reference [.deploy-on-aws-with-parameters, script]
+
+post-deploy:
+  extends: .node_install_dependencies
+  stage: notification
+  dependencies:
+    - deploy
+  rules:
+    - if: "$WORKFLOW == 'deploy' && $ENV == 'production'"
+      when: always
+    - when: never
+  script:
+    - bunx @cmflow/cli@v3.0.1 cm jira-releases --project-id GPAY --component SDK-PAYMENT --tag $VERSION --verbose --update
+
+rebase:
+  extends: .node_install_dependencies
+  stage: deploy
+  rules:
+    - if: "$WORKFLOW == 'rebase'"
+      when: always
+    - when: never
+  script:
+    - !reference [.dotenv-source, script]
+    - yarn dlx -p @cmflow/cli cm push
+
+rebase-all:
+  extends: .node_install_dependencies
+  stage: deploy
+  rules:
+    - if: "$WORKFLOW == 'rebase-all'"
+      when: always
+    - when: never
+  script:
+    - !reference [.dotenv-source, script]
+    - yarn dlx -p @cmflow/cli cm republish
+
+notify:
+  stage: notification
+  trigger:
+    include: .gitlab/ci/notification.yml
+    forward:
+      pipeline_variables: true
+  rules:
+    - if: "$WORKFLOW == 'deploy'"
+      when: always

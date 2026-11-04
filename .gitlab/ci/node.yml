@@ -1,12 +1,12 @@
 variables:
-  NPM_CONFIG_CACHE: '~/.npm'
-  YARN_CACHE_FOLDER: '~/.yarn/cache'
-  YARN_GLOBAL_FOLDER: '~/.yarn/cache'
-  YARN_ENABLE_GLOBAL_CACHE: 'false'
-  PNPM_CACHE_FOLDER: '~/.pnpm-store'
+  NPM_CONFIG_CACHE: "~/.npm"
+  YARN_CACHE_FOLDER: "~/.yarn/cache"
+  YARN_GLOBAL_FOLDER: "~/.yarn/cache"
+  YARN_ENABLE_GLOBAL_CACHE: "false"
+  PNPM_CACHE_FOLDER: "~/.pnpm-store"
 
 .node_configure:
-  image: ${NODE_IMG:-node:${NODE_VERSION}-bullseye}
+  image: ${NODE_IMG:-node:${NODE_VERSION}-bookworm}
   before_script: |
     echo "Node version: $(node -v)"
 
@@ -80,12 +80,11 @@ variables:
 .node_dind:
   image: docker:cli
   variables:
+    DOCKER_BUILDKIT: "1"
     DOCKER_HOST: unix:///var/run/docker.sock
-    TESTCONTAINERS_RYUK_DISABLED: 'true'
+    TESTCONTAINERS_RYUK_DISABLED: "true"
   before_script:
     - !reference [.setup_proxy_linux, script]
-    - !reference [.setup_proxy_apt, script] # from @clubmed/templates:CI/library/commons.yaml
-    - export DOCKER_BUILDKIT=0
     - docker --version
     - apk add --no-cache bash nodejs npm
     - node -v && npm -v

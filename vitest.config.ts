@@ -2,9 +2,9 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
+import { playwright } from '@vitest/browser-playwright';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 const dirname =
@@ -14,13 +14,13 @@ const dirname =
 export default defineConfig({
   plugins: [
     react(),
-    tsconfigPaths({
-      projects: ['tsconfig.app.json'],
-    }),
     svgr({
       include: '**/*.svg?react',
     }),
   ],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -29,16 +29,20 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      all: true,
       include: ['packages/*/src/**/*.{tsx,ts}'],
       exclude: [
-        '**/packages/starter/**',
         '**/lib/atoms/icons',
         '**/*.spec.{ts,tsx}',
         '**/*.stories.{ts,tsx}',
         '**/*.d.ts',
+        '**/types.ts',
+        '**/types/**',
+        '**/models.ts',
         '**/__mocks__/**',
+        '**/*.msw.{ts,tsx}',
+        '**/__fixtures__/**',
         '**/tests/**',
+        '**/__generated__/**',
         'lib/atoms/Icons/**',
         'lib/tailwind/**',
         'lib/types/**',
@@ -53,10 +57,10 @@ export default defineConfig({
       ],
       thresholds: {
         autoUpdate: true,
-        statements: 16.74,
-        branches: 59.18,
-        functions: 35.08,
-        lines: 16.74,
+        statements: 91.39,
+        branches: 81.36,
+        functions: 87.98,
+        lines: 90.68,
       },
     },
     projects: [
@@ -72,10 +76,12 @@ export default defineConfig({
         ],
         test: {
           name: 'storybook',
+          testTimeout: 30000,
+          retry: 2,
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [
               {
                 browser: 'chromium',

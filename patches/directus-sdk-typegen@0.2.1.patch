@@ -1,0 +1,13 @@
+diff --git a/dist/utils.js b/dist/utils.js
+index efaa2df82160448df61a8963da4ff8676847da0f..e2f21802947510a3b5dca4144e4a6bce9a1c7aef 100644
+--- a/dist/utils.js
++++ b/dist/utils.js
+@@ -102,7 +102,7 @@ function determineFieldType(field) {
+         // Remove duplicate values while preserving order
+         const uniqueChoices = [...new Set(choiceValues)];
+         const unionOfChoices = uniqueChoices.join(' | ');
+-        if (['select-multiple', 'select-multiple-dropdown'].includes(field.meta.interface)) {
++        if (['select-multiple', 'select-multiple-dropdown', 'select-multiple-checkbox'].includes(field.meta.interface)) {
+             return `Array<${unionOfChoices}>`;
+         }
+         return unionOfChoices;

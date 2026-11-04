@@ -1,42 +1,37 @@
-import { SDKConfigProvider } from '@clubmed/payment-sdk/providers/SDKConfigProvider.js';
-import { createContext, PropsWithChildren } from 'react';
+import { createContext, PropsWithChildren, useContext } from 'react';
 
 import { useAppParams } from '../hooks/useAppParams.js';
 import { LoadingPage } from '../pages/LoadingPage.js';
+import { setFetcherConfig } from '../utils/fetcher.js';
 
-type AppContextType = {
-  isIframe: boolean;
-};
+type AppParams = NonNullable<ReturnType<typeof useAppParams>>;
 
-export const AppContext = createContext<AppContextType>({
-  isIframe: false,
-});
+const AppContext = createContext<AppParams | null>(null);
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
-  const { isIframe, url, values, api, oidc, callbackUrl } = useAppParams();
+  const params = useAppParams();
 
-  if (!values) {
+  if (!params) {
     return <LoadingPage />;
   }
 
-  return (
-    <AppContext.Provider
-      value={{
-        isIframe,
-      }}
-    >
-      <SDKConfigProvider
-        url={url}
-        locale={values.locale}
-        proposalId={values.proposalId}
-        bookingId={values.bookingId}
-        customerId={values.customerId}
-        api={api}
-        oidc={oidc}
-        callbackUrl={callbackUrl}
-      >
-        {children}
-      </SDKConfigProvider>
-    </AppContext.Provider>
-  );
+  setFetcherConfig({ locale: params.values.locale, oidc: params.oidc, api: params.api });
+
+  return <AppContext.Provider value={params}>{children}</AppContext.Provider>;
+};
+
+export const useAppContext = () => {
+  const params = useContext(AppContext);
+
+  if (!params) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+
+  const { bookingId, proposalId } = params.values;
+
+  return {
+    ...params,
+    id: (bookingId ?? proposalId) as string | undefined,
+    type: bookingId ? ('booking' as const) : ('proposal' as const),
+  };
 };

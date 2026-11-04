@@ -1,0 +1,19 @@
+.switch-branch:
+  script: |
+    case "$VERSION" in
+      v[0-9]*.[0-9]*.[0-9]*)
+        echo "Checking out tag $VERSION"
+        git fetch --force --tags origin
+        git checkout "tags/$VERSION" -b "${VERSION}-branch"
+        ;;
+      [0-9]*.[0-9]*.[0-9]*)
+        echo "Checking out tag $VERSION"
+        git fetch --force --tags origin
+        git checkout "tags/v$VERSION" -b "${VERSION}-branch"
+        ;;
+      *)
+        echo "Checking out branch $VERSION"
+        git fetch --force
+        git checkout --force -B "$VERSION" --track "origin/$VERSION"
+        ;;
+    esac

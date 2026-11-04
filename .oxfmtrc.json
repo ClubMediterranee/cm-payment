@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/coverage/**",
+    "**/storybook-static/**",
+    "**/__generated__/**"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.yml", "**/*.yaml"],
+      "options": { "singleQuote": false }
+    }
+  ],
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "bracketSameLine": false,
+  "useTabs": false
+}

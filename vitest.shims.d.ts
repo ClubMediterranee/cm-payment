@@ -1,5 +1,7 @@
 /// <reference types="@vitest/browser/providers/playwright" />
 
+export {};
+
 declare module 'jest-axe' {
   export function axe(element: any, options?: any): Promise<any>;
 }

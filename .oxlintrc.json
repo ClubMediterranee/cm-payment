@@ -1,0 +1,108 @@
+{
+  "plugins": ["react", "react-hooks", "jsx-a11y", "typescript", "vitest", "import"],
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
+  "settings": {
+    "react": {
+      "version": "19.2.0"
+    }
+  },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/no-unescaped-entities": "off",
+    "vitest/require-mock-type-parameters": "off",
+    "react/set-state-in-effect": "off"
+  },
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/coverage/**",
+    "**/storybook-static/**",
+    "**/.docusaurus/**",
+    "**/node_modules/**",
+    "**/__generated__/**"
+  ],
+  "overrides": [
+    {
+      "files": ["packages/sdk/src/embed/webcomponent/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../../**"],
+                "message": "CAPS embed wrappers must not import SDK modules outside src/embed (portable, zero SDK dependency)."
+              },
+              {
+                "group": [
+                  "@clubmed/*",
+                  "@tanstack/*",
+                  "react-hook-form",
+                  "@hookform/*",
+                  "zod",
+                  "tailwindcss",
+                  "tailwind-merge",
+                  "classnames",
+                  "clsx",
+                  "js-cookie",
+                  "qrcode.react",
+                  "react-error-boundary"
+                ],
+                "message": "CAPS embed wrappers only depend on react (and @module-federation/runtime + bridge-react for the webcomponent entry)."
+              },
+              {
+                "group": ["*.css", "*.scss"],
+                "message": "CAPS embed wrappers must not ship CSS."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/sdk/src/embed/shared/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../../**"],
+                "message": "CAPS embed wrappers must not import SDK modules outside src/embed (portable, zero SDK dependency)."
+              },
+              {
+                "group": [
+                  "@clubmed/*",
+                  "@tanstack/*",
+                  "react-hook-form",
+                  "@hookform/*",
+                  "zod",
+                  "tailwindcss",
+                  "tailwind-merge",
+                  "classnames",
+                  "clsx",
+                  "js-cookie",
+                  "qrcode.react",
+                  "react-error-boundary"
+                ],
+                "message": "CAPS embed wrappers only depend on react (and @module-federation/runtime + bridge-react for the webcomponent entry)."
+              },
+              {
+                "group": ["*.css", "*.scss"],
+                "message": "CAPS embed wrappers must not ship CSS."
+              },
+              {
+                "group": ["@module-federation/*"],
+                "message": "Only the webcomponent entry may depend on @module-federation packages."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

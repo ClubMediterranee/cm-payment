@@ -1,3 +1,4 @@
+import { WebStorageStateStore } from 'oidc-client-ts';
 import { PropsWithChildren } from 'react';
 import { AuthProvider as ReactOidcContext } from 'react-oidc-context';
 
@@ -7,7 +8,15 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const { oidc, onSigninCallback } = useAuthParams();
 
   return (
-    <ReactOidcContext {...oidc} onSigninCallback={onSigninCallback}>
+    <ReactOidcContext
+      {...oidc}
+      userStore={
+        new WebStorageStateStore({
+          store: localStorage,
+        })
+      }
+      onSigninCallback={onSigninCallback}
+    >
       {children}
     </ReactOidcContext>
   );

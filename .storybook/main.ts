@@ -13,6 +13,8 @@ const config: StorybookConfig = {
     // },
   ],
 
+  staticDirs: ['../packages/sdk/public'],
+
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-onboarding',
@@ -21,6 +23,7 @@ const config: StorybookConfig = {
     '@storybook/addon-themes',
     '@storybook/addon-vitest',
     '@chromatic-com/storybook',
+    'msw-storybook-addon',
   ],
   typescript: {
     reactDocgen: 'react-docgen',

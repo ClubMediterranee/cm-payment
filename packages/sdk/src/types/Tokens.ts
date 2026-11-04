@@ -2,6 +2,12 @@ export const TOKENS = {
   PaymentSchedule: Symbol('PaymentSchedule'),
   Cgv: Symbol('Cgv'),
   ContactChoice: Symbol('ContactChoice'),
-  IframeProvider: Symbol('IframeProvider'),
   PaymentProviders: Symbol('PaymentProviders'),
+  PaymentPanel: Symbol('PaymentPanel'),
+  BillingAddress: Symbol('BillingAddress'),
+  PaymentWidget: Symbol('PaymentWidget'),
+  CardInstallments: Symbol('CardInstallments'),
+  SubmitButton: Symbol('SubmitButton'),
+  Donation: Symbol('Donation'),
+  Comments: Symbol('Comments'),
 } as const;

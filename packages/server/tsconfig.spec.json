@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "node"]
+  },
+  "include": ["src/**/*.spec.ts", "src/**/*.ts", ".templates/**/*"],
+  "exclude": ["dist", "node_modules", "**/helpers/*Fixture.ts", "**/__mock__/**", "coverage"]
+}

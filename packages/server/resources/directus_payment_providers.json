@@ -1,0 +1,1338 @@
+[
+  {
+    "id": "MHIPAY",
+    "default_display_type": "hosted_field",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "CB", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [
+          {
+            "key": "script_url",
+            "type": "string",
+            "value": "https://stage-libs.hipay.com/js/sdkjs.js"
+          },
+          {
+            "key": "username",
+            "type": "string",
+            "value": "94685941.stage-secure-gateway.hipay-tpp.com"
+          },
+          {
+            "key": "password",
+            "type": "string",
+            "value": "Test_KDArvJ3iCVesjQj3XRriMkXs"
+          },
+          {
+            "key": "environment",
+            "type": "string",
+            "value": "stage"
+          }
+        ],
+        "requires_token": true,
+        "requires_expiry_date": false,
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MUPLIFT",
+    "default_display_type": "third_party_iframe",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_token": true,
+        "requires_expiry_date": false,
+        "allowed_actions": []
+      },
+      {
+        "locale": "en-US",
+        "status": "published",
+        "settings": [
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X"
+          },
+          {
+            "key": "code",
+            "type": "string",
+            "value": "UP-75709538-99"
+          }
+        ],
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
+      },
+      {
+        "locale": "en-CA",
+        "status": "published",
+        "settings": [
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X"
+          },
+          {
+            "key": "code",
+            "type": "string",
+            "value": "UP-75709538-99"
+          }
+        ],
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
+      },
+      {
+        "locale": "fr-CA",
+        "status": "published",
+        "settings": [
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "MtMtysEvV832jJUMYZed642uP5IbX6bo8NcGPe7X"
+          },
+          {
+            "key": "code",
+            "type": "string",
+            "value": "UP-75709538-99"
+          }
+        ],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MHIPAYPP",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Paypal"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "de-DE",
+        "status": "published",
+        "settings": [
+          {
+            "key": "script_url",
+            "type": "string",
+            "value": "https://stage-libs.hipay.com/js/sdkjs.js"
+          },
+          {
+            "key": "username",
+            "type": "string",
+            "value": "94685941.stage-secure-gateway.hipay-tpp.com"
+          },
+          {
+            "key": "password",
+            "type": "string",
+            "value": "Test_KDArvJ3iCVesjQj3XRriMkXs"
+          },
+          {
+            "key": "environment",
+            "type": "string",
+            "value": "stage"
+          }
+        ],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EHIPAYBNPL",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [
+          {
+            "key": "script_url",
+            "type": "string",
+            "value": "https://assets-staging.oney.io/build/loader.min.js"
+          },
+          {
+            "key": "min_days_before_departure",
+            "type": "number",
+            "value": 45
+          }
+        ],
+        "allowed_actions": []
+      },
+      {
+        "locale": "fr-FR",
+        "status": "published",
+        "settings": [
+          {
+            "key": "merchant_id",
+            "type": "string",
+            "value": "06c9da03e8d944ceb1d5b1448479daf8"
+          },
+          {
+            "key": "psp_guid",
+            "type": "string",
+            "value": "15e77c91b8544a2c8e63048355ee886a"
+          },
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "57fd561153da460498a03636ce12e4e0"
+          },
+          {
+            "key": "max_amount",
+            "type": "number",
+            "value": 20000
+          },
+          {
+            "key": "payment_mode",
+            "type": "string",
+            "value": "4x"
+          },
+          {
+            "key": "is_free",
+            "type": "boolean",
+            "value": false
+          }
+        ],
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
+      },
+      {
+        "locale": "fr-BE",
+        "status": "published",
+        "settings": [
+          {
+            "key": "merchant_id",
+            "type": "string",
+            "value": "e1a97f76-8c60-4763-9069-83fea5fd4781"
+          },
+          {
+            "key": "psp_guid",
+            "type": "string",
+            "value": "989e2d3e-1456-4fb0-9276-d78ae039a669"
+          },
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "d87c755fc77e457e866ae82c3ad7cd2f"
+          },
+          {
+            "key": "max_amount",
+            "type": "number",
+            "value": 3000
+          },
+          {
+            "key": "payment_mode",
+            "type": "string",
+            "value": "3x"
+          },
+          {
+            "key": "is_free",
+            "type": "boolean",
+            "value": false
+          }
+        ],
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
+      },
+      {
+        "locale": "nl-BE",
+        "status": "published",
+        "settings": [
+          {
+            "key": "merchant_id",
+            "type": "string",
+            "value": "e1a97f76-8c60-4763-9069-83fea5fd4781"
+          },
+          {
+            "key": "psp_guid",
+            "type": "string",
+            "value": "989e2d3e-1456-4fb0-9276-d78ae039a669"
+          },
+          {
+            "key": "api_key",
+            "type": "string",
+            "value": "d87c755fc77e457e866ae82c3ad7cd2f"
+          },
+          {
+            "key": "max_amount",
+            "type": "number",
+            "value": 3000
+          },
+          {
+            "key": "payment_mode",
+            "type": "string",
+            "value": "3x"
+          },
+          {
+            "key": "is_free",
+            "type": "boolean",
+            "value": false
+          }
+        ],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EGLOBALCOLLECT",
+    "default_display_type": "iframe",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EPAYGATE",
+    "default_display_type": "iframe",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MCYBERSOURCE",
+    "default_display_type": "hosted_field",
+    "confirmation_strategy": "notify",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_token": true,
+        "requires_expiry_date": true,
+        "allowed_actions": []
+      },
+      {
+        "locale": "en-US",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "fr-CA",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "E99BILL",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["UnionPay"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EALIPAY",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Alipay"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ECYBERSOURCE",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "en-US",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
+      },
+      {
+        "locale": "fr-CA",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
+      }
+    ]
+  },
+  {
+    "id": "ECYBSSOAPI",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EHIPAY",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "CB", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
+      }
+    ]
+  },
+  {
+    "id": "EHIPAYCMTA",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EIYZICO",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ENETPAY",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ESBER",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
+      }
+    ]
+  },
+  {
+    "id": "ESSPSCT",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAY",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAY_EMAIL",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAY_PHONE",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EWECHAT",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Wechat"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
+      }
+    ]
+  },
+  {
+    "id": "M99BILLW",
+    "default_display_type": "custom",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [
+          {
+            "key": "blocked_user_agent_pattern",
+            "type": "string",
+            "value": "MicroMessenger"
+          },
+          {
+            "key": "qr_timeout_seconds",
+            "type": "number",
+            "value": 300
+          },
+          {
+            "key": "poll_interval_seconds",
+            "type": "number",
+            "value": 2
+          }
+        ],
+        "allowed_actions": []
+      },
+      {
+        "locale": "zh-CN",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "en-CN",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAY_SMS",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "NAPAY",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "NODELCRERE_CHEQUE",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "NODELCRERE_TRANSFER",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ECYBSPP",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Paypal"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ECYBSCMTA",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYCXO",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYSCT",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYCYBS",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYGC",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MHIPAYVW",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "fr-CH",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
+      }
+    ]
+  },
+  {
+    "id": "EGCPIX",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["PIX"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "WD",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": []
+      },
+      {
+        "locale": "en-HK",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "en-SG",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "en-MY",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "en-TW",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "en-TH",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "zh-TW",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      },
+      {
+        "locale": "es-AR",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYIZC",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EIXOPAY",
+    "default_display_type": "hosted_field",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [
+          {
+            "key": "script_url",
+            "type": "string",
+            "value": "https://sandbox.ixopay.com/js/integrated/payment.1.3.min.js"
+          },
+          {
+            "key": "integration_key",
+            "type": "string",
+            "value": "e9Qy2Q900KAfzf3dAuks"
+          }
+        ],
+        "requires_token": true,
+        "requires_expiry_date": true,
+        "requires_card_holder": true,
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EIXOPAYPP",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Paypal"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYPIX",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["PIX"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYPP",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Paypal"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EVOXPAYSTRIPE",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": ["Visa", "Mastercard", "AmericanExpress"],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [],
+        "requires_contact_choice": ["GO", "PARTNERS"],
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "OF",
+    "default_display_type": "redirect",
+    "confirmation_strategy": "status",
+    "logos": [],
+    "settings": [
+      {
+        "locale": "*",
+        "status": "published",
+        "settings": [
+          {
+            "key": "requires_comments",
+            "type": "boolean",
+            "value": true
+          }
+        ],
+        "allowed_actions": []
+      },
+      {
+        "locale": "zh-CN",
+        "status": "published",
+        "allowed_actions": [
+          "PAYMENT_CART",
+          "PAYMENT_RESA",
+          "PAYMENT_OPTION",
+          "PAYMENT_SOLDE",
+          "PAYMENT_PARTIAL",
+          "PAYMENT_UPGRADE_ROOM",
+          "PAYMENT_SERVICES_IN_OPTION"
+        ]
+      }
+    ]
+  }
+]

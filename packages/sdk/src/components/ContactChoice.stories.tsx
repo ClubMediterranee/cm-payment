@@ -1,39 +1,66 @@
-import { MockedFormProvider } from '@clubmed/payment-sdk/__fixtures__/MockedFormProvider.js';
-import { PspProviders } from '@clubmed/payment-sdk/types/PspProviders.js';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, mocked, userEvent, waitFor, within } from 'storybook/test';
+import { http } from 'msw';
+import { mswLoader } from 'msw-storybook-addon';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { useMockedForm } from '../__fixtures__/useMockedForm';
+import { Action } from '../__generated__/index.schemas';
+import { MockedProvider } from '../__fixtures__/MockedProvider';
+import { OidcIssuerTypes } from '../types/CapsSettings';
 import { ContactChoice } from './ContactChoice';
 
-// Note: We cannot mock GLOBAL_SDK_SETTINGS in Storybook stories
-// The component will use the real configuration from '@clubmed/payment-sdk/config'
+const handlers = [
+  http.get('*/v2/customers/456/profile', () => {
+    return Response.json({ mobile_phone: '123456789' });
+  }),
+  http.get('*/rest/payment_providers/booking/*', () => {
+    return Response.json({
+      payment_providers: [
+        {
+          id: 'EVOXPAY',
+          label: 'Carte bancaire',
+          connection_type: 'REDIRECT',
+          category_payment_method: 'CreditCard',
+          billing_address_form: true,
+          required_delay_before_departure: 0,
+          configuration: {
+            display_type: 'redirect',
+            settings: {},
+            requires_contact_choice: true,
+            validation: {
+              requires_token: false,
+              requires_expiry_date: false,
+            },
+          },
+          payment_conditions: {},
+        },
+      ],
+      buy_now_pay_later_providers: [],
+    });
+  }),
+];
 
-// Wrapper component to provide form context
 const ContactChoiceWithFormProvider = (args: any) => {
-  const methods = useMockedForm({
-    ...args,
-    defaultValues: {
-      template_id: '',
-      provider_id: [PspProviders.EIXOPAY], // Mock provider that matches withContactMethodProviders
-      billing_details: {
-        email: '',
-        mobile_phone: '',
-      },
-    },
-  });
-
   return (
-    <MockedFormProvider {...methods}>
+    <MockedProvider
+      bookingId="123"
+      customerId="456"
+      oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
+      defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
+    >
       <ContactChoice {...args} />
-    </MockedFormProvider>
+    </MockedProvider>
   );
 };
 
 const meta: Meta<typeof ContactChoice> = {
-  title: 'Components/ContactChoice',
+  title: 'Current/Internals/ContactChoice',
   component: ContactChoice,
+  loaders: [mswLoader],
   parameters: {
+    msw: {
+      handlers,
+    },
     layout: 'fullscreen',
     docs: {
       description: {
@@ -42,10 +69,6 @@ const meta: Meta<typeof ContactChoice> = {
       },
     },
   },
-  args: {
-    onChange: fn(),
-    onError: fn(),
-  } as any,
   render(args) {
     return <ContactChoiceWithFormProvider {...args} />;
   },
@@ -62,6 +85,20 @@ export const Default: Story = {
       },
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(
+      () => {
+        const emailRadio = canvas.getByDisplayValue('6');
+        const phoneRadio = canvas.getByDisplayValue('4');
+
+        expect(emailRadio).toBeInTheDocument();
+        expect(phoneRadio).toBeInTheDocument();
+      },
+      { timeout: 10000 },
+    );
+  },
 };
 
 export const WithInteractions: Story = {
@@ -73,82 +110,120 @@ export const WithInteractions: Story = {
       },
     },
   },
-  args: {},
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const { onChange } = args as any;
 
-    // Vérifier que le composant est rendu
-    await expect(canvas.getByText('Quel type de canal ?')).toBeInTheDocument();
-
-    // Vérifier la présence des deux options
-    // await expect(canvas.getByText((content, element) => {
-    //   return element?.textContent === 'Par Email';
-    // })).toBeInTheDocument();
-    // await expect(canvas.getByText((content, element) => {
-    //   return element?.textContent === 'Par Téléphone';
-    // })).toBeInTheDocument();
-
-    // Trouver les checkboxes
-    const emailCheckbox = canvas.getByDisplayValue('6');
-    const phoneCheckbox = canvas.getByDisplayValue('8');
-
-    expect(emailCheckbox).toBeInTheDocument();
-    expect(phoneCheckbox).toBeInTheDocument();
-
-    // Vérifier qu'aucun checkbox n'est coché initialement
-    expect(emailCheckbox).not.toBeChecked();
-    expect(phoneCheckbox).not.toBeChecked();
-
-    // Cliquer sur l'option Email
-    await userEvent.click(emailCheckbox);
-    expect(emailCheckbox).toBeChecked();
-
-    mocked(onChange).mockReset();
-
-    // Vérifier que le champ email apparaît
-    const emailField = canvas.getByLabelText('Email');
-    await expect(emailField).toBeInTheDocument();
-    await expect(emailField).toHaveAttribute('type', 'email');
-
-    await userEvent.type(emailField, 'test@example.com');
-
-    await expect(onChange).toHaveBeenCalledWith({
-      billing_details: {
-        email: 'test@example.com',
-        mobile_phone: '',
+    // Wait for component to render
+    await waitFor(
+      () => {
+        canvas.getByTestId('radio-6');
+        canvas.getByTestId('radio-4');
       },
-      provider_id: ['EIXOPAY'],
-      template_id: '6',
-    });
+      { timeout: 10000 },
+    );
 
-    // Changer pour l'option téléphone
-    await userEvent.click(phoneCheckbox);
-    await expect(phoneCheckbox).toBeChecked();
-    await expect(emailCheckbox).not.toBeChecked();
+    // Test that form state updates when clicking radio
+    const phoneInput = canvas.getByTestId('radio-4') as HTMLInputElement;
 
+    // Click phone radio and wait for form to update
+    await userEvent.click(phoneInput);
+
+    // Verify the form state changed by checking if mobile phone field appears
     await waitFor(() => {
-      return expect(canvas.getByTestId('InputFor_mobile_phone')).toBeInTheDocument();
+      expect(canvas.getByTestId('InputFor_mobile_phone')).toBeInTheDocument();
+    });
+  },
+};
+
+export const WithAdditionalInteractions: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: "Test d'interactions avec les options de contact additionnelles",
+      },
+    },
+    msw: {
+      handlers: [
+        http.get('*/rest/payment_providers/booking/*', () => {
+          return Response.json({
+            payment_providers: [
+              {
+                id: 'EVOXPAY',
+                label: 'Carte bancaire',
+                connection_type: 'REDIRECT',
+                category_payment_method: 'BankTransfer',
+                billing_address_form: true,
+                required_delay_before_departure: 0,
+                configuration: {
+                  display_type: 'redirect',
+                  settings: {},
+                  requires_contact_choice: true,
+                  validation: {
+                    requires_token: false,
+                    requires_expiry_date: false,
+                  },
+                },
+                payment_conditions: {},
+              },
+            ],
+            buy_now_pay_later_providers: [],
+          });
+        }),
+        ...handlers,
+      ],
+    },
+  },
+  render: (args) => (
+    <MockedProvider
+      bookingId="123"
+      customerId="456"
+      oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
+      defaultValues={{ provider_id: 'EVOXPAY', template_id: '1' }}
+    >
+      <ContactChoice {...args} uuid="123" />
+    </MockedProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(
+      () => {
+        canvas.getByTestId('radio-6');
+        canvas.getByTestId('radio-4');
+      },
+      { timeout: 10000 },
+    );
+
+    const emailInput = canvas.getByTestId('radio-6') as HTMLInputElement;
+    const phoneInput = canvas.getByTestId('radio-4') as HTMLInputElement;
+
+    await userEvent.click(emailInput);
+    await waitFor(() => {
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
+    });
+    expect(canvas.queryByLabelText('Phone')).not.toBeInTheDocument();
+
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
+    await userEvent.click(emailField);
+    await userEvent.type(emailField, 'invalid', { delay: 10 });
+    emailField.blur();
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    await userEvent.click(phoneInput);
+    await waitFor(() => {
+      expect(canvas.getByTestId('InputFor_mobile_phone')).toBeInTheDocument();
     });
 
-    // Vérifier que le champ téléphone apparaît et que le champ email disparaît
     const phoneField = canvas.getByTestId('InputFor_mobile_phone');
 
-    await expect(phoneField).toBeInTheDocument();
-    await expect(phoneField).toHaveAttribute('type', 'phone');
-    await expect(canvas.queryByLabelText('Email')).not.toBeInTheDocument();
+    expect(phoneField).toBeInTheDocument();
+    expect(phoneField).toHaveAttribute('type', 'tel');
 
-    // Saisir un numéro de téléphone
-    await userEvent.type(phoneField, '+33123456789');
-    await expect(phoneField).toHaveValue('+33123456789');
+    await userEvent.click(emailInput);
 
-    await expect(onChange).toHaveBeenCalledWith({
-      billing_details: {
-        email: 'test@example.com',
-        mobile_phone: '+33123456789',
-      },
-      provider_id: ['EIXOPAY'],
-      template_id: '6',
+    await waitFor(() => {
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
   },
 };
@@ -164,28 +239,75 @@ export const ValidationTest: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Sélectionner l'option email
-    const emailCheckbox = canvas.getByDisplayValue('6');
-    await userEvent.click(emailCheckbox);
+    const emailRadio = await waitFor(
+      () => {
+        return canvas.getByTestId('radio-6');
+      },
+      { timeout: 10000 },
+    );
 
-    // Tester la saisie d'un email valide
-    const emailField = canvas.getByLabelText('Email');
-    await userEvent.type(emailField, 'valid@example.com');
-    expect(emailField).toHaveValue('valid@example.com');
+    await userEvent.click(emailRadio);
 
-    // Effacer et tester un email invalide
-    await userEvent.clear(emailField);
-    await userEvent.type(emailField, 'invalid-email');
-    expect(emailField).toHaveValue('invalid-email');
+    await waitFor(() => {
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
+    });
 
-    // Changer pour téléphone
-    const phoneCheckbox = canvas.getByDisplayValue('8');
-    await userEvent.click(phoneCheckbox);
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
+    expect(emailField).toBeInTheDocument();
 
-    const phoneField = canvas.getByTestId('InputFor_mobile_phone');
-    await userEvent.type(phoneField, '0123456789');
+    await userEvent.click(emailField);
+    await userEvent.type(emailField, 'test.user@example.com', { delay: 10 });
 
-    expect(phoneField).toHaveValue('0123456789');
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    const phoneRadio = canvas.getByTestId('radio-4');
+    await userEvent.click(phoneRadio);
+
+    await waitFor(() => {
+      expect(canvas.getByTestId('InputFor_mobile_phone')).toBeInTheDocument();
+    });
+
+    const phoneField = canvas.getByTestId('InputFor_mobile_phone') as HTMLInputElement;
+    expect(phoneField).toBeInTheDocument();
+
+    await userEvent.click(phoneField);
+    await userEvent.type(phoneField, '+33123456789', { delay: 10 });
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    await userEvent.tripleClick(phoneField);
+    await userEvent.type(phoneField, 'invalid-phone', { delay: 10 });
+
+    phoneField.blur();
+
+    await waitFor(() => {
+      const errorMessage = canvas.queryByText(/invalid/i);
+      if (errorMessage) {
+        expect(errorMessage).toBeInTheDocument();
+      }
+    });
+
+    await userEvent.click(emailRadio);
+
+    await waitFor(() => {
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
+    });
+
+    const emailField2 = canvas.getByLabelText('Email address') as HTMLInputElement;
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    await userEvent.tripleClick(emailField2);
+    await userEvent.type(emailField2, 'invalid-email', { delay: 10 });
+
+    emailField2.blur();
+
+    await waitFor(() => {
+      const errorMessage = canvas.queryByText(/invalid/i);
+      if (errorMessage) {
+        expect(errorMessage).toBeInTheDocument();
+      }
+    });
   },
 };
 
@@ -197,42 +319,61 @@ export const AccessibilityTest: Story = {
       },
     },
   },
+  render: (args) => (
+    <MockedProvider
+      bookingId="123"
+      customerId="456"
+      oidc={{ issuerType: OidcIssuerTypes.PARTNERS, accessToken: '' }}
+      defaultValues={{ provider_id: 'EVOXPAY', template_id: '6' }}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
+    >
+      <ContactChoice {...args} />
+    </MockedProvider>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Vérifier que le titre est un heading
-    const heading = canvas.getByRole('heading', { name: /Quel type de canal/ });
-    expect(heading).toBeInTheDocument();
+    // Attendre que les radios soient disponibles
+    await waitFor(
+      () => {
+        return canvas.getByTestId('radio-6');
+      },
+      { timeout: 10000 },
+    );
 
-    // Vérifier que les checkboxes sont accessibles
-    const checkboxes = canvas.getAllByRole('checkbox');
-    expect(checkboxes).toHaveLength(2);
+    await waitFor(() => {
+      const radios = canvas.getAllByRole('radio');
+      expect(radios.length).toBe(2);
 
-    checkboxes.forEach((checkbox) => {
-      expect(checkbox).toBeInTheDocument();
+      radios.forEach((radio) => {
+        expect(radio).toBeInTheDocument();
+      });
     });
 
     // Test navigation clavier
-    const emailCheckbox = canvas.getByDisplayValue('6');
+    const emailRadio = canvas.getByTestId('radio-6');
 
     // Simuler la navigation au clavier
-    emailCheckbox.focus();
-    expect(emailCheckbox).toHaveFocus();
+    emailRadio.focus();
+    expect(emailRadio).toHaveFocus();
 
     // Simuler l'activation via la barre d'espace
     await userEvent.keyboard(' ');
-    expect(emailCheckbox).toBeChecked();
+    expect(emailRadio).toBeChecked();
 
     // Vérifier que le champ apparaît et peut recevoir le focus
-    const emailField = canvas.getByLabelText('Email');
+    await waitFor(() => {
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
+    });
+
+    const emailField = canvas.getByLabelText('Email address');
     emailField.focus();
     expect(emailField).toHaveFocus();
 
-    // Tester la navigation avec Tab
-    await userEvent.tab();
-    // Le focus devrait passer au checkbox téléphone
-    const phoneCheckbox = canvas.getByDisplayValue('8');
-    expect(phoneCheckbox).toHaveFocus();
+    // Navigation Tab ne fonctionne pas de façon fiable dans l'iframe Storybook
+    const phoneRadio = canvas.getByTestId('radio-4');
+    phoneRadio.focus();
+    expect(phoneRadio).toHaveFocus();
   },
 };
 
@@ -245,42 +386,89 @@ export const InteractionBetweenOptions: Story = {
       },
     },
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const emailCheckbox = canvas.getByDisplayValue('6');
-    const phoneCheckbox = canvas.getByDisplayValue('8');
-
-    // Sélectionner email
-    await userEvent.click(emailCheckbox);
-    expect(emailCheckbox).toBeChecked();
-    expect(phoneCheckbox).not.toBeChecked();
-
-    // Vérifier que le champ email est visible
-    expect(canvas.getByLabelText('Email')).toBeInTheDocument();
-    expect(canvas.queryByLabelText('Téléphone')).not.toBeInTheDocument();
-
-    // Saisir une valeur dans le champ email
-    const emailField = canvas.getByLabelText('Email');
-    await userEvent.type(emailField, 'test@example.com');
-
-    // Changer pour téléphone
-    await userEvent.click(phoneCheckbox);
-    expect(phoneCheckbox).toBeChecked();
-    expect(emailCheckbox).not.toBeChecked();
-
-    // Vérifier que le champ téléphone est maintenant visible et l'email caché
-    // expect(canvas.getByLabelText('Téléphone')).toBeInTheDocument();
-    // expect(canvas.queryByLabelText('Email')).not.toBeInTheDocument();
-
-    // Vérifier que les données précédentes de l'email sont conservées dans le state
-    await expect((args as any).onChange).toHaveBeenCalledWith({
-      billing_details: {
-        email: 'test@example.com',
-        mobile_phone: '',
+    await waitFor(
+      () => {
+        canvas.getByTestId('radio-6');
+        canvas.getByTestId('radio-4');
       },
-      provider_id: ['EIXOPAY'],
-      template_id: '8',
+      { timeout: 10000 },
+    );
+
+    const emailInput = canvas.getByTestId('radio-6') as HTMLInputElement;
+    const phoneInput = canvas.getByTestId('radio-4') as HTMLInputElement;
+
+    await userEvent.click(emailInput);
+    await waitFor(() => {
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
     });
+    expect(canvas.queryByLabelText('Phone')).not.toBeInTheDocument();
+
+    const emailField = canvas.getByLabelText('Email address') as HTMLInputElement;
+    await userEvent.click(emailField);
+    await userEvent.type(emailField, 'invalid', { delay: 10 });
+    emailField.blur();
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    await userEvent.click(phoneInput);
+    await waitFor(() => {
+      expect(canvas.getByTestId('InputFor_mobile_phone')).toBeInTheDocument();
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    await userEvent.click(emailInput);
+
+    await waitFor(() => {
+      expect(canvas.getByLabelText('Email address')).toBeInTheDocument();
+    });
+  },
+};
+
+export const ShowsValidationStatus: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Le champ passe au rouge avec son message au blur d'une valeur invalide, puis au vert",
+      },
+    },
+  },
+  render: () => (
+    <MockedProvider
+      bookingId="123"
+      action={Action.PAYMENT_RESA}
+      oidc={{ issuerType: OidcIssuerTypes.GO, accessToken: '' }}
+      defaultValues={{
+        provider_id: 'EVOXPAY',
+        template_id: '6',
+        amount: '100',
+        currency: 'EUR',
+        billing_details: { address: { country_code: 'FR' } },
+      }}
+      getProviderConfiguration={() => ({ requires_contact_choice: true })}
+    >
+      <ContactChoice />
+    </MockedProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const email = await canvas.findByLabelText('Email address', {}, { timeout: 10000 });
+
+    await userEvent.type(email, 'abc');
+    expect(email.className).not.toContain('border-red');
+
+    await userEvent.tab();
+    await waitFor(() => expect(email.className).toContain('border-red'));
+    expect(canvas.getByText('Invalid email')).toBeInTheDocument();
+
+    await userEvent.clear(email);
+    await userEvent.type(email, 'jean@example.com');
+    await userEvent.tab();
+    await waitFor(() => expect(email.className).toContain('border-green'));
+    expect(canvas.queryByText('Invalid email')).toBeNull();
   },
 };

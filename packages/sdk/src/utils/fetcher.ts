@@ -1,27 +1,39 @@
-import { getSDKPaymentOptions } from '@clubmed/payment-sdk/providers/SDKConfigProvider.js';
+import type { BadRequestErrorModel, BadRequestModel } from '../__generated__/index.schemas';
+import { getPaymentConfig } from '../providers/PaymentConfigProvider';
+import type { CapsSettings } from '../types/CapsSettings';
 
-export const fetcher = async <T>(
-  {
-    url,
-    method,
-    params = {},
-    headers,
-    data,
-  }: {
-    url: string;
-    method: string;
-    headers?: Record<string, string>;
-    params?: Record<string, unknown>;
-    data?: unknown;
-  },
-  auth?: { withAuth: boolean },
-): Promise<T> => {
-  const withAuth = auth?.withAuth || false;
+export type FetcherConfig = Pick<CapsSettings, 'locale' | 'oidc' | 'api'>;
+
+type ErrorNode = BadRequestModel | BadRequestErrorModel;
+
+function findDeepestError(errors?: ErrorNode[]): ErrorNode | undefined {
+  if (!Array.isArray(errors) || errors.length === 0) return undefined;
+  const first = errors[0] as BadRequestModel;
+  return findDeepestError(first.errors) ?? first;
+}
+
+export const fetcher = async <T>({
+  baseUrl,
+  url,
+  method,
+  params = {},
+  headers,
+  data,
+  config,
+}: {
+  baseUrl?: string;
+  url: string;
+  method: string;
+  headers?: Record<string, string>;
+  params?: Record<string, unknown>;
+  data?: unknown;
+  config?: FetcherConfig;
+}): Promise<T> => {
   const {
     locale,
-    oidc: { accessToken },
-    api: { url: apiUrl, apiKey },
-  } = getSDKPaymentOptions();
+    oidc: { accessToken, issuerType },
+    api: { apiKey, url: baseApiUrl },
+  } = config ?? getPaymentConfig();
 
   const queryParams = new URLSearchParams();
 
@@ -31,7 +43,7 @@ export const fetcher = async <T>(
     }
   });
 
-  const endpoint = `${apiUrl}${url}?${queryParams.toString()}`;
+  const endpoint = `${baseUrl || baseApiUrl || ''}${url}?${queryParams.toString()}`;
 
   const opts = {
     method,
@@ -39,11 +51,12 @@ export const fetcher = async <T>(
       accept: 'application/json',
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
-      ...(withAuth && accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      ...(data ? { body: JSON.stringify(data) } : {}),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       'accept-language': locale,
+      'x-issuer-type': issuerType,
       ...headers,
     },
+    ...(data ? { body: JSON.stringify(data) } : {}),
   };
 
   const response = await fetch(endpoint, opts);
@@ -51,11 +64,10 @@ export const fetcher = async <T>(
   const json = await response.json();
 
   if (!response.ok) {
-    if (json.status_code === 404) {
-      throw new Error(json.error_description);
-    }
+    const deepest = findDeepestError(json.errors);
+    const errorDescription = deepest?.error_description ?? json.message;
 
-    throw new Error(json.errors[0].error_description);
+    throw new Error(errorDescription);
   }
 
   return json;

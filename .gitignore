@@ -29,3 +29,4 @@ storybook-static
 
 tsconfig.tsbuildinfo
 tsconfig.*.tsbuildinfo
+version.json

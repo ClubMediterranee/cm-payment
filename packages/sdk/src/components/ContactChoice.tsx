@@ -1,72 +1,119 @@
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
-import { Icon, type IconicNames } from '@clubmed/trident-icons';
-import { Card } from '@clubmed/trident-ui/molecules/Card';
-import { Checkbox, Checkboxes } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
-import { TextField } from '@clubmed/trident-ui/molecules/Forms/TextField';
-import { useFormContext } from 'react-hook-form';
+import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
+import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
+import clsx from 'clsx';
 
-import { GLOBAL_SDK_SETTINGS } from '../config';
+import { useContactChoice } from '../hooks/useContactChoice';
+import { useProfilePrefill } from '../hooks/useProfilePrefill';
+import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
+import { useFormContext, useWatch } from '../hooks/utils/useForm';
+import { TOKENS } from '../types/Tokens';
+import { renderTemplate } from '../utils/renderTemplate';
+import { RadioSkeleton, TextFieldSkeleton } from './ui/skeletons';
 
 type Props = {
-  contactMethodProviders?: string[];
-  choices?: {
-    id: string;
-    name: string;
-    label: string;
-    type: string;
-    icon: IconicNames;
-  }[];
+  className?: string;
+  reference?: string;
+  uuid?: string;
 };
 
-export const ContactChoice = ({
-  contactMethodProviders = GLOBAL_SDK_SETTINGS.withContactMethodProviders,
-  choices = GLOBAL_SDK_SETTINGS.contactChoices,
-}: Props) => {
-  const { register, setValue, watch } = useFormContext();
-  const watchedTemplateId = watch('template_id');
-  const watchedProviderId = watch('provider_id');
-  const displayContactChoice = contactMethodProviders.find((id) => watchedProviderId?.includes(id));
+export const ContactChoice = ({ className, reference, uuid }: Props) => {
+  const { content } = useCapsConfigContext();
+  const { setValue, formState } = useFormContext();
+  const templateId = useWatch('template_id');
+  const billingDetails = useWatch('billing_details') || {};
 
-  if (!displayContactChoice) {
+  const { contactChoices, shouldDisplay, templateIds } = useContactChoice({
+    reference,
+    uuid,
+  });
+  useProfilePrefill(!!shouldDisplay);
+
+  if (!shouldDisplay) {
     return null;
   }
 
+  const displayOrder = [templateIds.email, templateIds.mobilePhone, templateIds.call];
+  const orderedChoices = [...contactChoices].sort(
+    (a, b) => displayOrder.indexOf(a.templateId) - displayOrder.indexOf(b.templateId),
+  );
+
   return (
-    <div className="w-full flex flex-col gap-16">
-      <h2 className="text-h3 font-serif">Quel type de canal ?</h2>
+    <div className={className}>
+      <div className="flex flex-wrap gap-20">
+        {orderedChoices.map((choice) => {
+          const isCurrentTemplate = choice.templateId === templateId;
+          const { input } = choice;
+          const field = input && content.contactChoice.fields[input.name];
+          const fieldError = input && formState.errors.billing_details?.[input.name];
+          const isTouched = input && formState.touchedFields.billing_details?.[input.name];
 
-      <Checkboxes className="flex flex-col gap-16">
-        {choices.map(({ id, name, type, icon, label }) => {
-          const isChecked = id === watchedTemplateId;
           return (
-            <Card title="" key={id} icon={icon as keyof typeof Icon}>
-              <div className="flex flex-col space-y-16 w-full">
-                <Checkbox
-                  value={id}
-                  {...register('template_id')}
-                  onChange={setValue}
-                  checked={isChecked}
-                >
-                  <span data-textid="ContactChoicesLabel">Par {label}</span>
-                </Checkbox>
-
-                {isChecked && (
-                  <TextField
-                    type={type}
-                    {...register(`billing_details.${name}`)}
-                    data-name={'InputFor_' + name}
-                    data-testid={'InputFor_' + name}
-                    onChange={setValue}
-                    label={label}
-                  />
-                )}
-              </div>
-            </Card>
+            <div
+              key={choice.templateId}
+              className={clsx(
+                'flex min-w-256 flex-1 flex-col gap-16 rounded-16 border-2 bg-white p-16',
+                isCurrentTemplate ? 'border-black' : 'border-lightGrey',
+              )}
+            >
+              <Radio
+                name="template_id"
+                value={choice.templateId}
+                checked={isCurrentTemplate}
+                disabled={!!choice.radio.disabled}
+                onChange={() => setValue('template_id', choice.templateId)}
+                data-testid={`radio-${choice.templateId}`}
+              >
+                <span className="font-bold" data-textid="ContactChoicesLabel">
+                  {renderTemplate(content.contactChoice.choiceLabel, {
+                    label: choice.radio.label,
+                  })}
+                </span>
+              </Radio>
+              {input && field && (
+                <TextField
+                  type={input.type}
+                  value={billingDetails[input.name] || ''}
+                  onChange={(_, value) =>
+                    setValue(`billing_details.${input.name}`, value, {
+                      shouldValidate: !!isTouched,
+                    })
+                  }
+                  onBlur={() =>
+                    setValue(`billing_details.${input.name}`, billingDetails[input.name] || '', {
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    })
+                  }
+                  disabled={!isCurrentTemplate}
+                  data-name={`InputFor_${input.name}`}
+                  data-testid={`InputFor_${input.name}`}
+                  label={field.label}
+                  placeholder={field.placeholder}
+                  errorMessage={fieldError?.message}
+                  validationStatus={fieldError ? 'error' : isTouched ? 'success' : 'default'}
+                />
+              )}
+            </div>
           );
         })}
-      </Checkboxes>
+      </div>
     </div>
   );
 };
 
+const ContactChoiceSkeleton = () => (
+  <div className="flex w-full flex-wrap gap-20">
+    {[1, 2].map((i) => (
+      <div
+        key={i}
+        className="flex min-w-256 flex-1 flex-col gap-16 rounded-16 border-2 border-lightGrey p-16"
+      >
+        <RadioSkeleton />
+        <TextFieldSkeleton />
+      </div>
+    ))}
+  </div>
+);
+
+ContactChoice.Skeleton = ContactChoiceSkeleton;
 ContactChoice.COMPONENT_KEY = TOKENS.ContactChoice;

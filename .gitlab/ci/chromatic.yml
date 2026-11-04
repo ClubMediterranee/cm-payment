@@ -5,7 +5,13 @@
   script:
     # Run Chromatic and capture diagnostics JSON. Token can be provided via CHROMATIC_PROJECT_TOKEN or CHROMATIC_TOKEN
     - |
-      CMD="$PM run chromatic $ARG_SEP --exit-zero-on-changes --diagnosticsFile=chromatic-diagnostics.json --branch-name ${CI_COMMIT_REF_NAME} --skip-update-check"
+      CMD="$PM run chromatic $ARG_SEP --exit-zero-on-changes --diagnosticsFile=chromatic-diagnostics.json --base-branch=${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} --branch-name ${CI_COMMIT_REF_NAME} --skip-update-check"
+
+      # If on develop branch, accept changes to set new baseline for future diffs
+      if [ "$CI_COMMIT_REF_NAME" = "$BRANCH_DEV" ]; then
+        CMD="$CMD --auto-accept-changes"
+      fi
+
       echo "Running: $CMD"
       # shellcheck disable=SC2086
       eval $CMD
@@ -38,7 +44,7 @@
 
       # Map Chromatic status -> GitLab state
       case "${STATUS^^}" in
-        PENDING|RUNNING|ACCEPTED|PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
+        PASSED|PENDING|RUNNING|ACCEPTED|PUBLISHED|COMPLETED|SUCCESS|OK) GSTATE="success" ;;
         FAILED|ERROR|ABORTED) GSTATE="failed" ;;
         *) GSTATE="pending" ;;
       esac
@@ -67,13 +73,18 @@
 
     - !reference [.gitlab_api_utils_setup_apt, script] # from @clubmed/templates:CI/library/gitlab-api-utils.yaml
     - !reference [.gitlab_api_utils, script] # from @clubmed/templates:CI/library/gitlab-api-utils.yaml
-    - MESSAGE_PREFIX="Storybook successfully **DEPLOYED** on Chromatic (n° $BUILD_NUMBER)"
-    - >
-      MESSAGE="$MESSAGE_PREFIX
+    - |
+      # Post MR comment only for merge request pipelines
+      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ] && [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        MESSAGE_PREFIX="Storybook successfully **DEPLOYED** on Chromatic (n° $BUILD_NUMBER)"
+        MESSAGE="$MESSAGE_PREFIX
 
-      - 🚀 Storybook is accessible at: <$STORYBOOK_URL>
+        - 🚀 Storybook is accessible at: <$STORYBOOK_URL>
 
-      - 🚀 Chromatic review is accessible at: <$CHROMATIC_REVIEW_URL>
-      "
+        - 🚀 Chromatic review is accessible at: <$CHROMATIC_REVIEW_URL>
+        "
 
-      gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
+        gitlab_add_mr_comment "$CI_PROJECT_ID" "$CI_MERGE_REQUEST_IID" "$MESSAGE"
+      else
+        echo "Skipping MR comment: not a merge request pipeline or MR IID missing."
+      fi

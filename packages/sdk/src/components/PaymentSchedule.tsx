@@ -1,41 +1,39 @@
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
-import { Card } from '@clubmed/trident-ui/molecules/Card';
-import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
-import { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
-import { usePaymentSchedule } from '../hooks/usePaymentSchedule';
+import { Action } from '../__generated__/index.schemas';
+import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
+import { useFormContext } from '../hooks/utils/useForm';
+import { TOKENS } from '../types/Tokens';
+import { ScheduleCardSkeleton } from './PaymentSchedule/ScheduleCard';
+import { ScheduleOptionsField } from './PaymentSchedule/ScheduleOptionsField';
+import { Title } from './ui/Title';
 
-export const PaymentSchedule = () => {
-  const { paymentSchedule } = usePaymentSchedule();
-  const { register, setValue, watch } = useFormContext();
-  const watchedAmount = watch('amount');
+export const PaymentSchedule = ({ className }: { className?: string }) => {
+  const { content } = useCapsConfigContext();
+  const { control, getValues } = useFormContext();
 
-  useEffect(() => {
-    setValue('amount', paymentSchedule[0]?.amount);
-  }, [paymentSchedule, setValue]);
+  if (getValues('action') === Action.PAYMENT_PARTIAL) {
+    return null;
+  }
 
   return (
-    <>
-      {paymentSchedule.map((props) => {
-        return (
-          <Card title="" key={props.amount} icon="Clipboard">
-            <Checkbox
-              value={props.amount}
-              {...register('amount')}
-              onChange={setValue}
-              checked={props.amount === watchedAmount}
-            >
-              Je paie le montant de{' '}
-              <span className="font-bold text-sienna mx-4">
-                {props.amount} {props.currency}
-              </span>
-              {'deadline' in props ? ` avant le ${props.deadline}` : ''}
-            </Checkbox>
-          </Card>
-        );
-      })}
-    </>
+    <div className={className}>
+      <Title variant="section">{content.paymentSchedule.heading}</Title>
+      <Controller
+        name="amount"
+        control={control}
+        render={({ field }) => <ScheduleOptionsField field={field} />}
+      />
+    </div>
   );
 };
+
+const PaymentScheduleSkeleton = () => (
+  <div className="flex flex-wrap justify-center gap-16">
+    <ScheduleCardSkeleton />
+    <ScheduleCardSkeleton />
+  </div>
+);
+
+PaymentSchedule.Skeleton = PaymentScheduleSkeleton;
 PaymentSchedule.COMPONENT_KEY = TOKENS.PaymentSchedule;

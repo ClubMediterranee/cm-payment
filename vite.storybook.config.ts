@@ -1,18 +1,13 @@
-import { join } from 'node:path';
-
-import react from '@vitejs/plugin-react-swc';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
-
-const root = join(import.meta.dirname);
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tsconfigPaths({
-      projects: [join(root, 'tsconfig.json')],
-    }),
-  ],
+  base: process.env.VITE_BASE_PATH || '/',
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   build: {
     target: 'es2022',
   },

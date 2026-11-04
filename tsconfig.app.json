@@ -1,12 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ES2020",
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "useDefineForClassFields": false,
@@ -23,20 +18,17 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@clubmed/payment-sdk/*": [
-        "./packages/sdk/src/*"
-      ]
+      "@clubmed/caps": ["./packages/sdk/src/index.ts"],
+      "@clubmed/caps/webcomponent": ["./packages/sdk/src/embed/webcomponent/index.ts"]
     }
   },
-  "include": [
-    ".storybook/**/*",
-    "packages/*/src/**/*.ts",
-    "packages/*/src/**/*.tsx",
-  ],
+  "include": [".storybook/**/*", "packages/*/src/**/*.ts", "packages/*/src/**/*.tsx"],
   "exclude": [
     "node_modules",
     "**/node_modules",
     "packages/*/src/**/*.spec.ts",
-    "packages/*/src/**/*.spec.tsx"
+    "packages/*/src/**/*.spec.tsx",
+    "packages/esbuild-pkg-plugin",
+    "packages/server/**"
   ]
 }

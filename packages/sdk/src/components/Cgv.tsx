@@ -1,35 +1,57 @@
-import { TOKENS } from '@clubmed/payment-sdk/types/Tokens';
-import { Card } from '@clubmed/trident-ui/molecules/Card';
-import { Checkbox } from '@clubmed/trident-ui/molecules/Forms/Checkboxes';
-import { useFormContext } from 'react-hook-form';
+import { PropsWithChildren } from 'react';
 
-export const Cgv = () => {
-  const { register, setValue, trigger } = useFormContext();
+import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
+import { useWatch } from '../hooks/utils/useForm';
+import { TOKENS } from '../types/Tokens';
+import { CheckboxField } from './ui/Form/CheckboxField';
+import { FormPanel } from './ui/FormPanel';
+import { CheckboxSkeleton, TitleSkeleton } from './ui/skeletons';
+
+export const Cgv = ({ className, children }: PropsWithChildren<{ className?: string }>) => {
+  const { content } = useCapsConfigContext();
+  const donationAmount = useWatch('donation_amount');
+  const hasDonation = (donationAmount || 0) > 0;
 
   return (
-    <div>
-      <h2 className="text-h5 mb-16 font-serif">Conditions Générales de Vente</h2>
-      <Card icon="Edit" title="Conditions Générales de Vente Modifiées 2">
-        <Checkbox
-          {...register('cgv', {
-            required: 'Vous devez accepter les conditions générales de vente',
-            validate: (value) => value === true || 'Vous devez accepter les CGV',
-          })}
-          onChange={(name, value) => {
-            setValue(name, value);
-            trigger(name);
-          }}
-          required
-        >
-          La validation de ma réservation implique une obligation de paiement. [FBL] §§ Je suis
-          informé(e) de l’obligation de présenter le résultat d’un test négatif ou une attestation
-          de vaccination complète à la Covid-19 pour accéder au Resort entre le 21 mai et le 30
-          septembre 2021 (détails sur la page du Resort). J'accepte les Conditions Générales de
-          Vente et déclare avoir pris également connaissance du Formulaire d’information.*
-        </Checkbox>
-      </Card>
+    <div className={className}>
+      {children}
+      <FormPanel className="w-full">
+        <div className="flex flex-col gap-20">
+          <CheckboxField name="cgv">
+            <span className="text-b4 font-bold">{content.cgv.content}</span>
+          </CheckboxField>
+
+          {hasDonation && (
+            <CheckboxField name="cgv_donation">
+              <span className="text-b4 font-bold">
+                {content.donation.acceptCGU}{' '}
+                {content.donation.linkDonationTerms && (
+                  <a
+                    href={content.donation.linkDonationTerms}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline text-primary"
+                  >
+                    {content.donation.donationTerms}
+                  </a>
+                )}
+              </span>
+            </CheckboxField>
+          )}
+        </div>
+      </FormPanel>
     </div>
   );
 };
 
+const CgvSkeleton = () => (
+  <div className="w-full">
+    <TitleSkeleton variant="h5" />
+    <FormPanel>
+      <CheckboxSkeleton />
+    </FormPanel>
+  </div>
+);
+
+Cgv.Skeleton = CgvSkeleton;
 Cgv.COMPONENT_KEY = TOKENS.Cgv;

@@ -1,47 +1,29 @@
-import { useSDKPaymentContext } from '@clubmed/payment-sdk/hooks/useSDKPaymentContext.js';
 import { Icon } from '@clubmed/trident-icons';
-import { Breadcrumb } from '@clubmed/trident-ui/molecules/Breadcrumb';
-import { useSearch } from 'wouter';
+
+import { useTheme } from '../hooks/useTheme';
+import { useAppContext } from '../providers/AppProvider';
+import { HeaderCurrent } from './HeaderCurrent';
+import { ImmersiveBreadcrumb } from './ImmersiveBreadcrumb';
 
 export const Header = () => {
-  const context = useSDKPaymentContext();
-  const search = useSearch();
-  const backUrl = new URLSearchParams(search).get('back_url');
+  const { id } = useAppContext();
+  const theme = useTheme();
+
+  if (theme !== 'legacy') {
+    return <HeaderCurrent />;
+  }
 
   return (
     <div className="w-full">
       <header
-        className="bg-white p-4 shadow-md flex items-center justify-center border-b border-saffron"
+        className="bg-white p-4 flex items-center border-b border-grey px-40"
         style={{ height: 60 }}
       >
-        <div
-          className="flex justify-between items-center font-semibold flex-row"
-          style={{ width: 1200 }}
-        >
-          <Icon name="ClubMed" width="120px" />
-          <span className="flex justify-center items-center">
-            {context?.oidc?.issuerType?.toUpperCase()} {context?.bookingId || context?.proposalId}
-          </span>
+        <div className="flex justify-between items-center font-semibold flex-row w-full">
+          <Icon name="ClubMed" width="10rem" />
         </div>
       </header>
-      <div className="p-8">
-        <Breadcrumb
-          items={
-            backUrl
-              ? [
-                  {
-                    href: backUrl || '#',
-                    label: 'Retour',
-                  },
-                  {
-                    href: '#',
-                    label: 'Payment',
-                  },
-                ]
-              : []
-          }
-        />
-      </div>
+      {id && <ImmersiveBreadcrumb />}
     </div>
   );
 };

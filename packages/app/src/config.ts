@@ -1,42 +1,44 @@
-import { OidcIssuerTypes } from '@clubmed/payment-sdk/types/SDKOptions.js';
+import { OidcIssuerTypes } from '@clubmed/caps';
 
 const commonConfig = {
   scope: 'openid profile email clubmed',
 };
 
+const DOMAIN = window.location.origin;
+
 export const AppSettings = {
-  url: import.meta.env.VITE_DOMAIN,
+  url: DOMAIN,
   api: {
     [OidcIssuerTypes.GM]: {
-      url: import.meta.env.VITE_API_ENDPOINT,
-      apiKey: import.meta.env.VITE_API_KEY,
+      apiKey: {
+        BE: import.meta.env.VITE_GM_API_KEY_BE,
+        CA: import.meta.env.VITE_GM_API_KEY_CA,
+      },
     },
     [OidcIssuerTypes.GO]: {
-      url: import.meta.env.VITE_API_ENDPOINT,
-      apiKey: import.meta.env.VITE_SELLER_API_KEY,
+      apiKey: import.meta.env.VITE_GO_API_KEY,
     },
     [OidcIssuerTypes.PARTNERS]: {
-      url: import.meta.env.VITE_API_ENDPOINT,
-      apiKey: import.meta.env.VITE_SELLER_API_KEY,
+      apiKey: import.meta.env.VITE_PARTNERS_API_KEY,
     },
   },
   oidc: {
     [OidcIssuerTypes.GM]: {
       authority: import.meta.env.VITE_GM_OIDC_URL,
       client_id: import.meta.env.VITE_GM_OIDC_CLIENT_ID,
-      redirect_uri: `${import.meta.env.VITE_DOMAIN}/gm/signin_redirect`,
+      redirect_uri: `${DOMAIN}/gm/signin_redirect`,
       ...commonConfig,
     },
     [OidcIssuerTypes.GO]: {
       authority: import.meta.env.VITE_GO_OIDC_URL,
       client_id: import.meta.env.VITE_GO_OIDC_CLIENT_ID,
-      redirect_uri: `${import.meta.env.VITE_DOMAIN}/go/signin_redirect`,
+      redirect_uri: `${DOMAIN}/go/signin_redirect`,
       ...commonConfig,
     },
     [OidcIssuerTypes.PARTNERS]: {
       authority: import.meta.env.VITE_GO_OIDC_URL,
       client_id: import.meta.env.VITE_GO_OIDC_CLIENT_ID,
-      redirect_uri: `${import.meta.env.VITE_DOMAIN}/partners/signin_redirect`,
+      redirect_uri: `${DOMAIN}/partners/signin_redirect`,
       ...commonConfig,
     },
   },

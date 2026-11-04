@@ -1,0 +1,29 @@
+services:
+  payment-apps:
+    build:
+      args:
+        - NODE_ENV=${NODE_ENV:-development}
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: cm-payment-apps
+    restart: unless-stopped
+
+    environment:
+      - PORT=8080
+      - CLUBMED_API_URL=${CLUBMED_API_URL:-https://api.integ.clubmed.com}
+      - CLUBMED_API_KEY=${CLUBMED_API_KEY}
+      - DIRECTUS_API_TOKEN="toto"
+      - CAPS_ALLOWED_ORIGINS=${CAPS_ALLOWED_ORIGINS:-}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.payment-apps.rule=Host(`localhost`)"
+      - "traefik.http.services.payment-apps.loadbalancer.server.port=8080"
+      - "app.description=Club Med Payment Applications"
+      - "app.app.path=/"
+      - "app.storybook.path=/storybook"
+
+networks:
+  default:
+    driver: bridge
