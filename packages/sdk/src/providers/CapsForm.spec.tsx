@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Action } from '../__generated__/index.schemas';
@@ -341,6 +342,43 @@ describe('CapsForm', () => {
     consoleErrorSpy.mockRestore();
     mockUseCapsConfigContext.mockReset();
   });
+  it('remounts the form when the customer changes', () => {
+    const mounts = vi.fn();
+    const Probe = () => {
+      useEffect(() => mounts(), []);
+      return null;
+    };
+    const config = (customerId: string) => ({
+      id: 'PROP001',
+      customerId,
+      locale: 'fr-FR',
+      content: {},
+      oidc: { issuerType: OidcIssuerTypes.GM, accessToken: 'token' },
+    });
+    const form = () => (
+      <CapsForm>
+        <MockPaymentSchedule />
+        <MockCgv />
+        <MockPaymentProviders />
+        <MockBillingAddress />
+        <MockPaymentWidget />
+        <MockCardInstallments />
+        <MockSubmitButton>Payer</MockSubmitButton>
+        <MockDonation />
+        <Probe />
+      </CapsForm>
+    );
+
+    mockUseCapsConfigContext.mockImplementation(() => config('customer-1'));
+    const { rerender } = render(form());
+    rerender(form());
+    expect(mounts).toHaveBeenCalledTimes(1);
+
+    mockUseCapsConfigContext.mockImplementation(() => config('customer-2'));
+    rerender(form());
+    expect(mounts).toHaveBeenCalledTimes(2);
+  });
+
   describe('billing address preload', () => {
     beforeEach(() => {
       mockUseCapsConfigContext.mockReturnValue({

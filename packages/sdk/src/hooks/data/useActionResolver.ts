@@ -6,12 +6,17 @@ import { getPaymentConfig } from '../../providers/PaymentConfigProvider';
 import { sdkQueryClient } from '../../providers/QueryClientProvider';
 import { useCapsConfigContext } from '../utils/useCapsConfigContext';
 
-export const ACTION_RESOLVER_QUERY_KEY = (id: string, type: string) => ['resolveAction', id, type];
+export const ACTION_RESOLVER_QUERY_KEY = (id: string, type: string, customerId?: string) => [
+  'resolveAction',
+  id,
+  type,
+  customerId,
+];
 
 export const getResolvedAction = () => {
-  const { id, type } = getPaymentConfig();
+  const { id, type, customerId } = getPaymentConfig();
   return sdkQueryClient.getQueryData<ReturnType<typeof useActionResolver>>(
-    ACTION_RESOLVER_QUERY_KEY(id, type),
+    ACTION_RESOLVER_QUERY_KEY(id, type, customerId),
   );
 };
 
@@ -26,7 +31,7 @@ export const actionResolverQuery = ({
   action?: Action;
   customerId?: string;
 }) => ({
-  queryKey: ACTION_RESOLVER_QUERY_KEY(id, type),
+  queryKey: ACTION_RESOLVER_QUERY_KEY(id, type, customerId),
   queryFn: async (): Promise<Action> => {
     const { action: resolved } = await actionResolverControllerResolveAction(type, id, {
       action,

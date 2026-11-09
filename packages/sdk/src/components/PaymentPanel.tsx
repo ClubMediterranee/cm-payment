@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { Action, PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import type { CapsFormSlots } from '../embed/shared';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
@@ -25,6 +27,12 @@ export type PaymentPanelProps = {
   reference?: string;
   uuid?: string;
   slots?: CapsFormSlots;
+  children?: (props: PaymentPanelRenderProps) => ReactNode;
+};
+
+export type PaymentPanelRenderProps = {
+  isProviderSelected: boolean;
+  deselectProvider: () => void;
 };
 
 type PaymentDetailsProps = Pick<PaymentPanelProps, 'reference' | 'uuid' | 'slots'> & {
@@ -85,9 +93,20 @@ const PaymentDetails = ({
   );
 };
 
-export const PaymentPanel = ({ className, reference, uuid, slots }: PaymentPanelProps) => {
+export const PaymentPanel = ({
+  className,
+  reference,
+  uuid,
+  slots,
+  children,
+}: PaymentPanelProps) => {
   const watchedProvider = useWatchedPaymentProvider();
-  const { getValues } = useFormContext();
+  const { getValues, setValue } = useFormContext();
+
+  const deselectProvider = () => {
+    setValue('provider_id', '');
+    setValue('payment_condition_id', undefined);
+  };
 
   const isPartialPayment = getValues('action') === Action.PAYMENT_PARTIAL;
 
@@ -105,10 +124,15 @@ export const PaymentPanel = ({ className, reference, uuid, slots }: PaymentPanel
     />
   );
 
-  const panel = isBuyNowPayLater ? (
-    <div className={className}>{details}</div>
-  ) : (
-    <PaymentProviders className={className}>{details}</PaymentProviders>
+  const panel = (
+    <>
+      {isBuyNowPayLater ? (
+        <div className={className}>{details}</div>
+      ) : (
+        <PaymentProviders className={className}>{details}</PaymentProviders>
+      )}
+      {children?.({ isProviderSelected: !!watchedProvider, deselectProvider })}
+    </>
   );
 
   return (

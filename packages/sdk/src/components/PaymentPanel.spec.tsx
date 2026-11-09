@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -139,6 +139,46 @@ describe('PaymentPanel', () => {
 
     expect(container.querySelector('[data-testid=donation]')).toBeTruthy();
     expect(getByRole('button').className).toBe('self-center');
+  });
+
+  describe('children', () => {
+    const renderWithResetButton = () =>
+      render(
+        <Harness>
+          {({ isProviderSelected, deselectProvider }) => (
+            <button type="button" onClick={deselectProvider}>
+              {isProviderSelected ? 'selected' : 'none'}
+            </button>
+          )}
+        </Harness>,
+      );
+
+    it('tells whether a provider is selected', () => {
+      expect(renderWithResetButton().getByRole('button', { name: 'selected' })).toBeTruthy();
+
+      watchedProvider.mockReturnValue(undefined);
+
+      expect(renderWithResetButton().getByRole('button', { name: 'none' })).toBeTruthy();
+    });
+
+    it('gives a callback that resets the provider', () => {
+      const { getByRole, queryAllByRole } = renderWithResetButton();
+
+      expect(queryAllByRole('radio', { checked: true })).toHaveLength(1);
+
+      fireEvent.click(getByRole('button', { name: 'selected' }));
+
+      expect(queryAllByRole('radio', { checked: true })).toHaveLength(0);
+    });
+  });
+
+  it('renders its children after the panel, inside the same step', () => {
+    const { container, getByText } = render(<Harness>{() => <p>Extra</p>}</Harness>);
+
+    const firstStep = container.querySelector('[data-testid=step]')!;
+
+    expect(firstStep.contains(getByText('Extra'))).toBe(true);
+    expect(firstStep.lastElementChild).toBe(getByText('Extra'));
   });
 
   it('shows only the blocks, without the provider list, for a buy now pay later provider', () => {
