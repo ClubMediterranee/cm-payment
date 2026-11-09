@@ -141,6 +141,16 @@ describe('PaymentPanel', () => {
     expect(getByRole('button').className).toBe('self-center');
   });
 
+  it('resets the provider when resetProvider is set', () => {
+    const { queryAllByRole, rerender } = render(<Harness />);
+
+    expect(queryAllByRole('radio', { checked: true })).toHaveLength(1);
+
+    rerender(<Harness resetProvider />);
+
+    expect(queryAllByRole('radio', { checked: true })).toHaveLength(0);
+  });
+
   it('shows only the blocks, without the provider list, for a buy now pay later provider', () => {
     watchedProvider.mockReturnValue({ id: 'ONEY', category_payment_method: 'BuyNowPayLater' });
 

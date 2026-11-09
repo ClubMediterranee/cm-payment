@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { Action, PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import type { CapsFormSlots } from '../embed/shared';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
@@ -25,6 +27,7 @@ export type PaymentPanelProps = {
   reference?: string;
   uuid?: string;
   slots?: CapsFormSlots;
+  resetProvider?: boolean;
 };
 
 type PaymentDetailsProps = Pick<PaymentPanelProps, 'reference' | 'uuid' | 'slots'> & {
@@ -85,9 +88,22 @@ const PaymentDetails = ({
   );
 };
 
-export const PaymentPanel = ({ className, reference, uuid, slots }: PaymentPanelProps) => {
+export const PaymentPanel = ({
+  className,
+  reference,
+  uuid,
+  slots,
+  resetProvider,
+}: PaymentPanelProps) => {
   const watchedProvider = useWatchedPaymentProvider();
-  const { getValues } = useFormContext();
+  const { getValues, setValue } = useFormContext();
+
+  useEffect(() => {
+    if (resetProvider) {
+      setValue('provider_id', '');
+      setValue('payment_condition_id', undefined);
+    }
+  }, [resetProvider, setValue]);
 
   const isPartialPayment = getValues('action') === Action.PAYMENT_PARTIAL;
 

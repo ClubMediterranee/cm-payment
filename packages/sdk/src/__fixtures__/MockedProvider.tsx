@@ -67,7 +67,7 @@ export const MockedProvider = ({
     if (action && (proposalId || bookingId)) {
       const id = bookingId || proposalId!;
       const type = bookingId ? 'booking' : 'proposal';
-      sdkQueryClient.setQueryData(ACTION_RESOLVER_QUERY_KEY(id, type), action);
+      sdkQueryClient.setQueryData(ACTION_RESOLVER_QUERY_KEY(id, type, customerId), action);
     }
   }, [proposalId, bookingId, customerId, action]);
 

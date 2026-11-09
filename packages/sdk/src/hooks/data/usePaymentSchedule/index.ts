@@ -5,10 +5,11 @@ import { Action } from '../../../__generated__/index.schemas';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { getResolvedAction } from '../useActionResolver';
 
-export const PAYMENT_SCHEDULE_QUERY_KEY = (id: string, action?: Action) => [
+export const PAYMENT_SCHEDULE_QUERY_KEY = (id: string, action?: Action, customerId?: string) => [
   'paymentSchedule',
   id,
   action,
+  customerId,
 ];
 
 export const paymentScheduleQueryOptions = (
@@ -18,7 +19,7 @@ export const paymentScheduleQueryOptions = (
 ) => {
   const action = getResolvedAction();
   return {
-    queryKey: PAYMENT_SCHEDULE_QUERY_KEY(id, action),
+    queryKey: PAYMENT_SCHEDULE_QUERY_KEY(id, action, customer_id),
     queryFn: () => paymentScheduleControllerGetPaymentSchedules(type, id, { action, customer_id }),
   };
 };

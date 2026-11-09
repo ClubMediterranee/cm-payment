@@ -144,7 +144,7 @@ export function CapsForm({
   errorFallback = FormErrorFallback,
   ...props
 }: CapsFormProps) {
-  const { oidc, id, theme } = useCapsConfigContext();
+  const { oidc, id, theme, customerId } = useCapsConfigContext();
   if (!id) {
     throw new Error('Either bookingId or proposalId must be provided');
   }
@@ -154,7 +154,7 @@ export function CapsForm({
   const defaultFallback = <GlobalFormSkeleton symbols={symbols} />;
 
   return (
-    <ErrorBoundary FallbackComponent={errorFallback}>
+    <ErrorBoundary key={customerId} FallbackComponent={errorFallback}>
       <Suspense fallback={fallback ?? defaultFallback}>
         <CapsFormProvider {...props}>{children}</CapsFormProvider>
       </Suspense>
