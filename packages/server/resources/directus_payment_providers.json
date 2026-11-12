@@ -3,7 +3,6 @@
     "id": "MHIPAY",
     "default_display_type": "hosted_field",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "CB", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -40,7 +39,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "CB", "AmericanExpress"]
       }
     ]
   },
@@ -48,7 +48,6 @@
     "id": "MUPLIFT",
     "default_display_type": "third_party_iframe",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -56,7 +55,8 @@
         "settings": [],
         "requires_token": true,
         "requires_expiry_date": false,
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": []
       },
       {
         "locale": "en-US",
@@ -73,7 +73,8 @@
             "value": "UP-75709538-99"
           }
         ],
-        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"],
+        "logos": []
       },
       {
         "locale": "en-CA",
@@ -90,7 +91,8 @@
             "value": "UP-75709538-99"
           }
         ],
-        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"],
+        "logos": []
       },
       {
         "locale": "fr-CA",
@@ -115,7 +117,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -123,7 +126,6 @@
     "id": "MHIPAYPP",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Paypal"],
     "settings": [
       {
         "locale": "*",
@@ -137,7 +139,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Paypal"]
       },
       {
         "locale": "de-DE",
@@ -172,7 +175,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Paypal"]
       }
     ]
   },
@@ -180,7 +184,6 @@
     "id": "EHIPAYBNPL",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -197,7 +200,8 @@
             "value": 45
           }
         ],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": []
       },
       {
         "locale": "fr-FR",
@@ -234,7 +238,8 @@
             "value": false
           }
         ],
-        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"],
+        "logos": []
       },
       {
         "locale": "fr-BE",
@@ -271,7 +276,8 @@
             "value": false
           }
         ],
-        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"]
+        "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"],
+        "logos": []
       },
       {
         "locale": "nl-BE",
@@ -316,7 +322,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -324,7 +331,6 @@
     "id": "EGLOBALCOLLECT",
     "default_display_type": "iframe",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -338,7 +344,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -346,7 +353,6 @@
     "id": "EPAYGATE",
     "default_display_type": "iframe",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -360,7 +366,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -368,7 +375,6 @@
     "id": "MCYBERSOURCE",
     "default_display_type": "hosted_field",
     "confirmation_strategy": "notify",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -376,7 +382,8 @@
         "settings": [],
         "requires_token": true,
         "requires_expiry_date": true,
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       },
       {
         "locale": "en-US",
@@ -390,7 +397,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       },
       {
         "locale": "fr-CA",
@@ -404,7 +412,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -412,7 +421,6 @@
     "id": "E99BILL",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["UnionPay"],
     "settings": [
       {
         "locale": "*",
@@ -426,7 +434,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["UnionPay"]
       }
     ]
   },
@@ -434,7 +443,6 @@
     "id": "EALIPAY",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Alipay"],
     "settings": [
       {
         "locale": "*",
@@ -448,7 +456,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Alipay"]
       }
     ]
   },
@@ -456,7 +465,6 @@
     "id": "ECYBERSOURCE",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -470,19 +478,22 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       },
       {
         "locale": "en-US",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       },
       {
         "locale": "fr-CA",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -490,7 +501,6 @@
     "id": "ECYBSSOAPI",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -504,7 +514,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -512,13 +523,13 @@
     "id": "EHIPAY",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "CB", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": ["Visa", "Mastercard", "CB", "AmericanExpress"]
       }
     ]
   },
@@ -526,7 +537,6 @@
     "id": "EHIPAYCMTA",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -540,7 +550,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -548,7 +559,6 @@
     "id": "EIYZICO",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard"],
     "settings": [
       {
         "locale": "*",
@@ -562,7 +572,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard"]
       }
     ]
   },
@@ -570,7 +581,6 @@
     "id": "ENETPAY",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -584,7 +594,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -592,13 +603,13 @@
     "id": "ESBER",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": []
       }
     ]
   },
@@ -606,7 +617,6 @@
     "id": "ESSPSCT",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -620,7 +630,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -628,7 +639,6 @@
     "id": "EVOXPAY",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -643,7 +653,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -651,7 +662,6 @@
     "id": "EVOXPAY_EMAIL",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -666,7 +676,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -674,7 +685,6 @@
     "id": "EVOXPAY_PHONE",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -689,7 +699,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -697,13 +708,13 @@
     "id": "EWECHAT",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Wechat"],
     "settings": [
       {
         "locale": "*",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": ["Wechat"]
       }
     ]
   },
@@ -711,7 +722,6 @@
     "id": "M99BILLW",
     "default_display_type": "custom",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -733,7 +743,8 @@
             "value": 2
           }
         ],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": []
       },
       {
         "locale": "zh-CN",
@@ -747,7 +758,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       },
       {
         "locale": "en-CN",
@@ -761,7 +773,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -769,7 +782,6 @@
     "id": "EVOXPAY_SMS",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -784,7 +796,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -792,7 +805,6 @@
     "id": "NAPAY",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -806,7 +818,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -814,7 +827,6 @@
     "id": "NODELCRERE_CHEQUE",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -828,7 +840,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -836,7 +849,6 @@
     "id": "NODELCRERE_TRANSFER",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -850,7 +862,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -858,7 +871,6 @@
     "id": "ECYBSPP",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Paypal"],
     "settings": [
       {
         "locale": "*",
@@ -872,7 +884,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Paypal"]
       }
     ]
   },
@@ -880,7 +893,6 @@
     "id": "ECYBSCMTA",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -894,7 +906,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -902,7 +915,6 @@
     "id": "EVOXPAYCXO",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -917,7 +929,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -925,7 +938,6 @@
     "id": "EVOXPAYSCT",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -940,7 +952,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -948,7 +961,6 @@
     "id": "EVOXPAYCYBS",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -963,7 +975,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -971,7 +984,6 @@
     "id": "EVOXPAYGC",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -986,7 +998,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -994,7 +1007,6 @@
     "id": "MHIPAYVW",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -1008,13 +1020,15 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       },
       {
         "locale": "fr-CH",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": []
       }
     ]
   },
@@ -1022,7 +1036,6 @@
     "id": "EGCPIX",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["PIX"],
     "settings": [
       {
         "locale": "*",
@@ -1036,7 +1049,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["PIX"]
       }
     ]
   },
@@ -1044,13 +1058,13 @@
     "id": "WD",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
         "status": "published",
         "settings": [],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": []
       },
       {
         "locale": "en-HK",
@@ -1064,7 +1078,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       },
       {
         "locale": "en-SG",
@@ -1078,7 +1093,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       },
       {
         "locale": "en-MY",
@@ -1092,7 +1108,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       },
       {
         "locale": "en-TW",
@@ -1106,7 +1123,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       },
       {
         "locale": "en-TH",
@@ -1120,7 +1138,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       },
       {
         "locale": "zh-TW",
@@ -1134,7 +1153,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       },
       {
         "locale": "es-AR",
@@ -1148,7 +1168,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   },
@@ -1156,7 +1177,6 @@
     "id": "EVOXPAYIZC",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard"],
     "settings": [
       {
         "locale": "*",
@@ -1171,7 +1191,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard"]
       }
     ]
   },
@@ -1179,7 +1200,6 @@
     "id": "EIXOPAY",
     "default_display_type": "hosted_field",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -1207,7 +1227,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -1215,7 +1236,6 @@
     "id": "EIXOPAYPP",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Paypal"],
     "settings": [
       {
         "locale": "*",
@@ -1229,7 +1249,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Paypal"]
       }
     ]
   },
@@ -1237,7 +1258,6 @@
     "id": "EVOXPAYPIX",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["PIX"],
     "settings": [
       {
         "locale": "*",
@@ -1252,7 +1272,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["PIX"]
       }
     ]
   },
@@ -1260,7 +1281,6 @@
     "id": "EVOXPAYPP",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Paypal"],
     "settings": [
       {
         "locale": "*",
@@ -1275,7 +1295,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Paypal"]
       }
     ]
   },
@@ -1283,7 +1304,6 @@
     "id": "EVOXPAYSTRIPE",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": ["Visa", "Mastercard", "AmericanExpress"],
     "settings": [
       {
         "locale": "*",
@@ -1298,7 +1318,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": ["Visa", "Mastercard", "AmericanExpress"]
       }
     ]
   },
@@ -1306,7 +1327,6 @@
     "id": "OF",
     "default_display_type": "redirect",
     "confirmation_strategy": "status",
-    "logos": [],
     "settings": [
       {
         "locale": "*",
@@ -1318,7 +1338,8 @@
             "value": true
           }
         ],
-        "allowed_actions": []
+        "allowed_actions": [],
+        "logos": []
       },
       {
         "locale": "zh-CN",
@@ -1331,7 +1352,8 @@
           "PAYMENT_PARTIAL",
           "PAYMENT_UPGRADE_ROOM",
           "PAYMENT_SERVICES_IN_OPTION"
-        ]
+        ],
+        "logos": []
       }
     ]
   }

@@ -291,27 +291,6 @@ export interface CapsProviderConfiguration {
     | 'PAYMENT_SERVICES_IN_OPTION'
   > | null;
   activation_day_range?: 'json' | null;
-}
-
-export interface CapsProvider {
-  /** @primaryKey */
-  id: string;
-  status?: 'published' | 'draft' | 'archived';
-  user_created?: DirectusUser | string | null;
-  date_created?: string | null;
-  user_updated?: DirectusUser | string | null;
-  date_updated?: string | null;
-  /** @required */
-  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom' | 'third_party_iframe';
-  image_url?: string | null;
-  category_payment_method?:
-    | 'credit_card'
-    | 'brank_transfer'
-    | 'direct_debit'
-    | 'paypal'
-    | 'buy_now_pay_later'
-    | null;
-  confirmation_strategy?: 'status' | 'notify' | null;
   logos?: Array<
     | 'Visa'
     | 'Mastercard'
@@ -335,6 +314,27 @@ export interface CapsProvider {
     | 'Twint'
     | 'PIX'
   > | null;
+}
+
+export interface CapsProvider {
+  /** @primaryKey */
+  id: string;
+  status?: 'published' | 'draft' | 'archived';
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  /** @required */
+  default_display_type: 'hosted_fields' | 'iframe' | 'redirect' | 'custom' | 'third_party_iframe';
+  image_url?: string | null;
+  category_payment_method?:
+    | 'credit_card'
+    | 'brank_transfer'
+    | 'direct_debit'
+    | 'paypal'
+    | 'buy_now_pay_later'
+    | null;
+  confirmation_strategy?: 'status' | 'notify' | null;
   settings?: CapsProviderConfiguration[] | string[];
 }
 

@@ -31,10 +31,11 @@ export class PaymentConfigRepository {
   }
 
   private toVariant(raw: RawVariant) {
-    const { locale, settings, allowed_actions, ...validation } = raw;
+    const { locale, settings, allowed_actions, logos, ...validation } = raw;
     return {
       locale: locale === GLOBAL_LOCALE ? null : locale,
       allowed_actions: allowed_actions ?? [],
+      logos: logos ?? [],
       settings: settings ?? [],
       validation,
     };

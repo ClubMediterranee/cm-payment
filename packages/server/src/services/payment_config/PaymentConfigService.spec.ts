@@ -158,26 +158,29 @@ describe('PaymentConfigService', () => {
       expect('is_active' in result.MCYBERSOURCE).toBe(false);
     });
 
-    it('exposes the logos of the provider and defaults to none', async () => {
+    it('exposes the logos of the resolved variant and defaults to none', async () => {
       const providers = [
         {
           id: 'MHIPAY',
           default_display_type: 'hosted_field',
-          logos: ['Visa', 'Mastercard'],
-          variants: [{ locale: null, allowed_actions: [], settings: [], validation: {} }],
+          variants: [
+            { locale: null, allowed_actions: [], logos: ['Visa'], settings: [], validation: {} },
+            { locale: 'fr-FR', allowed_actions: [], logos: ['CB'], settings: [], validation: {} },
+          ],
         },
         {
           id: 'MUPLIFT',
           default_display_type: 'third_party_iframe',
-          logos: null,
-          variants: [{ locale: null, allowed_actions: [], settings: [], validation: {} }],
+          variants: [
+            { locale: null, allowed_actions: [], logos: [], settings: [], validation: {} },
+          ],
         },
       ] as never;
       vi.spyOn(paymentConfigRepository, 'getProviders').mockResolvedValue(providers);
 
       const result = await service.getPaymentProvidersConfig({ locale: 'fr-FR' });
 
-      expect(result.MHIPAY.logos).toEqual(['Visa', 'Mastercard']);
+      expect(result.MHIPAY.logos).toEqual(['CB']);
       expect(result.MUPLIFT.logos).toEqual([]);
     });
 
