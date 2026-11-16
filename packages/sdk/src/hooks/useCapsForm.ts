@@ -16,7 +16,7 @@ export function useCapsForm({ config, defaultValues = {} }: UseCapsFormParams) {
   const baseDefaultValues = {
     cgv: false,
     token: { status: 'idle' as const },
-    ...(isSeller ? { template_id: GLOBAL_CAPS_SETTINGS.templateIds.mobilePhone } : {}),
+    ...(isSeller ? { template_id: GLOBAL_CAPS_SETTINGS.templateIds.email } : {}),
   };
 
   const schema = capsFormSchema(config);
