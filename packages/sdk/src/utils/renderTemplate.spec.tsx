@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { renderTemplate } from './renderTemplate';
+import { formatTemplate, renderTemplate } from './renderTemplate';
 
 describe('renderTemplate', () => {
   let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
@@ -122,5 +122,13 @@ describe('renderTemplate', () => {
       const { container } = render(result!);
       expect(container.textContent).toBe('Value: 0');
     });
+  });
+});
+
+describe('formatTemplate', () => {
+  it('replaces the placeholders with their values', () => {
+    expect(
+      formatTemplate('For {adults} adults and {children} children', { adults: 2, children: 1 }),
+    ).toBe('For 2 adults and 1 children');
   });
 });

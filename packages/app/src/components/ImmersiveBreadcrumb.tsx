@@ -1,12 +1,14 @@
 import { Breadcrumb } from '@clubmed/trident-ui/ui/Breadcrumb';
 
 import { useBackUrl } from '../hooks/useBackUrl';
+import { useContent } from '../hooks/useContent';
 import { useProduct } from '../hooks/useProduct';
 import { useStay } from '../hooks/useStay';
 
 export const ImmersiveBreadcrumb = () => {
   const backUrl = useBackUrl();
   const { stay } = useStay();
+  const { app } = useContent();
 
   const { data: product } = useProduct(stay);
 
@@ -38,11 +40,11 @@ export const ImmersiveBreadcrumb = () => {
               ? [
                   {
                     href: backUrl,
-                    label: 'Retour',
+                    label: app.header.back,
                   },
                   {
                     href: '#',
-                    label: 'Payment',
+                    label: app.payment.title,
                   },
                 ]
               : []

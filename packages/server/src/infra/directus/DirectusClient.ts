@@ -9,6 +9,7 @@ import {
 import { Constant, Injectable } from '@tsed/di';
 
 import type { Schema } from './__generated__/schema.js';
+import { GLOBAL_LOCALE } from './constants.js';
 
 @Injectable()
 export class DirectusClient {
@@ -30,6 +31,19 @@ export class DirectusClient {
     return this.client.request(
       readItems('caps_configurations', {
         fields: ['key', 'type', 'value', 'overrides'],
+      }),
+    );
+  }
+
+  getContents(locale: string) {
+    return this.client.request(
+      readItems('caps_content', {
+        fields: ['locale', 'content'],
+        filter: {
+          status: { _eq: 'published' },
+          _or: [{ locale: { _eq: locale } }, { locale: { _eq: GLOBAL_LOCALE } }],
+        },
+        limit: -1,
       }),
     );
   }

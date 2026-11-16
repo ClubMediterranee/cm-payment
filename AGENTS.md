@@ -88,4 +88,5 @@ Living specs: `openspec/specs/`. In-flight changes: `openspec/changes/<change-id
 <!-- One bullet per correction: the mistake pattern and the rule that prevents it. -->
 
 - The embed/SDK public API is unreleased (no users yet): replace callbacks and types directly, no backward-compat shims, deprecations or dual APIs.
+- Wording is provided by the consumers (e.g. the app fetches `caps_content` through `/rest/payment_content` and passes it as the `content` prop); the SDK never fetches content and only keeps its hard-coded `defaultContent` as the fallback for missing keys. Don't add parallel settings fields (e.g. `customContent`).
 - `pnpm check` (TypeScript 7) can pass while the IDE, which uses a different TS version, still reports errors: check the IDE diagnostics on the touched files too. Type react-hook-form explicitly (`useController<CapsFormSchema, 'amount'>`) rather than relying on inference through `<Controller control>`.

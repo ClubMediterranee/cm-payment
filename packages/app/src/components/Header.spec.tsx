@@ -7,6 +7,10 @@ const useAppContext = vi.hoisted(() => vi.fn());
 const useBackUrl = vi.hoisted(() => vi.fn());
 
 vi.mock('../hooks/useTheme', () => ({ useTheme }));
+vi.mock('../hooks/useContent', async () => {
+  const { content } = await import('../__fixtures__/content');
+  return { useContent: () => content };
+});
 vi.mock('../hooks/useBackUrl', () => ({ useBackUrl }));
 vi.mock('../providers/AppProvider', () => ({ useAppContext }));
 vi.mock('../hooks/useStay', () => ({ useStay: () => ({ stay: { productId: 'BAHA' } }) }));

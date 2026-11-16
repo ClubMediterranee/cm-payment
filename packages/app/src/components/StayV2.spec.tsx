@@ -3,6 +3,10 @@ import { render, screen } from '@testing-library/react';
 import type { StayModel } from '../hooks/useStay';
 import { StayV2 } from './StayV2';
 
+vi.mock('../hooks/useContent', async () => {
+  const { content } = await import('../__fixtures__/content');
+  return { useContent: () => content };
+});
 vi.mock('../providers/AppProvider', () => ({ useAppContext: () => ({ id: 'booking-1' }) }));
 vi.mock('../hooks/useProduct', () => ({
   useProduct: () => ({

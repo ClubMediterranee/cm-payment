@@ -10,6 +10,7 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { Stay, StayPlaceholder } from '../components/Stay';
 import { StayV2 } from '../components/StayV2';
+import { useContent } from '../hooks/useContent';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useStay } from '../hooks/useStay';
 import { useTheme } from '../hooks/useTheme';
@@ -25,6 +26,7 @@ export function PaymentPage() {
     uuid?: string;
   }>();
   const theme = useTheme();
+  const { app, content } = useContent();
   const { isOpen: isPaymentLoading, onOpen: onLoad, onClose: onLoadEnd } = useDisclosure();
 
   const ref = useRef<HTMLParagraphElement | null>(null);
@@ -69,10 +71,10 @@ export function PaymentPage() {
         )}
       >
         <div>
-          <h1 className="text-h3 w-full mb-8">Payment</h1>
+          <h1 className="text-h3 w-full mb-8">{app.payment.title}</h1>
 
-          <p>Nous ne parvenons pas à récupérer les informations de votre séjour.</p>
-          <p>Merci de réessayer ultérieurement.</p>
+          <p>{app.payment.stayUnavailable}</p>
+          <p>{app.payment.retryLater}</p>
         </div>
       </div>
     );
@@ -99,6 +101,7 @@ export function PaymentPage() {
       reference={reference}
       uuid={uuid}
       theme={theme}
+      content={content}
       slots={isLegacy ? undefined : { donation: donationSlot }}
       onEvent={onEvent}
     />
@@ -118,7 +121,7 @@ export function PaymentPage() {
         )}
       >
         {isPaymentLoading && <LoadingPage />}
-        <h1 className="text-h3 w-full mb-8">Payment</h1>
+        <h1 className="text-h3 w-full mb-8">{app.payment.title}</h1>
         <Suspense fallback={<StayPlaceholder />}>
           <Stay stay={stay!} />
         </Suspense>
@@ -133,7 +136,7 @@ export function PaymentPage() {
       {isPaymentLoading && <LoadingPage />}
       <div className="mb-40 flex items-center gap-64 pt-40">
         <hr className="m-0 h-px flex-1 border-0 bg-black" />
-        <h1 className="text-h3 font-serif font-bold italic">Payment</h1>
+        <h1 className="text-h3 font-serif font-bold italic">{app.payment.title}</h1>
         <hr className="m-0 h-px flex-1 border-0 bg-black" />
       </div>
       <div className="grid grid-cols-1 gap-20 md:grid-cols-4 md:items-start">

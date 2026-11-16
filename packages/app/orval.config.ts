@@ -30,7 +30,7 @@ export default defineConfig({
   bff: {
     input: {
       target: 'http://localhost:8083/oas/swagger.json',
-      filters: { tags: ['PaymentConfigController'] },
+      filters: { tags: ['PaymentConfigController', 'PaymentContentController'] },
     },
     output: {
       target: join(root, 'src/__generated__/bff.ts'),

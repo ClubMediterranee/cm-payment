@@ -6,13 +6,15 @@ const { formatCurrency } = vi.hoisted(() => ({
   formatCurrency: vi.fn(),
 }));
 
-vi.mock('@clubmed/caps', () => ({
+vi.mock('@clubmed/caps', async () => ({
   FormPanel: ({ children, className }: any) => (
     <div data-testid="panel" className={className}>
       {children}
     </div>
   ),
   formatCurrency,
+  renderTemplate: (await vi.importActual<typeof import('@clubmed/caps')>('@clubmed/caps'))
+    .renderTemplate,
 }));
 
 vi.mock('@clubmed/trident-icons', () => ({
@@ -21,6 +23,10 @@ vi.mock('@clubmed/trident-icons', () => ({
   ),
 }));
 
+vi.mock('../hooks/useContent', async () => {
+  const { content } = await import('../__fixtures__/content');
+  return { useContent: () => content };
+});
 vi.mock('../hooks/useAppParams', () => ({
   useAppParams: vi.fn(),
 }));

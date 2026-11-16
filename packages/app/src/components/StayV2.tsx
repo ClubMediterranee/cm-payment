@@ -1,7 +1,8 @@
-import { formatDate } from '@clubmed/caps';
+import { formatDate, renderTemplate } from '@clubmed/caps';
 import { Icon } from '@clubmed/trident-icons';
 import type { PropsWithChildren } from 'react';
 
+import { useContent } from '../hooks/useContent';
 import { useProduct } from '../hooks/useProduct';
 import type { StayModel } from '../hooks/useStay.js';
 import { useAppContext } from '../providers/AppProvider';
@@ -34,6 +35,7 @@ const CheckedRow = ({ children }: PropsWithChildren) => (
 
 export const StayV2 = ({ stay, donationSlotRef }: StayV2Props) => {
   const { data: product } = useProduct(stay);
+  const { app } = useContent();
 
   const { id } = useAppContext();
 
@@ -47,20 +49,31 @@ export const StayV2 = ({ stay, donationSlotRef }: StayV2Props) => {
       </TicketRow>
       <CheckedRow>
         <span>
-          A partir de {formatStayDate(stay.resortArrivalDate)} au{' '}
-          {formatStayDate(stay.resortDepartureDate)}
+          {renderTemplate(
+            app.stay.dates,
+            {
+              start: formatStayDate(stay.resortArrivalDate),
+              end: formatStayDate(stay.resortDepartureDate),
+            },
+            { asFragment: true },
+          )}
         </span>
       </CheckedRow>
       {!!stay.adultsCount && (
         <CheckedRow>
           <span>
-            Pour {stay.adultsCount} adultes
-            {stay.childrenCount ? ` et ${stay.childrenCount} enfants` : ''}
+            {stay.childrenCount
+              ? renderTemplate(
+                  app.stay.adultsAndChildren,
+                  { adults: stay.adultsCount, children: stay.childrenCount },
+                  { asFragment: true },
+                )
+              : renderTemplate(app.stay.adults, { adults: stay.adultsCount }, { asFragment: true })}
           </span>
         </CheckedRow>
       )}
       <TicketRow>
-        <span>Réference {id}</span>
+        <span>{renderTemplate(app.stay.reference, { id }, { asFragment: true })}</span>
       </TicketRow>
       <div ref={donationSlotRef} />
     </div>
