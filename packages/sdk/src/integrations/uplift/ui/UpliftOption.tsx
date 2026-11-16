@@ -6,7 +6,6 @@ import { useUplift } from '../hooks/useUplift.js';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext.js';
 import { useWatch } from '../../../hooks/utils/useForm.js';
 import { UpliftStatus } from '../types/Uplift.js';
-import { renderTemplate } from '../../../utils/renderTemplate.js';
 import { RadioSkeleton } from '../../../components/ui/skeletons/index.js';
 
 const getCurrencySymbol = (locale: string, currency: string): string => {
@@ -26,6 +25,7 @@ export const UpliftOption = ({ provider, name, checked, onChange }: UpliftOption
   const watchedAmount = useWatch('amount');
   const watchedCurrency = useWatch('currency');
   const { status } = useUplift();
+  const { monthly } = content.paymentSchedule;
 
   const currencySymbol = getCurrencySymbol(locale, watchedCurrency);
   const isFrench = language === 'fr';
@@ -49,25 +49,22 @@ export const UpliftOption = ({ provider, name, checked, onChange }: UpliftOption
           disabled={isUnavailable}
         >
           {isUnavailable ? (
-            <span>{content.paymentSchedule.buyNowPayLater.unavailable}</span>
+            <span>{monthly.unavailable}</span>
           ) : (
             <div id="up-pay-monthly-selector" className="flex items-center gap-4">
-              {renderTemplate(content.paymentSchedule.buyNowPayLater.priceLabel, {
-                price: (
-                  <span
-                    className="font-bold text-sienna cursor-pointer flex gap-12"
-                    data-up-price-type="total"
-                    data-up-price-value={priceInCents}
-                  >
-                    {!isFrench && currencySymbol}
-                    <span data-up-from-currency-unit-major=""></span>
-                    {isFrench && `${currencySymbol}/mo`}
-                    <span data-up-tooltip="" className="cursor-pointer">
-                      <Icon name="Information" width="1.5rem" />
-                    </span>
-                  </span>
-                ),
-              })}
+              {`${monthly.title} ${monthly.from}`}
+              <span
+                className="font-bold text-sienna cursor-pointer flex gap-12"
+                data-up-price-type="total"
+                data-up-price-value={priceInCents}
+              >
+                {!isFrench && currencySymbol}
+                <span data-up-from-currency-unit-major=""></span>
+                {isFrench && `${currencySymbol}/mo`}
+                <span data-up-tooltip="" className="cursor-pointer">
+                  <Icon name="Information" width="1.5rem" />
+                </span>
+              </span>
             </div>
           )}
         </Radio>

@@ -28,7 +28,7 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
   const { buyNowPayLaterProviders, paymentProviders } = data;
   const { setValue } = useFormContext();
   const { content, locale } = useCapsConfigContext();
-  const { cards } = content.paymentSchedule;
+  const { full, deposit } = content.paymentSchedule;
 
   const stayAmount = paymentSchedule[0]?.amount?.toString();
 
@@ -72,12 +72,12 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
             value={amount?.toString() ?? ''}
             checked={value === amount?.toString()}
             onChange={handleScheduleChange}
-            title={isDeposit ? cards.payInTwo.title : cards.payInFull.title}
+            title={isDeposit ? deposit.title : full.title}
           >
             {isDeposit ? (
               <>
                 <p className="text-b5">
-                  {renderTemplate(cards.payInTwo.description, {
+                  {renderTemplate(deposit.description, {
                     deposit: <span className="font-bold">{formattedAmount}</span>,
                     balance: <span className="font-bold">{formattedBalance}</span>,
                     deadline: <span className="font-bold">{formatDate(deadline)}</span>,
@@ -89,9 +89,9 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
               </>
             ) : (
               <>
-                <p className="text-b5">{cards.payInFull.description}</p>
+                <p className="text-b5">{full.description}</p>
                 <p className="text-b2 font-bold">{formattedAmount}</p>
-                <p className="text-b6">{cards.payInFull.caption}</p>
+                <p className="text-b6">{full.caption}</p>
               </>
             )}
           </ScheduleCard>

@@ -15,7 +15,7 @@ vi.mock('../../utils/navigate', () => ({
 
 vi.mock('../../providers/PaymentConfigProvider', async () => {
   const { CapsConfigContext } = await import('../../contexts/CapsConfigContext');
-  const { contentByTheme } = await import('../../content/themes');
+  const { contentByTheme } = await import('../../content/default');
   const { mergeFromPattern } = await import('../../utils/mergeFromPattern');
 
   return {

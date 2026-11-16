@@ -1,7 +1,7 @@
 import { render, renderHook } from '@testing-library/react';
 import type { PropsWithChildren } from 'react';
 
-import { contentByTheme } from '../content/themes';
+import { contentByTheme } from '../content/default';
 import { useCapsConfigContext, useOidcContext } from '../hooks/utils/useCapsConfigContext';
 import { OidcIssuerTypes } from '../types/CapsSettings';
 import { getPaymentConfig, PaymentConfigProvider } from './PaymentConfigProvider';
@@ -60,7 +60,7 @@ describe('PaymentConfigProvider', () => {
   it('should merge custom content with default content', () => {
     const customContent = {
       cgv: {
-        title: 'Custom Terms',
+        heading: 'Custom Terms',
       },
     } as any;
 
@@ -68,7 +68,7 @@ describe('PaymentConfigProvider', () => {
       wrapper: (props) => <Wrapper {...props} content={customContent} />,
     });
 
-    expect(result.current.content.cgv.title).toBe('Custom Terms');
+    expect(result.current.content.cgv.heading).toBe('Custom Terms');
     expect(result.current.content.cgv.content).toBe(contentByTheme.legacy.cgv.content);
   });
 

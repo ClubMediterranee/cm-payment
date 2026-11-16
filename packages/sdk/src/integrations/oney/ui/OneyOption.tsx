@@ -25,7 +25,7 @@ type OneyOptionProps = {
 export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProps) => {
   const {
     content: {
-      paymentSchedule: { buyNowPayLater: bnpl },
+      paymentSchedule: { monthly, installments },
     },
     locale,
   } = useCapsConfigContext();
@@ -47,7 +47,7 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
   const icon = ONEY_ICON[payment_mode as keyof typeof ONEY_ICON];
 
   const label = simulation
-    ? renderTemplate(bnpl.simulationLabel, {
+    ? renderTemplate(monthly.simulationLabel, {
         icon,
         total: sienna(fmt(amount + simulation.cost)),
         cost: sienna(fmt(simulation.cost)),
@@ -56,7 +56,7 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
             {simulation.instalments.map(({ number, amount: instAmount, date }, i) => (
               <React.Fragment key={number}>
                 {i > 0 && ', '}
-                {renderTemplate(bnpl.instalmentItem, {
+                {renderTemplate(monthly.instalmentItem, {
                   amount: sienna(fmt(instAmount)),
                   date: bold(new Date(date).toLocaleDateString()),
                 })}
@@ -65,7 +65,7 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
           </>
         ),
       })
-    : renderTemplate(bnpl.iconLabel, { icon });
+    : renderTemplate(installments.title, { icon });
 
   if (isPending) return <RadioSkeleton />;
 

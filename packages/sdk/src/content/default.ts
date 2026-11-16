@@ -1,4 +1,6 @@
-import { Content } from '../types/Content';
+import type { CapsTheme } from '../embed/shared';
+import type { Content } from '../types/Content';
+import { mergeFromPattern } from '../utils/mergeFromPattern';
 
 export const defaultContent: Content = {
   paymentProviders: {
@@ -21,31 +23,22 @@ export const defaultContent: Content = {
   },
   paymentSchedule: {
     heading: 'Choose the payment schedule',
-    payFullAmount: 'I pay today the full amount of {amount}',
-    payDeposit:
-      'I pay today, at no charge, a deposit of {amount} and at the latest on {deadline} the balance of {balance}',
-    cards: {
-      select: 'Select this option',
-      selected: 'Selected option',
-      payInFull: {
-        title: 'Pay in full today',
-        description: 'I pay the total amount of',
-        caption: 'Total price',
-      },
-      payInTwo: {
-        title: 'Pay in 2x',
-        description:
-          'I pay by credit card the deposit of {deposit}, and I agree to an automatic withdrawal of the remaining balance of {balance} on {deadline}',
-      },
-      payMonthly: {
-        title: 'Pay monthly',
-        from: 'from',
-        caption: 'Per month',
-      },
+    select: 'Select this option',
+    selected: 'Selected option',
+    full: {
+      title: 'Pay in full today',
+      description: 'I pay the total amount of',
+      caption: 'Total price',
     },
-    buyNowPayLater: {
-      iconLabel: 'I pay in {icon} by credit card',
-      priceLabel: 'Pay monthly from {price}',
+    deposit: {
+      title: 'Pay in 2x',
+      description:
+        'I pay by credit card the deposit of {deposit}, and I agree to an automatic withdrawal of the remaining balance of {balance} on {deadline}',
+    },
+    monthly: {
+      title: 'Pay monthly',
+      from: 'from',
+      caption: 'Per month',
       unavailable: 'Pay Monthly is currently unavailable',
       simulationLabel:
         'I pay in {icon} a total of {total} (incl. {cost} financing cost): {instalments}',
@@ -54,14 +47,15 @@ export const defaultContent: Content = {
       instalmentOther: '{count}th due date on {date}',
       feesInclude: '(including {amount} € of costs)',
     },
+    installments: {
+      title: 'I pay in {icon} by credit card',
+    },
   },
   cgv: {
     heading: 'General Terms and Conditions of Sale',
-    title: 'Terms and Conditions',
     content:
       'Validating my reservation implies a payment obligation. [FBL] I am informed of the obligation to present a negative test result or proof of complete vaccination for Covid-19 to access the Resort between May 21 and September 30, 2021 (details on the Resort page). I accept the General Conditions of Sale and declare that I have also read the Information Form.*',
     validation: {
-      required: 'You must accept the terms and conditions',
       mustAccept: 'You must accept the T&C',
     },
   },
@@ -74,7 +68,6 @@ export const defaultContent: Content = {
   },
   contactChoice: {
     heading: 'How would you like to be contacted?',
-    title: 'What type of channel?',
     choiceLabel: 'By {label}',
     validation: {
       required: 'Contact choice information is required',
@@ -104,7 +97,6 @@ export const defaultContent: Content = {
     },
   },
   creditCardForm: {
-    title: 'Card details',
     fullName: 'Cardholder name',
     cardNumber: 'Card number',
     expiryDate: 'Expiry date',
@@ -120,13 +112,11 @@ export const defaultContent: Content = {
     },
   },
   freeDeposit: {
-    title: 'Pay the amount of your choice without fees',
     totalRemaining: 'Total due :',
     before: 'Before',
     payNowLabel: 'Amount desired by the client',
     placeholder: 'Please enter an amount',
     validation: {
-      required: 'Please enter an amount',
       positive: 'The amount must be greater than 0',
       maxExceeded: 'The amount cannot exceed the remaining total',
     },
@@ -139,7 +129,6 @@ export const defaultContent: Content = {
   },
   cardInstallments: {
     heading: 'Choose your card installments',
-    title: 'Payment method',
     selectCardType: 'Select your card type',
     selectInstallments: 'Select the number of installments',
     placeholder: 'Choose',
@@ -151,7 +140,6 @@ export const defaultContent: Content = {
   },
   billingAddress: {
     heading: 'Billing address',
-    title: 'Billing Address',
     additionalInformation: 'Additional information',
     hints: {
       first_name: 'Matching Passport/ID',
@@ -179,11 +167,6 @@ export const defaultContent: Content = {
       required: 'This field is required',
       maxLength: 'Maximum length exceeded',
       pattern: 'Invalid format',
-      invalidValue: 'Invalid value',
-    },
-    errors: {
-      schemaFetchFailed: 'Failed to load billing address form. Please try again.',
-      schemaInvalid: 'Billing address form configuration error. Please contact support.',
     },
   },
   wechat: {
@@ -221,4 +204,29 @@ export const defaultContent: Content = {
     pay: 'Pay {amount} now',
     redirect: 'Go to our payment partner',
   },
+};
+
+export const DEFAULT_CAPS_THEME: CapsTheme = 'legacy';
+
+const legacyContent: Content = mergeFromPattern(defaultContent, {
+  paymentProviders: { heading: 'Which payment method would you like to use?' },
+  paymentSchedule: {
+    heading: 'Choose your payment schedule',
+    full: { description: 'I pay today the full amount of' },
+    deposit: {
+      description:
+        'I pay today, at no charge, a deposit of {deposit} and at the latest on {deadline} the balance of {balance}',
+    },
+  },
+  cgv: { heading: 'Terms and conditions' },
+  freeDeposit: {
+    totalRemaining: 'Total remaining to pay',
+    before: 'before',
+    payNowLabel: 'I pay now',
+  },
+});
+
+export const contentByTheme: Record<CapsTheme, Content> = {
+  current: defaultContent,
+  legacy: legacyContent,
 };

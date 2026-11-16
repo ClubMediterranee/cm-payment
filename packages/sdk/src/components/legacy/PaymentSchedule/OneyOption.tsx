@@ -26,7 +26,7 @@ type OneyOptionProps = {
 export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProps) => {
   const {
     content: {
-      paymentSchedule: { buyNowPayLater: bnpl },
+      paymentSchedule: { monthly, installments },
     },
     locale,
   } = useCapsConfigContext();
@@ -43,7 +43,7 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
 
   if (isPending) return <RadioSkeleton />;
 
-  const [labelTemplate, ...legalParts] = bnpl.iconLabel.split(LINE_BREAK);
+  const [labelTemplate, ...legalParts] = installments.title.split(LINE_BREAK);
   const legalMention = legalParts.join(' ').trim();
   const icon = ONEY_ICON[paymentMode as keyof typeof ONEY_ICON];
   const formatNumber = (value: number) =>
@@ -63,7 +63,7 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
       <Radio value={id} name={name} checked={checked} onChange={() => onChange(id)}>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-4">
-            {renderTemplate(labelTemplate as typeof bnpl.iconLabel, { icon })}
+            {renderTemplate(labelTemplate as typeof installments.title, { icon })}
             <button type="button" onClick={handlePopinClick} className="focus:outline-none">
               <Icon name="Information" className="text-sienna font-bold" width="1.5rem" />
             </button>
@@ -81,11 +81,11 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
             {simulation.instalments.map(({ number, amount: instalmentAmount, date }, index) => (
               <div key={number} className="flex items-baseline justify-between gap-8">
                 {index
-                  ? renderTemplate(bnpl.instalmentOther, {
+                  ? renderTemplate(monthly.instalmentOther, {
                       count: index + 1,
                       date: <span className="font-bold text-black">{formatDate(date)}</span>,
                     })
-                  : renderTemplate(bnpl.instalmentFirst, {
+                  : renderTemplate(monthly.instalmentFirst, {
                       date: <span className="font-bold text-black">{formatDate(date)}</span>,
                     })}
                 <span className="flex flex-col items-end text-right">
@@ -94,7 +94,7 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
                   </span>
                   {number === FIRST_INSTALMENT_NUMBER && !!simulation.cost && (
                     <span className="text-b6 text-grey">
-                      {renderTemplate(bnpl.feesInclude, {
+                      {renderTemplate(monthly.feesInclude, {
                         amount: formatNumber(simulation.cost),
                       })}
                     </span>

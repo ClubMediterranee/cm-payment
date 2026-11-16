@@ -27,7 +27,7 @@ export const OneyCard = ({ provider, name, checked, onChange }: OneyCardProps) =
 
   return (
     <ScheduleCard
-      title={renderTemplate(content.paymentSchedule.buyNowPayLater.iconLabel, {
+      title={renderTemplate(content.paymentSchedule.installments.title, {
         icon: ONEY_ICON[payment_mode as keyof typeof ONEY_ICON],
       })}
       name={name}

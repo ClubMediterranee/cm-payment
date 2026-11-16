@@ -11,7 +11,7 @@ import {
 } from '../../embed/shared';
 import { CapsForm } from '../../providers/CapsForm';
 import { PaymentConfigProvider } from '../../providers/PaymentConfigProvider';
-import { contentByTheme, DEFAULT_CAPS_THEME } from '../../content/themes';
+import { contentByTheme, DEFAULT_CAPS_THEME } from '../../content/default';
 import { OidcIssuerTypes } from '../../types/CapsSettings';
 import type { Content, DeepPartial } from '../../types/Content';
 import { mergeFromPattern } from '../../utils/mergeFromPattern';

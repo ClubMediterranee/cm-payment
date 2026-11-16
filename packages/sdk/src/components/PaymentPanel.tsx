@@ -78,6 +78,11 @@ const PaymentDetails = ({
             <Title variant="label">{content.comments.heading}</Title>
           </Comments>
         </Step>
+        {!slots?.donation && (
+          <Step after="comments">
+            <Donation />
+          </Step>
+        )}
         <Step after="comments">
           <Cgv className="group-data-cgv-first/panel:-order-1">
             <Title variant="label">{content.cgv.heading}</Title>
@@ -138,14 +143,10 @@ export const PaymentPanel = ({
   return (
     <>
       {isPartialPayment ? panel : <Step after="amount">{panel}</Step>}
-      {slots?.donation ? (
+      {slots?.donation && (
         <FormSlot target={slots.donation}>
           <Donation />
         </FormSlot>
-      ) : (
-        <Step after="billing_details.address">
-          <Donation />
-        </Step>
       )}
     </>
   );

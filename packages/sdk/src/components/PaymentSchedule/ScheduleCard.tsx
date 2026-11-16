@@ -24,7 +24,7 @@ export const ScheduleCard = ({
   children,
 }: ScheduleCardProps) => {
   const { content } = useCapsConfigContext();
-  const { select, selected } = content.paymentSchedule.cards;
+  const { select, selected } = content.paymentSchedule;
 
   return (
     <label
