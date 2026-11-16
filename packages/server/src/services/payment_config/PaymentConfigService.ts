@@ -79,7 +79,7 @@ export class PaymentConfigService {
             settings,
             display_type: provider.default_display_type,
             confirmation_strategy: provider.confirmation_strategy ?? 'status',
-            logos: provider.logos ?? [],
+            logos: resolved?.logos ?? [],
           },
         ] as const;
       }),

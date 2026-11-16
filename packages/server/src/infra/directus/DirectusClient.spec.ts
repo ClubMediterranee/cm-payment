@@ -71,8 +71,7 @@ describe('DirectusClient', () => {
             fields: expect.arrayContaining([
               'id',
               'default_display_type',
-              'logos',
-              expect.objectContaining({ settings: expect.any(Array) }),
+              expect.objectContaining({ settings: expect.arrayContaining(['logos']) }),
             ]),
           }),
         }),

@@ -60,10 +60,10 @@ export class DirectusClient {
           'id',
           'default_display_type',
           'confirmation_strategy',
-          'logos',
           {
             settings: [
               'locale',
+              'logos',
               'display_type',
               'requires_token',
               'requires_expiry_date',
