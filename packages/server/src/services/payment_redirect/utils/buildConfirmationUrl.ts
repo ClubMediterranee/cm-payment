@@ -11,23 +11,39 @@ export type PaymentData = {
 export const buildConfirmationUrl = ({
   callbackUrl,
   paymentData,
+  paymentId,
   proposalId,
   locale,
+  action,
+  categoryPaymentMethod,
 }: {
   callbackUrl: string | null;
   paymentData: PaymentData;
+  paymentId?: string | null;
   proposalId?: string | null;
   locale?: string | null;
+  action?: string | null;
+  categoryPaymentMethod?: string | null;
 }) => {
   if (!callbackUrl) {
     throw new Error('callback_url is required');
   }
 
-  const params = new URLSearchParams({
-    ...paymentData,
-    ...(proposalId ? { proposal_id: proposalId } : {}),
-    ...(locale ? { locale } : {}),
+  const url = new URL(callbackUrl);
+
+  Object.entries(paymentData).forEach(([key, value]) => url.searchParams.set(key, String(value)));
+
+  Object.entries({
+    payment_id: paymentId,
+    proposal_id: proposalId,
+    locale,
+    action,
+    category_payment_method: categoryPaymentMethod,
+  }).forEach(([key, value]) => {
+    if (value) {
+      url.searchParams.set(key, value);
+    }
   });
 
-  return `${callbackUrl}?${params.toString()}`;
+  return url.toString();
 };

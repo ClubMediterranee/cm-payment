@@ -94,6 +94,7 @@ export interface PaymentRedirectRequestBody {
   connection_type?: string;
   /** @minLength 1 */
   action: string;
+  category_payment_method?: string;
   /** @minLength 1 */
   amount: string;
   /** @minLength 1 */
@@ -109,6 +110,9 @@ export interface PaymentRedirectRequestBody {
   uuid?: string;
   reference?: string;
   comments?: string;
+  sales_network_id?: string;
+  salesman_id?: string;
+  opportunity_id?: string;
 }
 
 export interface OverpaymentAllowanceOutputModel {
@@ -376,7 +380,6 @@ export type PaymentProvidersControllerGetPaymentProviders200 = {
 
 export type PaymentProvidersControllerGetBnplSimulationParams = {
   payment_amount?: number;
-  business_transaction_code?: string;
 };
 
 export type PaymentScheduleControllerGetOverpaymentAllowanceParams = {

@@ -47,6 +47,7 @@ export const buildPaymentRedirectPayload = (
     customer_id: customerId,
     provider_id,
     connection_type: watchedPaymentProvider?.connection_type,
+    category_payment_method: watchedPaymentProvider?.category_payment_method,
     action,
     amount,
     currency,

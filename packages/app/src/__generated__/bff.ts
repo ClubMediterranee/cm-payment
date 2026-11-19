@@ -96,6 +96,7 @@ export interface PaymentRedirectRequestBody {
   connection_type?: string;
   /** @minLength 1 */
   action: string;
+  category_payment_method?: string;
   /** @minLength 1 */
   amount: string;
   /** @minLength 1 */
@@ -111,6 +112,9 @@ export interface PaymentRedirectRequestBody {
   uuid?: string;
   reference?: string;
   comments?: string;
+  sales_network_id?: string;
+  salesman_id?: string;
+  opportunity_id?: string;
 }
 
 export interface OverpaymentAllowanceOutputModel {

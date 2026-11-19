@@ -1,7 +1,10 @@
 import { AdditionalProperties, Property, Required } from '@tsed/schema';
 
 import type { BillingDetailsModel, HeadersModel } from '../../infra/api/__generated__/index.js';
-import { Action } from '../../infra/api/__generated__/index.js';
+import {
+  Action,
+  PaymentProvider1CategoryPaymentMethod,
+} from '../../infra/api/__generated__/index.js';
 
 export class PaymentRedirectRequestBody {
   @Required()
@@ -21,6 +24,9 @@ export class PaymentRedirectRequestBody {
 
   @Required()
   action!: Action;
+
+  @Property()
+  category_payment_method?: PaymentProvider1CategoryPaymentMethod;
 
   @Required()
   amount!: string;

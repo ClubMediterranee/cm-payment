@@ -58,9 +58,12 @@ Section headings and the submit label of the webcomponent form can be overridden
 ```
 https://host.example/confirmation?payment_status=OK&payment_amount=1250.00&payment_currency=EUR
   &booking_id=…&provider_id=…&proposal_id=…&locale=fr-FR
+  &payment_id=…&action=PAYMENT_RESA&category_payment_method=CreditCard
 ```
 
 `payment_status` is one of `OK`, `PENDING`, `REFUSED_PSP`, `REFUSED_CM` or `CANCELED`. Count a conversion from the confirmation page only, to avoid counting a submit that was refused. `payment_amount` is a decimal string, whereas `amount` of `submit` is a number.
+
+`payment_id` identifies the payment (absent for a manual payment, which creates none), `action` is the action the payment was made for (for example `PAYMENT_RESA`) and `category_payment_method` is the category of the payment method (`CreditCard`, `BankTransfer`, `DirectDebit`, `BuyNowPayLater`, `Cheque` or `Paypal`). Your `callbackUrl` can already carry a query string: the parameters above are added to it.
 
 ## Without the webcomponent
 
