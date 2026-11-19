@@ -1,14 +1,10 @@
 import { Inject, Service } from '@tsed/di';
 
 import {
-  getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
-  getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
-  getV1CustomersCustomerIdBookingsBookingIdCart,
+  getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules,
   getV1ProposalsProposalIdPaymentSchedule,
-  getV3CustomersCustomerIdBookingsBookingIdServices,
-  GetV3CustomersCustomerIdBookingsBookingIdServicesStatus,
+  GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesAction as BookingPaymentScheduleAction,
 } from '../../infra/api/__generated__/index.js';
-import { Action } from '../../infra/api/__generated__/index.js';
 import {
   PaymentScheduleNotFoundError,
   PaymentScheduleValidationError,
@@ -18,6 +14,8 @@ import { PaymentScheduleBuilder } from './PaymentScheduleBuilder.js';
 import { PaymentScheduleNormalizer } from './PaymentScheduleNormalizer.js';
 import { PaymentScheduleOutput, PaymentScheduleParams } from './types.js';
 
+const SUPPORTED_BOOKING_ACTIONS: string[] = Object.values(BookingPaymentScheduleAction);
+
 @Service()
 export class PaymentSchedulesService {
   @Inject()
@@ -25,18 +23,6 @@ export class PaymentSchedulesService {
 
   @Inject()
   private builder!: PaymentScheduleBuilder;
-
-  private actionMap = {
-    [Action.PAYMENT_OPTION]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
-    [Action.PAYMENT_SOLDE]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
-    [Action.PAYMENT_PARTIAL]: getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules,
-    [Action.PAYMENT_CART]: getV1CustomersCustomerIdBookingsBookingIdCart,
-    [Action.PAYMENT_UPGRADE_ROOM]: getV0CustomersCustomerIdBookingsBookingIdCartAccommodations,
-    [Action.PAYMENT_SERVICES_IN_OPTION]: (customerId: string, bookingId: string) =>
-      getV3CustomersCustomerIdBookingsBookingIdServices(customerId, bookingId, {
-        status: GetV3CustomersCustomerIdBookingsBookingIdServicesStatus.OPTION,
-      }),
-  };
 
   async handlePaymentSchedules({
     type,
@@ -49,12 +35,13 @@ export class PaymentSchedulesService {
     const response =
       type === 'proposal'
         ? await getV1ProposalsProposalIdPaymentSchedule(String(id))
-        : await this.actionMap[action as keyof typeof this.actionMap](
+        : await getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules(
             String(customer_id),
             String(id),
+            { action: action as BookingPaymentScheduleAction },
           );
 
-    const normalizedData = this.normalizer.normalize(response);
+    const normalizedData = this.normalizer.normalize(response, action);
 
     const paymentSchedules = this.builder.build(normalizedData);
 
@@ -74,7 +61,7 @@ export class PaymentSchedulesService {
       throw new PaymentScheduleValidationError('customer id is required');
     }
 
-    if (type === 'booking' && !this.actionMap[action as keyof typeof this.actionMap]) {
+    if (type === 'booking' && !SUPPORTED_BOOKING_ACTIONS.includes(action)) {
       throw new UnsupportedActionError(action);
     }
   }

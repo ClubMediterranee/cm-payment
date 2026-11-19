@@ -1,19 +1,11 @@
 import {
   Action,
-  CartModel,
-  CartUpgradeRoomModel,
-  CustomerBookingPaymentScheduleModel,
+  GetPaymentSchedulesV1Model,
   ProposalPaymentScheduleModelV1,
-  ServicesV3Model,
 } from '../../infra/api/__generated__/index.js';
 import { ResourceType } from '../../utils/types.js';
 
-export type ApiResponse =
-  | ProposalPaymentScheduleModelV1
-  | CustomerBookingPaymentScheduleModel
-  | CartModel
-  | CartUpgradeRoomModel
-  | ServicesV3Model;
+export type ApiResponse = ProposalPaymentScheduleModelV1 | GetPaymentSchedulesV1Model;
 
 export type PaymentSchedule = {
   currency: string;
