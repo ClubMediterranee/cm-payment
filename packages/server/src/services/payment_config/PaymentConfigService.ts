@@ -47,6 +47,15 @@ export class PaymentConfigService {
     return { feature_flips, settings };
   }
 
+  async getContent(locale: string): Promise<Record<string, unknown>> {
+    const contents = await this.paymentConfigRepository.getContents(locale);
+
+    const content =
+      contents.find((c) => c.locale === locale) ?? contents.find((c) => c.locale === null);
+
+    return content?.content ?? {};
+  }
+
   async getPaymentProvidersConfig({
     locale,
     issuerType,

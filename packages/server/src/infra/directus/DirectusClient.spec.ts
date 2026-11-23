@@ -44,6 +44,28 @@ describe('DirectusClient', () => {
     });
   });
 
+  describe('getContents', () => {
+    it('fetches the published contents of the locale and the global one', async () => {
+      const contents = [{ locale: '*', content: { cgv: { heading: 'Terms' } } }];
+      requestMock.mockResolvedValue(contents);
+
+      const result = await client.getContents('fr-FR');
+
+      expect(result).toEqual(contents);
+      expect(requestMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          collection: 'caps_content',
+          query: expect.objectContaining({
+            filter: {
+              status: { _eq: 'published' },
+              _or: [{ locale: { _eq: 'fr-FR' } }, { locale: { _eq: '*' } }],
+            },
+          }),
+        }),
+      );
+    });
+  });
+
   describe('getProviders', () => {
     it('fetches providers from the caps_providers collection with nested settings', async () => {
       const providers = [

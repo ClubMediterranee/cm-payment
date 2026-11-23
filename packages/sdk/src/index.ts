@@ -21,4 +21,5 @@ export * from './utils/fetcher';
 export * from './utils/formatCurrency';
 export * from './utils/formatDate';
 export { defaultNavigate } from './utils/navigate';
+export { formatTemplate, renderTemplate } from './utils/renderTemplate';
 export type { NavigationHandler, NavigationRequest } from './utils/navigate';

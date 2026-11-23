@@ -32,20 +32,28 @@ export interface BackendProperty {
   /** @primaryKey */
   id: string;
   comments?: string | null;
-  content_name?: string | null;
   sort?: number | null;
   path?: string | null;
-  /** @required */
-  route: BackendRoute | string;
   type?: PredefinedValue | string | null;
   source_file?: string | null;
   user_created?: DirectusUser | string | null;
   date_created?: string | null;
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
+  data_type?: PredefinedValue | string | null;
+  provenance?: 'code_analysis' | 'ai' | 'manual' | null;
+  /** @required */
+  backend: BackendSource | string;
+  description?: string | null;
+  is_nullable?: boolean | null;
+  format?: string | null;
+  pattern?: string | null;
+  /** @description The original type from datasource */
+  original_type?: string | null;
+  enum_values?: string[] | null;
 }
 
-export interface BackendRoute {
+export interface BackendSource {
   /** @primaryKey */
   id: string;
   sort?: number | null;
@@ -55,22 +63,27 @@ export interface BackendRoute {
   date_updated?: string | null;
   /** @required */
   backend: PredefinedValue | string;
+  route?: string | null;
   /** @required */
-  route: string;
-  errors?: BackendRoutesBackendError[] | string[];
+  resource_type: 'http' | 'document';
+  method?: PredefinedValue | string | null;
+  document?: PredefinedValue | string | null;
+  source_file?: string | null;
+  provenance?: 'code_analysis' | 'ai' | null;
+  errors?: BackendSourcesBackendError[] | string[];
 }
 
-export interface BackendRoutesBackendError {
+export interface BackendSourcesBackendError {
   /** @primaryKey */
   id: number;
-  backend_routes_id?: BackendRoute | string | null;
+  backend_sources_id?: BackendSource | string | null;
   backend_errors_id?: BackendError | string | null;
 }
 
-export interface BackendRoutesPredefinedValue {
+export interface BackendSourcesPredefinedValue {
   /** @primaryKey */
   id: number;
-  backend_routes_id?: string | null;
+  backend_sources_id?: string | null;
   predefined_values_id?: string | null;
 }
 
@@ -264,6 +277,21 @@ export interface CapsConfiguration {
   description?: string | null;
 }
 
+export interface CapsContent {
+  /** @primaryKey */
+  id: string;
+  status?: 'published' | 'draft' | 'archived';
+  sort?: number | null;
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  /** @description Locale code sourced from Club Med locales API (one content item per locale, * for the fallback content). @required */
+  locale: string;
+  /** @description Free JSON object holding the CAPS wording for this locale. @required */
+  content: Record<string, any>;
+}
+
 export interface CapsProviderConfiguration {
   /** @primaryKey */
   id: string;
@@ -314,6 +342,7 @@ export interface CapsProviderConfiguration {
     | 'Twint'
     | 'PIX'
   > | null;
+  sort?: number | null;
 }
 
 export interface CapsProvider {
@@ -335,6 +364,8 @@ export interface CapsProvider {
     | 'buy_now_pay_later'
     | null;
   confirmation_strategy?: 'status' | 'notify' | null;
+  logos?: string[] | null;
+  sort?: number | null;
   settings?: CapsProviderConfiguration[] | string[];
 }
 
@@ -403,6 +434,23 @@ export interface Language {
   code: string;
   name?: string | null;
   direction?: 'ltr' | 'rtl' | null;
+}
+
+export interface MappingEvidence {
+  /** @primaryKey */
+  id: string;
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  atlas_key?: string | null;
+  backend_property_id?: BackendProperty | string | null;
+  evidence_type?: 'static_analysis' | 'inference' | null;
+  status?: 'confirmed' | 'inferred' | 'needs_review' | 'unknown' | null;
+  confidence_score?: number | null;
+  source_file?: string | null;
+  last_seen_at?: string | null;
+  route_property_id?: RouteProperty | string | null;
 }
 
 export interface MigrationNote {
@@ -526,6 +574,42 @@ export interface OtaProductId {
   product_id?: CmmProduct | string | null;
 }
 
+export interface OtaProfile {
+  /** @primaryKey */
+  id: string;
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  /** @required */
+  ota: Ota | string;
+  /** @required */
+  label: string;
+  /** @required */
+  accepted_guarantee_types: Array<
+    | 'deposit'
+    | 'OTACollect'
+    | 'OTAVirtualCard'
+    | 'manual'
+    | 'creditcard'
+    | 'BankTransfer'
+    | `D-Edge`
+  >;
+  /** @required */
+  is_ducroire: boolean;
+  /** @required */
+  network_code: string;
+  /** @required */
+  country_code: string;
+  /** @required */
+  agent_code: string;
+  /** @required */
+  currency: string;
+  /** @required */
+  local: string;
+  status?: 'published' | 'draft' | 'archived' | null;
+}
+
 export interface OtaRateId {
   /** @primaryKey */
   id: string;
@@ -563,13 +647,8 @@ export interface Ota {
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
   label?: string | null;
-  agent_code?: string | null;
-  country_code?: string | null;
-  network_code?: string | null;
-  manager_code?: string | null;
-  currency?: string | null;
-  local?: string | null;
-  is_ducroire?: boolean | null;
+  /** @description Profiles shared by all products and resorts of this OTA. */
+  profiles?: OtaProfile[] | string[];
 }
 
 export interface Page {
@@ -632,6 +711,28 @@ export interface PredefinedValue {
   label: string;
   /** @required */
   type: string;
+  meta?: string | null;
+}
+
+export interface ReleaseJiraIssue {
+  /** @primaryKey */
+  id: string;
+  user_created?: DirectusUser | string | null;
+  date_created?: string | null;
+  user_updated?: DirectusUser | string | null;
+  date_updated?: string | null;
+  version?: string | null;
+  translations?: ReleaseJiraIssuesTranslation[] | null;
+}
+
+export interface ReleaseJiraIssuesTranslation {
+  /** @primaryKey */
+  id: number;
+  release_jira_issues_id?: ReleaseJiraIssue | string | null;
+  languages_code?: Language | string | null;
+  /** @required */
+  title: string;
+  summary?: string | null;
 }
 
 export interface Release {
@@ -654,6 +755,7 @@ export interface Release {
   related_routes?: ReleasesRoute[] | string[];
   related_migration_notes?: ReleasesMigrationNote[] | string[];
   tags?: ReleasesTag[] | string[];
+  related_jira_issues?: ReleasesReleaseJiraIssue[] | string[];
 }
 
 export interface ReleasesChannel {
@@ -668,6 +770,13 @@ export interface ReleasesMigrationNote {
   id: number;
   releases_id?: Release | string | null;
   migration_notes_id?: MigrationNote | string | null;
+}
+
+export interface ReleasesReleaseJiraIssue {
+  /** @primaryKey */
+  id: number;
+  releases_id?: Release | string | null;
+  release_jira_issues_id?: ReleaseJiraIssue | string | null;
 }
 
 export interface ReleasesRoute {
@@ -708,63 +817,23 @@ export interface RouteError {
   description?: string | null;
 }
 
-export interface RouteInputProperty {
+export interface RouteProperty {
   /** @primaryKey */
   id: string;
   description?: string | null;
   sort?: number | null;
   deprecated?: boolean | null;
-  /** @required */
-  route_id: Route | string;
-  /** @required */
-  path: string;
-  /** @required */
-  in_type: PredefinedValue | string;
-  user_created?: DirectusUser | string | null;
-  date_created?: string | null;
-  user_updated?: DirectusUser | string | null;
-  date_updated?: string | null;
-  source_file?: string | null;
-  /** @description First published API version */
-  first_published_version?: string | null;
-  /** @description Last observed API version */
-  last_published_version?: string | null;
-  /** @description Version where this API property was deprecated */
-  deprecated_version?: string | null;
-  targets?: RouteInputPropertiesBackendProperty[] | string[];
-}
-
-export interface RouteInputPropertiesBackendProperty {
-  /** @primaryKey */
-  id: number;
-  route_input_properties_id?: RouteInputProperty | string | null;
-  backend_properties_id?: BackendProperty | string | null;
-}
-
-export interface RouteInputPropertiesRouteInputProperty {
-  /** @primaryKey */
-  id: number;
-  route_input_properties_id?: RouteInputProperty | string | null;
-  related_route_input_properties_id?: RouteInputProperty | string | null;
-}
-
-export interface RouteOutputProperty {
-  /** @primaryKey */
-  id: string;
-  /** @required */
-  route_id: Route | string;
-  description?: string | null;
   is_dynamic?: boolean;
-  sort?: number | null;
-  deprecated?: boolean | null;
+  /** @required */
+  route_id: Route | string;
   /** @required */
   path: string;
+  /** @required */
+  type: PredefinedValue | string;
   user_created?: DirectusUser | string | null;
   date_created?: string | null;
   user_updated?: DirectusUser | string | null;
   date_updated?: string | null;
-  /** @required */
-  out_type: PredefinedValue | string;
   source_file?: string | null;
   /** @description First published API version */
   first_published_version?: string | null;
@@ -772,14 +841,27 @@ export interface RouteOutputProperty {
   last_published_version?: string | null;
   /** @description Version where this API property was deprecated */
   deprecated_version?: string | null;
-  sources?: RouteOutputPropertiesBackendProperty[] | string[];
+  data_type?: PredefinedValue | string | null;
+  format?: string | null;
+  original_type?: string | null;
+  is_nullable?: boolean | null;
+  pattern?: string | null;
+  enum_values?: string[] | null;
+  linked_backend_properties?: RoutePropertiesBackendProperty[] | string[];
 }
 
-export interface RouteOutputPropertiesBackendProperty {
+export interface RoutePropertiesBackendProperty {
   /** @primaryKey */
   id: number;
-  route_output_properties_id?: RouteOutputProperty | string | null;
+  route_properties_id?: RouteProperty | string | null;
   backend_properties_id?: BackendProperty | string | null;
+}
+
+export interface RoutePropertiesRouteProperty {
+  /** @primaryKey */
+  id: number;
+  route_properties_id?: RouteProperty | string | null;
+  related_route_properties_id?: RouteProperty | string | null;
 }
 
 export interface Route {
@@ -802,10 +884,8 @@ export interface Route {
   deprecated_version?: string | null;
   tags?: RoutesTag[] | string[];
   translations?: RoutesTranslation[] | null;
-  /** @description Response payload properties sent to our consumer */
-  output_properties?: RouteOutputProperty[] | string[];
-  input_properties?: RouteInputProperty[] | string[];
   errors?: RoutesRouteError[] | string[];
+  properties?: RouteProperty[] | string[];
 }
 
 export interface RoutesRouteError {
@@ -1501,9 +1581,9 @@ export interface Schema {
   ai_prompts: AiPrompt[];
   backend_errors: BackendError[];
   backend_properties: BackendProperty[];
-  backend_routes: BackendRoute[];
-  backend_routes_backend_errors: BackendRoutesBackendError[];
-  backend_routes_predefined_values: BackendRoutesPredefinedValue[];
+  backend_sources: BackendSource[];
+  backend_sources_backend_errors: BackendSourcesBackendError[];
+  backend_sources_predefined_values: BackendSourcesPredefinedValue[];
   blocks_cards: BlocksCard[];
   blocks_cards_translations: BlocksCardsTranslation[];
   blocks_herobanners: BlocksHerobanner[];
@@ -1520,6 +1600,7 @@ export interface Schema {
   buttons_translations: ButtonsTranslation[];
   caps_allowed_origins: CapsAllowedOrigin[];
   caps_configurations: CapsConfiguration[];
+  caps_content: CapsContent[];
   caps_provider_configurations: CapsProviderConfiguration[];
   caps_providers: CapsProvider[];
   channels: Channel[];
@@ -1528,6 +1609,7 @@ export interface Schema {
   cmm_rates: CmmRate[];
   cmm_rooms: CmmRoom[];
   languages: Language[];
+  mapping_evidences: MappingEvidence[];
   migration_notes: MigrationNote[];
   migration_notes_channels: MigrationNotesChannel[];
   migration_notes_routes: MigrationNotesRoute[];
@@ -1538,6 +1620,7 @@ export interface Schema {
   navigation_items_translations: NavigationItemsTranslation[];
   navigations: Navigation[];
   ota_product_ids: OtaProductId[];
+  ota_profiles: OtaProfile[];
   ota_rate_ids: OtaRateId[];
   ota_room_ids: OtaRoomId[];
   otas: Ota[];
@@ -1546,18 +1629,19 @@ export interface Schema {
   pages_tags: PagesTag[];
   pages_translations: PagesTranslation[];
   predefined_values: PredefinedValue[];
+  release_jira_issues: ReleaseJiraIssue[];
+  release_jira_issues_translations: ReleaseJiraIssuesTranslation[];
   releases: Release[];
   releases_channels: ReleasesChannel[];
   releases_migration_notes: ReleasesMigrationNote[];
+  releases_release_jira_issues: ReleasesReleaseJiraIssue[];
   releases_routes: ReleasesRoute[];
   releases_tags: ReleasesTag[];
   releases_translations: ReleasesTranslation[];
   route_errors: RouteError[];
-  route_input_properties: RouteInputProperty[];
-  route_input_properties_backend_properties: RouteInputPropertiesBackendProperty[];
-  route_input_properties_route_input_properties: RouteInputPropertiesRouteInputProperty[];
-  route_output_properties: RouteOutputProperty[];
-  route_output_properties_backend_properties: RouteOutputPropertiesBackendProperty[];
+  route_properties: RouteProperty[];
+  route_properties_backend_properties: RoutePropertiesBackendProperty[];
+  route_properties_route_properties: RoutePropertiesRouteProperty[];
   routes: Route[];
   routes_route_errors: RoutesRouteError[];
   routes_tags: RoutesTag[];
@@ -1608,9 +1692,9 @@ export enum CollectionNames {
   ai_prompts = 'ai_prompts',
   backend_errors = 'backend_errors',
   backend_properties = 'backend_properties',
-  backend_routes = 'backend_routes',
-  backend_routes_backend_errors = 'backend_routes_backend_errors',
-  backend_routes_predefined_values = 'backend_routes_predefined_values',
+  backend_sources = 'backend_sources',
+  backend_sources_backend_errors = 'backend_sources_backend_errors',
+  backend_sources_predefined_values = 'backend_sources_predefined_values',
   blocks_cards = 'blocks_cards',
   blocks_cards_translations = 'blocks_cards_translations',
   blocks_herobanners = 'blocks_herobanners',
@@ -1627,6 +1711,7 @@ export enum CollectionNames {
   buttons_translations = 'buttons_translations',
   caps_allowed_origins = 'caps_allowed_origins',
   caps_configurations = 'caps_configurations',
+  caps_content = 'caps_content',
   caps_provider_configurations = 'caps_provider_configurations',
   caps_providers = 'caps_providers',
   channels = 'channels',
@@ -1635,6 +1720,7 @@ export enum CollectionNames {
   cmm_rates = 'cmm_rates',
   cmm_rooms = 'cmm_rooms',
   languages = 'languages',
+  mapping_evidences = 'mapping_evidences',
   migration_notes = 'migration_notes',
   migration_notes_channels = 'migration_notes_channels',
   migration_notes_routes = 'migration_notes_routes',
@@ -1645,6 +1731,7 @@ export enum CollectionNames {
   navigation_items_translations = 'navigation_items_translations',
   navigations = 'navigations',
   ota_product_ids = 'ota_product_ids',
+  ota_profiles = 'ota_profiles',
   ota_rate_ids = 'ota_rate_ids',
   ota_room_ids = 'ota_room_ids',
   otas = 'otas',
@@ -1653,18 +1740,19 @@ export enum CollectionNames {
   pages_tags = 'pages_tags',
   pages_translations = 'pages_translations',
   predefined_values = 'predefined_values',
+  release_jira_issues = 'release_jira_issues',
+  release_jira_issues_translations = 'release_jira_issues_translations',
   releases = 'releases',
   releases_channels = 'releases_channels',
   releases_migration_notes = 'releases_migration_notes',
+  releases_release_jira_issues = 'releases_release_jira_issues',
   releases_routes = 'releases_routes',
   releases_tags = 'releases_tags',
   releases_translations = 'releases_translations',
   route_errors = 'route_errors',
-  route_input_properties = 'route_input_properties',
-  route_input_properties_backend_properties = 'route_input_properties_backend_properties',
-  route_input_properties_route_input_properties = 'route_input_properties_route_input_properties',
-  route_output_properties = 'route_output_properties',
-  route_output_properties_backend_properties = 'route_output_properties_backend_properties',
+  route_properties = 'route_properties',
+  route_properties_backend_properties = 'route_properties_backend_properties',
+  route_properties_route_properties = 'route_properties_route_properties',
   routes = 'routes',
   routes_route_errors = 'routes_route_errors',
   routes_tags = 'routes_tags',

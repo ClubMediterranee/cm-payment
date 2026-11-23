@@ -27,7 +27,7 @@ export const UpliftCard = ({ provider, name, checked, onChange }: UpliftCardProp
   const watchedAmount = useWatch('amount');
   const watchedCurrency = useWatch('currency');
   const { status } = useUplift();
-  const { payMonthly } = content.paymentSchedule.cards;
+  const { monthly } = content.paymentSchedule;
 
   const currencySymbol = getCurrencySymbol(locale, watchedCurrency);
   const isFrench = language === 'fr';
@@ -44,7 +44,7 @@ export const UpliftCard = ({ provider, name, checked, onChange }: UpliftCardProp
 
       <div className={isLoading ? 'hidden' : 'contents'}>
         <ScheduleCard
-          title={payMonthly.title}
+          title={monthly.title}
           name={name}
           value={provider.id}
           checked={checked}
@@ -52,10 +52,10 @@ export const UpliftCard = ({ provider, name, checked, onChange }: UpliftCardProp
           disabled={isUnavailable}
         >
           {isUnavailable ? (
-            <p className="text-b5">{content.paymentSchedule.buyNowPayLater.unavailable}</p>
+            <p className="text-b5">{monthly.unavailable}</p>
           ) : (
             <>
-              <p className="text-b5">{payMonthly.from}</p>
+              <p className="text-b5">{monthly.from}</p>
               <div id="up-pay-monthly-selector" className="text-b2 font-bold">
                 <span
                   className="flex items-center gap-4 cursor-pointer"
@@ -70,7 +70,7 @@ export const UpliftCard = ({ provider, name, checked, onChange }: UpliftCardProp
                   </span>
                 </span>
               </div>
-              <p className="text-b6">{payMonthly.caption}</p>
+              <p className="text-b6">{monthly.caption}</p>
             </>
           )}
         </ScheduleCard>

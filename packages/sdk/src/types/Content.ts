@@ -19,29 +19,23 @@ export type Content = {
   };
   paymentSchedule: {
     heading: string;
-    payFullAmount: `${string}{amount}${string}`;
-    payDeposit: `${string}{amount}${string}{deadline}${string}{balance}${string}`;
-    cards: {
-      select: string;
-      selected: string;
-      payInFull: {
-        title: string;
-        description: string;
-        caption: string;
-      };
-      payInTwo: {
-        title: string;
-        description: `${string}{deposit}${string}{balance}${string}{deadline}${string}`;
-      };
-      payMonthly: {
-        title: string;
-        from: string;
-        caption: string;
-      };
+    select: string;
+    selected: string;
+    full: {
+      title: string;
+      description: string;
+      caption: string;
     };
-    buyNowPayLater: {
-      iconLabel: `${string}{icon}${string}`;
-      priceLabel: `${string}{price}${string}`;
+    deposit: {
+      title: string;
+      description: `${string}{deposit}${string}` &
+        `${string}{balance}${string}` &
+        `${string}{deadline}${string}`;
+    };
+    monthly: {
+      title: string;
+      from: string;
+      caption: string;
       unavailable: string;
       simulationLabel: `${string}{icon}${string}{total}${string}{cost}${string}{instalments}${string}`;
       instalmentItem: `${string}{amount}${string}{date}${string}`;
@@ -49,13 +43,14 @@ export type Content = {
       instalmentOther: `${string}{count}${string}{date}${string}`;
       feesInclude: `${string}{amount}${string}`;
     };
+    installments: {
+      title: `${string}{icon}${string}`;
+    };
   };
   cgv: {
     heading: string;
-    title: string;
     content: string;
     validation: {
-      required: string;
       mustAccept: string;
     };
   };
@@ -71,7 +66,6 @@ export type Content = {
     validation: {
       required: string;
     };
-    title: string;
     choiceLabel: `${string}{label}${string}`;
     mobile_phone: {
       sendLink: string;
@@ -92,7 +86,6 @@ export type Content = {
     fields: Record<'email' | 'mobile_phone', { label: string; placeholder: string }>;
   };
   creditCardForm: {
-    title: string;
     fullName: string;
     cardNumber: string;
     expiryDate: string;
@@ -108,13 +101,11 @@ export type Content = {
     };
   };
   freeDeposit: {
-    title: string;
     totalRemaining: string;
     before: string;
     payNowLabel: string;
     placeholder: string;
     validation: {
-      required: string;
       positive: string;
       maxExceeded: string;
     };
@@ -127,7 +118,6 @@ export type Content = {
   };
   cardInstallments: {
     heading: string;
-    title: string;
     selectCardType: string;
     selectInstallments: string;
     placeholder: string;
@@ -139,7 +129,6 @@ export type Content = {
   };
   billingAddress: {
     heading: string;
-    title: string;
     additionalInformation: string;
     hints: {
       first_name: string;
@@ -167,11 +156,6 @@ export type Content = {
       required: string;
       maxLength: string;
       pattern: string;
-      invalidValue: string;
-    };
-    errors: {
-      schemaFetchFailed: string;
-      schemaInvalid: string;
     };
   };
   wechat: {

@@ -132,6 +132,38 @@ describe('PaymentConfigService', () => {
     });
   });
 
+  describe('getContent', () => {
+    it('should return the locale content when it exists', async () => {
+      vi.spyOn(paymentConfigRepository, 'getContents').mockResolvedValue([
+        { locale: null, content: { cgv: { heading: 'Terms', content: 'I accept' } } },
+        { locale: 'fr-FR', content: { cgv: { heading: 'CGV' } } },
+        { locale: 'en-US', content: { cgv: { heading: 'T&C' } } },
+      ]);
+
+      const result = await service.getContent('fr-FR');
+
+      expect(result).toEqual({ cgv: { heading: 'CGV' } });
+    });
+
+    it('should return the global content when the locale has none', async () => {
+      vi.spyOn(paymentConfigRepository, 'getContents').mockResolvedValue([
+        { locale: null, content: { cgv: { heading: 'Terms' } } },
+      ]);
+
+      const result = await service.getContent('it-IT');
+
+      expect(result).toEqual({ cgv: { heading: 'Terms' } });
+    });
+
+    it('should return an empty object when there is no content', async () => {
+      vi.spyOn(paymentConfigRepository, 'getContents').mockResolvedValue([]);
+
+      const result = await service.getContent('fr-FR');
+
+      expect(result).toEqual({});
+    });
+  });
+
   describe('getPaymentProvidersConfig', () => {
     it('returns all providers and exposes allowed_actions from the resolved variant', async () => {
       const providers = [

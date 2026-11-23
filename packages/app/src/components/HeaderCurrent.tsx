@@ -1,6 +1,7 @@
 import { Icon, type IconicNames } from '@clubmed/trident-icons';
 
 import { useBackUrl } from '../hooks/useBackUrl';
+import { useContent } from '../hooks/useContent';
 import { useProduct } from '../hooks/useProduct';
 import { useStay } from '../hooks/useStay';
 import { useAppContext } from '../providers/AppProvider';
@@ -8,6 +9,7 @@ import { useAppContext } from '../providers/AppProvider';
 const HeaderBanner = () => {
   const { stay } = useStay();
   const { data: product } = useProduct(stay);
+  const { app } = useContent();
 
   return (
     <div className="relative overflow-hidden bg-lightSand">
@@ -21,7 +23,7 @@ const HeaderBanner = () => {
           />
         )}
         <div>
-          <p className="mb-8 text-b3">Your stay at:</p>
+          <p className="mb-8 text-b3">{app.header.stayAt}</p>
           <p className="font-serif text-h2 font-bold italic md:text-h0">{product.title}</p>
         </div>
       </div>
@@ -38,6 +40,7 @@ const HeaderBanner = () => {
 export const HeaderCurrent = () => {
   const { id } = useAppContext();
   const backUrl = useBackUrl();
+  const { app } = useContent();
 
   return (
     <div className="w-full">
@@ -46,7 +49,7 @@ export const HeaderCurrent = () => {
           {backUrl && (
             <a href={backUrl} className="inline-flex items-center gap-16 text-b4">
               <Icon name="ArrowDefaultLeft" width="0.75rem" />
-              Retour
+              {app.header.back}
             </a>
           )}
         </div>

@@ -7,8 +7,8 @@
 /**
  * @minLength 1
  */
-export type ResolvedActionModelAction =
-  (typeof ResolvedActionModelAction)[keyof typeof ResolvedActionModelAction];
+export type ResolvedActionModelAction = typeof ResolvedActionModelAction[keyof typeof ResolvedActionModelAction];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ResolvedActionModelAction = {
@@ -39,7 +39,8 @@ export interface FeatureFlipsConfig {
 
 export type PaymentSettingsDaysBeforeTripToAllowFreeDeposit = null | number;
 
-export type PaymentSettingsTheme = (typeof PaymentSettingsTheme)[keyof typeof PaymentSettingsTheme];
+export type PaymentSettingsTheme = typeof PaymentSettingsTheme[keyof typeof PaymentSettingsTheme];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PaymentSettingsTheme = {
@@ -51,7 +52,9 @@ export interface PaymentSettings {
   days_before_trip_to_allow_free_deposit?: PaymentSettingsDaysBeforeTripToAllowFreeDeposit;
   theme?: PaymentSettingsTheme;
   [key: string]: unknown;
-}
+ }
+
+export interface PaymentContent { [key: string]: unknown }
 
 export interface PaymentRedirectRequestResult {
   redirect: ProviderRedirectModel;
@@ -237,12 +240,12 @@ export interface TimePaymentConditionModel {
 }
 
 export type ActionResolverControllerResolveActionParams = {
-  customer_id?: string;
-  action?: ActionResolverControllerResolveActionAction;
+customer_id?: string;
+action?: ActionResolverControllerResolveActionAction;
 };
 
-export type ActionResolverControllerResolveActionAction =
-  (typeof ActionResolverControllerResolveActionAction)[keyof typeof ActionResolverControllerResolveActionAction];
+export type ActionResolverControllerResolveActionAction = typeof ActionResolverControllerResolveActionAction[keyof typeof ActionResolverControllerResolveActionAction];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActionResolverControllerResolveActionAction = {
@@ -256,12 +259,12 @@ export const ActionResolverControllerResolveActionAction = {
 } as const;
 
 export type PaymentProvidersControllerGetPaymentProvidersParams = {
-  customer_id?: string;
-  action?: PaymentProvidersControllerGetPaymentProvidersAction;
+customer_id?: string;
+action?: PaymentProvidersControllerGetPaymentProvidersAction;
 };
 
-export type PaymentProvidersControllerGetPaymentProvidersAction =
-  (typeof PaymentProvidersControllerGetPaymentProvidersAction)[keyof typeof PaymentProvidersControllerGetPaymentProvidersAction];
+export type PaymentProvidersControllerGetPaymentProvidersAction = typeof PaymentProvidersControllerGetPaymentProvidersAction[keyof typeof PaymentProvidersControllerGetPaymentProvidersAction];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PaymentProvidersControllerGetPaymentProvidersAction = {
@@ -274,45 +277,40 @@ export const PaymentProvidersControllerGetPaymentProvidersAction = {
   PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
 } as const;
 
-export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType =
-  (typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType)[keyof typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType];
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType = typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType[keyof typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType =
-  {
-    'E-commerce': 'E-commerce',
-    Manual: 'Manual',
-  } as const;
+export const PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType = {
+  'E-commerce': 'E-commerce',
+  Manual: 'Manual',
+} as const;
 
-export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType =
-  (typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType)[keyof typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType];
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType = typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType[keyof typeof PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType =
-  {
-    hosted_field: 'hosted_field',
-    iframe: 'iframe',
-    third_party_iframe: 'third_party_iframe',
-    redirect: 'redirect',
-    custom: 'custom',
-  } as const;
+export const PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType = {
+  hosted_field: 'hosted_field',
+  iframe: 'iframe',
+  third_party_iframe: 'third_party_iframe',
+  redirect: 'redirect',
+  custom: 'custom',
+} as const;
 
-export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings =
-  { [key: string]: unknown };
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings = { [key: string]: unknown };
 
-export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfiguration =
-  {
-    display_type: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType;
-    settings: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings;
-    requires_token?: boolean;
-    requires_card_holder?: boolean;
-    requires_expiry_date?: boolean;
-    requires_contact_choice?: boolean;
-    logos?: string[];
-  };
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfiguration = {
+  display_type: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationDisplayType;
+  settings: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConfigurationSettings;
+  requires_token?: boolean;
+  requires_card_holder?: boolean;
+  requires_expiry_date?: boolean;
+  requires_contact_choice?: boolean;
+  logos?: string[];
+};
 
-export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfPaymentConditions =
-  { [key: string]: TimePaymentConditionModel[] };
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfPaymentConditions = {[key: string]: TimePaymentConditionModel[]};
 
 export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOf = {
   connection_type: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfConnectionType;
@@ -320,48 +318,42 @@ export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem
   payment_conditions: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOfPaymentConditions;
 };
 
-export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem =
-  PaymentProvider1 & PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOf;
+export type PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem = PaymentProvider1 & PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItemAllOf;
 
-export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType =
-  (typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType)[keyof typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType];
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType = typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType[keyof typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType =
-  {
-    'E-commerce': 'E-commerce',
-    Manual: 'Manual',
-  } as const;
-
-export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType =
-  (typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType)[keyof typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType =
-  {
-    hosted_field: 'hosted_field',
-    iframe: 'iframe',
-    third_party_iframe: 'third_party_iframe',
-    redirect: 'redirect',
-    custom: 'custom',
-  } as const;
+export const PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType = {
+  'E-commerce': 'E-commerce',
+  Manual: 'Manual',
+} as const;
 
-export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings =
-  { [key: string]: unknown };
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType = typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType[keyof typeof PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType];
 
-export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfiguration =
-  {
-    display_type: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType;
-    settings: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings;
-    requires_token?: boolean;
-    requires_card_holder?: boolean;
-    requires_expiry_date?: boolean;
-    requires_contact_choice?: boolean;
-    logos?: string[];
-  };
 
-export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfPaymentConditions =
-  { [key: string]: TimePaymentConditionModel[] };
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType = {
+  hosted_field: 'hosted_field',
+  iframe: 'iframe',
+  third_party_iframe: 'third_party_iframe',
+  redirect: 'redirect',
+  custom: 'custom',
+} as const;
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings = { [key: string]: unknown };
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfiguration = {
+  display_type: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationDisplayType;
+  settings: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConfigurationSettings;
+  requires_token?: boolean;
+  requires_card_holder?: boolean;
+  requires_expiry_date?: boolean;
+  requires_contact_choice?: boolean;
+  logos?: string[];
+};
+
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfPaymentConditions = {[key: string]: TimePaymentConditionModel[]};
 
 export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOf = {
   connection_type: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfConnectionType;
@@ -369,9 +361,7 @@ export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvid
   payment_conditions: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOfPaymentConditions;
 };
 
-export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem =
-  PaymentProvider1 &
-    PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOf;
+export type PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem = PaymentProvider1 & PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItemAllOf;
 
 export type PaymentProvidersControllerGetPaymentProviders200 = {
   payment_providers: PaymentProvidersControllerGetPaymentProviders200PaymentProvidersItem[];
@@ -383,16 +373,16 @@ export type PaymentProvidersControllerGetBnplSimulationParams = {
 };
 
 export type PaymentScheduleControllerGetOverpaymentAllowanceParams = {
-  customer_id?: string;
+customer_id?: string;
 };
 
 export type PaymentScheduleControllerGetPaymentSchedulesParams = {
-  action?: PaymentScheduleControllerGetPaymentSchedulesAction;
-  customer_id?: string;
+action?: PaymentScheduleControllerGetPaymentSchedulesAction;
+customer_id?: string;
 };
 
-export type PaymentScheduleControllerGetPaymentSchedulesAction =
-  (typeof PaymentScheduleControllerGetPaymentSchedulesAction)[keyof typeof PaymentScheduleControllerGetPaymentSchedulesAction];
+export type PaymentScheduleControllerGetPaymentSchedulesAction = typeof PaymentScheduleControllerGetPaymentSchedulesAction[keyof typeof PaymentScheduleControllerGetPaymentSchedulesAction];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PaymentScheduleControllerGetPaymentSchedulesAction = {
@@ -404,3 +394,4 @@ export const PaymentScheduleControllerGetPaymentSchedulesAction = {
   PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
   PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
 } as const;
+

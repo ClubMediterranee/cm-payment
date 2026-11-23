@@ -55,6 +55,8 @@ export interface PaymentSettings {
   [key: string]: unknown;
  }
 
+export interface PaymentContent { [key: string]: unknown }
+
 export interface PaymentRedirectRequestResult {
   redirect: ProviderRedirectModel;
   payment?: PaymentInfoModel;
@@ -250,9 +252,22 @@ export const paymentConfigControllerGetPaymentConfig = (
       );
     }
   
+/**
+ * @summary Get the CAPS wording for a given locale, merged over the global (*) content
+ */
+export const paymentContentControllerGetPaymentContent = (
+    
+ ) => {
+      return bffFetcher<PaymentContent>(
+      {url: `/rest/payment_content`, method: 'GET'
+    },
+      );
+    }
+  
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
     type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
 export type PaymentConfigControllerGetPaymentConfigResult = NonNullable<Awaited<ReturnType<typeof paymentConfigControllerGetPaymentConfig>>>
+export type PaymentContentControllerGetPaymentContentResult = NonNullable<Awaited<ReturnType<typeof paymentContentControllerGetPaymentContent>>>

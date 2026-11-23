@@ -69,23 +69,26 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
           });
           return (
             <Radio key={amount} value={amount?.toString()}>
-              {deadline && balance
-                ? renderTemplate(content.paymentSchedule.payDeposit, {
-                    amount: <span className="font-bold text-sienna">{formattedCurrency}</span>,
-                    deadline: <span className="font-bold">{formatDate(deadline)}</span>,
-                    balance: (
-                      <span className="font-bold text-sienna">
-                        {formatCurrency({
-                          amount: Number(balance) + Number(watchedDonationAmount || 0),
-                          currency,
-                          locale,
-                        })}
-                      </span>
-                    ),
-                  })
-                : renderTemplate(content.paymentSchedule.payFullAmount, {
-                    amount: <span className="font-bold text-sienna">{formattedCurrency}</span>,
-                  })}
+              {deadline && balance ? (
+                renderTemplate(content.paymentSchedule.deposit.description, {
+                  deposit: <span className="font-bold text-sienna">{formattedCurrency}</span>,
+                  deadline: <span className="font-bold">{formatDate(deadline)}</span>,
+                  balance: (
+                    <span className="font-bold text-sienna">
+                      {formatCurrency({
+                        amount: Number(balance) + Number(watchedDonationAmount || 0),
+                        currency,
+                        locale,
+                      })}
+                    </span>
+                  ),
+                })
+              ) : (
+                <>
+                  {content.paymentSchedule.full.description}{' '}
+                  <span className="font-bold text-sienna">{formattedCurrency}</span>
+                </>
+              )}
             </Radio>
           );
         })}

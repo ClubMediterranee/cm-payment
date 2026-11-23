@@ -6,6 +6,14 @@ type ExtractPlaceholders<S extends string> = S extends `${string}{${infer Param}
 
 type TemplateValues<T extends string> = Record<ExtractPlaceholders<T>, React.ReactNode>;
 
+export const formatTemplate = <T extends string>(
+  template: T,
+  values: Record<ExtractPlaceholders<T>, string | number>,
+) =>
+  template.replace(/{(\w+)}/g, (placeholder, key: ExtractPlaceholders<T>) =>
+    String(values[key] ?? placeholder),
+  );
+
 export const renderTemplate = <T extends string>(
   template: T,
   values: TemplateValues<T>,

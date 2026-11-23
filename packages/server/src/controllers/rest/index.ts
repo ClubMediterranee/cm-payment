@@ -4,6 +4,7 @@
 export * from './action_resolver/ActionResolverController.js';
 export * from './health/HealthController.js';
 export * from './payment_config/PaymentConfigController.js';
+export * from './payment_content/PaymentContentController.js';
 export * from './payment_providers/PaymentProvidersController.js';
 export * from './payment_redirect/PaymentRedirectController.js';
 export * from './payment_schedules/PaymentScheduleController.js';

@@ -22,6 +22,14 @@ export class PaymentConfigRepository {
     }));
   }
 
+  async getContents(locale: string) {
+    const contents = await this.directusClient.getContents(locale);
+    return contents.map(({ locale, content }) => ({
+      locale: locale === GLOBAL_LOCALE ? null : locale,
+      content,
+    }));
+  }
+
   async getProviders() {
     const providers = await this.directusClient.getProviders();
     return providers.map(({ settings, ...provider }) => ({

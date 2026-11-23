@@ -64,6 +64,24 @@ describe('PaymentConfigRepository', () => {
     });
   });
 
+  describe('getContents', () => {
+    it("translates Directus '*' locale to null", async () => {
+      vi.spyOn(directusClient, 'getContents').mockResolvedValue([
+        { locale: '*', content: { cgv: { heading: 'Terms' } } },
+        { locale: 'fr-FR', content: { cgv: { heading: 'CGV' } } },
+      ]);
+
+      const contents = await repository.getContents('fr-FR');
+
+      expect(directusClient.getContents).toHaveBeenCalledWith('fr-FR');
+
+      expect(contents).toEqual([
+        { locale: null, content: { cgv: { heading: 'Terms' } } },
+        { locale: 'fr-FR', content: { cgv: { heading: 'CGV' } } },
+      ]);
+    });
+  });
+
   describe('getProviders', () => {
     it("translates Directus '*' locale to null in variants and exposes allowed_actions", async () => {
       vi.spyOn(directusClient, 'getProviders').mockResolvedValue([

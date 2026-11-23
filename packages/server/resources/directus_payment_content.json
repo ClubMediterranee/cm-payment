@@ -1,0 +1,462 @@
+[
+  {
+    "locale": "*",
+    "status": "published",
+    "content": {
+      "paymentProviders": {
+        "heading": "How do you want to pay?",
+        "validation": {
+          "required": "You must choose a payment method"
+        },
+        "creditCard": {
+          "label": "I pay by card the amount of {amount}",
+          "description": "Secure payment with possible 3D Secure verification"
+        },
+        "paypal": {
+          "label": "I pay by PayPal the amount of {amount}"
+        },
+        "bankTransfer": {
+          "label": "I pay by bank transfer the amount of {amount}",
+          "security": "Secure 100% payment (direct connection with your bank)",
+          "paymentCap": "No payment limit for standard bank transfers"
+        }
+      },
+      "paymentSchedule": {
+        "heading": "Choose the payment schedule",
+        "select": "Select this option",
+        "selected": "Selected option",
+        "full": {
+          "title": "Pay in full today",
+          "description": "I pay the total amount of",
+          "caption": "Total price"
+        },
+        "deposit": {
+          "title": "Pay in 2x",
+          "description": "I pay a deposit of {deposit}, and I will have to pay the remaining balance of {balance} on {deadline}"
+        },
+        "monthly": {
+          "title": "Pay monthly",
+          "from": "from",
+          "caption": "Per month",
+          "unavailable": "Pay Monthly is currently unavailable",
+          "simulationLabel": "I pay in {icon} a total of {total} (incl. {cost} financing cost): {instalments}",
+          "instalmentItem": "{amount} on {date}",
+          "instalmentFirst": "1st due date on {date}",
+          "instalmentOther": "{count}th due date on {date}",
+          "feesInclude": "(including {amount} € of costs)"
+        },
+        "installments": {
+          "title": "I pay in {icon} by card"
+        }
+      },
+      "cgv": {
+        "heading": "General Terms and Conditions of Sale",
+        "content": "I accept the terms of sales",
+        "validation": {
+          "mustAccept": "You must accept the T&C"
+        }
+      },
+      "comments": {
+        "heading": "Comments",
+        "placeholder": "Enter your comments",
+        "validation": {
+          "required": "Comments are required"
+        }
+      },
+      "contactChoice": {
+        "heading": "How would you like to be contacted?",
+        "choiceLabel": "By {label}",
+        "validation": {
+          "required": "Contact choice information is required"
+        },
+        "choices": {
+          "email": "Email",
+          "call": "Phone",
+          "mobile_phone": "SMS"
+        },
+        "fields": {
+          "email": {
+            "label": "Email address",
+            "placeholder": "Ex: client@email.com"
+          },
+          "mobile_phone": {
+            "label": "Mobile phone",
+            "placeholder": "Ex: +33 6 12 34 56 78"
+          }
+        },
+        "call": {
+          "sendLink": "To complete the payment, you will be prompted to request the client’s various payment information. You will be able to track your client’s payment progress in real time."
+        },
+        "email": {
+          "invalid": "Invalid email",
+          "sendLink": "To complete the payment, we will immediately send your client an email with a payment link. You will need to track your client’s payment progress in real time."
+        },
+        "mobile_phone": {
+          "invalid": "Invalid phone number",
+          "sendLink": "To complete the payment, we will immediately send a payment link to your client’s phone number. You will need to track your client’s payment progress in real time."
+        }
+      },
+      "creditCardForm": {
+        "fullName": "Cardholder name",
+        "cardNumber": "Card number",
+        "expiryDate": "Expiry date",
+        "cvc": "Security code",
+        "validation": {
+          "expiryDate": "Expiry date is required",
+          "expired": "Card is expired",
+          "cardHolder": "Cardholder name is required",
+          "cardNumber": "Invalid card number",
+          "cardNumberRequired": "Card number is required",
+          "cvc": "Invalid security code",
+          "cvcRequired": "Security code is required"
+        }
+      },
+      "freeDeposit": {
+        "totalRemaining": "Total due :",
+        "before": "Before",
+        "payNowLabel": "Amount desired by the client",
+        "placeholder": "Please enter an amount",
+        "validation": {
+          "positive": "The amount must be greater than 0",
+          "maxExceeded": "The amount cannot exceed the remaining total"
+        },
+        "overpaymentConfirmation": {
+          "title": "Payment above the due amount",
+          "description": "The amount you entered exceeds the amount due. Do you wish to proceed?",
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        }
+      },
+      "cardInstallments": {
+        "heading": "Choose your card installments",
+        "selectCardType": "Select your card type",
+        "selectInstallments": "Select the number of installments",
+        "placeholder": "Choose",
+        "installmentLabel": "{count} X of {amount}",
+        "validation": {
+          "methodRequired": "Please select a payment method",
+          "conditionRequired": "Please select the number of installments"
+        }
+      },
+      "billingAddress": {
+        "heading": "Billing address",
+        "additionalInformation": "Additional information",
+        "hints": {
+          "first_name": "Matching Passport/ID",
+          "last_name": "Matching Passport/ID"
+        },
+        "fields": {
+          "first_name": "First Name",
+          "last_name": "Last Name",
+          "number": "Street Number",
+          "street": "Street",
+          "add_on": "Additional Information",
+          "city": "City",
+          "state_or_district": "State / Province",
+          "zip_code": "Postal Code",
+          "country": "Country",
+          "country_code": "Country",
+          "additional_information_1": "Additional Information 1",
+          "additional_information_2": "Additional Information 2",
+          "town": "Town"
+        },
+        "placeholders": {
+          "select": "Select an option"
+        },
+        "validation": {
+          "required": "This field is required",
+          "maxLength": "Maximum length exceeded",
+          "pattern": "Invalid format"
+        }
+      },
+      "wechat": {
+        "payLabel": "Scan now to pay:",
+        "scanLabel": "Please scan",
+        "tutorial": {
+          "title": "After you press continue",
+          "subtitle": "please scan the QRCode within the WeChat to pay scanner",
+          "imageUrl": "https://ns.clubmed.com/it/2018/be/payment/wechat.png",
+          "expiredMessage": "Transaction expired"
+        }
+      },
+      "donation": {
+        "heading": "Make a donation",
+        "title": "Make a donation to the Friends of the Foundation",
+        "description": "Would you like to make a donation to support the Foundation's projects for education and nature conservation around Club Med Villages?",
+        "notThisTime": "Not this time!",
+        "freeAmount": "Free amount",
+        "imageUrl": "https://ns.clubmed.com/it/2019/be/donation.jpg",
+        "popinTitle": "Friends of the Foundation",
+        "popinDescription": "Would you like to make a donation to support the Foundation's projects for education and nature conservation around Club Med Villages?",
+        "popinFiscalInfo": "Your donation is tax deductible. You will receive a tax receipt after your donation.",
+        "acceptCGU": "I accept the donation terms and conditions",
+        "donationTerms": "donation terms and conditions",
+        "linkDonationTerms": ""
+      },
+      "paymentWidget": {
+        "heading": "Payment details"
+      },
+      "submit": {
+        "label": "Pay",
+        "pay": "Pay {amount} now",
+        "redirect": "Go to our payment partner"
+      },
+      "app": {
+        "payment": {
+          "title": "Payment",
+          "stayUnavailable": "We are unable to retrieve your stay information.",
+          "retryLater": "Please try again later."
+        },
+        "header": {
+          "back": "Back",
+          "stayAt": "Your stay at:"
+        },
+        "stay": {
+          "placeholder": "Stay placeholder",
+          "dates": "From {start} to {end}",
+          "adults": "For {adults} adults",
+          "adultsAndChildren": "For {adults} adults and {children} children",
+          "reference": "Reference {id}"
+        },
+        "confirmation": {
+          "title": "Payment confirmation - {issuer}",
+          "myBooking": "My booking",
+          "amount": "Amount",
+          "paymentValidated": "Your payment has been validated",
+          "paymentFailed": "Your payment has failed"
+        },
+        "notFound": "404 not found"
+      }
+    }
+  },
+  {
+    "locale": "fr-FR",
+    "status": "published",
+    "content": {
+      "paymentProviders": {
+        "heading": "Comment souhaitez-vous payer ?",
+        "validation": {
+          "required": "Vous devez choisir un moyen de paiement"
+        },
+        "creditCard": {
+          "label": "Je paie par carte le montant de {amount}",
+          "description": "Paiement sécurisé avec vérification 3D Secure possible"
+        },
+        "paypal": {
+          "label": "Je paie par PayPal le montant de {amount}"
+        },
+        "bankTransfer": {
+          "label": "Je paie par virement bancaire le montant de {amount}",
+          "security": "Paiement 100 % sécurisé (connexion directe avec votre banque)",
+          "paymentCap": "Aucun plafond de paiement pour les virements bancaires standards"
+        }
+      },
+      "paymentSchedule": {
+        "heading": "Choisissez l'échéancier de paiement",
+        "select": "Sélectionner cette option",
+        "selected": "Option sélectionnée",
+        "full": {
+          "title": "Payer en totalité aujourd'hui",
+          "description": "Je paie le montant total de",
+          "caption": "Prix total"
+        },
+        "deposit": {
+          "title": "Payer en 2 fois",
+          "description": "Je paie un acompte de {deposit}, et je devrai régler le solde restant de {balance} le {deadline}"
+        },
+        "monthly": {
+          "title": "Payer mensuellement",
+          "from": "à partir de",
+          "caption": "Par mois",
+          "unavailable": "Le paiement mensuel est actuellement indisponible",
+          "simulationLabel": "Je paie en {icon} un total de {total} (dont {cost} de frais de financement) : {instalments}",
+          "instalmentItem": "{amount} le {date}",
+          "instalmentFirst": "1re échéance le {date}",
+          "instalmentOther": "{count}e échéance le {date}",
+          "feesInclude": "(dont {amount} € de frais)"
+        },
+        "installments": {
+          "title": "Je paie en {icon} par carte"
+        }
+      },
+      "cgv": {
+        "heading": "Conditions générales de vente",
+        "content": "J'accepte les conditions générales de vente",
+        "validation": {
+          "mustAccept": "Vous devez accepter les CGV"
+        }
+      },
+      "comments": {
+        "heading": "Commentaires",
+        "placeholder": "Saisissez vos commentaires",
+        "validation": {
+          "required": "Les commentaires sont obligatoires"
+        }
+      },
+      "contactChoice": {
+        "heading": "Comment souhaitez-vous être contacté ?",
+        "choiceLabel": "Par {label}",
+        "validation": {
+          "required": "Le choix du mode de contact est obligatoire"
+        },
+        "choices": {
+          "email": "E-mail",
+          "call": "Téléphone",
+          "mobile_phone": "SMS"
+        },
+        "fields": {
+          "email": {
+            "label": "Adresse e-mail",
+            "placeholder": "Ex : client@email.com"
+          },
+          "mobile_phone": {
+            "label": "Téléphone mobile",
+            "placeholder": "Ex : +33 6 12 34 56 78"
+          }
+        },
+        "call": {
+          "sendLink": "Pour finaliser le paiement, vous serez invité à demander au client ses différentes informations de paiement. Vous pourrez suivre l’avancement du paiement de votre client en temps réel."
+        },
+        "email": {
+          "invalid": "E-mail invalide",
+          "sendLink": "Pour finaliser le paiement, nous allons immédiatement envoyer à votre client un e-mail contenant un lien de paiement. Vous devrez suivre l’avancement du paiement de votre client en temps réel."
+        },
+        "mobile_phone": {
+          "invalid": "Numéro de téléphone invalide",
+          "sendLink": "Pour finaliser le paiement, nous allons immédiatement envoyer un lien de paiement au numéro de téléphone de votre client. Vous devrez suivre l’avancement du paiement de votre client en temps réel."
+        }
+      },
+      "creditCardForm": {
+        "fullName": "Nom du titulaire de la carte",
+        "cardNumber": "Numéro de carte",
+        "expiryDate": "Date d'expiration",
+        "cvc": "Code de sécurité",
+        "validation": {
+          "expiryDate": "La date d'expiration est obligatoire",
+          "expired": "La carte a expiré",
+          "cardHolder": "Le nom du titulaire de la carte est obligatoire",
+          "cardNumber": "Numéro de carte invalide",
+          "cardNumberRequired": "Le numéro de carte est obligatoire",
+          "cvc": "Code de sécurité invalide",
+          "cvcRequired": "Le code de sécurité est obligatoire"
+        }
+      },
+      "freeDeposit": {
+        "totalRemaining": "Total dû :",
+        "before": "Avant le",
+        "payNowLabel": "Montant souhaité par le client",
+        "placeholder": "Veuillez saisir un montant",
+        "validation": {
+          "positive": "Le montant doit être supérieur à 0",
+          "maxExceeded": "Le montant ne peut pas dépasser le total restant"
+        },
+        "overpaymentConfirmation": {
+          "title": "Paiement supérieur au montant dû",
+          "description": "Le montant saisi dépasse le montant dû. Souhaitez-vous continuer ?",
+          "confirm": "Confirmer",
+          "cancel": "Annuler"
+        }
+      },
+      "cardInstallments": {
+        "heading": "Choisissez votre paiement en plusieurs fois par carte",
+        "selectCardType": "Sélectionnez votre type de carte",
+        "selectInstallments": "Sélectionnez le nombre d'échéances",
+        "placeholder": "Choisir",
+        "installmentLabel": "{count} x {amount}",
+        "validation": {
+          "methodRequired": "Veuillez sélectionner un moyen de paiement",
+          "conditionRequired": "Veuillez sélectionner le nombre d'échéances"
+        }
+      },
+      "billingAddress": {
+        "heading": "Adresse de facturation",
+        "additionalInformation": "Informations complémentaires",
+        "hints": {
+          "first_name": "Identique au passeport / à la pièce d'identité",
+          "last_name": "Identique au passeport / à la pièce d'identité"
+        },
+        "fields": {
+          "first_name": "Prénom",
+          "last_name": "Nom",
+          "number": "Numéro de rue",
+          "street": "Rue",
+          "add_on": "Complément d'adresse",
+          "city": "Ville",
+          "state_or_district": "État / Province",
+          "zip_code": "Code postal",
+          "country": "Pays",
+          "country_code": "Pays",
+          "additional_information_1": "Informations complémentaires 1",
+          "additional_information_2": "Informations complémentaires 2",
+          "town": "Commune"
+        },
+        "placeholders": {
+          "select": "Sélectionnez une option"
+        },
+        "validation": {
+          "required": "Ce champ est obligatoire",
+          "maxLength": "Longueur maximale dépassée",
+          "pattern": "Format invalide"
+        }
+      },
+      "wechat": {
+        "payLabel": "Scannez maintenant pour payer :",
+        "scanLabel": "Veuillez scanner",
+        "tutorial": {
+          "title": "Après avoir appuyé sur Continuer",
+          "subtitle": "veuillez scanner le QR code avec le scanner de paiement WeChat",
+          "imageUrl": "https://ns.clubmed.com/it/2018/be/payment/wechat.png",
+          "expiredMessage": "Transaction expirée"
+        }
+      },
+      "donation": {
+        "heading": "Faire un don",
+        "title": "Faites un don aux Amis de la Fondation",
+        "description": "Souhaitez-vous faire un don pour soutenir les projets de la Fondation en faveur de l'éducation et de la préservation de la nature autour des Villages Club Med ?",
+        "notThisTime": "Pas cette fois !",
+        "freeAmount": "Montant libre",
+        "imageUrl": "https://ns.clubmed.com/it/2019/be/donation.jpg",
+        "popinTitle": "Amis de la Fondation",
+        "popinDescription": "Souhaitez-vous faire un don pour soutenir les projets de la Fondation en faveur de l'éducation et de la préservation de la nature autour des Villages Club Med ?",
+        "popinFiscalInfo": "Votre don est déductible des impôts. Vous recevrez un reçu fiscal après votre don.",
+        "acceptCGU": "J'accepte les conditions générales du don",
+        "donationTerms": "conditions générales du don",
+        "linkDonationTerms": ""
+      },
+      "paymentWidget": {
+        "heading": "Détails du paiement"
+      },
+      "submit": {
+        "label": "Payer",
+        "pay": "Payer {amount} maintenant",
+        "redirect": "Accéder à notre partenaire de paiement"
+      },
+      "app": {
+        "payment": {
+          "title": "Paiement",
+          "stayUnavailable": "Nous ne parvenons pas à récupérer les informations de votre séjour.",
+          "retryLater": "Merci de réessayer ultérieurement."
+        },
+        "header": {
+          "back": "Retour",
+          "stayAt": "Votre séjour à :"
+        },
+        "stay": {
+          "placeholder": "Séjour",
+          "dates": "A partir de {start} au {end}",
+          "adults": "Pour {adults} adultes",
+          "adultsAndChildren": "Pour {adults} adultes et {children} enfants",
+          "reference": "Réference {id}"
+        },
+        "confirmation": {
+          "title": "Confirmation de paiement - {issuer}",
+          "myBooking": "Ma réservation",
+          "amount": "Montant",
+          "paymentValidated": "Votre paiement a été validé",
+          "paymentFailed": "Votre paiement a échoué"
+        },
+        "notFound": "404 page introuvable"
+      }
+    }
+  }
+]

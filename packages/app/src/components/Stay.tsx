@@ -1,22 +1,25 @@
-import { formatDate, FormPanel as Panel } from '@clubmed/caps';
+import { formatDate, formatTemplate, FormPanel as Panel, renderTemplate } from '@clubmed/caps';
 import { Icon } from '@clubmed/trident-icons';
 import { Card } from '@clubmed/trident-ui/ui/cards/Card';
 import { Chip } from '@clubmed/trident-ui/ui/Chip';
 import { Image } from '@clubmed/trident-ui/ui/Image';
 import { Tag } from '@clubmed/trident-ui/ui/Tag';
 
+import { useContent } from '../hooks/useContent';
 import { useProduct } from '../hooks/useProduct';
 import type { StayModel } from '../hooks/useStay.js';
 import { useAppContext } from '../providers/AppProvider';
 
 export const StayPlaceholder = () => {
+  const { app } = useContent();
+
   return (
     <div className="w-full">
       <Card>
         <Chip theme="solid" color="lightSand" size="size-48">
           <Icon name="Trident" width="24px" />
         </Chip>
-        <h3 className="text-18 font-bold mt-12 mb-8">Stay placeholder</h3>
+        <h3 className="text-18 font-bold mt-12 mb-8">{app.stay.placeholder}</h3>
       </Card>
     </div>
   );
@@ -36,6 +39,7 @@ const formatStayDate = (date?: string | null) => {
 
 export const Stay = ({ stay }: StayProps) => {
   const { data: product } = useProduct(stay);
+  const { app } = useContent();
 
   const { id } = useAppContext();
 
@@ -56,7 +60,10 @@ export const Stay = ({ stay }: StayProps) => {
             <p className="font-bold text-b2">{product?.title}</p>
             <div className="flex flex-col gap-6">
               <Tag
-                label={`A partir de ${formatStayDate(stay.resortArrivalDate)} au ${formatStayDate(stay.resortDepartureDate)}`}
+                label={formatTemplate(app.stay.dates, {
+                  start: formatStayDate(stay.resortArrivalDate),
+                  end: formatStayDate(stay.resortDepartureDate),
+                })}
                 theme="none"
                 icon="CalendarDefault"
                 backgroundColor="lightSand"
@@ -66,7 +73,14 @@ export const Stay = ({ stay }: StayProps) => {
               />
               {!!stay.adultsCount && (
                 <Tag
-                  label={`Pour ${stay.adultsCount} adultes${stay.childrenCount ? ` et ${stay.childrenCount} enfants` : ''}`}
+                  label={
+                    stay.childrenCount
+                      ? formatTemplate(app.stay.adultsAndChildren, {
+                          adults: stay.adultsCount,
+                          children: stay.childrenCount,
+                        })
+                      : formatTemplate(app.stay.adults, { adults: stay.adultsCount })
+                  }
                   theme="none"
                   icon="PeopleDouble"
                   backgroundColor="lightSand"
@@ -77,7 +91,9 @@ export const Stay = ({ stay }: StayProps) => {
               )}
             </div>
           </div>
-          <p className="font-bold text-b4">Réference {id}</p>
+          <p className="font-bold text-b4">
+            {renderTemplate(app.stay.reference, { id }, { asFragment: true })}
+          </p>
         </div>
       </div>
     </Panel>

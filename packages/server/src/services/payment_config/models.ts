@@ -31,3 +31,6 @@ export class PaymentConfig {
   @Property()
   settings!: PaymentSettings;
 }
+
+@AdditionalProperties(true)
+export class PaymentContent {}

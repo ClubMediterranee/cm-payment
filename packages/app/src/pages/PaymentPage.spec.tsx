@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 
+import { content } from '../__fixtures__/content';
 import { PaymentPage } from './PaymentPage';
 
 const formProps = vi.fn();
@@ -23,6 +24,10 @@ vi.mock('../components/StayV2', () => ({
 }));
 vi.mock('../hooks/useStay', () => ({ useStay: () => ({ status: 'success', stay: {} }) }));
 vi.mock('../hooks/useTheme', () => ({ useTheme: () => theme.current }));
+vi.mock('../hooks/useContent', async () => {
+  const { content } = await import('../__fixtures__/content');
+  return { useContent: () => content };
+});
 vi.mock('../hooks/useQueryParams', () => ({ useQueryParams: () => queryParams.current }));
 vi.mock('../providers/AppProvider', () => ({
   useAppContext: () => ({
@@ -66,6 +71,14 @@ describe('PaymentPage', () => {
     expect(screen.queryByTestId('stay-v2')).toBeNull();
     expect(formProps.mock.lastCall![0]).toEqual(
       expect.objectContaining({ theme: 'legacy', slots: undefined }),
+    );
+  });
+
+  it('passes the CMS content to the form', () => {
+    render(<PaymentPage />);
+
+    expect(formProps.mock.lastCall![0]).toEqual(
+      expect.objectContaining({ content: content.content }),
     );
   });
 

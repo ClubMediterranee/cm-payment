@@ -113,8 +113,8 @@ describe('PaymentPanel', () => {
       'billing_details.address',
       ['template_id', 'billing_details.mobile_phone', 'billing_details.email'],
       'comments',
+      'comments',
       undefined,
-      'billing_details.address',
     ]);
   });
 

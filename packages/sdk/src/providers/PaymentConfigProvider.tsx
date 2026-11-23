@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 
-import { contentByTheme, DEFAULT_CAPS_THEME } from '../content/themes';
+import { contentByTheme, DEFAULT_CAPS_THEME } from '../content/default';
 import { CapsConfigContext } from '../contexts/CapsConfigContext';
 import { CapsSettings } from '../types/CapsSettings';
 import type { DeepPartial } from '../types/Content';
