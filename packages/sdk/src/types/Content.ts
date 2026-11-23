@@ -21,6 +21,8 @@ export type Content = {
     heading: string;
     select: string;
     selected: string;
+    moreInformation: string;
+    close: string;
     full: {
       title: string;
       description: string;
@@ -31,6 +33,7 @@ export type Content = {
       description: `${string}{deposit}${string}` &
         `${string}{balance}${string}` &
         `${string}{deadline}${string}`;
+      info: string;
     };
     monthly: {
       title: string;
@@ -45,6 +48,8 @@ export type Content = {
     };
     installments: {
       title: `${string}{icon}${string}`;
+      cardTitle: string;
+      cardDescription: string;
     };
   };
   cgv: {
@@ -90,8 +95,21 @@ export type Content = {
     cardNumber: string;
     expiryDate: string;
     cvc: string;
+    placeholders: {
+      cardHolder: string;
+      cardNumber: string;
+      expiryDate: string;
+      cvc: string;
+    };
+    hints: {
+      cardHolder: string;
+      cardNumber: string;
+      expiryDate: string;
+      cvc: string;
+    };
     validation: {
       expiryDate: string;
+      expiryDateInvalid: string;
       expired: string;
       cardNumber: string;
       cardNumberRequired: string;
@@ -130,6 +148,8 @@ export type Content = {
   billingAddress: {
     heading: string;
     additionalInformation: string;
+    sameAsMainTraveler: string;
+    mandatoryField: string;
     hints: {
       first_name: string;
       last_name: string;
@@ -159,14 +179,12 @@ export type Content = {
     };
   };
   wechat: {
+    instruction: `${string}{amount}${string}`;
     payLabel: string;
-    scanLabel: string;
-    tutorial: {
-      title: string;
-      subtitle: string;
-      imageUrl: string;
-      expiredMessage: string;
-    };
+    imageUrl: string;
+    imageAlt: string;
+    qrCodeLabel: string;
+    expiredMessage: string;
   };
   donation: {
     heading: string;
@@ -181,6 +199,18 @@ export type Content = {
     acceptCGU: string;
     donationTerms: string;
     linkDonationTerms: string;
+    otherAmount: string;
+    otherAmountPlaceholder: string;
+    consent: string;
+    confirm: string;
+    remove: string;
+    infoLabel: string;
+    closeLabel: string;
+    errors: {
+      consent: string;
+      noAmount: string;
+      invalidAmount: string;
+    };
   };
   paymentWidget: {
     heading: string;
@@ -189,6 +219,7 @@ export type Content = {
     label: string;
     pay: `${string}{amount}${string}`;
     redirect: string;
+    continue: string;
   };
 };
 

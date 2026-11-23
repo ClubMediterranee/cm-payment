@@ -197,7 +197,7 @@ HostedField.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
   await canvas.findByText('Card number', { exact: false }, { timeout: 10000 });
-  expect(canvas.getByText('Expiry date', { exact: false })).toBeInTheDocument();
+  expect(canvas.getByText('Expiration', { exact: false })).toBeInTheDocument();
 };
 
 export const Iframe: Story = {

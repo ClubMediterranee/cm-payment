@@ -1,37 +1,33 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import type { CybersourceMicroform } from '../types/Cybersource.js';
 import { PspProviders } from '../../../types/PspProviders.js';
 import { createFieldLoadTracker } from '../../../utils/integrations/createFieldLoadTracker.js';
 import { useRequestToken } from '../../../hooks/data/useRequestToken.js';
+import { cardFieldMessages, useHostedFieldsState } from '../../../hooks/useHostedFieldsState.js';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext.js';
 import { useDisclosure } from '../../../hooks/utils/useDisclosure.js';
 import { useFormContext, useWatch } from '../../../hooks/utils/useForm.js';
 import { useScriptLoader } from '../../../hooks/utils/useScriptLoader.js';
+import { parseExpiryDate } from '../../../schemas/validations/validateExpiryDate.js';
 import { createCybersourceMicroform } from './cybersource.js';
 
+const FIELD_KEYS = ['cardNumber', 'cvc'] as const;
+
+type CybersourceFieldKey = (typeof FIELD_KEYS)[number];
+
 type UseCybersourceParams = {
-  fields: {
-    cardNumber: { selector: string; placeholder: string };
-    cvc: { selector: string; placeholder: string };
-  };
+  fields: Record<CybersourceFieldKey, { selector: string; placeholder: string }>;
 };
 
-const FIELD_MAPPING = {
-  cardNumber: { type: 'number' as const, errorKey: 'number' as const },
-  cvc: { type: 'securityCode' as const, errorKey: 'securityCode' as const },
+const FIELD_TYPES = {
+  cardNumber: 'number',
+  cvc: 'securityCode',
 } as const;
-
-const parseExpiryDate = (expiryDate: string) => {
-  const date = new Date(expiryDate);
-  return {
-    expirationMonth: (date.getMonth() + 1).toString().padStart(2, '0'),
-    expirationYear: date.getFullYear().toString(),
-  };
-};
 
 export const useCybersource = ({ fields }: UseCybersourceParams) => {
   const { id, type, content } = useCapsConfigContext();
+  const { validation } = content.creditCardForm;
   const {
     setValue,
     formState: { isSubmitting, errors: formErrors },
@@ -40,6 +36,8 @@ export const useCybersource = ({ fields }: UseCybersourceParams) => {
   const expiryDate = useWatch('creditCard.expiryDate');
   const tokenStatus = useWatch('token.status');
   const token = useWatch('token.value');
+
+  const { fields: states, isValid, actions } = useHostedFieldsState(cardFieldMessages(validation));
 
   const { data } = useRequestToken({
     providerId: PspProviders.MCYBERSOURCE,
@@ -56,11 +54,6 @@ export const useCybersource = ({ fields }: UseCybersourceParams) => {
 
   const { isOpen: isReady, onOpen: onReady } = useDisclosure();
 
-  const [fieldsState, setFieldsState] = useState({
-    number: { valid: false, empty: true, touched: false },
-    securityCode: { valid: false, empty: true, touched: false },
-  });
-
   useEffect(() => {
     if (!data?.token || !isLoaded || microformRef.current) return;
 
@@ -68,47 +61,32 @@ export const useCybersource = ({ fields }: UseCybersourceParams) => {
 
     microformRef.current = microform;
 
-    const onFieldLoaded = createFieldLoadTracker(Object.keys(fields).length, onReady);
+    const onFieldLoaded = createFieldLoadTracker(FIELD_KEYS.length, onReady);
 
-    Object.entries(fields).forEach(([fieldKey, config]) => {
-      const fieldConfig = FIELD_MAPPING[fieldKey as keyof typeof fields];
-
-      const field = microform.createField(fieldConfig.type, {
-        placeholder: config.placeholder,
+    FIELD_KEYS.forEach((key) => {
+      const microformField = microform.createField(FIELD_TYPES[key], {
+        placeholder: fields[key].placeholder,
       });
 
-      field.load(`#${config.selector}`);
-      field.on('load', onFieldLoaded);
-
-      field.on('change', ({ valid, empty }) => {
-        setFieldsState((prev) => ({
-          ...prev,
-          [fieldConfig.errorKey]: { valid, empty, touched: true },
-        }));
-      });
+      microformField.load(`#${fields[key].selector}`);
+      microformField.on('load', onFieldLoaded);
+      microformField.on('change', ({ valid, empty }) => actions.change(key, { valid, empty }));
+      microformField.on('focus', () => actions.focus(key));
+      microformField.on('blur', () => actions.blur(key));
     });
-  }, [data, isLoaded, fields, onReady]);
+  }, [actions, data, isLoaded, fields, onReady]);
+
+  const allFieldsValid =
+    isValid('cardNumber') && isValid('cvc') && !formErrors?.creditCard?.expiryDate;
 
   const generateToken = useCallback(() => {
-    if (!microformRef.current) return;
+    const parsedExpiryDate = parseExpiryDate(expiryDate);
 
-    const hasExpiryDateError = !!formErrors?.creditCard?.expiryDate;
-    const allFieldsValid =
-      fieldsState.number.valid && fieldsState.securityCode.valid && !hasExpiryDateError;
-
-    if (!allFieldsValid) {
-      setFieldsState((prev) => ({
-        number: { ...prev.number, touched: true },
-        securityCode: { ...prev.securityCode, touched: true },
-      }));
-      return;
-    }
-
-    const { expirationMonth, expirationYear } = parseExpiryDate(expiryDate!);
+    if (!microformRef.current || !allFieldsValid || !parsedExpiryDate) return;
 
     setValue('token.status', 'pending');
 
-    microformRef.current.createToken({ expirationMonth, expirationYear }, (err, tokenizedCard) => {
+    microformRef.current.createToken(parsedExpiryDate, (err, tokenizedCard) => {
       if (err) {
         setValue('token', { value: '', status: 'error' });
         return;
@@ -116,13 +94,7 @@ export const useCybersource = ({ fields }: UseCybersourceParams) => {
 
       setValue('token', { value: tokenizedCard, status: 'success' });
     });
-  }, [
-    formErrors?.creditCard?.expiryDate,
-    fieldsState.number.valid,
-    fieldsState.securityCode.valid,
-    expiryDate,
-    setValue,
-  ]);
+  }, [allFieldsValid, expiryDate, setValue]);
 
   useEffect(() => {
     if (isSubmitting && !token && tokenStatus !== 'pending') {
@@ -130,24 +102,5 @@ export const useCybersource = ({ fields }: UseCybersourceParams) => {
     }
   }, [generateToken, isSubmitting]);
 
-  const errors = {
-    ...(fieldsState.number.touched &&
-      !fieldsState.number.valid && {
-        number: fieldsState.number.empty
-          ? content.creditCardForm.validation.cardNumberRequired
-          : content.creditCardForm.validation.cardNumber,
-      }),
-    ...(fieldsState.securityCode.touched &&
-      !fieldsState.securityCode.valid && {
-        securityCode: fieldsState.securityCode.empty
-          ? content.creditCardForm.validation.cvcRequired
-          : content.creditCardForm.validation.cvc,
-      }),
-  };
-
-  return {
-    fieldsState,
-    isReady,
-    errors,
-  };
+  return { isReady, fields: states };
 };

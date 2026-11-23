@@ -1,61 +1,73 @@
-import { Icon } from '@clubmed/trident-icons';
-import type { PropsWithChildren, ReactNode } from 'react';
+import { Button } from '@clubmed/trident-ui/ui/buttons/Button';
+import clsx from 'clsx';
+import { type PropsWithChildren, type ReactNode, useId } from 'react';
 
 import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 
-export const SCHEDULE_CARD_SIZE = 'min-w-[16rem] flex-[0_1_calc(50%-0.5rem)]';
+const SCHEDULE_CARD_SIZE = 'w-full max-w-370 md:w-370';
 
 type ScheduleCardProps = PropsWithChildren<{
   title: ReactNode;
-  name: string;
+  description?: ReactNode;
   value: string;
   checked: boolean;
   onChange: (value: string) => void;
   disabled?: boolean;
+  selectable?: boolean;
 }>;
 
 export const ScheduleCard = ({
   title,
-  name,
+  description,
   value,
   checked,
   onChange,
   disabled,
+  selectable = true,
   children,
 }: ScheduleCardProps) => {
   const { content } = useCapsConfigContext();
   const { select, selected } = content.paymentSchedule;
+  const titleId = useId();
 
   return (
-    <label
-      className={`${SCHEDULE_CARD_SIZE} relative flex flex-col items-center gap-16 rounded-16 border bg-white p-24 text-center has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-black ${
-        checked ? 'border-black' : 'border-lightGrey'
-      } ${disabled ? 'cursor-not-allowed text-grey' : 'cursor-pointer'}`}
+    <div
+      className={clsx(
+        SCHEDULE_CARD_SIZE,
+        'flex flex-col items-center rounded-32 bg-white p-20 text-center md:min-h-272',
+        checked || !selectable
+          ? 'inset-ring-2 inset-ring-black'
+          : 'inset-ring inset-ring-lightGrey',
+        selectable ? 'justify-between gap-20' : 'justify-center gap-32',
+        disabled && 'text-grey',
+      )}
     >
-      <input
-        type="radio"
-        className="sr-only"
-        name={name}
-        value={value}
-        checked={checked}
-        disabled={disabled}
-        onChange={() => onChange(value)}
-      />
-      <span className="text-b3 font-bold">{title}</span>
-      <div className="flex flex-1 flex-col items-center gap-8">{children}</div>
-      <span
-        aria-hidden="true"
-        className={`inline-flex min-h-40 items-center gap-8 rounded-pill border border-black px-24 py-8 text-b5 font-bold ${
-          checked ? 'bg-black text-white' : ''
-        }`}
-      >
-        {checked ? selected : select}
-        {checked && <Icon name="CheckDefault" width="1.25rem" />}
-      </span>
-    </label>
+      <div className="flex w-full flex-col items-center gap-4">
+        <p id={titleId} className="text-b2 font-semibold">
+          {title}
+        </p>
+        {description && <p className="text-b3">{description}</p>}
+      </div>
+      {children}
+      {selectable && (
+        <Button
+          variant="pill"
+          color="black"
+          theme={checked ? 'solid' : 'outline'}
+          icon={checked ? 'CheckDefault' : undefined}
+          aria-pressed={checked}
+          aria-describedby={titleId}
+          disabled={disabled}
+          className="min-w-200 whitespace-nowrap"
+          onClick={() => onChange(value)}
+        >
+          {checked ? selected : select}
+        </Button>
+      )}
+    </div>
   );
 };
 
 export const ScheduleCardSkeleton = () => (
-  <div className={`${SCHEDULE_CARD_SIZE} h-[16rem] rounded-16 animate-pulsation bg-lightGrey`} />
+  <div className={`${SCHEDULE_CARD_SIZE} h-272 rounded-32 animate-pulsation bg-lightGrey`} />
 );

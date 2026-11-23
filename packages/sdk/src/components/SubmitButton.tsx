@@ -1,3 +1,5 @@
+import '../integrations/ui.js';
+
 import { Button, type ButtonProps } from '@clubmed/trident-ui/ui/buttons/Button';
 import { useEffect } from 'react';
 
@@ -9,6 +11,7 @@ import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegratio
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
 import { TOKENS } from '../types/Tokens';
 import { formatCurrency } from '../utils/formatCurrency';
+import { getPspComponent } from '../utils/integrations/definePspProvider';
 import { renderTemplate } from '../utils/renderTemplate';
 // TODO voir pour utiliser la registry plutot qu'un import direct
 import { HipayPaypalButton } from '../integrations/hipay-paypal/ui/HipayPaypalButton.js';
@@ -28,11 +31,11 @@ export const SubmitButton = (props: Omit<ButtonProps, 'children'>) => {
     triggerAndTouch,
   } = useFormContext();
 
-  const isPaypalButtonEnabled =
-    watchedProvider?.category_payment_method === PaymentProvider1CategoryPaymentMethod.Paypal &&
-    paymentConfig.feature_flips?.is_paypal_button_enabled;
-
+  const isPaypal =
+    watchedProvider?.category_payment_method === PaymentProvider1CategoryPaymentMethod.Paypal;
+  const isPaypalButtonEnabled = isPaypal && paymentConfig.feature_flips?.is_paypal_button_enabled;
   const isSubmitButtonDisabled = isPaypalButtonEnabled && !isValid;
+  const PspButton = getPspComponent(watchedProvider?.id, 'button');
 
   useEffect(() => {
     if (isSubmitButtonDisabled) {
@@ -40,23 +43,31 @@ export const SubmitButton = (props: Omit<ButtonProps, 'children'>) => {
     }
   }, [isSubmitButtonDisabled]);
 
-  if ((iframe && !thirdPartyIframe) || (thirdPartyIframe && !isValid)) return null;
+  if ((iframe && !thirdPartyIframe) || (thirdPartyIframe && !isValid)) {
+    return null;
+  }
 
   if (isPaypalButtonEnabled && isValid) {
     return <HipayPaypalButton />;
   }
 
+  if (PspButton && !isPaypal) {
+    return <PspButton className={props.className} />;
+  }
+
+  const label = redirect
+    ? content.submit.redirect
+    : renderTemplate(content.submit.pay, {
+        amount: formatCurrency({
+          amount: Number(amount || 0) + Number(donationAmount || 0),
+          currency,
+          locale,
+        }),
+      });
+
   return (
     <Button type="submit" form="payment-form" {...props} disabled={isSubmitButtonDisabled}>
-      {redirect
-        ? content.submit.redirect
-        : renderTemplate(content.submit.pay, {
-            amount: formatCurrency({
-              amount: Number(amount || 0) + Number(donationAmount || 0),
-              currency,
-              locale,
-            }),
-          })}
+      {label}
     </Button>
   );
 };

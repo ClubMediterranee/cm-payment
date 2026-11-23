@@ -1,52 +1,64 @@
 import { Icon } from '@clubmed/trident-icons';
+import { FormControlError } from '@clubmed/trident-ui/ui/forms/FormControlError';
 import { useQueryClient } from '@tanstack/react-query';
 import { QRCodeSVG } from 'qrcode.react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { StatutPaiement } from '../../../__generated__/index.schemas.js';
-import { usePaymentRedirectState } from '../../../hooks/data/usePaymentRedirect/index.js';
 import { usePaymentStatus } from '../../../hooks/data/usePaymentStatus/index.js';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext.js';
 import { useCountdown } from '../../../hooks/utils/useCountdown.js';
 import { useWatch } from '../../../hooks/utils/useForm.js';
-import { useWatchedPaymentProvider } from '../../../hooks/utils/useWatchedPaymentProvider.js';
-import type { CapsFormSchema } from '../../../schemas/capsFormSchema.js';
+import { usePaymentProviderSettings } from '../../../hooks/utils/usePaymentProviderSettings.js';
 import { PspProviders } from '../../../types/PspProviders.js';
 import { formatCurrency } from '../../../utils/formatCurrency.js';
 import { loadPaymentProviderUrl } from '../../../utils/loadPaymentProviderUrl.js';
-import { ErrorMessage } from '../../../components/ui/ErrorMessage.js';
-import { FormPanel } from '../../../components/ui/FormPanel.js';
+import { renderTemplate } from '../../../utils/renderTemplate.js';
+import { useWeChatQRCode } from '../hooks/useWeChatQRCode.js';
 
 const formatCountdown = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
 };
 
+type CountdownProps = { seconds: number; onExpire: () => void };
+
+const Countdown = ({ seconds, onExpire }: CountdownProps) => {
+  const { secondsRemaining, expired } = useCountdown(seconds);
+
+  useEffect(() => {
+    if (expired) onExpire();
+  }, [expired, onExpire]);
+
+  return (
+    <p className="flex items-center gap-8">
+      <Icon name="ClockDefault" width="1rem" />
+      {formatCountdown(secondsRemaining)}
+    </p>
+  );
+};
+
 export const WeChatQRView = () => {
   const { content, locale } = useCapsConfigContext();
-  const provider = useWatchedPaymentProvider();
-  const timeoutSeconds = Number(provider?.configuration?.settings?.qr_timeout_seconds) || 0;
-  const pollIntervalSeconds = Number(provider?.configuration?.settings?.poll_interval_seconds) || 2;
+  const { qr_timeout_seconds = 0, poll_interval_seconds = 2 } = usePaymentProviderSettings<{
+    qr_timeout_seconds?: number;
+    poll_interval_seconds?: number;
+  }>(PspProviders.M99BILLW);
 
   const amount = useWatch('amount');
   const currency = useWatch('currency');
+  const cgv = useWatch('cgv');
 
   const queryClient = useQueryClient();
   useEffect(() => queryClient.getMutationCache().clear(), [queryClient]);
 
-  const { payment, redirect } =
-    usePaymentRedirectState({
-      predicate: (mutation) =>
-        (mutation.state.variables as CapsFormSchema)?.provider_id === PspProviders.M99BILLW,
-    }) ?? {};
-
+  const [expired, setExpired] = useState(false);
+  const { payment, url } = useWeChatQRCode();
   const { paymentId, callbacks } = payment ?? {};
 
-  const { secondsRemaining, expired } = useCountdown(timeoutSeconds, paymentId);
-
   const { data: paymentStatus, isSuccess } = usePaymentStatus(paymentId, {
-    pollIntervalMs: pollIntervalSeconds * 1000,
-    enabled: !!paymentId && !expired,
+    pollIntervalMs: poll_interval_seconds * 1000,
+    enabled: !!paymentId,
   });
 
   useEffect(() => {
@@ -55,42 +67,40 @@ export const WeChatQRView = () => {
     loadPaymentProviderUrl({ url: callbacks.callback_url, method: 'GET' });
   }, [isSuccess, paymentStatus, callbacks]);
 
+  if (!cgv) return null;
+
   const { wechat } = content;
-  const showTutorial = !redirect?.url || expired;
+  const formattedAmount = formatCurrency({ amount: Number(amount), currency, locale });
+
+  const expire = () => {
+    setExpired(true);
+    queryClient.getMutationCache().clear();
+  };
 
   return (
-    <FormPanel className="w-full items-center text-center gap-16 py-24">
-      {showTutorial ? (
+    <div className="flex w-full flex-col items-center gap-20 text-center">
+      {expired && !url && <FormControlError role="alert">{wechat.expiredMessage}</FormControlError>}
+      <p className="hidden w-full text-left text-b3 md:block">
+        {renderTemplate(wechat.instruction, { amount: formattedAmount }, { asFragment: true })}
+      </p>
+      {url ? (
         <>
-          {expired && <ErrorMessage message={wechat.tutorial.expiredMessage} />}
-          <div>
-            <p className="text-b3 text-sienna">{wechat.tutorial.title}</p>
-            <p className="text-b3">{wechat.tutorial.subtitle}</p>
+          <div className="flex flex-col items-center gap-4 text-b3 md:hidden">
+            <p>
+              {wechat.payLabel} {formattedAmount}
+            </p>
+            <Countdown seconds={qr_timeout_seconds} onExpire={expire} />
           </div>
-          <img
-            src={wechat.tutorial.imageUrl}
-            alt="WeChat payment tutorial"
-            className="w-420 max-w-full"
+          <QRCodeSVG
+            value={url}
+            size={229}
+            title={wechat.qrCodeLabel}
+            className="size-229 md:size-172"
           />
         </>
       ) : (
-        <>
-          <p className="text-b3">
-            {wechat.payLabel}{' '}
-            <span className="text-sienna">
-              {formatCurrency({ amount: Number(amount), currency, locale })}
-            </span>
-          </p>
-          <p className="text-b3 flex items-center justify-center gap-8 text-sienna">
-            <Icon name="ClockDefault" width="1rem" />
-            {formatCountdown(secondsRemaining)}
-          </p>
-          <div className="p-16 bg-white border-1 border-lightGrey rounded-8">
-            <QRCodeSVG value={redirect?.url ?? ''} size={200} />
-          </div>
-          <p className="text-b3">{wechat.scanLabel}</p>
-        </>
+        <img src={wechat.imageUrl} alt={wechat.imageAlt} className="w-full max-w-480 rounded-16" />
       )}
-    </FormPanel>
+    </div>
   );
 };

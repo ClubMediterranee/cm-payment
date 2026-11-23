@@ -28,8 +28,10 @@ export const Textarea = ({
       data-testid={dataTestId}
       aria-invalid={!!errorMessage}
       className={clsx(
-        'text-b3 w-full resize-y rounded-8 border p-16 outline-none',
-        errorMessage ? 'border-red' : 'border-lightGrey focus:border-black',
+        'text-b3 w-full resize-y rounded-8 bg-white p-16 text-black inset-ring outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2',
+        errorMessage
+          ? 'inset-ring-red'
+          : 'inset-ring-middleGrey focus:inset-ring-black active:inset-ring-black',
       )}
     />
   </FormControl>

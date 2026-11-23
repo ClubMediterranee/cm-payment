@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 
-import type { CardEvents, HipayInputChangeData, HipayInstance } from '../../ixopay/types/Hipay.js';
+import type { CardEvents, HipayInputChangeData, HipayInstance } from '../types/Hipay.js';
+import { defaultContent } from '../../../content/default.js';
 import * as useCapsConfigContext from '../../../hooks/utils/useCapsConfigContext.js';
 import * as useFormContext from '../../../hooks/utils/useForm.js';
 import * as usePaymentProviderSettings from '../../../hooks/utils/usePaymentProviderSettings.js';
@@ -30,27 +31,19 @@ describe('useHipayHostedFields', () => {
     cvc: 'hipay-card-cvc',
   };
 
-  const mockContent = {
-    creditCardForm: {
-      title: 'Carte bancaire',
-      cardNumber: 'Numéro de carte',
-      fullName: 'Nom complet',
-      expiryDate: "Date d'expiration",
-      cvc: 'CVV',
-    },
-  };
+  const { placeholders, validation } = defaultContent.creditCardForm;
 
   let mockSetValue: ReturnType<typeof vi.fn>;
-  let mockFormState: { isSubmitting: boolean };
+  let mockFormState: { isSubmitting: boolean; submitCount: number };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     mockSetValue = vi.fn();
-    mockFormState = { isSubmitting: false };
+    mockFormState = { isSubmitting: false, submitCount: 0 };
 
     vi.spyOn(useCapsConfigContext, 'useCapsConfigContext').mockReturnValue({
-      content: mockContent as any,
+      content: defaultContent,
     } as any);
 
     vi.spyOn(useFormContext, 'useFormContext').mockReturnValue({
@@ -99,19 +92,19 @@ describe('useHipayHostedFields', () => {
           },
           options: {
             cardHolder: {
-              placeholder: mockContent.creditCardForm.fullName,
+              placeholder: placeholders.cardHolder,
               selector: mockFieldSelectors.cardHolder,
             },
             cardNumber: {
-              placeholder: mockContent.creditCardForm.cardNumber,
+              placeholder: placeholders.cardNumber,
               selector: mockFieldSelectors.cardNumber,
             },
             cvc: {
-              placeholder: mockContent.creditCardForm.cvc,
+              placeholder: placeholders.cvc,
               selector: mockFieldSelectors.cvc,
             },
             expiryDate: {
-              placeholder: mockContent.creditCardForm.expiryDate,
+              placeholder: placeholders.expiryDate,
               selector: mockFieldSelectors.expiryDate,
             },
           },
@@ -146,44 +139,92 @@ describe('useHipayHostedFields', () => {
     expect(result.current.isReady).toBe(true);
   });
 
-  it('should update errors on inputChange event', async () => {
-    let inputChangeCallback: ((data: HipayInputChangeData) => void) | undefined;
+  const validity = (overrides: Partial<HipayInputChangeData['validity']>) => ({
+    valid: false,
+    empty: false,
+    potentiallyValid: false,
+    disabled: false,
+    focused: true,
+    ...overrides,
+  });
+
+  const renderWithEvents = () => {
+    let events: CardEvents = {};
 
     vi.spyOn(hipayHelpers, 'createHipayClient').mockImplementation((params) => {
       if (params.type === 'card') {
-        inputChangeCallback = params.events?.inputChange;
+        events = params.events ?? {};
       }
       return mockHipayInstance;
     });
+    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({ isLoaded: true });
 
-    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
-      isLoaded: true,
-    });
+    const hook = renderHook(() => useHipayHostedFields({ fieldSelectors: mockFieldSelectors }));
 
-    const { result } = renderHook(() =>
-      useHipayHostedFields({ fieldSelectors: mockFieldSelectors }),
-    );
+    return { ...hook, events: () => events };
+  };
 
-    const inputChangeData: HipayInputChangeData = {
-      element: 'cardNumber',
-      validity: {
-        valid: false,
-        empty: false,
-        error: 'Invalid card number',
-        potentiallyValid: false,
-        disabled: false,
-        focused: true,
-      },
-      valid: false,
-    };
+  it('keeps an incorrect field neutral while typing and shows its error on blur', async () => {
+    const { result, events } = renderWithEvents();
 
     await act(async () => {
-      inputChangeCallback?.(inputChangeData);
+      events().focus?.({ element: 'cardNumber' });
+      events().inputChange?.({
+        element: 'cardNumber',
+        validity: validity({ error: 'Invalid card number' }),
+        valid: false,
+      });
     });
 
-    expect(result.current.errors).toEqual({
-      cardNumber: 'Invalid card number',
+    expect(result.current.fields.cardNumber).toEqual({
+      status: 'default',
+      focused: true,
+      filled: true,
+      error: undefined,
     });
+
+    await act(async () => {
+      events().blur?.({ element: 'cardNumber' });
+    });
+
+    expect(result.current.fields.cardNumber).toMatchObject({
+      status: 'error',
+      focused: false,
+      error: 'Invalid card number',
+    });
+  });
+
+  it('turns a field green as soon as it is valid and tracks its focus', async () => {
+    const { result, events } = renderWithEvents();
+
+    await act(async () => {
+      events().focus?.({ element: 'cvc' });
+    });
+
+    expect(result.current.fields.cvc.focused).toBe(true);
+
+    await act(async () => {
+      events().inputChange?.({
+        element: 'cvc',
+        validity: validity({ valid: true }),
+        valid: true,
+      });
+    });
+
+    expect(result.current.fields.cvc).toMatchObject({ status: 'success', focused: true });
+  });
+
+  it('shows the required message of empty fields once the form is submitted', async () => {
+    const { result, rerender } = renderWithEvents();
+
+    mockFormState.submitCount = 1;
+    rerender();
+
+    expect(result.current.fields.cardNumber).toMatchObject({
+      status: 'error',
+      error: validation.cardNumberRequired,
+    });
+    expect(result.current.fields.expiryDate.error).toBe(validation.expiryDate);
   });
 
   it('should generate token when form becomes valid via change event', async () => {
@@ -252,8 +293,9 @@ describe('useHipayHostedFields', () => {
       value: '',
       status: 'error',
     });
-    expect(result.current.errors).toEqual({
-      cardNumber: 'Card expired',
+    expect(result.current.fields.cardNumber).toMatchObject({
+      status: 'error',
+      error: 'Card expired',
     });
   });
 

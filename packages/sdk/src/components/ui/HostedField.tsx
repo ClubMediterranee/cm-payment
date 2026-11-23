@@ -1,37 +1,91 @@
+import { Icon, type IconicNames } from '@clubmed/trident-icons';
+import { FormControlError } from '@clubmed/trident-ui/ui/forms/FormControlError';
 import clsx from 'clsx';
-import { ReactNode } from 'react';
 
+import type { HostedFieldState } from '../../hooks/useHostedFieldsState';
 import { usePspMountPoint } from '../../hooks/utils/usePspMountPoint';
-import { ErrorMessage } from './ErrorMessage';
-import { FormPanel } from './FormPanel';
 
 type Props = {
-  error?: string;
+  id: string;
   label: string;
-  id?: string;
+  hint?: string;
+  state: HostedFieldState;
   isLoading?: boolean;
-  children?: ReactNode;
+  icon?: IconicNames;
+  className?: string;
 };
 
-export const HostedField = ({ error, label, id, isLoading, children }: Props) => {
-  const { ref, slotted } = usePspMountPoint(id);
+const STATUS_ICONS = {
+  error: { name: 'CrossDefault', className: 'text-red' },
+  success: { name: 'CheckDefault', className: 'text-green' },
+} as const;
+
+export const HostedField = ({
+  id,
+  label,
+  hint,
+  state: { status, focused, filled, error },
+  isLoading = false,
+  icon,
+  className,
+}: Props) => {
+  const { ref, slotted } = usePspMountPoint<HTMLFieldSetElement>(id);
+  const labelId = `${id}-label`;
+  const statusIcon = status === 'default' ? undefined : STATUS_ICONS[status];
+  const endIcon = statusIcon ?? (icon && { name: icon, className: 'text-black' });
 
   return (
-    <div ref={ref} className="w-full flex flex-col gap-6">
-      <span className="font-semibold px-20">{label}</span>
-
-      <FormPanel
-        id={slotted ? undefined : id}
-        className={clsx(
-          'text-b3 rounded-pill w-full border overflow-hidden px-20 py-12 font-normal outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 h-48 border-middleGrey focus:border-black active:border-black bg-white text-black',
-          isLoading && 'animate-pulsation bg-lightGrey pointer-events-none',
-          error && 'border-red',
-        )}
+    <fieldset
+      ref={ref}
+      aria-labelledby={labelId}
+      className={clsx('w-full min-w-0 flex flex-col gap-4', className)}
+    >
+      <span
+        id={labelId}
+        className="HostedField-label text-b3 font-semibold text-black flex flex-wrap items-center ps-20"
       >
-        {slotted ? <slot name={id} /> : children}
-      </FormPanel>
+        {label}
+        {hint && (focused || filled) && (
+          <span className="ms-12 text-b4 font-normal text-darkGrey">{hint}</span>
+        )}
+      </span>
 
-      <ErrorMessage message={error} />
-    </div>
+      <div className="relative">
+        <div
+          id={slotted ? undefined : id}
+          className={clsx(
+            'h-48 w-full overflow-hidden rounded-pill px-20 py-12 text-b3 text-black inset-ring',
+            endIcon && 'pe-52',
+            isLoading ? 'animate-pulsation bg-lightGrey pointer-events-none' : 'bg-white',
+            focused
+              ? 'ring-4 ring-black ring-offset-2'
+              : 'focus-within:ring-4 focus-within:ring-black focus-within:ring-offset-2',
+            status === 'error'
+              ? 'inset-ring-red'
+              : status === 'success'
+                ? 'inset-ring-green'
+                : focused
+                  ? 'inset-ring-black'
+                  : 'inset-ring-middleGrey focus-within:inset-ring-black',
+          )}
+        >
+          {slotted && <slot name={id} />}
+        </div>
+
+        {endIcon && (
+          <span
+            aria-hidden
+            className={clsx(
+              'pointer-events-none absolute inset-y-0 inset-e-20 flex items-center',
+              endIcon.className,
+            )}
+          >
+            <Icon name={endIcon.name} width="24px" />
+          </span>
+        )}
+      </div>
+
+      {error && <FormControlError role="alert">{error}</FormControlError>}
+    </fieldset>
   );
 };

@@ -134,8 +134,8 @@ export const CardInstallments = (props: PropsWithChildren<{ className?: string }
 
 const CardInstallmentsSkeleton = () => (
   <FormPanel className="w-full flex flex-col md:flex-row gap-16">
-    <div className="flex-1 h-48 bg-grey-light rounded animate-pulse" />
-    <div className="flex-1 h-48 bg-grey-light rounded animate-pulse" />
+    <div className="flex-1 h-48 bg-lightGrey rounded-pill animate-pulsation" />
+    <div className="flex-1 h-48 bg-lightGrey rounded-pill animate-pulsation" />
   </FormPanel>
 );
 

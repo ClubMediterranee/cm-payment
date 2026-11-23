@@ -14,7 +14,7 @@
   "dependencies": {
     "@clubmed/caps": "workspace:*",
     "@clubmed/trident-icons": "1.24.0",
-    "@clubmed/trident-ui": "2.1.0-beta.4",
+    "@clubmed/trident-ui": "2.1.0",
     "@tanstack/react-query": "^5.59.13",
     "@types/js-cookie": "^3.0.6",
     "classnames": "^2.5.1",

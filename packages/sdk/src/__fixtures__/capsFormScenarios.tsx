@@ -74,6 +74,20 @@ export const freeDepositHandlers = [
   ...contactChoiceHandlers.slice(2),
 ];
 
+export const singleChoiceHandlers = [
+  handlers[0],
+  http.get('*/rest/payment_schedules/booking/*', () =>
+    Response.json([{ amount: 2000, currency: 'EUR' }]),
+  ),
+  http.get('*/rest/payment_providers/booking/*', () =>
+    Response.json({
+      payment_providers: [provider('PAYPAL', 'Pay with PayPal')],
+      buy_now_pay_later_providers: [],
+    }),
+  ),
+  handlers[3],
+];
+
 export const submitButton = (canvasElement: HTMLElement) =>
   canvasElement.querySelector('button[type=submit]');
 
@@ -100,7 +114,7 @@ export const providersHandler = (providers: object[]) =>
   );
 
 export const pickSchedule = async (canvas: ReturnType<typeof within>) =>
-  userEvent.click((await canvas.findAllByRole('radio'))[0]);
+  userEvent.click((await canvas.findAllByRole('button', { name: 'Select this option' }))[0]);
 
 export const pickProvider = async (canvas: ReturnType<typeof within>, description: string) =>
   userEvent.click(await canvas.findByText(description));

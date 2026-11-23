@@ -1,6 +1,5 @@
-import { Icon } from '@clubmed/trident-icons';
-
 import type { PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem } from '../../../__generated__/bff/index.schemas.js';
+import { InfoButton } from '../../../components/ui/InfoButton.js';
 import {
   ScheduleCard,
   ScheduleCardSkeleton,
@@ -17,17 +16,16 @@ const getCurrencySymbol = (locale: string, currency: string): string => {
 
 type UpliftCardProps = {
   provider: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem;
-  name: string;
   checked: boolean;
   onChange: (value: string) => void;
 };
 
-export const UpliftCard = ({ provider, name, checked, onChange }: UpliftCardProps) => {
+export const UpliftCard = ({ provider, checked, onChange }: UpliftCardProps) => {
   const { content, locale, language } = useCapsConfigContext();
   const watchedAmount = useWatch('amount');
   const watchedCurrency = useWatch('currency');
   const { status } = useUplift();
-  const { monthly } = content.paymentSchedule;
+  const { monthly, moreInformation } = content.paymentSchedule;
 
   const currencySymbol = getCurrencySymbol(locale, watchedCurrency);
   const isFrench = language === 'fr';
@@ -45,33 +43,31 @@ export const UpliftCard = ({ provider, name, checked, onChange }: UpliftCardProp
       <div className={isLoading ? 'hidden' : 'contents'}>
         <ScheduleCard
           title={monthly.title}
-          name={name}
+          description={isUnavailable ? monthly.unavailable : monthly.from}
           value={provider.id}
           checked={checked}
           onChange={onChange}
           disabled={isUnavailable}
         >
-          {isUnavailable ? (
-            <p className="text-b5">{monthly.unavailable}</p>
-          ) : (
-            <>
-              <p className="text-b5">{monthly.from}</p>
-              <div id="up-pay-monthly-selector" className="text-b2 font-bold">
+          {!isUnavailable && (
+            <div className="flex flex-col items-center gap-4">
+              <div id="up-pay-monthly-selector" className="text-b1 font-semibold leading-24">
                 <span
-                  className="flex items-center gap-4 cursor-pointer"
+                  className="flex items-center gap-4"
                   data-up-price-type="total"
                   data-up-price-value={priceInCents}
                 >
                   {!isFrench && currencySymbol}
                   <span data-up-from-currency-unit-major=""></span>
                   {isFrench && currencySymbol}
-                  <span data-up-tooltip="" className="cursor-pointer">
-                    <Icon name="Information" width="1.5rem" />
-                  </span>
+                  <InfoButton
+                    data-up-tooltip=""
+                    aria-label={`${moreInformation}: ${monthly.title}`}
+                  />
                 </span>
               </div>
-              <p className="text-b6">{monthly.caption}</p>
-            </>
+              <p className="text-b5">{monthly.caption}</p>
+            </div>
           )}
         </ScheduleCard>
       </div>

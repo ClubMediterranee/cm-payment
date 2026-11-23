@@ -5,12 +5,16 @@ import { usePaymentProviders } from '../../hooks/data/usePaymentProviders';
 import { usePaymentSchedule } from '../../hooks/data/usePaymentSchedule';
 import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 import { useFormContext, useWatch } from '../../hooks/utils/useForm';
+import { useDisclosure } from '../../hooks/utils/useDisclosure';
 import { useWatchedPaymentProvider } from '../../hooks/utils/useWatchedPaymentProvider';
 import type { CapsFormSchema } from '../../schemas/capsFormSchema';
 import { getActiveBuyNowPayLaterProviders } from '../../utils/paymentProviders';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatDate } from '../../utils/formatDate';
 import { renderTemplate } from '../../utils/renderTemplate';
+import { InfoButton } from '../ui/InfoButton';
+import { InfoPopin } from '../ui/InfoPopin';
+import { Title } from '../ui/Title';
 import { BnplOption } from './BnplOption';
 import { ScheduleCard } from './ScheduleCard';
 
@@ -28,7 +32,8 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
   const { buyNowPayLaterProviders, paymentProviders } = data;
   const { setValue } = useFormContext();
   const { content, locale } = useCapsConfigContext();
-  const { full, deposit } = content.paymentSchedule;
+  const { full, deposit, moreInformation, close } = content.paymentSchedule;
+  const { isOpen: isInfoOpen, onOpen: openInfo, onClose: closeInfo } = useDisclosure();
 
   const stayAmount = paymentSchedule[0]?.amount?.toString();
 
@@ -41,6 +46,7 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
     watchedProvider?.category_payment_method ===
     PaymentProvider1CategoryPaymentMethod.BuyNowPayLater;
   const value = isBnpl ? watchedProvider?.id : watchedAmount;
+  const isSelectable = paymentSchedule.length + activeBuyNowPayLaterProviders.length > 1;
 
   const handleScheduleChange = (selectedValue: string) => {
     const isProviderId = isNaN(Number(selectedValue));
@@ -53,60 +59,77 @@ export const ScheduleOptionsField = ({ field }: ScheduleOptionsFieldProps) => {
   };
 
   return (
-    <div role="radiogroup" className="flex flex-wrap justify-center gap-16">
-      {paymentSchedule.map(({ amount, currency, deadline = null, balance }) => {
-        const formattedAmount = formatCurrency({
-          amount: Number(amount) + Number(watchedDonationAmount || 0),
-          currency,
-          locale,
-        });
-        const isDeposit = deadline && balance;
-        const formattedBalance = isDeposit
-          ? formatCurrency({ amount: Number(balance), currency, locale })
-          : null;
+    <>
+      {isSelectable && (
+        <Title variant="section" as="h3">
+          {content.paymentSchedule.heading}
+        </Title>
+      )}
+      <div className="flex flex-wrap justify-center gap-20">
+        {paymentSchedule.map(({ amount, currency, deadline = null, balance }) => {
+          const formattedAmount = formatCurrency({
+            amount: Number(amount) + Number(watchedDonationAmount || 0),
+            currency,
+            locale,
+          });
+          const isDeposit = deadline && balance;
+          const formattedBalance = isDeposit
+            ? formatCurrency({ amount: Number(balance), currency, locale })
+            : null;
 
-        return (
-          <ScheduleCard
-            key={amount}
-            name={field.name}
-            value={amount?.toString() ?? ''}
-            checked={value === amount?.toString()}
+          return (
+            <ScheduleCard
+              key={amount}
+              value={amount?.toString() ?? ''}
+              checked={value === amount?.toString()}
+              onChange={handleScheduleChange}
+              title={isDeposit ? deposit.title : full.title}
+              description={
+                isDeposit
+                  ? renderTemplate(deposit.description, {
+                      deposit: <span className="font-semibold">{formattedAmount}</span>,
+                      balance: <span className="font-semibold">{formattedBalance}</span>,
+                      deadline: <span className="font-semibold">{formatDate(deadline)}</span>,
+                    })
+                  : full.description
+              }
+              selectable={isSelectable}
+            >
+              {isDeposit ? (
+                <div className="flex items-center gap-4">
+                  <p className="text-b1 font-semibold leading-24">
+                    {formattedAmount} + {formattedBalance}
+                  </p>
+                  {deposit.info && (
+                    <InfoButton
+                      aria-label={`${moreInformation}: ${deposit.title}`}
+                      onClick={openInfo}
+                    />
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-4">
+                  <p className="text-b1 font-semibold leading-24">{formattedAmount}</p>
+                  <p className="text-b5">{full.caption}</p>
+                </div>
+              )}
+            </ScheduleCard>
+          );
+        })}
+
+        {activeBuyNowPayLaterProviders.map((provider) => (
+          <BnplOption
+            key={provider.id}
+            provider={provider}
+            checked={value === provider.id}
             onChange={handleScheduleChange}
-            title={isDeposit ? deposit.title : full.title}
-          >
-            {isDeposit ? (
-              <>
-                <p className="text-b5">
-                  {renderTemplate(deposit.description, {
-                    deposit: <span className="font-bold">{formattedAmount}</span>,
-                    balance: <span className="font-bold">{formattedBalance}</span>,
-                    deadline: <span className="font-bold">{formatDate(deadline)}</span>,
-                  })}
-                </p>
-                <p className="text-b2 font-bold">
-                  {formattedAmount} + {formattedBalance}
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="text-b5">{full.description}</p>
-                <p className="text-b2 font-bold">{formattedAmount}</p>
-                <p className="text-b6">{full.caption}</p>
-              </>
-            )}
-          </ScheduleCard>
-        );
-      })}
+          />
+        ))}
+      </div>
 
-      {activeBuyNowPayLaterProviders.map((provider) => (
-        <BnplOption
-          key={provider.id}
-          provider={provider}
-          name={field.name}
-          checked={value === provider.id}
-          onChange={handleScheduleChange}
-        />
-      ))}
-    </div>
+      <InfoPopin isVisible={isInfoOpen} onClose={closeInfo} closeLabel={close}>
+        <p>{deposit.info}</p>
+      </InfoPopin>
+    </>
   );
 };

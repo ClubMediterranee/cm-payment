@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-import type { HipayInputChangeData, HipayInstance } from '../../ixopay/types/Hipay.js';
+import type { HipayField, HipayInstance } from '../types/Hipay.js';
 import { PspProviders } from '../../../types/PspProviders.js';
+import { cardFieldMessages, useHostedFieldsState } from '../../../hooks/useHostedFieldsState.js';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext.js';
 import { useDisclosure } from '../../../hooks/utils/useDisclosure.js';
 import { useFormContext, useWatch } from '../../../hooks/utils/useForm.js';
@@ -10,18 +11,14 @@ import { useScriptLoader } from '../../../hooks/utils/useScriptLoader.js';
 import { createHipayClient, mapHipayErrorsToObject } from './hipay.js';
 
 type UseHipayHostedFieldsParams = {
-  fieldSelectors: {
-    cardHolder: string;
-    cardNumber: string;
-    expiryDate: string;
-    cvc: string;
-  };
+  fieldSelectors: Record<HipayField, string>;
 };
 
 export const useHipayHostedFields = ({ fieldSelectors }: UseHipayHostedFieldsParams) => {
   const { content } = useCapsConfigContext();
   const { formState, setValue } = useFormContext();
   const { isSubmitting } = formState;
+  const { placeholders, validation } = content.creditCardForm;
 
   const { script_url, ...hipayConfig } = usePaymentProviderSettings<{
     script_url: string;
@@ -31,7 +28,12 @@ export const useHipayHostedFields = ({ fieldSelectors }: UseHipayHostedFieldsPar
   }>(PspProviders.HIPAY);
 
   const { isLoaded } = useScriptLoader(script_url);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { fields, actions } = useHostedFieldsState<HipayField>({
+    cardHolder: { required: validation.cardHolder, invalid: validation.cardHolder },
+    ...cardFieldMessages(validation),
+    expiryDate: { required: validation.expiryDate, invalid: validation.expiryDateInvalid },
+  });
 
   const watchedToken = useWatch('token.value');
   const watchedTokenStatus = useWatch('token.status');
@@ -55,7 +57,7 @@ export const useHipayHostedFields = ({ fieldSelectors }: UseHipayHostedFieldsPar
       })
       .catch((errors) => {
         if (generationId === generationIdRef.current) {
-          setErrors(mapHipayErrorsToObject(errors));
+          actions.rejectAll(mapHipayErrorsToObject(errors));
           setValue('token', { value: '', status: 'error' });
         }
       })
@@ -64,17 +66,7 @@ export const useHipayHostedFields = ({ fieldSelectors }: UseHipayHostedFieldsPar
           setValue('token.status', 'idle');
         }
       });
-  }, [setValue]);
-
-  const onHipayInputChange = (field: HipayInputChangeData) => {
-    generationIdRef.current++;
-    setErrors((prev) => {
-      return {
-        ...prev,
-        [field.element]: field.validity.error || '',
-      };
-    });
-  };
+  }, [actions, setValue]);
 
   useEffect(() => {
     if (!isLoaded || instance.current) return;
@@ -83,26 +75,19 @@ export const useHipayHostedFields = ({ fieldSelectors }: UseHipayHostedFieldsPar
       type: 'card',
       config: hipayConfig,
       options: {
-        cardHolder: {
-          placeholder: content.creditCardForm.fullName,
-          selector: fieldSelectors.cardHolder,
-        },
-        cardNumber: {
-          placeholder: content.creditCardForm.cardNumber,
-          selector: fieldSelectors.cardNumber,
-        },
-        cvc: {
-          placeholder: content.creditCardForm.cvc,
-          selector: fieldSelectors.cvc,
-        },
-        expiryDate: {
-          placeholder: content.creditCardForm.expiryDate,
-          selector: fieldSelectors.expiryDate,
-        },
+        cardHolder: { placeholder: placeholders.cardHolder, selector: fieldSelectors.cardHolder },
+        cardNumber: { placeholder: placeholders.cardNumber, selector: fieldSelectors.cardNumber },
+        cvc: { placeholder: placeholders.cvc, selector: fieldSelectors.cvc },
+        expiryDate: { placeholder: placeholders.expiryDate, selector: fieldSelectors.expiryDate },
       },
       events: {
         ready: onHipayReady,
-        inputChange: onHipayInputChange,
+        inputChange: ({ element, validity }) => {
+          generationIdRef.current++;
+          actions.change(element, validity, validity.error || undefined);
+        },
+        focus: ({ element }) => actions.focus(element),
+        blur: ({ element }) => actions.blur(element),
         change: ({ valid }) => {
           if (valid) {
             return generateToken();
@@ -123,5 +108,5 @@ export const useHipayHostedFields = ({ fieldSelectors }: UseHipayHostedFieldsPar
     }
   }, [formState, generateToken, isSubmitting, watchedToken, watchedTokenStatus]);
 
-  return { errors, isReady: isHipayReady };
+  return { fields, isReady: isHipayReady };
 };

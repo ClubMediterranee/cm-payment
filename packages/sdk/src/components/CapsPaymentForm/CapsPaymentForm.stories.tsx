@@ -47,42 +47,26 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const queryHidden = (canvas: ReturnType<typeof within>, name: RegExp) =>
-  canvas.queryByRole('button', { name });
-
-export const StepByStep: Story = {
+export const AllAtOnce: Story = {
   parameters: { msw: { handlers } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const schedules = await canvas.findAllByRole('radio');
-    expect(schedules).toHaveLength(2);
-    schedules.forEach((schedule) => expect(schedule).not.toBeChecked());
+    await canvas.findAllByRole('button', { name: 'Select this option' });
     expect(canvas.queryByText('Pay with PayPal')).toBeNull();
 
-    await userEvent.click(schedules[0]);
-
-    const payPal = await canvas.findByText('Pay with PayPal');
+    await pickSchedule(canvas);
+    expect(await canvas.findByText('Pay with PayPal')).toBeVisible();
+    expect(canvas.getByText('Pay with Alipay')).toBeVisible();
     expect(canvas.queryByRole('checkbox')).toBeNull();
 
-    const group = schedules[0].closest('[role=radiogroup]') as HTMLElement;
-    let hidden = false;
-    const timer = setInterval(() => (hidden ||= group.offsetParent === null), 10);
-
-    await userEvent.click(payPal);
+    await userEvent.click(canvas.getByText('Pay with PayPal'));
 
     const cgv = await canvas.findByRole('checkbox');
-    clearInterval(timer);
-    expect(hidden).toBe(false);
-    expect(queryHidden(canvas, /partner/i)).toBeNull();
+    expect(canvas.getByRole('button', { name: /partner/i })).toBeVisible();
 
     await userEvent.click(cgv);
-
-    await waitFor(() => expect(canvas.getByRole('button', { name: /partner/i })).toBeVisible());
-
-    await userEvent.click(cgv);
-
-    await waitFor(() => expect(queryHidden(canvas, /partner/i)).toBeNull());
+    expect(cgv).toBeChecked();
   },
 };
 
@@ -157,7 +141,7 @@ export const DonationInSlot: Story = {
     const canvas = within(canvasElement);
     const slot = canvas.getByTestId('donation-slot');
 
-    await canvas.findAllByRole('radio');
+    await canvas.findAllByRole('button', { name: 'Select this option' });
     await waitFor(() => expect(slot.children.length).toBeGreaterThan(0));
     expect(canvas.queryByText('Pay with PayPal')).toBeNull();
   },

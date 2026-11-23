@@ -14,8 +14,8 @@ export function FlowErrorFallback({
 
   return (
     <div className="p-40 text-center" role="alert">
-      <h2 className="text-20 font-bold text-red mb-16">Impossible d'afficher le formulaire</h2>
-      <p className="text-14 text-middleGrey mb-16">{message}</p>
+      <h2 className="text-b2 font-semibold text-red mb-16">Impossible d'afficher le formulaire</h2>
+      <p className="text-b4 text-middleGrey mb-16">{message}</p>
       <button type="button" className="underline font-semibold" onClick={resetErrorBoundary}>
         Réessayer
       </button>

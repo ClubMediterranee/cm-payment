@@ -121,11 +121,13 @@ export const Default: Story = {
     expect(cardNumberDiv).toBeInTheDocument();
     expect(cvcDiv).toBeInTheDocument();
 
-    const cardHolderInput = canvas.getByPlaceholderText('Cardholder name');
+    const cardHolderInput = canvas.getByRole('textbox', { name: 'Cardholder name' });
+    expect(cardHolderInput).toHaveAttribute('placeholder', 'Surname Name');
     expect(cardHolderInput).toBeInTheDocument();
 
     await userEvent.type(cardHolderInput, 'John Doe');
     expect(cardHolderInput).toHaveValue('John Doe');
+    await waitFor(() => expect(cardHolderInput.className).toContain('inset-ring-green'));
   },
 };
 

@@ -37,10 +37,10 @@ const preview: Preview = {
     backgrounds: {
       default: 'white',
       values: [
-        { name: 'white', value: 'hsl(var(--color-white))' },
-        { name: 'pearl', value: 'hsl(var(--color-pearl))' },
-        { name: 'ultramarine', value: 'hsl(var(--color-ultramarine))' },
-        { name: 'darkGrey', value: 'hsl(var(--color-darkGrey))' },
+        { name: 'white', value: 'var(--color-white)' },
+        { name: 'pearl', value: 'var(--color-pearl)' },
+        { name: 'ultramarine', value: 'var(--color-ultramarine)' },
+        { name: 'darkGrey', value: 'var(--color-darkGrey)' },
       ],
     },
   },

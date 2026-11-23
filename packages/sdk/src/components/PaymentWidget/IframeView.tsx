@@ -79,7 +79,7 @@ export const IframeView = () => {
   }
 
   return (
-    <div className="w-full flex justify-center flex-col items-center mt-24">
+    <div className="w-full flex justify-center flex-col items-center">
       <Spinner
         className={classNames('w-48', {
           hidden: !isPending,

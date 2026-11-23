@@ -1,12 +1,35 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-import type { IxopayConfig, IxopayError, IxopayEventData } from '../types/Ixopay.js';
+import type {
+  IxopayConfig,
+  IxopayError,
+  IxopayEventData,
+  IxopayPayment,
+  IxopayPaymentJs,
+  IxopayStyle,
+} from '../types/Ixopay.js';
+import { cardFieldMessages, useHostedFieldsState } from '../../../hooks/useHostedFieldsState.js';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext.js';
 import { useDisclosure } from '../../../hooks/utils/useDisclosure.js';
 import { useFormContext, useWatch } from '../../../hooks/utils/useForm.js';
 import { useScriptLoader } from '../../../hooks/utils/useScriptLoader.js';
 import { useWatchedPaymentProvider } from '../../../hooks/utils/useWatchedPaymentProvider.js';
-import { mapIxopayErrorsToObject, removeErrorKey } from './ixopay.js';
+import { parseExpiryDate } from '../../../schemas/validations/validateExpiryDate.js';
+import { HOSTED_FIELD_THEME } from '../../../utils/integrations/hostedFieldTheme.js';
+import { mapIxopayErrorsToObject } from './ixopay.js';
+
+export const IXOPAY_STYLE: IxopayStyle = {
+  border: '0',
+  width: '100%',
+  height: HOSTED_FIELD_THEME.lineHeight,
+  outline: 'none',
+  'box-shadow': 'none',
+  'font-family': HOSTED_FIELD_THEME.fontFamily,
+  'font-size': HOSTED_FIELD_THEME.fontSize,
+  'line-height': HOSTED_FIELD_THEME.lineHeight,
+  color: HOSTED_FIELD_THEME.color,
+  '::placeholder': { color: HOSTED_FIELD_THEME.placeholderColor },
+};
 
 type UseIxopayHostedFieldsParams = {
   fieldSelectors: {
@@ -15,26 +38,16 @@ type UseIxopayHostedFieldsParams = {
   };
 };
 
-const parseExpiryDate = (expiryDate: string) => {
-  if (!expiryDate) {
-    return { expirationMonth: '', expirationYear: '' };
-  }
-
-  const date = new Date(expiryDate);
-  const expirationMonth = (date.getMonth() + 1).toString().padStart(2, '0');
-  const expirationYear = date.getFullYear().toString();
-
-  return { expirationMonth, expirationYear };
-};
-
 export const useIxopayHostedFields = ({ fieldSelectors }: UseIxopayHostedFieldsParams) => {
-  const { formState, setValue, setError } = useFormContext();
+  const { formState, setValue } = useFormContext();
   const { content } = useCapsConfigContext();
+  const { placeholders, validation } = content.creditCardForm;
   const provider = useWatchedPaymentProvider();
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { cardNumber, cvc } = cardFieldMessages(validation);
+  const { fields, actions } = useHostedFieldsState({ number: cardNumber, cvv: cvc });
 
-  const { script_url = '', integration_key } = (provider?.configuration?.settings ||
+  const { script_url = '', integration_key = '' } = (provider?.configuration?.settings ||
     {}) as Partial<IxopayConfig>;
   const { isLoaded } = useScriptLoader(script_url, { 'data-main': 'payment-js' });
 
@@ -45,7 +58,7 @@ export const useIxopayHostedFields = ({ fieldSelectors }: UseIxopayHostedFieldsP
 
   const { isOpen: isIxopayReady, onOpen: onIxopayReady } = useDisclosure();
 
-  const paymentJs = useRef<any>(null);
+  const paymentJs = useRef<IxopayPaymentJs | null>(null);
 
   useEffect(() => {
     if (!isLoaded || !window.PaymentJs) return;
@@ -55,50 +68,23 @@ export const useIxopayHostedFields = ({ fieldSelectors }: UseIxopayHostedFieldsP
       integration_key,
       fieldSelectors.cardNumber,
       fieldSelectors.cvc,
-      (payment: any) => {
-        const style = {
-          border: '0px ',
-          width: '100%',
-          height: '24px',
-          outline: 'none',
-          boxShadow: 'none',
-          '::placeholder': {
-            color: '#9ca3af',
-          },
-        };
-        payment.setNumberStyle(style);
-        payment.setCvvStyle(style);
-        payment.setNumberPlaceholder(content.creditCardForm.cardNumber);
-        payment.setCvvPlaceholder(content.creditCardForm.cvc);
+      (payment: IxopayPayment) => {
+        payment.setNumberStyle(IXOPAY_STYLE);
+        payment.setCvvStyle(IXOPAY_STYLE);
+        payment.setNumberPlaceholder(placeholders.cardNumber);
+        payment.setCvvPlaceholder(placeholders.cvc);
 
-        payment.numberOn('input', ({ validNumber }: IxopayEventData) => {
-          setErrors((prev) =>
-            validNumber
-              ? removeErrorKey(prev, 'number')
-              : {
-                  ...prev,
-                  ...mapIxopayErrorsToObject([
-                    {
-                      attribute: 'number',
-                      message: content.creditCardForm.validation.cardNumber,
-                    },
-                  ]),
-                },
-          );
-        });
+        payment.numberOn('input', ({ validNumber, numberLength }: IxopayEventData) =>
+          actions.change('number', { valid: validNumber, empty: !numberLength }),
+        );
+        payment.numberOn('focus', () => actions.focus('number'));
+        payment.numberOn('blur', () => actions.blur('number'));
 
-        payment.cvvOn('input', ({ validCvv }: IxopayEventData) => {
-          setErrors((prev) =>
-            validCvv
-              ? removeErrorKey(prev, 'cvv')
-              : {
-                  ...prev,
-                  ...mapIxopayErrorsToObject([
-                    { attribute: 'cvv', message: content.creditCardForm.validation.cvc },
-                  ]),
-                },
-          );
-        });
+        payment.cvvOn('input', ({ validCvv, cvvLength }: IxopayEventData) =>
+          actions.change('cvv', { valid: validCvv, empty: !cvvLength }),
+        );
+        payment.cvvOn('focus', () => actions.focus('cvv'));
+        payment.cvvOn('blur', () => actions.blur('cvv'));
 
         onIxopayReady();
       },
@@ -108,8 +94,8 @@ export const useIxopayHostedFields = ({ fieldSelectors }: UseIxopayHostedFieldsP
   const generateToken = useCallback(() => {
     if (!paymentJs.current || !watchedExpiryDate || !watchedCardHolder) return;
 
-    const { expirationMonth, expirationYear } = parseExpiryDate(watchedExpiryDate);
-    if (!expirationMonth || !expirationYear) {
+    const expiryDate = parseExpiryDate(watchedExpiryDate);
+    if (!expiryDate) {
       setValue('token', { value: '', status: 'error' });
       return;
     }
@@ -119,18 +105,18 @@ export const useIxopayHostedFields = ({ fieldSelectors }: UseIxopayHostedFieldsP
     paymentJs.current.tokenize(
       {
         card_holder: watchedCardHolder,
-        month: expirationMonth,
-        year: expirationYear,
+        month: expiryDate.expirationMonth,
+        year: expiryDate.expirationYear,
       },
       (token: string) => {
         setValue('token', { value: token, status: 'success' });
       },
       (errors: IxopayError[]) => {
         setValue('token', { value: '', status: 'error' });
-        setErrors(mapIxopayErrorsToObject(errors));
+        actions.rejectAll(mapIxopayErrorsToObject(errors));
       },
     );
-  }, [watchedExpiryDate, watchedCardHolder, setValue, setError]);
+  }, [actions, watchedExpiryDate, watchedCardHolder, setValue]);
 
   useEffect(() => {
     if (formState.isSubmitting && !watchedToken && watchedTokenStatus !== 'pending') {
@@ -138,8 +124,5 @@ export const useIxopayHostedFields = ({ fieldSelectors }: UseIxopayHostedFieldsP
     }
   }, [formState.isSubmitting, watchedToken, watchedTokenStatus, generateToken]);
 
-  return {
-    isReady: isIxopayReady,
-    errors,
-  };
+  return { isReady: isIxopayReady, fields };
 };

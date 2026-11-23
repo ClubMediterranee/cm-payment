@@ -92,7 +92,8 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'État par défaut du formulaire Hipay avec les 4 champs de carte bancaire.',
+        story:
+          'État par défaut du formulaire Hipay avec les 4 champs de carte bancaire, dans l’ordre titulaire, numéro, expiration, CVV.',
       },
     },
   },
@@ -104,11 +105,16 @@ export const Default: Story = {
     });
 
     expect(canvas.getByText('Cardholder name')).toBeInTheDocument();
-    expect(canvas.getByText('Expiry date')).toBeInTheDocument();
-    expect(canvas.getByText('Security code')).toBeInTheDocument();
+    expect(canvas.getByText('Expiration')).toBeInTheDocument();
+    expect(canvas.getByText('Security code (CVV)')).toBeInTheDocument();
 
-    const hostedFields = canvasElement.querySelectorAll('[id^="hipay-"]');
-    expect(hostedFields.length).toBe(4);
+    const hostedFields = canvasElement.querySelectorAll('div[id^="hipay-card-"]');
+    expect([...hostedFields].map(({ id }) => id)).toEqual([
+      'hipay-card-holder',
+      'hipay-card-number',
+      'hipay-card-expiry',
+      'hipay-card-cvc',
+    ]);
   },
 };
 

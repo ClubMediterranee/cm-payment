@@ -54,7 +54,7 @@ export const UpliftOption = ({ provider, name, checked, onChange }: UpliftOption
             <div id="up-pay-monthly-selector" className="flex items-center gap-4">
               {`${monthly.title} ${monthly.from}`}
               <span
-                className="font-bold text-sienna cursor-pointer flex gap-12"
+                className="font-semibold text-sienna cursor-pointer flex gap-12"
                 data-up-price-type="total"
                 data-up-price-value={priceInCents}
               >

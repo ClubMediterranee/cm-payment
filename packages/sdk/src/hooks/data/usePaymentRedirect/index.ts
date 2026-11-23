@@ -3,6 +3,7 @@ import { noop, useMutation, useMutationState } from '@tanstack/react-query';
 import { paymentRedirectControllerCreate } from '../../../__generated__/bff';
 import type { CapsFormSchema } from '../../../schemas/capsFormSchema';
 import type { CapsSettings } from '../../../types/CapsSettings';
+import type { PspProviders } from '../../../types/PspProviders';
 import { useCapsConfigContext } from '../../utils/useCapsConfigContext';
 import { useWatchedPaymentProvider } from '../../utils/useWatchedPaymentProvider';
 
@@ -111,14 +112,16 @@ export const usePaymentRedirect = ({
   });
 };
 
-type MutationFilters = NonNullable<Parameters<typeof useMutationState>[0]>['filters'];
-type Predicate = NonNullable<MutationFilters>['predicate'];
-
-export const usePaymentRedirectState = ({ predicate }: { predicate?: Predicate } = {}) => {
+export const usePaymentRedirectState = ({ providerId }: { providerId: PspProviders }) => {
   const { type, id } = useCapsConfigContext();
 
   const data = useMutationState({
-    filters: { mutationKey: paymentRedirectMutationKey(type, id), status: 'success', predicate },
+    filters: {
+      mutationKey: paymentRedirectMutationKey(type, id),
+      status: 'success',
+      predicate: (mutation) =>
+        (mutation.state.variables as CapsFormSchema).provider_id === providerId,
+    },
     select: (mutation) => mutation.state.data as PaymentRedirectResult,
   });
 

@@ -59,10 +59,34 @@ describe('validateBillingAddress', () => {
 
   it('returns undefined when all required fields are valid', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true },
-      { name: 'last_name', group: 'attendee', type: 'text', required: true },
-      { name: 'street', group: 'address', type: 'text', required: true },
-      { name: 'city', group: 'address', type: 'text', required: true },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'last_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.last_name',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'street',
+        group: 'address',
+        path: 'billing_details.address.street',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'city',
+        group: 'address',
+        path: 'billing_details.address.city',
+        type: 'text',
+        required: true,
+      },
     ];
     setBillingFields(fields);
 
@@ -88,8 +112,20 @@ describe('validateBillingAddress', () => {
 
   it('returns error when required attendee field is missing', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true },
-      { name: 'last_name', group: 'attendee', type: 'text', required: true },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'last_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.last_name',
+        type: 'text',
+        required: true,
+      },
     ];
     setBillingFields(fields);
 
@@ -118,8 +154,20 @@ describe('validateBillingAddress', () => {
 
   it('returns error when required address field is missing', () => {
     const fields: FieldMetadata[] = [
-      { name: 'street', group: 'address', type: 'text', required: true },
-      { name: 'city', group: 'address', type: 'text', required: true },
+      {
+        name: 'street',
+        group: 'address',
+        path: 'billing_details.address.street',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'city',
+        group: 'address',
+        path: 'billing_details.address.city',
+        type: 'text',
+        required: true,
+      },
     ];
     setBillingFields(fields);
 
@@ -146,7 +194,13 @@ describe('validateBillingAddress', () => {
 
   it('returns error when required field is only whitespace', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+      },
     ];
     setBillingFields(fields);
 
@@ -174,7 +228,14 @@ describe('validateBillingAddress', () => {
 
   it('returns error when field exceeds maxLength', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true, maxLength: 10 },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+        maxLength: 10,
+      },
     ];
     setBillingFields(fields);
 
@@ -202,7 +263,14 @@ describe('validateBillingAddress', () => {
 
   it('returns error when field is below minLength', () => {
     const fields: FieldMetadata[] = [
-      { name: 'zip_code', group: 'address', type: 'text', required: true, minLength: 5 },
+      {
+        name: 'zip_code',
+        group: 'address',
+        path: 'billing_details.address.zip_code',
+        type: 'text',
+        required: true,
+        minLength: 5,
+      },
     ];
     setBillingFields(fields);
 
@@ -231,6 +299,7 @@ describe('validateBillingAddress', () => {
       {
         name: 'zip_code',
         group: 'address',
+        path: 'billing_details.address.zip_code',
         type: 'text',
         required: true,
         pattern: '^[0-9]{5}$',
@@ -260,8 +329,20 @@ describe('validateBillingAddress', () => {
 
   it('returns undefined when optional field is empty', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true },
-      { name: 'last_name', group: 'attendee', type: 'text', required: false },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'last_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.last_name',
+        type: 'text',
+        required: false,
+      },
     ];
     setBillingFields(fields);
 
@@ -285,9 +366,28 @@ describe('validateBillingAddress', () => {
 
   it('returns multiple errors when multiple fields are invalid', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true },
-      { name: 'last_name', group: 'attendee', type: 'text', required: true },
-      { name: 'street', group: 'address', type: 'text', required: true, maxLength: 10 },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'last_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.last_name',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'street',
+        group: 'address',
+        path: 'billing_details.address.street',
+        type: 'text',
+        required: true,
+        maxLength: 10,
+      },
     ];
     setBillingFields(fields);
 
@@ -328,6 +428,7 @@ describe('validateBillingAddress', () => {
       {
         name: 'zip_code',
         group: 'address',
+        path: 'billing_details.address.zip_code',
         type: 'text',
         required: true,
         pattern: '^[0-9]{5}$',
@@ -355,8 +456,9 @@ describe('validateBillingAddress', () => {
 
     const fields: FieldMetadata[] = [
       {
-        name: 'test_field',
+        name: 'add_on',
         group: 'address',
+        path: 'billing_details.address.add_on',
         type: 'text',
         required: false,
         pattern: '[invalid(regex',
@@ -368,7 +470,7 @@ describe('validateBillingAddress', () => {
       {
         billing_details: {
           address: {
-            test_field: 'some value',
+            add_on: 'some value',
             country_code: 'FR',
           },
         },
@@ -384,7 +486,13 @@ describe('validateBillingAddress', () => {
 
   it('handles missing billing_details gracefully', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+      },
     ];
     setBillingFields(fields);
 
@@ -400,7 +508,13 @@ describe('validateBillingAddress', () => {
 
   it('handles missing group in billing_details', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+      },
     ];
     setBillingFields(fields);
 
@@ -425,13 +539,42 @@ describe('validateBillingAddress', () => {
 
   it('validates combination of required and optional fields with constraints', () => {
     const fields: FieldMetadata[] = [
-      { name: 'first_name', group: 'attendee', type: 'text', required: true, maxLength: 50 },
-      { name: 'last_name', group: 'attendee', type: 'text', required: true, maxLength: 50 },
-      { name: 'street', group: 'address', type: 'text', required: true, maxLength: 100 },
-      { name: 'city', group: 'address', type: 'text', required: true, maxLength: 50 },
+      {
+        name: 'first_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.first_name',
+        type: 'text',
+        required: true,
+        maxLength: 50,
+      },
+      {
+        name: 'last_name',
+        group: 'attendee',
+        path: 'billing_details.attendee.last_name',
+        type: 'text',
+        required: true,
+        maxLength: 50,
+      },
+      {
+        name: 'street',
+        group: 'address',
+        path: 'billing_details.address.street',
+        type: 'text',
+        required: true,
+        maxLength: 100,
+      },
+      {
+        name: 'city',
+        group: 'address',
+        path: 'billing_details.address.city',
+        type: 'text',
+        required: true,
+        maxLength: 50,
+      },
       {
         name: 'zip_code',
         group: 'address',
+        path: 'billing_details.address.zip_code',
         type: 'text',
         required: true,
         minLength: 5,

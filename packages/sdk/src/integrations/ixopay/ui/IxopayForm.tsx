@@ -1,68 +1,57 @@
-import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
-import { Controller, get } from 'react-hook-form';
-
 import { useIxopayHostedFields } from '../hooks/useIxopayHostedFields.js';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext.js';
-import { useFormContext } from '../../../hooks/utils/useForm.js';
 import { FormPanel } from '../../../components/ui/FormPanel.js';
 import { HostedField } from '../../../components/ui/HostedField.js';
 import { MonthField } from '../../../components/ui/MonthField.js';
+import { ValidatedTextField } from '../../../components/ui/ValidatedTextField.js';
 import integration from '../integration.config.js';
 
 export const IxopayForm = () => {
   const { content } = useCapsConfigContext();
-  const { formState, control } = useFormContext();
+  const { fullName, cardNumber, expiryDate, cvc, placeholders, hints } = content.creditCardForm;
 
-  const { isReady, errors } = useIxopayHostedFields({
+  const { isReady, fields } = useIxopayHostedFields({
     fieldSelectors: integration.mountPoints,
   });
 
-  const fieldProps = { isLoading: !isReady };
+  const isLoading = !isReady;
 
   return (
     <FormPanel className="w-full">
-      <div className="flex flex-wrap gap-28">
-        <Controller
+      <div className="flex flex-col gap-20">
+        <ValidatedTextField
           name="creditCard.cardHolder"
-          control={control}
-          render={({ field: { value, onChange, name }, fieldState: { error } }) => (
-            <div className="w-full flex flex-col gap-6">
-              <span className="font-semibold px-20">{content.creditCardForm.fullName}</span>
-              <TextField
-                {...fieldProps}
-                name={name}
-                placeholder={content.creditCardForm.fullName}
-                value={value || ''}
-                onChange={(_: unknown, val: string) => onChange(val)}
-                errorMessage={error?.message}
-                validationStatus={error ? 'error' : 'default'}
-              />
-            </div>
-          )}
+          label={fullName}
+          placeholder={placeholders.cardHolder}
+          hint={hints.cardHolder}
+          autoComplete="cc-name"
         />
 
         <HostedField
-          {...fieldProps}
-          label={content.creditCardForm.cardNumber}
           id={integration.mountPoints.cardNumber}
-          error={errors.number}
+          label={cardNumber}
+          hint={hints.cardNumber}
+          state={fields.number}
+          isLoading={isLoading}
+          icon="CreditCard"
         />
 
-        <div className="w-full flex flex-col md:flex-row gap-28">
-          <MonthField
-            {...fieldProps}
-            label={content.creditCardForm.expiryDate}
-            name="creditCard.expiryDate"
-            error={get(formState.errors, 'creditCard.expiryDate')?.message}
-          />
+        <MonthField
+          label={expiryDate}
+          placeholder={placeholders.expiryDate}
+          hint={hints.expiryDate}
+          isLoading={isLoading}
+          className="md:w-315"
+        />
 
-          <HostedField
-            {...fieldProps}
-            label={content.creditCardForm.cvc}
-            id={integration.mountPoints.cvc}
-            error={errors.cvv}
-          />
-        </div>
+        <HostedField
+          id={integration.mountPoints.cvc}
+          label={cvc}
+          hint={hints.cvc}
+          state={fields.cvv}
+          isLoading={isLoading}
+          className="md:w-315"
+        />
       </div>
     </FormPanel>
   );

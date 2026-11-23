@@ -91,7 +91,7 @@ The `theme` prop (`'legacy'` or `'current'`) picks the UI the form renders, and 
 
 The form serves one set of default texts, the one of the theme: the `'legacy'` texts are unchanged, and `content` overrides are merged on top of them.
 
-The `'current'` theme reveals the form step by step: each block shows once the fields before it are valid, and the submit button shows once the whole form is valid.
+The `'current'` theme reveals the payment panel once a schedule is chosen, then shows every block of the panel at once. The schedule and the payment methods render without a radio when there is only one choice, except when `PaymentPanel` receives `children`, which keeps the payment method radio.
 
 ## Webcomponent mode
 
@@ -100,7 +100,7 @@ The `'current'` theme reveals the form step by step: each block shows once the f
 import { CapsFormWebComponent } from '@clubmed/caps/webcomponent';
 ```
 
-- The form is rendered through `@module-federation/bridge-react`: the remote mounts its own React root in a host DOM node, so nothing is shared with the host (React 18 and 19 hosts are supported). The SDK, trident-ui v1 and Tailwind CSS are bundled in the remote.
+- The form is rendered through `@module-federation/bridge-react`: the remote mounts its own React root in a host DOM node, so nothing is shared with the host (React 18 and 19 hosts are supported). The SDK, trident-ui v2 (`2.1.0`) and Tailwind CSS are bundled in the remote.
 - `className` and `style` apply to the host container of the form.
 - Styles live in a shadow root: host styles do not reach CAPS and CAPS styles do not reach the host. Nothing to add to the host Tailwind configuration.
 - The host owns the authentication and passes `apiKey` and `accessToken`. The remote does not fetch the API key from the CAPS server.

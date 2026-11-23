@@ -8,6 +8,7 @@ import hipay from '../../integrations/hipay/integration.config.js';
 import type { ReactNode } from 'react';
 
 const ID = hipay.mountPoints.cardNumber;
+const IDLE = { status: 'default', focused: false, filled: false } as const;
 
 function renderInShadowRoot(children: ReactNode) {
   const host = document.body.appendChild(document.createElement('caps-form'));
@@ -23,7 +24,7 @@ describe('PSP mount points', () => {
   });
 
   it('renders the mount point in place outside a shadow root', () => {
-    const { container } = render(<HostedField label="Card number" id={ID} />);
+    const { container } = render(<HostedField label="Card number" id={ID} state={IDLE} />);
 
     expect(document.getElementById(ID)).toBe(container.querySelector(`#${ID}`));
     expect(container.querySelector('slot')).toBeNull();
@@ -31,7 +32,7 @@ describe('PSP mount points', () => {
 
   it('renders the mount point in the light DOM of the shadow host, projected with a slot', () => {
     const { host, shadowRoot, unmount } = renderInShadowRoot(
-      <HostedField label="Card number" id={ID} />,
+      <HostedField label="Card number" id={ID} state={IDLE} />,
     );
 
     const mountPoint = document.getElementById(ID);

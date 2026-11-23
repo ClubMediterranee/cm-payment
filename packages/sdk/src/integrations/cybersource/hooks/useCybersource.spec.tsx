@@ -4,6 +4,7 @@ import type { PropsWithChildren } from 'react';
 
 import * as apiGenerated from '../../../__generated__/index.js';
 import type { CybersourceMicroform } from '../types/Cybersource.js';
+import { defaultContent } from '../../../content/default.js';
 import * as useCapsConfigContext from '../../../hooks/utils/useCapsConfigContext.js';
 import * as useFormContext from '../../../hooks/utils/useForm.js';
 import * as useScriptLoader from '../../../hooks/utils/useScriptLoader.js';
@@ -53,18 +54,8 @@ describe('useCybersource', () => {
     },
   };
 
-  const mockContent = {
-    creditCardForm: {
-      title: 'Carte bancaire',
-      cardNumber: 'Numéro de carte',
-      fullName: 'Nom complet',
-      expiryDate: "Date d'expiration",
-      cvc: 'CVV',
-    },
-  };
-
   let mockSetValue: ReturnType<typeof vi.fn>;
-  let mockFormState: { isSubmitting: boolean; errors: any };
+  let mockFormState: { isSubmitting: boolean; submitCount: number; errors: object };
 
   const Wrapper = ({ children }: PropsWithChildren) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -75,10 +66,10 @@ describe('useCybersource', () => {
     vi.clearAllMocks();
 
     mockSetValue = vi.fn();
-    mockFormState = { isSubmitting: false, errors: {} };
+    mockFormState = { isSubmitting: false, submitCount: 0, errors: {} };
 
     vi.spyOn(useCapsConfigContext, 'useCapsConfigContext').mockReturnValue({
-      content: mockContent as any,
+      content: defaultContent,
       id: 'booking123',
       type: 'booking',
     } as any);
@@ -106,7 +97,7 @@ describe('useCybersource', () => {
 
   it('should fetch token on mount and initialize CyberSource SDK when script loads', async () => {
     vi.spyOn(useFormContext, 'useWatch').mockImplementation((name) =>
-      name === 'creditCard.expiryDate' ? '2025-12-31' : undefined,
+      name === 'creditCard.expiryDate' ? '2025 / 12' : undefined,
     );
 
     vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
@@ -145,7 +136,7 @@ describe('useCybersource', () => {
   it('should generate token when all fields are valid and expiry date is set', async () => {
     vi.spyOn(useFormContext, 'useWatch').mockImplementation((name) => {
       if (name === 'provider_id') return 'MCYBERSOURCE';
-      if (name === 'creditCard.expiryDate') return '2025-12-31';
+      if (name === 'creditCard.expiryDate') return '2025 / 12';
       return undefined;
     });
 
@@ -194,7 +185,7 @@ describe('useCybersource', () => {
   it('should handle token generation errors', async () => {
     vi.spyOn(useFormContext, 'useWatch').mockImplementation((name) => {
       if (name === 'provider_id') return 'MCYBERSOURCE';
-      if (name === 'creditCard.expiryDate') return '2025-12-31';
+      if (name === 'creditCard.expiryDate') return '2025 / 12';
       return undefined;
     });
 
@@ -237,5 +228,62 @@ describe('useCybersource', () => {
     });
 
     expect(mockSetValue).toHaveBeenCalledWith('token', { value: '', status: 'error' });
+  });
+
+  const renderReady = async () => {
+    vi.spyOn(useFormContext, 'useWatch').mockImplementation((name) =>
+      name === 'creditCard.expiryDate' ? '2025 / 12' : undefined,
+    );
+    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({ isLoaded: true });
+
+    const hook = renderHook(() => useCybersource({ fields: mockFields }), { wrapper: Wrapper });
+
+    await waitFor(() => expect(mockMicroform.createField).toHaveBeenCalledTimes(2));
+
+    const fieldAt = (index: number) =>
+      vi.mocked(mockMicroform.createField).mock.results[index].value as {
+        on: ReturnType<typeof vi.fn>;
+      };
+    const listener = (index: number, event: string) =>
+      fieldAt(index).on.mock.calls.find(([name]) => name === event)?.[1];
+
+    return { ...hook, listener };
+  };
+
+  it('tracks the focus of the hosted fields and shows an incorrect value on blur', async () => {
+    const { result, listener } = await renderReady();
+
+    await act(async () => {
+      listener(0, 'focus')();
+      listener(0, 'change')({ valid: false, empty: false });
+    });
+
+    expect(result.current.fields.cardNumber).toEqual({
+      status: 'default',
+      focused: true,
+      filled: true,
+      error: undefined,
+    });
+
+    await act(async () => {
+      listener(0, 'blur')();
+    });
+
+    expect(result.current.fields.cardNumber).toMatchObject({
+      status: 'error',
+      focused: false,
+      error: defaultContent.creditCardForm.validation.cardNumber,
+    });
+  });
+
+  it('does not tokenize while the hosted fields are invalid', async () => {
+    const { rerender } = await renderReady();
+
+    await act(async () => {
+      mockFormState.isSubmitting = true;
+    });
+    rerender();
+
+    expect(mockMicroform.createToken).not.toHaveBeenCalled();
   });
 });

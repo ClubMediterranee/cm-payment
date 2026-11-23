@@ -1,5 +1,4 @@
 import React from 'react';
-import { Icon } from '@clubmed/trident-icons';
 import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 
 import type { PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem } from '../../../__generated__/bff/index.schemas.js';
@@ -10,6 +9,7 @@ import { formatCurrency } from '../../../utils/formatCurrency.js';
 import { renderTemplate } from '../../../utils/renderTemplate.js';
 import { Oney3x } from '../../../components/icons/Oney3x.js';
 import { Oney4x } from '../../../components/icons/Oney4x.js';
+import { InfoButton } from '../../../components/ui/InfoButton.js';
 import { RadioSkeleton } from '../../../components/ui/skeletons/index.js';
 import { useOneySimulationPopin } from '../hooks/useOneySimulationPopin.js';
 
@@ -25,7 +25,7 @@ type OneyOptionProps = {
 export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProps) => {
   const {
     content: {
-      paymentSchedule: { monthly, installments },
+      paymentSchedule: { monthly, installments, moreInformation },
     },
     locale,
   } = useCapsConfigContext();
@@ -41,8 +41,8 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
   });
 
   const fmt = (value: number) => formatCurrency({ amount: value, currency, locale });
-  const sienna = (value: string) => <span className="font-bold text-sienna">{value}</span>;
-  const bold = (value: string) => <span className="font-bold">{value}</span>;
+  const sienna = (value: string) => <span className="font-semibold text-sienna">{value}</span>;
+  const bold = (value: string) => <span className="font-semibold">{value}</span>;
 
   const icon = ONEY_ICON[payment_mode as keyof typeof ONEY_ICON];
 
@@ -73,9 +73,11 @@ export const OneyOption = ({ provider, name, checked, onChange }: OneyOptionProp
     <Radio value={id} name={name} checked={checked} onChange={() => onChange(id)}>
       <div className="flex items-center gap-4">
         {label}
-        <button type="button" onClick={handlePopinClick} className="focus:outline-none">
-          <Icon name="Information" className="text-sienna font-bold" width="1.5rem" />
-        </button>
+        <InfoButton
+          aria-label={`${moreInformation}: ${provider.label}`}
+          onClick={handlePopinClick}
+          className="text-sienna"
+        />
       </div>
     </Radio>
   );

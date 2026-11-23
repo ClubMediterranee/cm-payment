@@ -1,8 +1,15 @@
 import { ClientSchemaModel } from '../../__generated__/index.schemas';
+import type { CapsFormSchema } from '../../schemas/capsFormSchema';
 
-export type FieldMetadata = {
-  name: string;
-  group: 'attendee' | 'address';
+type BillingDetails = CapsFormSchema['billing_details'];
+type AttendeeKey = keyof NonNullable<BillingDetails['attendee']>;
+type AddressKey = keyof BillingDetails['address'];
+
+type FieldLocation =
+  | { group: 'attendee'; name: AttendeeKey; path: `billing_details.attendee.${AttendeeKey}` }
+  | { group: 'address'; name: AddressKey; path: `billing_details.address.${AddressKey}` };
+
+export type FieldMetadata = FieldLocation & {
   type: 'select' | 'text';
   required: boolean;
   options?: { value: string; label: string }[];
@@ -26,74 +33,74 @@ type SchemaGroup = {
   properties?: Record<string, SchemaProperty>;
 };
 
+const KEYS = {
+  attendee: ['first_name', 'last_name'],
+  address: [
+    'additional_information_1',
+    'additional_information_2',
+    'number',
+    'street',
+    'add_on',
+    'town',
+    'city',
+    'state_or_district',
+    'zip_code',
+    'country',
+    'country_code',
+  ],
+} as const satisfies { attendee: readonly AttendeeKey[]; address: readonly AddressKey[] };
+
+const locate = (group: FieldLocation['group'], fieldName: string): FieldLocation | undefined => {
+  if (group === 'attendee') {
+    const name = KEYS.attendee.find((key) => key === fieldName);
+    return name && { group, name, path: `billing_details.attendee.${name}` };
+  }
+
+  const name = KEYS.address.find((key) => key === fieldName);
+  return name && { group, name, path: `billing_details.address.${name}` };
+};
+
+const toOptions = (property: SchemaProperty) => {
+  if (property['x-choices']?.length) {
+    return property['x-choices'].map(({ code, label }) => ({ value: code, label }));
+  }
+
+  return property.enum?.length
+    ? property.enum.map((value) => ({ value, label: value }))
+    : undefined;
+};
+
 export const parseBillingSchema = (rawSchema: ClientSchemaModel): FieldMetadata[] => {
-  if (!rawSchema.properties) {
+  const { properties } = rawSchema;
+
+  if (!properties) {
     console.error('[parseBillingSchema] Missing properties in schema');
     throw new Error('Invalid billing schema: missing properties');
   }
 
-  const parsedProperties = rawSchema.properties;
-
-  if (!parsedProperties.attendee && !parsedProperties.address) {
+  if (!properties.attendee && !properties.address) {
     console.error('[parseBillingSchema] Missing attendee and address in schema properties');
     throw new Error('Invalid billing schema: missing attendee and address groups');
   }
 
-  const fields: FieldMetadata[] = [];
+  return (['attendee', 'address'] as const).flatMap((groupName) => {
+    const group = properties[groupName] as SchemaGroup | undefined;
 
-  const groups: Array<{ name: 'attendee' | 'address'; data: SchemaGroup | undefined }> = [
-    { name: 'attendee', data: parsedProperties.attendee as SchemaGroup | undefined },
-    { name: 'address', data: parsedProperties.address as SchemaGroup | undefined },
-  ];
+    return Object.entries(group?.properties ?? {}).flatMap(([fieldName, property]) => {
+      const location = locate(groupName, fieldName);
+      const options = toOptions(property);
 
-  groups.forEach(({ name: groupName, data: group }) => {
-    if (!group || !group.properties) {
-      return;
-    }
-
-    const requiredFields = group.required || [];
-
-    Object.entries(group.properties).forEach(([fieldName, property]) => {
-      const hasEnum = property.enum && property.enum.length > 0;
-      const hasXChoices = property['x-choices'] && property['x-choices'].length > 0;
-
-      const isSelect = hasEnum || hasXChoices;
-      const isRequired = requiredFields.includes(fieldName);
-
-      let options: { value: string; label: string }[] | undefined;
-      if (hasXChoices) {
-        options = property['x-choices']!.map((choice) => ({
-          value: choice.code,
-          label: choice.label,
-        }));
-      } else if (hasEnum) {
-        options = property.enum!.map((value) => ({
-          value,
-          label: value,
-        }));
-      }
-
-      if (requiredFields.includes(fieldName) && !group.properties![fieldName]) {
-        console.error(
-          `[parseBillingSchema] Required field "${fieldName}" not found in ${groupName}.properties`,
-        );
-        throw new Error(
-          `Invalid billing schema: required field "${fieldName}" not defined in ${groupName}`,
-        );
-      }
-
-      fields.push({
-        name: fieldName,
-        group: groupName,
-        type: isSelect ? 'select' : 'text',
-        required: isRequired,
-        options,
-        maxLength: property.maxLength,
-        minLength: property.minLength,
-        pattern: property.pattern,
-      });
+      return location
+        ? {
+            ...location,
+            type: options ? 'select' : 'text',
+            required: !!group?.required?.includes(fieldName),
+            options,
+            maxLength: property.maxLength,
+            minLength: property.minLength,
+            pattern: property.pattern,
+          }
+        : [];
     });
   });
-
-  return fields;
 };

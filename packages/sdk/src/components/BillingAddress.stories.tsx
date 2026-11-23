@@ -282,12 +282,12 @@ export const Default: Story = {
   },
 };
 
-export const WithProfilePrefill: Story = {
+export const SameAsMainTraveler: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          "Formulaire avec profil prefillé - le schéma et le profil s'adaptent selon la locale",
+          "Cocher «Same as main traveler» remplit l'adresse avec celle du voyageur principal ; les champs restent modifiables",
       },
     },
     msw: {
@@ -331,6 +331,12 @@ export const WithProfilePrefill: Story = {
     const firstNameInput = inputs[0];
     const lastNameInput = inputs[1];
 
+    expect(firstNameInput.value).toBe('');
+
+    await userEvent.click(
+      await canvas.findByRole('checkbox', { name: 'Same as main traveler' }, { timeout: 10000 }),
+    );
+
     await waitFor(
       () => {
         expect(firstNameInput.value).toBe('Jean');
@@ -344,7 +350,7 @@ export const WithProfilePrefill: Story = {
     );
     expect(inputsWithStreet.length).toBeGreaterThan(0);
 
-    await waitFor(() => expect(firstNameInput.className).toContain('border-green'));
+    await waitFor(() => expect(firstNameInput.className).toContain('inset-ring-green'));
 
     const inputsWithParis = inputs.filter((input) => input.value === 'Paris');
     expect(inputsWithParis.length).toBeGreaterThan(0);
@@ -374,7 +380,7 @@ export const WithAdditionalInformation: Story = {
     docs: {
       description: {
         story:
-          "Les champs additional_information_* du schéma sont regroupés dans un bloc repliable, quel qu'en soit le nombre",
+          "Les champs additional_information_* du schéma sont regroupés dans un bloc repliable, ouvert par défaut, quel qu'en soit le nombre",
       },
     },
     msw: {
@@ -406,14 +412,14 @@ export const WithAdditionalInformation: Story = {
       { timeout: 10000 },
     );
 
-    expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    expect(canvas.queryByText('Additional Information 2', { exact: false })).toBeNull();
-
-    await userEvent.click(toggle);
-
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
     expect(canvas.getByText('Additional Information 1', { exact: false })).toBeInTheDocument();
     expect(canvas.getByText('Additional Information 2', { exact: false })).toBeInTheDocument();
+
+    await userEvent.click(toggle);
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(canvas.queryByText('Additional Information 2', { exact: false })).toBeNull();
   },
 };
 
@@ -440,7 +446,7 @@ export const ValidatesAndRevealsNextStep: Story = {
     docs: {
       description: {
         story:
-          "Les champs passent au rouge ou au vert au blur, et l'étape suivante n'apparaît qu'une fois l'adresse valide",
+          "Un champ vide quitté reste neutre, une valeur incorrecte passe au rouge au blur, une valeur correcte au vert dès la saisie, et l'étape suivante n'apparaît qu'une fois l'adresse valide",
       },
     },
     msw: { handlers: billingSchemaHandlers },
@@ -467,17 +473,23 @@ export const ValidatesAndRevealsNextStep: Story = {
 
     await userEvent.click(firstName);
     await userEvent.tab();
-    await waitFor(() => expect(firstName.className).toContain('border-red'));
+    expect(firstName.className).toContain('inset-ring-middleGrey');
     expect(canvas.queryByText('Next step')).toBeNull();
 
     await userEvent.type(firstName, 'Jean');
+    await waitFor(() => expect(firstName.className).toContain('inset-ring-green'));
+
+    await userEvent.type(zipCode, '750');
+    expect(zipCode.className).not.toContain('inset-ring-red');
     await userEvent.tab();
-    await waitFor(() => expect(firstName.className).toContain('border-green'));
+    await waitFor(() => expect(zipCode.className).toContain('inset-ring-red'));
 
     await userEvent.type(lastName, 'Dupont');
     await userEvent.type(number, '42');
     await userEvent.type(street, 'Rue de la Paix');
+    await userEvent.clear(zipCode);
     await userEvent.type(zipCode, '75008');
+    await waitFor(() => expect(zipCode.className).toContain('inset-ring-green'));
     await userEvent.type(city, 'Paris');
     await userEvent.tab();
 

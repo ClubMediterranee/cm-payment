@@ -40,7 +40,7 @@ export const StayV2 = ({ stay, donationSlotRef }: StayV2Props) => {
   const { id } = useAppContext();
 
   return (
-    <div className="flex w-full flex-col gap-8 rounded-32 border border-lightGrey bg-white p-12">
+    <div className="flex w-full flex-col gap-12 rounded-32 border border-lightGrey bg-white p-20">
       <TicketRow>
         <div>
           <p className="text-sienna text-b5">{product?.destination?.countries?.[0].label}</p>

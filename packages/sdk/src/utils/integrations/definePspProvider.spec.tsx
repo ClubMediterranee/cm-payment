@@ -4,6 +4,7 @@ import { CybersourceForm } from '../../integrations/cybersource/ui/CybersourceFo
 import { HipayForm } from '../../integrations/hipay/ui/HipayForm.js';
 import { HipayPaypalButton } from '../../integrations/hipay-paypal/ui/HipayPaypalButton.js';
 import { IxopayForm } from '../../integrations/ixopay/ui/IxopayForm.js';
+import { WeChatButton } from '../../integrations/wechat/ui/WeChatButton.js';
 import { WeChatQRView } from '../../integrations/wechat/ui/WeChatQRView.js';
 import { PspProviders } from '../../types/PspProviders.js';
 import { definePspProvider, getPspComponent } from './definePspProvider.js';
@@ -40,7 +41,7 @@ describe('definePspProvider', () => {
   it('returns undefined for an unknown or missing provider', () => {
     expect(getPspComponent('UNKNOWN')).toBeUndefined();
     expect(getPspComponent(undefined)).toBeUndefined();
-    expect(getPspComponent(PspProviders.M99BILLW, 'button')).toBeUndefined();
+    expect(getPspComponent(PspProviders.HIPAY, 'button')).toBeUndefined();
   });
 });
 
@@ -52,6 +53,10 @@ describe('payment provider UIs', () => {
     [PspProviders.M99BILLW, WeChatQRView],
   ])('registers the form of %s', (id, component) => {
     expect(getPspComponent(id)).toBe(component);
+  });
+
+  it('registers the WeChat Pay button beside its QR code view', () => {
+    expect(getPspComponent(PspProviders.M99BILLW, 'button')).toBe(WeChatButton);
   });
 
   it('registers the PayPal button without replacing the HiPay form', () => {

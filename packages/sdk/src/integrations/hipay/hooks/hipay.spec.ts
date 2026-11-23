@@ -1,5 +1,5 @@
-import type { Hipay, HipayError, HipayInstance, HipaySDK } from '../../ixopay/types/Hipay.js';
-import { createHipayClient, mapHipayErrorsToObject } from './hipay.js';
+import type { Hipay, HipayError, HipayInstance, HipaySDK } from '../types/Hipay.js';
+import { createHipayClient, HIPAY_STYLES, mapHipayErrorsToObject } from './hipay.js';
 
 describe('hipay utilities', () => {
   describe('createHipayHostedFields', () => {
@@ -48,7 +48,10 @@ describe('hipay utilities', () => {
       });
 
       expect(mockHiPay).toHaveBeenCalledWith(mockConfig);
-      expect(mockHipaySDK.create).toHaveBeenCalledWith('card', { fields: cardOptions });
+      expect(mockHipaySDK.create).toHaveBeenCalledWith('card', {
+        fields: cardOptions,
+        styles: HIPAY_STYLES,
+      });
       expect(result).toBe(mockHipayInstance);
     });
   });

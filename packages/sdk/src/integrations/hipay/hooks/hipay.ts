@@ -1,53 +1,49 @@
 import type {
-  CardOptions,
   CreateHipayClientParams,
-  Hipay,
-  HipayConfig,
   HipayError,
+  HipayEventMap,
   HipayInstance,
-  PaypalOptions,
-} from '../../ixopay/types/Hipay.js';
+  HipayStyles,
+} from '../types/Hipay.js';
+import { HOSTED_FIELD_THEME } from '../../../utils/integrations/hostedFieldTheme.js';
 
-const initializeHiPay = (config: HipayConfig) => {
-  const HiPay = (window as unknown as Window & { HiPay: Hipay }).HiPay;
-  return HiPay(config);
+export const HIPAY_STYLES: HipayStyles = {
+  base: {
+    color: HOSTED_FIELD_THEME.color,
+    fontSize: HOSTED_FIELD_THEME.fontSize,
+    fontFamily: HOSTED_FIELD_THEME.fontFamily,
+    fontWeight: 400,
+    placeholderColor: HOSTED_FIELD_THEME.placeholderColor,
+    caretColor: HOSTED_FIELD_THEME.color,
+    iconColor: HOSTED_FIELD_THEME.color,
+  },
+  valid: { color: HOSTED_FIELD_THEME.color },
+  invalid: { color: HOSTED_FIELD_THEME.color, caretColor: HOSTED_FIELD_THEME.color },
 };
 
-const hipayOptionsBuilders = {
-  card: (options: CardOptions) => ({
-    fields: {
-      cardHolder: options.cardHolder,
-      cardNumber: options.cardNumber,
-      cvc: options.cvc,
-      expiryDate: options.expiryDate,
-    },
-  }),
-
-  paypal: (options: PaypalOptions) => ({
-    canPayLater: false,
-    request: {
-      amount: options.amount,
-      currency: options.currency,
-      locale: options.locale,
-    },
-    paypalButtonStyle: {
-      shape: 'pill',
-      color: 'gold',
-      height: 45,
-    },
-    template: 'auto',
-    selector: options.selector,
-  }),
-} as const;
-
 export function createHipayClient(params: CreateHipayClientParams): HipayInstance {
-  const { type, config, options, events } = params;
-  const hipay = initializeHiPay(config);
-  const instance = hipay.create(type as any, hipayOptionsBuilders[type](options as any) as any);
+  const hipay = window.HiPay(params.config);
+  const instance =
+    params.type === 'card'
+      ? hipay.create('card', { fields: params.options, styles: HIPAY_STYLES })
+      : hipay.create('paypal', {
+          canPayLater: false,
+          request: {
+            amount: params.options.amount,
+            currency: params.options.currency,
+            locale: params.options.locale,
+          },
+          paypalButtonStyle: { shape: 'pill', color: 'gold', height: 45 },
+          template: 'auto',
+          selector: params.options.selector,
+        });
+  const events: Partial<HipayEventMap> = params.events ?? {};
 
-  Object.entries(events ?? {}).forEach(([event, callback]) =>
-    callback ? instance.on(event as any, callback) : null,
-  );
+  (Object.keys(events) as (keyof HipayEventMap)[]).forEach((event) => {
+    const callback = events[event];
+
+    if (callback) instance.on(event, callback);
+  });
 
   return instance;
 }

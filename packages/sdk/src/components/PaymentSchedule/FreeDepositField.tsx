@@ -28,8 +28,8 @@ export const FreeDepositField = () => {
     <div className="flex flex-col gap-24">
       <div className="flex flex-col gap-4">
         <p className="flex items-baseline gap-8">
-          <span className="text-b3 font-bold">{content.freeDeposit.totalRemaining}</span>
-          <span className="text-b2 font-bold">{formattedAmount}</span>
+          <span className="text-b3 font-semibold">{content.freeDeposit.totalRemaining}</span>
+          <span className="text-b2 font-semibold">{formattedAmount}</span>
         </p>
         {deadline && (
           <p className="text-b4">
