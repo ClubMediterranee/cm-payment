@@ -1,4 +1,5 @@
 import type { CapsTheme } from '../embed/shared';
+import wechatScanUrl from '../integrations/wechat/assets/wechat-scan.webp';
 import type { Content } from '../types/Content';
 import { mergeFromPattern } from '../utils/mergeFromPattern';
 
@@ -192,7 +193,7 @@ export const defaultContent: Content = {
     instruction:
       'After you press continue, please scan the QR code with the WeChat Pay scanner. Total amount due {amount}',
     payLabel: 'Scan now to pay:',
-    imageUrl: 'https://ns.clubmed.com/it/2018/be/payment/wechat.png',
+    imageUrl: wechatScanUrl,
     imageAlt: 'Scanning the QR code on the screen with WeChat on a phone',
     qrCodeLabel: 'WeChat Pay QR code',
     expiredMessage: 'Transaction expired',
