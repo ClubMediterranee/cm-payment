@@ -39,6 +39,7 @@ describe('buildPaymentRedirectPayload', () => {
   it('maps the form data, settings and provider into the BFF payload', () => {
     const payload = buildPaymentRedirectPayload(formData, settings, {
       connection_type: 'E-commerce',
+      category_payment_method: 'CreditCard',
     } as any);
 
     expect(payload).toEqual({
@@ -47,6 +48,7 @@ describe('buildPaymentRedirectPayload', () => {
       customer_id: 'customer-888',
       provider_id: 'EVOXPAY',
       connection_type: 'E-commerce',
+      category_payment_method: 'CreditCard',
       action: 'PAYMENT_RESA',
       amount: '100',
       currency: 'EUR',
@@ -86,5 +88,6 @@ describe('buildPaymentRedirectPayload', () => {
     expect(payload.billing_details.address1).toBeUndefined();
     expect(payload.billing_details.first_name).toBeUndefined();
     expect(payload.connection_type).toBeUndefined();
+    expect(payload.category_payment_method).toBeUndefined();
   });
 });

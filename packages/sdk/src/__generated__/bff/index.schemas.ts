@@ -97,6 +97,7 @@ export interface PaymentRedirectRequestBody {
   connection_type?: string;
   /** @minLength 1 */
   action: string;
+  category_payment_method?: string;
   /** @minLength 1 */
   amount: string;
   /** @minLength 1 */
@@ -368,7 +369,7 @@ export type PaymentProvidersControllerGetPaymentProviders200 = {
 };
 
 export type PaymentProvidersControllerGetBnplSimulationParams = {
-payment_amount?: number;
+  payment_amount?: number;
 };
 
 export type PaymentScheduleControllerGetOverpaymentAllowanceParams = {

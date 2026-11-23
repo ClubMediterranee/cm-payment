@@ -36,12 +36,40 @@ describe('buildConfirmationUrl', () => {
     expect(params.get('locale')).toBe('fr-FR');
   });
 
-  it('omits proposal_id and locale when absent', () => {
+  it('includes payment_id, action and category_payment_method when provided', () => {
+    const url = buildConfirmationUrl({
+      callbackUrl: 'https://client.callback',
+      paymentData,
+      paymentId: 'PAY1',
+      action: 'PAYMENT_RESA',
+      categoryPaymentMethod: 'CreditCard',
+    });
+
+    const params = new URL(url).searchParams;
+    expect(params.get('payment_id')).toBe('PAY1');
+    expect(params.get('action')).toBe('PAYMENT_RESA');
+    expect(params.get('category_payment_method')).toBe('CreditCard');
+  });
+
+  it('omits the optional params when absent', () => {
     const url = buildConfirmationUrl({ callbackUrl: 'https://client.callback', paymentData });
 
     const params = new URL(url).searchParams;
-    expect(params.has('proposal_id')).toBe(false);
-    expect(params.has('locale')).toBe(false);
+    ['payment_id', 'proposal_id', 'locale', 'action', 'category_payment_method'].forEach((key) =>
+      expect(params.has(key)).toBe(false),
+    );
+  });
+
+  it('keeps the query string and hash of the callback url', () => {
+    const url = buildConfirmationUrl({
+      callbackUrl: 'https://client.callback/confirm?ref=abc#top',
+      paymentData,
+    });
+
+    const parsed = new URL(url);
+    expect(parsed.searchParams.get('ref')).toBe('abc');
+    expect(parsed.searchParams.get('payment_status')).toBe(PaymentStatus.OK);
+    expect(parsed.hash).toBe('#top');
   });
 
   it('throws when the callback url is missing', () => {

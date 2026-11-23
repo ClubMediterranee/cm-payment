@@ -1,6 +1,7 @@
 import { constant, Inject, Service } from '@tsed/di';
 
 import {
+  Action,
   getV0PaymentsPaymentIdStatus,
   PatchBookingPaymentModel,
   patchV2BookingsBookingId,
@@ -52,6 +53,8 @@ export class PaymentRedirectService {
         amount: body.amount,
         currency: body.currency,
         callbackUrl: body.callback_url_seller || '',
+        action: body.action,
+        categoryPaymentMethod: body.category_payment_method,
         proposalId,
         locale,
         comments: body.comments,
@@ -82,7 +85,11 @@ export class PaymentRedirectService {
       callbackUrl: body.callback_url,
       callbackUrlSeller: body.callback_url_seller,
       proposalId,
-      params: { mode: providersConfig[body.provider_id]?.display_type },
+      params: {
+        mode: providersConfig[body.provider_id]?.display_type,
+        action: body.action,
+        category_payment_method: body.category_payment_method,
+      },
     });
 
     const redirectPayload = {
@@ -127,7 +134,15 @@ export class PaymentRedirectService {
   }
 
   async handlePaymentRedirect(paymentId: string, queryParams: Record<string, any>) {
-    const { callback_url, proposal_id, provider_id, locale, ...providerResponse } = queryParams;
+    const {
+      callback_url,
+      proposal_id,
+      provider_id,
+      locale,
+      action,
+      category_payment_method,
+      ...providerResponse
+    } = queryParams;
 
     const providersConfig = await this.paymentConfigService.getPaymentProvidersConfig({ locale });
 
@@ -139,8 +154,11 @@ export class PaymentRedirectService {
     return buildConfirmationUrl({
       callbackUrl: callback_url,
       paymentData,
+      paymentId,
       proposalId: proposal_id,
       locale,
+      action,
+      categoryPaymentMethod: category_payment_method,
     });
   }
 
@@ -151,6 +169,8 @@ export class PaymentRedirectService {
     amount,
     currency,
     callbackUrl,
+    action,
+    categoryPaymentMethod,
     proposalId,
     locale,
     comments,
@@ -161,6 +181,8 @@ export class PaymentRedirectService {
     amount: string;
     currency: string;
     callbackUrl: string;
+    action: Action;
+    categoryPaymentMethod?: string;
     proposalId?: string;
     locale: string;
     comments: PatchBookingPaymentModel['comments'];
@@ -195,6 +217,8 @@ export class PaymentRedirectService {
       },
       proposalId,
       locale,
+      action,
+      categoryPaymentMethod,
     });
   }
 
