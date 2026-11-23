@@ -131,10 +131,10 @@ export const SellerContactChoice: Story = {
     await pickSchedule(canvas);
     await pickProvider(canvas, 'Pay by link');
 
-    const phone = await canvas.findByTestId('InputFor_mobile_phone');
+    const email = await canvas.findByTestId('InputFor_email');
     expect(canvas.queryByRole('checkbox')).toBeNull();
 
-    await userEvent.type(phone, '+33612345678');
+    await userEvent.type(email, 'client@email.com');
     await userEvent.click(await canvas.findByRole('checkbox'));
     await waitFor(() => expect(submitButton(canvasElement)).not.toBeNull());
   },
