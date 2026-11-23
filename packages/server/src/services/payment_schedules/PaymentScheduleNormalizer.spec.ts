@@ -1,11 +1,9 @@
 import { DITest } from '@tsed/di';
 
 import {
-  CartModel,
-  CartUpgradeRoomModel,
-  CustomerBookingPaymentScheduleModel,
+  Action,
+  GetPaymentSchedulesV1Model,
   ProposalPaymentScheduleModelV1,
-  ServicesV3Model,
 } from '../../infra/api/__generated__/index.js';
 import { PaymentScheduleNormalizer } from './PaymentScheduleNormalizer.js';
 
@@ -15,68 +13,77 @@ describe('PaymentScheduleNormalizer', () => {
   });
 
   describe('normalize', () => {
-    it('should normalize CartUpgradeRoomModel', async () => {
+    it('should keep the booking schedule for booking payment actions', async () => {
       const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
 
-      const input: CartUpgradeRoomModel = {
-        price: {
-          amount: 420,
-          currency: 'EUR',
-        },
+      const input: GetPaymentSchedulesV1Model = {
+        currency: 'EUR',
+        amount: 3470,
+        paid: 1200,
+        payment_schedules: [
+          { amount: 1200, deadline: '2026-02-10' },
+          { amount: 800, deadline: null },
+        ],
       };
 
-      const result = normalizer.normalize(input);
+      const result = normalizer.normalize(input, Action.PAYMENT_SOLDE);
 
       expect(result).toEqual({
         currency: 'EUR',
-        total: 420,
+        total: 3470,
         payment_schedules: [
-          {
-            amount: 420,
-            deadline: undefined,
-          },
+          { amount: 1200, deadline: '2026-02-10' },
+          { amount: 800, deadline: undefined },
         ],
       });
     });
 
-    it('should normalize CartUpgradeRoomModel with missing currency', async () => {
-      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
+    it.each([Action.PAYMENT_CART, Action.PAYMENT_UPGRADE_ROOM])(
+      'should collapse the schedule to the amount for %s',
+      async (action) => {
+        const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
 
-      const input: CartUpgradeRoomModel = {
-        price: {
-          amount: 420,
-          currency: undefined,
-        },
-      } as any;
-
-      const result = normalizer.normalize(input);
-
-      expect(result.currency).toBe('');
-      expect(result.total).toBe(420);
-    });
-
-    it('should normalize CartModel using the cart total', async () => {
-      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
-
-      const input: CartModel = {
-        price: {
-          total: 250,
+        const input: GetPaymentSchedulesV1Model = {
           currency: 'EUR',
-        },
+          amount: 420,
+          payment_schedules: [{ amount: 900, deadline: '2026-09-30' }],
+        };
+
+        expect(normalizer.normalize(input, action)).toEqual({
+          currency: 'EUR',
+          total: 420,
+          payment_schedules: [{ amount: 420 }],
+        });
+      },
+    );
+
+    it('should use the total for PAYMENT_SERVICES_IN_OPTION', async () => {
+      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
+
+      const input: GetPaymentSchedulesV1Model = {
+        currency: 'EUR',
+        total: 80,
+        payment_schedules: [{ amount: 80, deadline: null }],
       };
 
-      const result = normalizer.normalize(input);
-
-      expect(result).toEqual({
+      expect(normalizer.normalize(input, Action.PAYMENT_SERVICES_IN_OPTION)).toEqual({
         currency: 'EUR',
-        total: 250,
-        payment_schedules: [
-          {
-            amount: 250,
-            deadline: undefined,
-          },
-        ],
+        total: 80,
+        payment_schedules: [{ amount: 80 }],
       });
+    });
+
+    it('should expose the net amount and ignore the gross amount', async () => {
+      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
+
+      const input: GetPaymentSchedulesV1Model = {
+        currency: 'AUD',
+        amount: 300,
+        gross_amount: 350,
+        payment_schedules: [{ amount: 300, deadline: '2026-09-30' }],
+      };
+
+      expect(normalizer.normalize(input, Action.PAYMENT_CART).total).toBe(300);
     });
 
     it('should normalize ProposalPaymentScheduleModelV1', async () => {
@@ -97,7 +104,7 @@ describe('PaymentScheduleNormalizer', () => {
         ],
       };
 
-      const result = normalizer.normalize(input);
+      const result = normalizer.normalize(input, Action.PAYMENT_SOLDE);
 
       expect(result).toEqual({
         currency: 'EUR',
@@ -124,112 +131,9 @@ describe('PaymentScheduleNormalizer', () => {
         ],
       } as any;
 
-      const result = normalizer.normalize(input);
+      const result = normalizer.normalize(input, Action.PAYMENT_SOLDE);
 
       expect(result.currency).toBe('EUR');
-    });
-
-    it('should normalize ServicesV3Model by summing OPTION services prices', async () => {
-      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
-
-      const input: ServicesV3Model = [
-        {
-          id: 'service_1',
-          type: 'TRANSFER',
-          currency: 'EUR',
-          stay_index: 0,
-          schedules: [
-            {
-              start_date: '2026-05-01',
-              end_date: '2026-05-01',
-              attendees: [
-                { id: 'A', status: 'OPTION', price: 21, price_without_discount: 21 },
-                { id: 'B', status: 'OPTION', price: 21, price_without_discount: 21 },
-              ],
-            },
-          ],
-        },
-        {
-          id: 'service_2',
-          type: 'INSURANCE',
-          currency: 'EUR',
-          stay_index: 0,
-          schedules: [
-            {
-              start_date: '2026-05-02',
-              end_date: '2026-05-02',
-              attendees: [{ id: 'A', status: 'OPTION', price: 38, price_without_discount: 38 }],
-            },
-          ],
-        },
-      ] as any;
-
-      const result = normalizer.normalize(input);
-
-      expect(result).toEqual({
-        currency: 'EUR',
-        total: 80,
-        payment_schedules: [{ amount: 80 }],
-      });
-    });
-
-    it('should treat missing attendees and prices as zero for ServicesV3Model', async () => {
-      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
-
-      const input: ServicesV3Model = [
-        {
-          id: 'service_1',
-          type: 'TRANSFER',
-          currency: 'EUR',
-          stay_index: 0,
-          schedules: [
-            {
-              start_date: '2026-05-01',
-              end_date: '2026-05-01',
-              attendees: [{ id: 'A', status: 'OPTION', price_without_discount: 21 }],
-            },
-            { start_date: '2026-05-02', end_date: '2026-05-02' },
-          ],
-        },
-      ] as any;
-
-      const result = normalizer.normalize(input);
-
-      expect(result).toEqual({
-        currency: 'EUR',
-        total: 0,
-        payment_schedules: [{ amount: 0 }],
-      });
-    });
-
-    it('should return an empty-currency zero total for an empty ServicesV3Model', async () => {
-      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
-
-      const result = normalizer.normalize([] as ServicesV3Model);
-
-      expect(result).toEqual({
-        currency: '',
-        total: 0,
-        payment_schedules: [{ amount: 0 }],
-      });
-    });
-
-    it('should return data as-is for CustomerBookingPaymentScheduleModel', async () => {
-      const normalizer = await DITest.invoke(PaymentScheduleNormalizer);
-
-      const input: CustomerBookingPaymentScheduleModel = {
-        currency: 'EUR',
-        paid: 1200,
-        total: 3470,
-        payment_schedules: [
-          { amount: 1200, deadline: '2026-02-10' },
-          { amount: 800, deadline: '2026-03-20' },
-        ],
-      };
-
-      const result = normalizer.normalize(input);
-
-      expect(result).toEqual(input);
     });
   });
 });

@@ -2,7 +2,7 @@ import { DITest } from '@tsed/di';
 
 import * as api from '../../infra/api/__generated__/index.js';
 import {
-  CustomerBookingPaymentScheduleModel,
+  GetPaymentSchedulesV1Model,
   HouseholdPaymentScheduleModels,
 } from '../../infra/api/__generated__/index.js';
 import { PaymentSchedulesService } from './PaymentSchedulesService.js';
@@ -20,10 +20,7 @@ const Action = {
 vi.mock('../../infra/api/__generated__/index.js', async (importOriginal) => ({
   ...(await importOriginal()),
   getV1ProposalsProposalIdPaymentSchedule: vi.fn(),
-  getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules: vi.fn(),
-  getV1CustomersCustomerIdBookingsBookingIdCart: vi.fn(),
-  getV0CustomersCustomerIdBookingsBookingIdCartAccommodations: vi.fn(),
-  getV3CustomersCustomerIdBookingsBookingIdServices: vi.fn(),
+  getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules: vi.fn(),
 }));
 
 describe('PaymentSchedulesService', () => {
@@ -190,18 +187,16 @@ describe('PaymentSchedulesService', () => {
     it('booking payment schedules: should build merged schedule when >= 2 payments', async () => {
       const service = await DITest.invoke(PaymentSchedulesService);
 
-      vi.mocked(api.getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
         currency: 'EUR',
         paid: 1200,
-        total: 3470,
+        amount: 3470,
         payment_schedules: [
           { amount: 1200, deadline: '2026-02-10' },
-
           { amount: 800, deadline: '2026-03-20' },
-
           { amount: 1470, deadline: '2026-04-20' },
         ],
-      } as CustomerBookingPaymentScheduleModel);
+      } as GetPaymentSchedulesV1Model);
 
       const paymentSchedule = await service.handlePaymentSchedules({
         type: 'booking',
@@ -210,8 +205,11 @@ describe('PaymentSchedulesService', () => {
         action: Action.PAYMENT_SOLDE,
       });
 
-      expect(paymentSchedule[0].currency).toBe('EUR');
-      expect(paymentSchedule[1].currency).toBe('EUR');
+      expect(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).toHaveBeenCalledWith(
+        '123456',
+        '123456',
+        { action: 'PAYMENT_SOLDE' },
+      );
       expect(paymentSchedule).toEqual([
         { amount: 3470, currency: 'EUR' },
         { amount: 1200, currency: 'EUR', deadline: '2026-03-20', balance: 800 },
@@ -221,188 +219,137 @@ describe('PaymentSchedulesService', () => {
     it('booking payment schedules: should use 2nd payment deadline and amount as balance', async () => {
       const service = await DITest.invoke(PaymentSchedulesService);
 
-      vi.mocked(api.getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
         currency: 'EUR',
         paid: 1200,
-        total: 3470,
+        amount: 3470,
         payment_schedules: [
-          { amount: 1200, deadline: '2026-02-10' }, // deadline du 1er paiement (ne doit PAS être utilisé)
-          { amount: 800, deadline: '2026-03-20' }, // deadline utilisé par la ligne 2
+          { amount: 1200, deadline: '2026-02-10' },
+          { amount: 800, deadline: '2026-03-20' },
           { amount: 1470, deadline: '2026-04-20' },
         ],
-      } as any);
+      } as GetPaymentSchedulesV1Model);
 
       const paymentSchedule = await service.handlePaymentSchedules({
         type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_SOLDE,
-      } as any);
+      });
 
       expect(paymentSchedule).toHaveLength(2);
-
       expect(paymentSchedule[1]).toMatchObject({
-        amount: 1200, // payments[0].amount
-        deadline: '2026-03-20', // payments[1].deadline (PAS 2026-02-10)
-        balance: 800, // payments[1].amount
+        amount: 1200,
+        deadline: '2026-03-20',
+        balance: 800,
         currency: 'EUR',
       });
-
-      expect(paymentSchedule[1].deadline).not.toBe('2026-02-10');
     });
 
-    it('cart: should return a single schedule line with the cart total', async () => {
+    it('booking payment schedules: should expose the net amount returned by the API', async () => {
       const service = await DITest.invoke(PaymentSchedulesService);
 
-      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdCart).mockResolvedValue({
-        price: {
-          total: 3470,
-          currency: 'EUR',
-        },
-      } as any);
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
+        currency: 'AUD',
+        amount: 3000,
+        gross_amount: 3470,
+        payment_schedules: [{ amount: 3000, deadline: '2026-02-10' }],
+      } as GetPaymentSchedulesV1Model);
 
-      const schedule = await service.handlePaymentSchedules({
+      const paymentSchedule = await service.handlePaymentSchedules({
         type: 'booking',
         id: 123456,
         customer_id: 123456,
-        action: Action.PAYMENT_CART,
-      } as any);
-
-      expect(api.getV1CustomersCustomerIdBookingsBookingIdCart).toHaveBeenCalledWith(
-        '123456',
-        '123456',
-      );
-
-      expect(schedule).toEqual([
-        {
-          amount: 3470,
-          deadline: undefined,
-          currency: 'EUR',
-        },
-      ]);
-    });
-
-    it('cart: should fallback to empty currency and never set balance', async () => {
-      const service = await DITest.invoke(PaymentSchedulesService);
-
-      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdCart).mockResolvedValue({
-        price: { total: 3470, currency: undefined },
-      } as any);
-
-      const schedule = await service.handlePaymentSchedules({
-        type: 'booking',
-        id: 123456,
-        customer_id: 123456,
-        action: Action.PAYMENT_CART,
-      } as any);
-
-      expect(schedule).toHaveLength(1);
-      expect(schedule[0].currency).toBe('');
-      expect(schedule[0].amount).toBe(3470);
-      expect(schedule[0]).not.toHaveProperty('balance');
-    });
-
-    it('upgrade room: should return a single schedule line (payments length < 2)', async () => {
-      const service = await DITest.invoke(PaymentSchedulesService);
-
-      vi.mocked(api.getV0CustomersCustomerIdBookingsBookingIdCartAccommodations).mockResolvedValue({
-        price: {
-          amount: 420,
-          currency: 'EUR',
-        },
+        action: Action.PAYMENT_OPTION,
       });
+
+      expect(paymentSchedule).toEqual([{ amount: 3000, currency: 'AUD', deadline: '2026-02-10' }]);
+    });
+
+    it('cart: should return a single schedule line with the cart amount', async () => {
+      const service = await DITest.invoke(PaymentSchedulesService);
+
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
+        currency: 'EUR',
+        amount: 70,
+        paid: 0,
+        payment_schedules: [
+          { amount: 30, deadline: '2026-09-30' },
+          { amount: 40, deadline: '2026-10-30' },
+        ],
+        services: [],
+      } as GetPaymentSchedulesV1Model);
+
+      const schedule = await service.handlePaymentSchedules({
+        type: 'booking',
+        id: 123456,
+        customer_id: 123456,
+        action: Action.PAYMENT_CART,
+      });
+
+      expect(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).toHaveBeenCalledWith(
+        '123456',
+        '123456',
+        { action: 'PAYMENT_CART' },
+      );
+      expect(schedule).toEqual([{ amount: 70, deadline: undefined, currency: 'EUR' }]);
+    });
+
+    it('upgrade room: should return the upgrade amount rather than the booking schedule', async () => {
+      const service = await DITest.invoke(PaymentSchedulesService);
+
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
+        currency: 'USD',
+        amount: 75,
+        paid: 50,
+        payment_schedules: [{ amount: 150, deadline: '2026-09-30' }],
+        accommodations: [],
+      } as GetPaymentSchedulesV1Model);
 
       const schedule = await service.handlePaymentSchedules({
         type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_UPGRADE_ROOM,
-      } as any);
+      });
 
-      expect(schedule).toEqual([
-        {
-          amount: 420,
-          deadline: undefined,
-          currency: 'EUR',
-        },
-      ]);
+      expect(schedule).toEqual([{ amount: 75, deadline: undefined, currency: 'USD' }]);
     });
 
-    it('services in option: should call the services route filtered on OPTION and sum the prices', async () => {
+    it('services in option: should return the total as a single schedule line', async () => {
       const service = await DITest.invoke(PaymentSchedulesService);
 
-      vi.mocked(api.getV3CustomersCustomerIdBookingsBookingIdServices).mockResolvedValue([
-        {
-          id: 'service_1',
-          type: 'TRANSFER',
-          currency: 'EUR',
-          stay_index: 0,
-          schedules: [
-            {
-              start_date: '2026-05-01',
-              end_date: '2026-05-01',
-              attendees: [
-                { id: 'A', status: 'OPTION', price: 21, price_without_discount: 21 },
-                { id: 'B', status: 'OPTION', price: 21, price_without_discount: 21 },
-              ],
-            },
-          ],
-        },
-        {
-          id: 'service_2',
-          type: 'INSURANCE',
-          currency: 'EUR',
-          stay_index: 0,
-          schedules: [
-            {
-              start_date: '2026-05-02',
-              end_date: '2026-05-02',
-              attendees: [{ id: 'A', status: 'OPTION', price: 38, price_without_discount: 38 }],
-            },
-          ],
-        },
-      ] as any);
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
+        currency: 'EUR',
+        total: 80,
+        paid: null,
+        payment_schedules: [{ amount: 80, deadline: null }],
+      } as GetPaymentSchedulesV1Model);
 
       const schedule = await service.handlePaymentSchedules({
         type: 'booking',
         id: 123456,
         customer_id: 123456,
         action: Action.PAYMENT_SERVICES_IN_OPTION,
-      } as any);
+      });
 
-      expect(api.getV3CustomersCustomerIdBookingsBookingIdServices).toHaveBeenCalledWith(
+      expect(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).toHaveBeenCalledWith(
         '123456',
         '123456',
-        { status: 'OPTION' },
+        { action: 'PAYMENT_SERVICES_IN_OPTION' },
       );
-
-      expect(schedule).toEqual([
-        {
-          amount: 80,
-          deadline: undefined,
-          currency: 'EUR',
-        },
-      ]);
+      expect(schedule).toEqual([{ amount: 80, deadline: undefined, currency: 'EUR' }]);
     });
 
     it('services in option: should throw not found when the total is zero', async () => {
       const service = await DITest.invoke(PaymentSchedulesService);
 
-      vi.mocked(api.getV3CustomersCustomerIdBookingsBookingIdServices).mockResolvedValue([
-        {
-          id: 'service_1',
-          type: 'TRANSFER',
-          currency: 'EUR',
-          stay_index: 0,
-          schedules: [
-            {
-              start_date: '2026-05-01',
-              end_date: '2026-05-01',
-              attendees: [{ id: 'A', status: 'OPTION', price: 0, price_without_discount: 0 }],
-            },
-          ],
-        },
-      ] as any);
+      vi.mocked(api.getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules).mockResolvedValue({
+        currency: 'EUR',
+        total: 0,
+        paid: null,
+        payment_schedules: [{ amount: 0, deadline: null }],
+      } as GetPaymentSchedulesV1Model);
 
       await expect(
         service.handlePaymentSchedules({
@@ -410,29 +357,8 @@ describe('PaymentSchedulesService', () => {
           id: 123456,
           customer_id: 123456,
           action: Action.PAYMENT_SERVICES_IN_OPTION,
-        } as any),
+        }),
       ).rejects.toThrow('No payment schedule found for id: 123456');
-    });
-
-    it('upgrade room: should fallback to empty currency and never set balance when only one payment', async () => {
-      const service = await DITest.invoke(PaymentSchedulesService);
-
-      vi.mocked(api.getV0CustomersCustomerIdBookingsBookingIdCartAccommodations).mockResolvedValue({
-        price: { amount: 420, currency: undefined },
-      } as any);
-
-      const schedule = await service.handlePaymentSchedules({
-        type: 'booking',
-        id: 999001,
-        customer_id: 123456,
-        action: Action.PAYMENT_UPGRADE_ROOM,
-      } as any);
-
-      expect(schedule).toHaveLength(1);
-      expect(schedule[0].currency).toBe(''); // selectUpgradeSchedule: data.price?.currency || ''
-      expect(schedule[0].amount).toBe(420);
-
-      expect(schedule[0]).not.toHaveProperty('balance');
     });
   });
 });
