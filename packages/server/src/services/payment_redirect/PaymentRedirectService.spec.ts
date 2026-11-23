@@ -204,6 +204,50 @@ describe('PaymentRedirectService', () => {
       expect(redirectUrl).toContain('locale=fr-FR');
     });
 
+    it('should include payment_id, action and category_payment_method in callback URL', async () => {
+      const service = await invokeService();
+      mockStrategy('HIPAY', 'notify');
+
+      vi.mocked(api.postV1PaymentsPaymentIdNotify).mockResolvedValue({
+        payment_status: 'SUCCESS',
+        booking_id: 'BOOK555',
+        payment_amount: '80.00',
+        payment_currency: 'EUR',
+        provider_id: 'HIPAY',
+      } as any);
+
+      const redirectUrl = await service.handlePaymentRedirect('payment555', {
+        callback_url: 'https://example.com/callback',
+        provider_id: 'HIPAY',
+        action: 'PAYMENT_RESA',
+        category_payment_method: 'CreditCard',
+      });
+
+      const params = new URL(redirectUrl).searchParams;
+      expect(params.get('payment_id')).toBe('payment555');
+      expect(params.get('action')).toBe('PAYMENT_RESA');
+      expect(params.get('category_payment_method')).toBe('CreditCard');
+    });
+
+    it('should not forward action to the provider notification', async () => {
+      const service = await invokeService();
+      mockStrategy('HIPAY', 'notify');
+
+      vi.mocked(api.postV1PaymentsPaymentIdNotify).mockResolvedValue({} as any);
+
+      await service.handlePaymentRedirect('payment666', {
+        callback_url: 'https://example.com/callback',
+        provider_id: 'HIPAY',
+        action: 'PAYMENT_RESA',
+        category_payment_method: 'CreditCard',
+        status: 'captured',
+      });
+
+      expect(api.postV1PaymentsPaymentIdNotify).toHaveBeenCalledWith('payment666', {
+        provider_response: 'status=captured',
+      });
+    });
+
     it('should default notify response fields to empty strings when missing', async () => {
       const service = await invokeService();
       mockStrategy('HIPAY', 'notify');
@@ -314,6 +358,21 @@ describe('PaymentRedirectService', () => {
       expect(redirect.url).toContain('payment_currency=EUR');
     });
 
+    it('adds the action and the category of the payment method to the redirect', async () => {
+      const service = await invokeService();
+      vi.mocked(api.patchV2BookingsBookingId).mockResolvedValue(undefined as any);
+
+      const { redirect } = await service.createPaymentRedirect(
+        { ...manualBody, category_payment_method: 'Cheque' },
+        context,
+      );
+
+      const params = new URL(redirect.url).searchParams;
+      expect(params.get('action')).toBe('PAYMENT_RESA');
+      expect(params.get('category_payment_method')).toBe('Cheque');
+      expect(params.has('payment_id')).toBe(false);
+    });
+
     it('forwards the comment on the payment when provided', async () => {
       const service = await invokeService();
       vi.mocked(api.patchV2BookingsBookingId).mockResolvedValue(undefined as any);
@@ -372,7 +431,7 @@ describe('PaymentRedirectService', () => {
       const service = await invokeService();
 
       const result = await service.createPaymentRedirect(
-        { ...baseBody, template_id: '6' },
+        { ...baseBody, template_id: '6', category_payment_method: 'CreditCard' },
         context,
       );
 
@@ -391,6 +450,10 @@ describe('PaymentRedirectService', () => {
         expect.objectContaining({ template_id: '6' }),
       );
       expect(result.payment?.callbacks.callback_url).toContain('mode=redirect');
+      expect(result.payment?.callbacks.callback_url).toContain('action=PAYMENT_RESA');
+      expect(result.payment?.callbacks.callback_url).toContain(
+        'category_payment_method=CreditCard',
+      );
       expect(result.payment?.callbacks.callback_url).toContain(
         `${BASE_URL}/rest/payment_redirect/PAY1`,
       );
