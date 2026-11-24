@@ -20,7 +20,7 @@ CAPS also offers a hosted Redirect Mode for non-React or lower-effort integratio
 ## Prerequisites
 
 - React and React DOM `^18` or `^19`
-- `@clubmed/trident-ui` `1.5.0` (migration to v2 is planed).
+- `@clubmed/trident-ui` `1.5.0` (migration to v2 is planned).
 - `@clubmed/trident-icons` `>=1.3.3`
 - CAPS API URL, API key, and OIDC access token supplied by Club Med
 
