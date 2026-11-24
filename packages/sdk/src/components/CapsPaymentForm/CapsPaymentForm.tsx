@@ -45,6 +45,7 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
     salesNetworkId,
     salesmanId,
     opportunityId,
+    sellerEmail,
     action,
     reference,
     uuid,
@@ -88,6 +89,7 @@ export function CapsPaymentForm(props: CapsPaymentFormProps) {
         salesNetworkId={salesNetworkId}
         salesmanId={salesmanId}
         opportunityId={opportunityId}
+        sellerEmail={sellerEmail}
         content={content}
         onNavigate={(request: NavigationRequest) => {
           if (latest.current.onRedirect?.(request.url) !== false) {

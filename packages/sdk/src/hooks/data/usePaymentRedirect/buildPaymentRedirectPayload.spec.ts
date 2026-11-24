@@ -90,4 +90,13 @@ describe('buildPaymentRedirectPayload', () => {
     expect(payload.connection_type).toBeUndefined();
     expect(payload.category_payment_method).toBeUndefined();
   });
+
+  it('forwards the seller email from the form data', () => {
+    const payload = buildPaymentRedirectPayload(
+      { ...formData, seller_email: 'seller@clubmed.com' },
+      settings,
+    );
+
+    expect(payload.seller_email).toBe('seller@clubmed.com');
+  });
 });

@@ -39,6 +39,7 @@ export const buildPaymentRedirectPayload = (
     sales_network_id,
     salesman_id,
     opportunity_id,
+    seller_email,
     billing_details: { email, mobile_phone, attendee, address },
   } = formData;
 
@@ -75,6 +76,7 @@ export const buildPaymentRedirectPayload = (
     sales_network_id,
     salesman_id,
     opportunity_id: opportunity_id ?? opportunityId,
+    seller_email,
   };
 };
 

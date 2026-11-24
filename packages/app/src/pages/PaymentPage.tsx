@@ -97,6 +97,7 @@ export function PaymentPage() {
       salesNetworkId={values.salesNetworkId}
       salesmanId={values.salesmanId}
       opportunityId={values.opportunityId}
+      sellerEmail={values.sellerEmail}
       action={action}
       reference={reference}
       uuid={uuid}

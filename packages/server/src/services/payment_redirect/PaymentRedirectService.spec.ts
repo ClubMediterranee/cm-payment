@@ -675,5 +675,46 @@ describe('PaymentRedirectService', () => {
         expect.objectContaining({ salesman_id: 'SALESMAN_42' }),
       );
     });
+
+    it('passes seller_email to postV3Bookings when creating from a proposal', async () => {
+      const service = await invokeService();
+      vi.mocked(api.getV2ProposalsProposalId).mockResolvedValue({
+        households: [{ attendees: [{ customer_id: 'CUST_FROM_PROPOSAL' }] }],
+      } as any);
+      vi.mocked(api.postV3Bookings).mockResolvedValue({ booking_id: 'BOOK_FROM_PROPOSAL' } as any);
+
+      await service.createPaymentRedirect(
+        {
+          ...baseBody,
+          type: 'proposal',
+          id: 'PROP1',
+          customer_id: undefined,
+          template_id: '6',
+          seller_email: 'seller@clubmed.com',
+        },
+        context,
+      );
+
+      expect(api.postV3Bookings).toHaveBeenCalledWith(
+        expect.objectContaining({ seller_email: 'seller@clubmed.com' }),
+      );
+    });
+
+    it('does not include seller_email in postV3Bookings when absent', async () => {
+      const service = await invokeService();
+      vi.mocked(api.getV2ProposalsProposalId).mockResolvedValue({
+        households: [{ attendees: [{ customer_id: 'CUST_FROM_PROPOSAL' }] }],
+      } as any);
+      vi.mocked(api.postV3Bookings).mockResolvedValue({ booking_id: 'BOOK_FROM_PROPOSAL' } as any);
+
+      await service.createPaymentRedirect(
+        { ...baseBody, type: 'proposal', id: 'PROP1', customer_id: undefined, template_id: '6' },
+        context,
+      );
+
+      expect(api.postV3Bookings).toHaveBeenCalledWith(
+        expect.not.objectContaining({ seller_email: expect.anything() }),
+      );
+    });
   });
 });
