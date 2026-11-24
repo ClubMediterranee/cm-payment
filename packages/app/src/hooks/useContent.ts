@@ -2,7 +2,10 @@ import type { Content, DeepPartial } from '@clubmed/caps';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { paymentContentControllerGetPaymentContent } from '../__generated__/bff';
+import {
+  type PaymentContent,
+  paymentContentControllerGetPaymentContent,
+} from '../__generated__/bff';
 import { useAppContext } from '../providers/AppProvider';
 
 type Template<P extends string[]> = P extends [
@@ -49,13 +52,40 @@ export type AppContent = z.infer<typeof appContentSchema>;
 
 export type CmsContent = { app: AppContent; content: DeepPartial<Content> };
 
+export const defaultAppContent: AppContent = {
+  payment: {
+    title: 'Payment',
+    stayUnavailable: 'We are unable to retrieve your stay information.',
+    retryLater: 'Please try again later.',
+  },
+  header: { back: 'Back', stayAt: 'Your stay at:' },
+  stay: {
+    placeholder: 'Stay placeholder',
+    dates: 'From {start} to {end}',
+    adults: 'For {adults} adults',
+    adultsAndChildren: 'For {adults} adults and {children} children',
+    reference: 'Reference {id}',
+  },
+  confirmation: {
+    title: 'Payment confirmation - {issuer}',
+    myBooking: 'My booking',
+    amount: 'Amount',
+    paymentValidated: 'Your payment has been validated',
+    paymentFailed: 'Your payment has failed',
+  },
+  notFound: '404 not found',
+};
+
 export const useContent = () => {
   const { api, values } = useAppContext();
 
   const { data } = useSuspenseQuery({
     queryKey: ['content', api.url, values.locale],
-    queryFn: paymentContentControllerGetPaymentContent,
-    select: ({ app, ...content }): CmsContent => ({ app: appContentSchema.parse(app), content }),
+    queryFn: () => paymentContentControllerGetPaymentContent().catch((): PaymentContent => ({})),
+    select: ({ app, ...content }): CmsContent => ({
+      app: appContentSchema.catch(defaultAppContent).parse(app),
+      content,
+    }),
     staleTime: Infinity,
   });
 
