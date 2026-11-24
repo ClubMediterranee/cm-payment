@@ -63,6 +63,7 @@ type CapsFlowBase = {
   salesNetworkId?: string;
   salesmanId?: string;
   opportunityId?: string;
+  sellerEmail?: string;
   action?: string;
   reference?: string;
   uuid?: string;

@@ -54,8 +54,6 @@ export interface PaymentSettings {
   [key: string]: unknown;
  }
 
-export interface PaymentContent { [key: string]: unknown }
-
 export interface PaymentRedirectRequestResult {
   redirect: ProviderRedirectModel;
   payment?: PaymentInfoModel;
@@ -116,6 +114,7 @@ export interface PaymentRedirectRequestBody {
   sales_network_id?: string;
   salesman_id?: string;
   opportunity_id?: string;
+  seller_email?: string;
 }
 
 export interface OverpaymentAllowanceOutputModel {
@@ -369,7 +368,7 @@ export type PaymentProvidersControllerGetPaymentProviders200 = {
 };
 
 export type PaymentProvidersControllerGetBnplSimulationParams = {
-  payment_amount?: number;
+payment_amount?: number;
 };
 
 export type PaymentScheduleControllerGetOverpaymentAllowanceParams = {

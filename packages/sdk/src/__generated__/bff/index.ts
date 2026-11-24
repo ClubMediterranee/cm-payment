@@ -53,18 +53,6 @@ export const paymentConfigControllerGetPaymentConfig = (
     }
   
 /**
- * @summary Get the CAPS wording for a given locale, merged over the global (*) content
- */
-export const paymentContentControllerGetPaymentContent = (
-    
- ) => {
-      return fetcher<PaymentContent>(
-      {url: `/rest/payment_content`, method: 'GET'
-    },
-      );
-    }
-  
-/**
  * @summary Get payment providers for a booking or proposal
  */
 export const paymentProvidersControllerGetPaymentProviders = (
@@ -152,7 +140,6 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 export type ActionResolverControllerResolveActionResult = NonNullable<Awaited<ReturnType<typeof actionResolverControllerResolveAction>>>
 export type PaymentConfigControllerGetPaymentConfigResult = NonNullable<Awaited<ReturnType<typeof paymentConfigControllerGetPaymentConfig>>>
-export type PaymentContentControllerGetPaymentContentResult = NonNullable<Awaited<ReturnType<typeof paymentContentControllerGetPaymentContent>>>
 export type PaymentProvidersControllerGetPaymentProvidersResult = NonNullable<Awaited<ReturnType<typeof paymentProvidersControllerGetPaymentProviders>>>
 export type PaymentProvidersControllerGetBnplSimulationResult = NonNullable<Awaited<ReturnType<typeof paymentProvidersControllerGetBnplSimulation>>>
 export type PaymentRedirectControllerCreateResult = NonNullable<Awaited<ReturnType<typeof paymentRedirectControllerCreate>>>
