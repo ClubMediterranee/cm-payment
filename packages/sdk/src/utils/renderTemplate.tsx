@@ -14,40 +14,7 @@ export const formatTemplate = <T extends string>(
     String(values[key] ?? placeholder),
   );
 
-const LINK_PATTERN = /<a\s+([^>]*)>(.*?)<\/a>/gis;
 const SAFE_HREF = /^(https?:\/\/|mailto:|tel:|\/|#)/i;
-
-const renderLinks = (text: string) => {
-  const nodes: React.ReactNode[] = [];
-  let cursor = 0;
-
-  for (const match of text.matchAll(LINK_PATTERN)) {
-    const [link, attributes, label] = match;
-    const href = attributes.match(/href\s*=\s*["']([^"']*)["']/i)?.[1];
-
-    nodes.push(text.slice(cursor, match.index));
-    nodes.push(
-      href && SAFE_HREF.test(href) ? (
-        <a
-          key={match.index}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          {label}
-        </a>
-      ) : (
-        label
-      ),
-    );
-    cursor = match.index + link.length;
-  }
-
-  nodes.push(text.slice(cursor));
-
-  return nodes;
-};
 
 export const renderTemplate = <T extends string>(
   template: T,
@@ -65,17 +32,34 @@ export const renderTemplate = <T extends string>(
     }
   });
 
-  const content = template
-    .split(/({\w+})/g)
-    .map((part, i) =>
-      /^{(\w+)}$/.test(part) ? (
-        <React.Fragment key={i}>
-          {values[part.slice(1, -1) as ExtractPlaceholders<T>]}
-        </React.Fragment>
-      ) : (
-        <React.Fragment key={i}>{renderLinks(part)}</React.Fragment>
-      ),
+  const interpolate = (text: string) =>
+    text
+      .split(/({\w+})/g)
+      .map((part, i) =>
+        /^{(\w+)}$/.test(part) ? (
+          <React.Fragment key={i}>
+            {values[part.slice(1, -1) as ExtractPlaceholders<T>]}
+          </React.Fragment>
+        ) : (
+          part
+        ),
+      );
+
+  const content = template.split(/(\[[^\]]+\]\([^)]*\))/g).map((part, i) => {
+    const link = part.match(/^\[([^\]]+)\]\(([^)]*)\)$/);
+    if (!link) {
+      return <React.Fragment key={i}>{interpolate(part)}</React.Fragment>;
+    }
+    const [, label, url] = link;
+    const href = formatTemplate(url, values);
+    return href && SAFE_HREF.test(href) ? (
+      <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="underline">
+        {interpolate(label)}
+      </a>
+    ) : (
+      <React.Fragment key={i}>{interpolate(label)}</React.Fragment>
     );
+  });
 
   return options?.asFragment ? content : <span className="text-left">{content}</span>;
 };

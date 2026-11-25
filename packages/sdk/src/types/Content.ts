@@ -1,3 +1,5 @@
+type Link = `[${string}](${string})`;
+
 export type Content = {
   paymentProviders: {
     heading: string;
@@ -54,7 +56,7 @@ export type Content = {
   };
   cgv: {
     heading: string;
-    content: string;
+    terms: `${string}${Link}${string}`;
     validation: {
       mustAccept: string;
     };
@@ -196,18 +198,17 @@ export type Content = {
     popinTitle: string;
     popinDescription: string;
     popinFiscalInfo: string;
-    acceptCGU: string;
-    donationTerms: string;
-    linkDonationTerms: string;
     otherAmount: string;
     otherAmountPlaceholder: string;
-    consent: string;
+    terms: `${string}${Link}${string}`;
     confirm: string;
     remove: string;
     infoLabel: string;
     closeLabel: string;
+    validation: {
+      mustAccept: string;
+    };
     errors: {
-      consent: string;
       noAmount: string;
       invalidAmount: string;
     };

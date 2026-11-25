@@ -120,7 +120,7 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
         isOtherAmount && !(draftAmount && draftAmount > 0)
           ? content.donation.errors.invalidAmount
           : undefined,
-      consent: hasConsent ? undefined : content.donation.errors.consent,
+      consent: hasConsent ? undefined : content.donation.validation.mustAccept,
     };
     setErrors(nextErrors);
 
@@ -233,7 +233,7 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
                   aria-invalid={!!consentError}
                 >
                   <span className={twMerge('text-b3', consentError && 'text-red')}>
-                    {renderTemplate(content.donation.consent, {}, { asFragment: true })}
+                    {renderTemplate(content.donation.terms, {}, { asFragment: true })}
                   </span>
                 </Checkbox>
               </FormControl>

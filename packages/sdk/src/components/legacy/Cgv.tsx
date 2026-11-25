@@ -20,24 +20,14 @@ export const Cgv = ({ className, children }: PropsWithChildren<{ className?: str
         <div className="flex flex-col gap-20">
           <CheckboxField name="cgv">
             <span className="text-b4 font-bold">
-              {renderTemplate(content.cgv.content, {}, { asFragment: true })}
+              {renderTemplate(content.cgv.terms, {}, { asFragment: true })}
             </span>
           </CheckboxField>
 
           {hasDonation && (
             <CheckboxField name="cgv_donation">
               <span className="text-b4 font-bold">
-                {content.donation.acceptCGU}{' '}
-                {content.donation.linkDonationTerms && (
-                  <a
-                    href={content.donation.linkDonationTerms}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline text-primary"
-                  >
-                    {content.donation.donationTerms}
-                  </a>
-                )}
+                {renderTemplate(content.donation.terms, {}, { asFragment: true })}
               </span>
             </CheckboxField>
           )}

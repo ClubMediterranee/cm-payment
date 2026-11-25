@@ -58,8 +58,8 @@ export const defaultContent: Content = {
   },
   cgv: {
     heading: 'General Terms and Conditions of Sale',
-    content:
-      'I acknowledge that confirming my booking entails a payment obligation. I accept the <a href="">General Terms and Conditions of Sale and confirm that I have also read the Information Form.</a>',
+    terms:
+      'I acknowledge that confirming my booking entails a payment obligation. I accept the [General Terms and Conditions of Sale and confirm that I have also read the Information Form.]()',
     validation: {
       mustAccept: 'Please accept the terms and conditions of sale',
     },
@@ -211,18 +211,17 @@ export const defaultContent: Content = {
       "Would you like to make a donation to support the Foundation's projects for education and nature conservation around Club Med Villages?",
     popinFiscalInfo:
       'Your donation is tax deductible. You will receive a tax receipt after your donation.',
-    acceptCGU: 'I accept the donation terms and conditions',
-    donationTerms: 'donation terms and conditions',
-    linkDonationTerms: '',
     otherAmount: 'Other amount',
     otherAmountPlaceholder: 'Enter an amount',
-    consent: 'I accept the <a href="">terms and conditions</a> of my donation',
+    terms: 'I accept the [terms and conditions]() of my donation',
     confirm: 'Confirm',
     remove: 'Remove -{amount}',
     infoLabel: 'Information about donation',
     closeLabel: 'Close',
+    validation: {
+      mustAccept: 'Please accept the terms and conditions of your donation',
+    },
     errors: {
-      consent: 'Please accept the terms and conditions of your donation',
       noAmount: 'Select an amount',
       invalidAmount: 'Enter a valid amount',
     },
@@ -251,6 +250,7 @@ const legacyContent: Content = mergeFromPattern(defaultContent, {
     },
   },
   cgv: { heading: 'Terms and conditions' },
+  donation: { terms: 'I accept the [donation terms and conditions]()' },
   freeDeposit: {
     totalRemaining: 'Total remaining to pay',
     before: 'before',
