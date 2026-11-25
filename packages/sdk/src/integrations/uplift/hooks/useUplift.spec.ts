@@ -101,6 +101,12 @@ describe('useUplift', () => {
     expect(result.current.status).toBeNull();
   });
 
+  it('should return the order amount as the displayed price', () => {
+    const { result } = renderHook(() => useUplift());
+
+    expect(result.current.priceInCents).toBe(99999);
+  });
+
   it('should set window.upReady callback', () => {
     renderHook(() => useUplift());
 
