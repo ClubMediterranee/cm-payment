@@ -1,0 +1,13 @@
+{
+  "name": "@clubmed/stress-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Artillery stress tests of the CAPS payment server (@clubmed/server).",
+  "type": "module",
+  "scripts": {
+    "payment-config": "mkdir -p reports && artillery run scenarios/payment-config.yml --config config/environments.yml --environment ${STRESS_ENV:-local} --output reports/payment-config.json"
+  },
+  "devDependencies": {
+    "artillery": "2.0.34"
+  }
+}
