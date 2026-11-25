@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3473.0
+ * OpenAPI spec version: 0.3514.0
  */
 import { fetcher } from '../../http/fetcher.js';
 export interface LinkModel {
@@ -1815,75 +1815,24 @@ export interface CustomerBookingModelV3 {
   _links?: LinksModel;
 }
 
-export interface CustomerBookingPaymentSchedule {
-  /** amount to pay before the deadline */
-  amount?: number;
-  /** deadline for payment of the amount */
-  deadline?: string;
-}
-
-export type PaymentSchedules = CustomerBookingPaymentSchedule[];
+/**
+ * Payment deadline in ISO format
+ */
+export type PaymentSchedulesV1ItemModelDeadline = string | null;
 
 /**
- * Payment schedule of a booking
+ * Amount due at the payment deadline
  */
-export interface CustomerBookingPaymentScheduleModel {
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  /** amount already paid */
-  paid?: number;
-  /** total amount to pay */
-  total?: number;
-  payment_schedules?: PaymentSchedules;
+export type PaymentSchedulesV1ItemModelAmount = number | null;
+
+export interface PaymentSchedulesV1ItemModel {
+  /** Payment deadline in ISO format */
+  deadline: PaymentSchedulesV1ItemModelDeadline;
+  /** Amount due at the payment deadline */
+  amount: PaymentSchedulesV1ItemModelAmount;
 }
 
-/**
- * type of the service
- */
-export type CartPriceDetailModelTypes =
-  (typeof CartPriceDetailModelTypes)[keyof typeof CartPriceDetailModelTypes];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CartPriceDetailModelTypes = {
-  CHILDCARE: 'CHILDCARE',
-  TRANSFER: 'TRANSFER',
-  RENTAL: 'RENTAL',
-  EXCURSION: 'EXCURSION',
-  LAND_SPORT: 'LAND_SPORT',
-  WINTER_SPORT: 'WINTER_SPORT',
-  WATER_SPORT: 'WATER_SPORT',
-  WELLNESS: 'WELLNESS',
-  INSURANCE: 'INSURANCE',
-  PARKING: 'PARKING',
-  CONCIERGERIE: 'CONCIERGERIE',
-} as const;
-
-export interface CartPriceDetailModel {
-  /** total price for the given type of service (ie. childcares, transfers, ...) */
-  amount?: number;
-  type?: CartPriceDetailModelTypes;
-}
-
-export type CartPriceDetails = CartPriceDetailModel[];
-
-/**
- * Cart price
- */
-export interface CartPrice {
-  /** total price for all services currently in cart. */
-  total?: number;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  detail?: CartPriceDetails;
-}
+export type PaymentSchedulesModel = PaymentSchedulesV1ItemModel[];
 
 export type CartServiceTypeModel = (typeof CartServiceTypeModel)[keyof typeof CartServiceTypeModel];
 
@@ -1900,6 +1849,9 @@ export const CartServiceTypeModel = {
   INSURANCE: 'INSURANCE',
   PARKING: 'PARKING',
   CONCIERGERIE: 'CONCIERGERIE',
+  VISAS: 'VISAS',
+  HONEYMOON: 'HONEYMOON',
+  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
 } as const;
 
 export interface CartServiceScheduleAttendee {
@@ -1914,21 +1866,11 @@ export interface CartServiceScheduleAttendee {
  */
 export type CartServiceScheduleAttendees = CartServiceScheduleAttendee[];
 
-/**
- * start date for service deliverance
- */
-export type CartServiceScheduleModelStartDate = string | null;
-
-/**
- * end date for service deliverance
- */
-export type CartServiceScheduleModelEndDate = string | null;
-
 export interface CartServiceScheduleModel {
   /** start date for service deliverance */
-  start_date?: CartServiceScheduleModelStartDate;
+  start_date?: string;
   /** end date for service deliverance */
-  end_date?: CartServiceScheduleModelEndDate;
+  end_date?: string;
   attendees?: CartServiceScheduleAttendees;
 }
 
@@ -1960,269 +1902,7 @@ export interface CartServiceModel {
  */
 export type CartServicesModel = CartServiceModel[];
 
-export interface CartModel {
-  price: CartPrice;
-  services?: CartServicesModel;
-}
-
-/**
- * type of the service
- */
-export type ServiceTypesModel = (typeof ServiceTypesModel)[keyof typeof ServiceTypesModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ServiceTypesModel = {
-  CHILDCARE: 'CHILDCARE',
-  TRANSFER: 'TRANSFER',
-  INSURANCE: 'INSURANCE',
-  RENTAL: 'RENTAL',
-  EXCURSION: 'EXCURSION',
-  WATER_SPORT: 'WATER_SPORT',
-  LAND_SPORT: 'LAND_SPORT',
-  WINTER_SPORT: 'WINTER_SPORT',
-  WELLNESS: 'WELLNESS',
-  CONCIERGERIE: 'CONCIERGERIE',
-  PARKING: 'PARKING',
-  VISAS: 'VISAS',
-  TOURIST_TAX: 'TOURIST_TAX',
-  PORT_TAX: 'PORT_TAX',
-  UPGRADE_PACKAGE: 'UPGRADE_PACKAGE',
-  DONATION: 'DONATION',
-  ROOM_SELECTION: 'ROOM_SELECTION',
-  MISCELLANEOUS_TOUR: 'MISCELLANEOUS_TOUR',
-  MISCELLANEOUS_VILLAGE: 'MISCELLANEOUS_VILLAGE',
-  HONEYMOON: 'HONEYMOON',
-  HOUSEKEEPING: 'HOUSEKEEPING',
-  FOOD_AND_BEVERAGE: 'FOOD_AND_BEVERAGE',
-  TAILORMED: 'TAILORMED',
-  ALL_INCLUSIVE: 'ALL_INCLUSIVE',
-} as const;
-
-/**
- * the service's status for a given schedule and attendee
- */
-export type ServiceV3StatusModel = (typeof ServiceV3StatusModel)[keyof typeof ServiceV3StatusModel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ServiceV3StatusModel = {
-  VALIDATED: 'VALIDATED',
-  OPTION: 'OPTION',
-  REQUEST: 'REQUEST',
-  WAITING_LIST: 'WAITING_LIST',
-  QUOTE: 'QUOTE',
-  WAITING_LIST_UNLOCKABLE: 'WAITING_LIST_UNLOCKABLE',
-  CANCELED: 'CANCELED',
-  EXPIRED: 'EXPIRED',
-  HOPE_TO_UNLOCK: 'HOPE_TO_UNLOCK',
-  HOPE: 'HOPE',
-  MUTE: 'MUTE',
-  INCLUDED: 'INCLUDED',
-} as const;
-
-export interface BookingServiceScheduleAttendeeDiscountV3 {
-  /** discount's amount applied on the service for the concerned attendee and schedule */
-  amount: number;
-  /** Offer id if relevant */
-  offer_id?: string;
-  /** Offer code */
-  code?: string;
-  _links?: LinksModel;
-}
-
-export type BookingServiceScheduleAttendeeDiscounts = BookingServiceScheduleAttendeeDiscountV3[];
-
-export interface ServiceAttendeeV3Model {
-  /** attendee id */
-  id: string;
-  status: ServiceV3StatusModel;
-  /** price per attendee */
-  price?: number;
-  /** price per attendee without discount */
-  price_without_discount: number;
-  discounts?: BookingServiceScheduleAttendeeDiscounts;
-}
-
-export type ServiceAttendeesV3 = ServiceAttendeeV3Model[];
-
-/**
- * attendees id for which the transfer information is relevant
- * @minItems 1
- */
-export type ServiceTransferInformationConcernedAttendees = string[];
-
-/**
- * Direction of transfer
- */
-export type ValidServiceTransferInformationWaysModel =
-  | 'INBOUND'
-  | 'OUTBOUND'
-  | 'WITHIN_TOUR'
-  | null;
-
-/**
- * indicates the travel company code, on two letters.
- */
-export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfId = string | null;
-
-/**
- * full company name
- */
-export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfLabel = string | null;
-
-export type BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf = {
-  /** indicates the travel company code, on two letters. */
-  id?: BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfId;
-  /** full company name */
-  label?: BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOfLabel;
-};
-
-export type BookingTransferInfoCustomerTravelingInformationTravelCompany =
-  BookingTransferInfoCustomerTravelingInformationTravelCompanyAnyOf | null;
-
-/**
- * arrival or departure travel time
- * @pattern ^\d+:\d+:\d+.\d+$
- */
-export type BookingTransferInfoCustomerTravelingInformationAnyOfTime = string | null;
-
-/**
- * arrival or departure travel reference
- * @maxLength 6
- */
-export type BookingTransferInfoCustomerTravelingInformationAnyOfTravelReference = string | null;
-
-/**
- * information provided by the customer to insure the service delivery
- */
-export type BookingTransferInfoCustomerTravelingInformationAnyOf = {
-  /**
-   * arrival or departure travel time
-   * @pattern ^\d+:\d+:\d+.\d+$
-   */
-  time?: BookingTransferInfoCustomerTravelingInformationAnyOfTime;
-  /**
-   * arrival or departure travel reference
-   * @maxLength 6
-   */
-  travel_reference?: BookingTransferInfoCustomerTravelingInformationAnyOfTravelReference;
-  travel_company?: BookingTransferInfoCustomerTravelingInformationTravelCompany;
-};
-
-/**
- * information provided by the customer to insure the service delivery
- */
-export type BookingTransferInfoCustomerTravelingInformation =
-  BookingTransferInfoCustomerTravelingInformationAnyOf | null;
-
-export type TransfersBookingFromAnyOfId = string | null;
-
-export type TransfersBookingFromAnyOfLabel = string | null;
-
-/**
- * transfer pickup place
- */
-export type TransfersBookingFromAnyOf = {
-  id?: TransfersBookingFromAnyOfId;
-  label?: TransfersBookingFromAnyOfLabel;
-};
-
-/**
- * transfer pickup place
- */
-export type TransfersBookingFrom = TransfersBookingFromAnyOf | null;
-
-export type TransfersBookingToAnyOfId = string | null;
-
-export type TransfersBookingToAnyOfLabel = string | null;
-
-/**
- * transfer drop off place
- */
-export type TransfersBookingToAnyOf = {
-  id?: TransfersBookingToAnyOfId;
-  label?: TransfersBookingToAnyOfLabel;
-};
-
-/**
- * transfer drop off place
- */
-export type TransfersBookingTo = TransfersBookingToAnyOf | null;
-
-export type ServiceTransferInformationV3ModelAnyOf = {
-  concerned_attendees: ServiceTransferInformationConcernedAttendees;
-  way: ValidServiceTransferInformationWaysModel;
-  customer_traveling_information: BookingTransferInfoCustomerTravelingInformation;
-  from?: TransfersBookingFrom;
-  to?: TransfersBookingTo;
-  /**
-   * Any special comment regarding the transfer
-   * @maxLength 30
-   */
-  comment: string;
-};
-
-export type ServiceTransferInformationV3Model = ServiceTransferInformationV3ModelAnyOf | null;
-
-export type ServiceTransferInformationsV3Model = ServiceTransferInformationV3Model[] | null;
-
-/**
- * service start date
- */
-export type ServiceScheduleV3ModelStartDate = string | null;
-
-/**
- * service end date
- */
-export type ServiceScheduleV3ModelEndDate = string | null;
-
-export interface ServiceScheduleV3Model {
-  /** service start date */
-  start_date: ServiceScheduleV3ModelStartDate;
-  /** service end date */
-  end_date: ServiceScheduleV3ModelEndDate;
-  attendees?: ServiceAttendeesV3;
-  transfer_information?: ServiceTransferInformationsV3Model;
-}
-
-export type ServiceSchedulesV3 = ServiceScheduleV3Model[];
-
-/**
- * Order of the stay this service is applied to. Counting from 0.
- * @minimum 0
- */
-export type ServiceV3ModelStayIndex = number | null;
-
-export interface ServiceV3Model {
-  /** service id */
-  id: string;
-  type: ServiceTypesModel;
-  /**
-   * The iso 3 currency. Ex: CNY,EUR,..
-   * @minLength 3
-   * @maxLength 3
-   */
-  currency: string;
-  /**
-   * Order of the stay this service is applied to. Counting from 0.
-   * @minimum 0
-   */
-  stay_index: ServiceV3ModelStayIndex;
-  schedules: ServiceSchedulesV3;
-  _links?: LinksModel;
-}
-
-export type ServicesV3Model = ServiceV3Model[];
-
-export type CartUpgradeRoomPriceModelAnyOf = {
-  /** Room price amount */
-  amount: number;
-  /** Price currency */
-  currency: string;
-};
-
-export type CartUpgradeRoomPriceModel = CartUpgradeRoomPriceModelAnyOf | null;
-
-export interface CartUpgradeRoomAttendeeModel {
+export interface PaymentSchedulesAccommodationAttendeeModel {
   /** Attendee id in this booking */
   id: string;
   /** Attendee type [MAIN, KID, ADULT] */
@@ -2235,23 +1915,62 @@ export interface CartUpgradeRoomAttendeeModel {
  * List of the attendees
  * @minItems 1
  */
-export type CartUpgradeRoomAttendeesModel = CartUpgradeRoomAttendeeModel[];
+export type PaymentSchedulesAccommodationAttendeesModel =
+  PaymentSchedulesAccommodationAttendeeModel[];
 
-export interface CartUpgradeRoomAccommodationModel {
+export interface PaymentSchedulesAccommodationModel {
   /** Id of the accommodation */
   id: string;
-  attendees: CartUpgradeRoomAttendeesModel;
+  attendees: PaymentSchedulesAccommodationAttendeesModel;
   /** Number of accommodations where the attendees will be allocated */
   quantity: number;
   /** Number of occupants in the accommodation */
   occupancy: number;
 }
 
-export type CartUpgradeRoomAccommodationsModel = CartUpgradeRoomAccommodationModel[];
+export type PaymentSchedulesAccommodationsModel = PaymentSchedulesAccommodationModel[];
 
-export interface CartUpgradeRoomModel {
-  price?: CartUpgradeRoomPriceModel;
-  accommodations?: CartUpgradeRoomAccommodationsModel;
+/**
+ * Authoritative amount due for the requested payment action
+ */
+export type GetPaymentSchedulesV1ModelAmount = number | null;
+
+/**
+ * Gross payable amount. Returned only when `amount` is net (indirect seller, CMAB-4398)
+ */
+export type GetPaymentSchedulesV1ModelGrossAmount = number | null;
+
+/**
+ * Authoritative total due for PAYMENT_SERVICES_IN_OPTION
+ */
+export type GetPaymentSchedulesV1ModelTotal = number | null;
+
+/**
+ * Amount already paid for the booking
+ */
+export type GetPaymentSchedulesV1ModelPaid = number | null;
+
+/**
+ * Payment data for the requested payment action
+ */
+export interface GetPaymentSchedulesV1Model {
+  /** Authoritative amount due for the requested payment action */
+  amount?: GetPaymentSchedulesV1ModelAmount;
+  /** Gross payable amount. Returned only when `amount` is net (indirect seller, CMAB-4398) */
+  gross_amount?: GetPaymentSchedulesV1ModelGrossAmount;
+  /** Authoritative total due for PAYMENT_SERVICES_IN_OPTION */
+  total?: GetPaymentSchedulesV1ModelTotal;
+  /**
+   * Currency of the authoritative amount
+   * @minLength 3
+   * @maxLength 3
+   */
+  currency: string;
+  /** Amount already paid for the booking */
+  paid?: GetPaymentSchedulesV1ModelPaid;
+  payment_schedules: PaymentSchedulesModel;
+  services?: CartServicesModel;
+  accommodations?: PaymentSchedulesAccommodationsModel;
 }
 
 /**
@@ -2523,7 +2242,7 @@ export interface ProposalAttendeeInputV2Model {
   /** Health pass id */
   health_pass_id?: string;
   identity?: NationalIdentifierCodeModel;
-  /**  
+  /**
 Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
   birthdate?: string;
   travel_documents?: ProposalAttendeeInputTravelDocumentsModel;
@@ -3183,6 +2902,7 @@ export const AcceptLanguageParamModel = {
   'en-GE': 'en-GE',
   'en-AZ': 'en-AZ',
   'es-DO': 'es-DO',
+  'en-OTA': 'en-OTA',
   'fr-TM': 'fr-TM',
   'fr-TN': 'fr-TN',
   'sk-SK': 'sk-SK',
@@ -3215,30 +2935,24 @@ export type GetV0CountriesParams = {
   filter?: FilterArrayParamModel;
 };
 
-export type GetV3CustomersCustomerIdBookingsBookingIdServicesParams = {
+export type GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesParams = {
   /**
-   * Specify if you only want services with a given status
+   * Payment action supported by this resource
    */
-  status?: GetV3CustomersCustomerIdBookingsBookingIdServicesStatus;
+  action?: GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesAction;
 };
 
-export type GetV3CustomersCustomerIdBookingsBookingIdServicesStatus =
-  (typeof GetV3CustomersCustomerIdBookingsBookingIdServicesStatus)[keyof typeof GetV3CustomersCustomerIdBookingsBookingIdServicesStatus];
+export type GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesAction =
+  (typeof GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesAction)[keyof typeof GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesAction];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetV3CustomersCustomerIdBookingsBookingIdServicesStatus = {
-  VALIDATED: 'VALIDATED',
-  OPTION: 'OPTION',
-  REQUEST: 'REQUEST',
-  WAITING_LIST: 'WAITING_LIST',
-  QUOTE: 'QUOTE',
-  WAITING_LIST_UNLOCKABLE: 'WAITING_LIST_UNLOCKABLE',
-  CANCELED: 'CANCELED',
-  EXPIRED: 'EXPIRED',
-  HOPE_TO_UNLOCK: 'HOPE_TO_UNLOCK',
-  HOPE: 'HOPE',
-  MUTE: 'MUTE',
-  INCLUDED: 'INCLUDED',
+export const GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesAction = {
+  PAYMENT_SOLDE: 'PAYMENT_SOLDE',
+  PAYMENT_OPTION: 'PAYMENT_OPTION',
+  PAYMENT_PARTIAL: 'PAYMENT_PARTIAL',
+  PAYMENT_SERVICES_IN_OPTION: 'PAYMENT_SERVICES_IN_OPTION',
+  PAYMENT_CART: 'PAYMENT_CART',
+  PAYMENT_UPGRADE_ROOM: 'PAYMENT_UPGRADE_ROOM',
 } as const;
 
 export type PostV3BookingsParams = {
@@ -3310,56 +3024,17 @@ export const getV3CustomersCustomerIdBookingsBookingId = (
 };
 
 /**
- * @summary payment schedules of one booking
+ * @summary Retrieves payment data for the requested payment action
  */
-export const getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules = (
+export const getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules = (
   customerId: string,
   bookingId: string,
+  params?: GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesParams,
 ) => {
-  return fetcher<CustomerBookingPaymentScheduleModel>({
-    url: `/v0/customers/${customerId}/bookings/${bookingId}/payment_schedules`,
-    method: 'GET',
-  });
-};
-
-/**
- * @summary Get the services a cart contains for a given booking.
- */
-export const getV1CustomersCustomerIdBookingsBookingIdCart = (
-  customerId: string,
-  bookingId: string,
-) => {
-  return fetcher<CartModel>({
-    url: `/v1/customers/${customerId}/bookings/${bookingId}/cart`,
-    method: 'GET',
-  });
-};
-
-/**
- * @summary Provides the list of subscribed services in a booking
- */
-export const getV3CustomersCustomerIdBookingsBookingIdServices = (
-  customerId: string,
-  bookingId: string,
-  params?: GetV3CustomersCustomerIdBookingsBookingIdServicesParams,
-) => {
-  return fetcher<ServicesV3Model>({
-    url: `/v3/customers/${customerId}/bookings/${bookingId}/services`,
+  return fetcher<GetPaymentSchedulesV1Model>({
+    url: `/v1/customers/${customerId}/bookings/${bookingId}/payment_schedules`,
     method: 'GET',
     params,
-  });
-};
-
-/**
- * @summary Retrieves the accommodations a cart contains for a given booking.
- */
-export const getV0CustomersCustomerIdBookingsBookingIdCartAccommodations = (
-  customerId: string,
-  bookingId: string,
-) => {
-  return fetcher<CartUpgradeRoomModel>({
-    url: `/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`,
-    method: 'GET',
   });
 };
 
@@ -3445,6 +3120,7 @@ export const postV1PaymentsPaymentIdNotify = (
 };
 
 /**
+ * @deprecated
  * @summary Allow to validate a booking by making one or more payments
  */
 export const patchV2BookingsBookingId = (
@@ -3478,17 +3154,8 @@ export type GetV2CustomersCustomerIdProfileResult = NonNullable<
 export type GetV3CustomersCustomerIdBookingsBookingIdResult = NonNullable<
   Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingId>>
 >;
-export type GetV0CustomersCustomerIdBookingsBookingIdPaymentSchedulesResult = NonNullable<
-  Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdPaymentSchedules>>
->;
-export type GetV1CustomersCustomerIdBookingsBookingIdCartResult = NonNullable<
-  Awaited<ReturnType<typeof getV1CustomersCustomerIdBookingsBookingIdCart>>
->;
-export type GetV3CustomersCustomerIdBookingsBookingIdServicesResult = NonNullable<
-  Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingIdServices>>
->;
-export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = NonNullable<
-  Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartAccommodations>>
+export type GetV1CustomersCustomerIdBookingsBookingIdPaymentSchedulesResult = NonNullable<
+  Awaited<ReturnType<typeof getV1CustomersCustomerIdBookingsBookingIdPaymentSchedules>>
 >;
 export type PostV1PaymentsResult = NonNullable<Awaited<ReturnType<typeof postV1Payments>>>;
 export type PostV3BookingsResult = NonNullable<Awaited<ReturnType<typeof postV3Bookings>>>;

@@ -1,74 +1,47 @@
 import { Service } from '@tsed/di';
 
 import {
-  CartModel,
-  CartUpgradeRoomModel,
+  Action,
+  GetPaymentSchedulesV1Model,
   ProposalPaymentScheduleModelV1,
-  ServicesV3Model,
 } from '../../infra/api/__generated__/index.js';
 import { ApiResponse, PaymentSchedule } from './types.js';
 
+const SINGLE_PAYMENT_ACTIONS: Action[] = [
+  Action.PAYMENT_CART,
+  Action.PAYMENT_UPGRADE_ROOM,
+  Action.PAYMENT_SERVICES_IN_OPTION,
+];
+
 @Service()
 export class PaymentScheduleNormalizer {
-  normalize(response: ApiResponse) {
-    if (this.isServices(response)) {
-      return this.normalizeServicesSchedule(response);
-    }
-
-    if (this.isCart(response)) {
-      const price = response.price;
-      const amount = price && 'amount' in price ? price.amount : price?.total;
-
-      return this.normalizeCartSchedule({ amount, currency: price?.currency });
-    }
-
+  normalize(response: ApiResponse, action: Action): PaymentSchedule {
     if (this.isProposalSchedule(response)) {
       return this.normalizeProposalSchedule(response);
     }
 
-    return response as PaymentSchedule;
+    return this.normalizeBookingSchedule(response, action);
   }
 
-  private isServices(data: any): data is ServicesV3Model {
-    return Array.isArray(data) && data.every((service) => Array.isArray(service?.schedules));
+  private isProposalSchedule(data: ApiResponse): data is ProposalPaymentScheduleModelV1 {
+    return 'households' in data && Array.isArray(data.households);
   }
 
-  private isCart(data: any): data is CartModel | CartUpgradeRoomModel {
-    return !!data?.price;
-  }
-
-  private isProposalSchedule(data: any): data is ProposalPaymentScheduleModelV1 {
-    return Array.isArray(data?.households);
-  }
-
-  private normalizeServicesSchedule(services: ServicesV3Model) {
-    const total = services.reduce(
-      (servicesSum, service) =>
-        servicesSum +
-        service.schedules.reduce(
-          (schedulesSum, schedule) =>
-            schedulesSum +
-            (schedule.attendees || []).reduce(
-              (attendeesSum, attendee) => attendeesSum + (attendee.price || 0),
-              0,
-            ),
-          0,
-        ),
-      0,
-    );
+  private normalizeBookingSchedule(
+    data: GetPaymentSchedulesV1Model,
+    action: Action,
+  ): PaymentSchedule {
+    const amount = data.amount ?? data.total ?? undefined;
 
     return {
-      currency: services[0]?.currency || '',
-      total,
-      payment_schedules: [{ amount: total }],
-    };
-  }
-
-  private normalizeCartSchedule({ amount, currency }: { amount?: number; currency?: string }) {
-    return {
-      currency: currency || '',
+      currency: data.currency,
       total: amount,
-      payment_schedules: [{ amount }],
+      payment_schedules: SINGLE_PAYMENT_ACTIONS.includes(action)
+        ? [{ amount }]
+        : data.payment_schedules.map((schedule) => ({
+            amount: schedule.amount ?? undefined,
+            deadline: schedule.deadline ?? undefined,
+          })),
     };
   }
 
