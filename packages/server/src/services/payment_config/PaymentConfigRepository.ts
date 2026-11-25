@@ -22,11 +22,14 @@ export class PaymentConfigRepository {
     }));
   }
 
-  async getContents(locale: string) {
-    const contents = await this.directusClient.getContents(locale);
-    return contents.map(({ locale, content }) => ({
-      locale: locale === GLOBAL_LOCALE ? null : locale,
-      content,
+  async getContents(locales: string[]) {
+    const contents = await this.directusClient.getContents(locales);
+    return contents.map(({ key, type, translations }) => ({
+      key,
+      type,
+      values: Object.fromEntries(
+        (translations ?? []).map(({ languages_code, value }) => [languages_code, value]),
+      ),
     }));
   }
 

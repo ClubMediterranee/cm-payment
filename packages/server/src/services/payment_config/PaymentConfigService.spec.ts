@@ -133,26 +133,28 @@ describe('PaymentConfigService', () => {
   });
 
   describe('getContent', () => {
-    it('should return the locale content when it exists', async () => {
+    it('should nest the locale values by key and fall back to en-US', async () => {
       vi.spyOn(paymentConfigRepository, 'getContents').mockResolvedValue([
-        { locale: null, content: { cgv: { heading: 'Terms', content: 'I accept' } } },
-        { locale: 'fr-FR', content: { cgv: { heading: 'CGV' } } },
-        { locale: 'en-US', content: { cgv: { heading: 'T&C' } } },
+        { key: 'cgv.heading', type: 'string', values: { 'en-US': 'Terms', 'fr-FR': 'CGV' } },
+        { key: 'cgv.terms', type: 'string', values: { 'en-US': 'I accept' } },
+        { key: 'submit.label', type: 'string', values: {} },
       ]);
 
       const result = await service.getContent('fr-FR');
 
-      expect(result).toEqual({ cgv: { heading: 'CGV' } });
+      expect(paymentConfigRepository.getContents).toHaveBeenCalledWith(['fr-FR', 'en-US']);
+      expect(result).toEqual({ cgv: { heading: 'CGV', terms: 'I accept' } });
     });
 
-    it('should return the global content when the locale has none', async () => {
+    it('should parse the values according to their type', async () => {
       vi.spyOn(paymentConfigRepository, 'getContents').mockResolvedValue([
-        { locale: null, content: { cgv: { heading: 'Terms' } } },
+        { key: 'flags.enabled', type: 'boolean', values: { 'fr-FR': 'true' } },
+        { key: 'limits.max', type: 'number', values: { 'fr-FR': '42' } },
       ]);
 
-      const result = await service.getContent('it-IT');
+      const result = await service.getContent('fr-FR');
 
-      expect(result).toEqual({ cgv: { heading: 'Terms' } });
+      expect(result).toEqual({ flags: { enabled: true }, limits: { max: 42 } });
     });
 
     it('should return an empty object when there is no content', async () => {
