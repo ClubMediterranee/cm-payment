@@ -61,14 +61,14 @@ export const Default: Story = {
       expect(canvas.getByText('Card number')).toBeInTheDocument();
     });
 
-    expect(canvas.getByText('Expiry date')).toBeInTheDocument();
-    expect(canvas.getByText('Security code')).toBeInTheDocument();
+    expect(canvas.getByRole('textbox', { name: 'Expiration' })).toBeInTheDocument();
+    expect(canvas.getByText('Security code (CVV)')).toBeInTheDocument();
 
     const hostedFieldContainers = canvasElement.querySelectorAll('[id^="cybersource-card-"]');
 
     const loadingFields = canvasElement.querySelectorAll('.animate-pulsation');
     if (loadingFields.length > 0) {
-      expect(loadingFields.length).toBe(3);
+      expect(loadingFields.length).toBe(2);
 
       loadingFields.forEach((field) => {
         expect(field).toHaveClass('pointer-events-none');

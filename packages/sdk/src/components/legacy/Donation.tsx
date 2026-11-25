@@ -12,7 +12,7 @@ import { useFormContext, useWatch } from '../../hooks/utils/useForm';
 import { TOKENS } from '../../types/Tokens';
 import { formatCurrency, getCurrencySymbol } from '../../utils/formatCurrency';
 import { FormPanel } from '../ui/FormPanel';
-import { Popin } from '../ui/Popin';
+import { InfoPopin } from '../ui/InfoPopin';
 import { TitleSkeleton } from '../ui/skeletons';
 
 const NOT_THIS_TIME = '0';
@@ -131,18 +131,22 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
           <Icon name="AllInclusiveDonations" width="5rem" />
         </FormPanel>
 
-        <Popin isVisible={isModalOpen} onClose={onClose}>
-          <img
-            src={content.donation.imageUrl}
-            alt={content.donation.popinTitle}
-            className="w-full "
-          />
-          <div className="p-20 flex flex-col gap-10">
-            <h3 className="text-b2 font-serif">{content.donation.popinTitle}</h3>
-            <p className="text-b5">{content.donation.popinDescription}</p>
-            <p className="text-b5">{content.donation.popinFiscalInfo}</p>
-          </div>
-        </Popin>
+        <InfoPopin
+          isVisible={isModalOpen}
+          onClose={onClose}
+          closeLabel={content.donation.closeLabel}
+          title={content.donation.popinTitle}
+          media={
+            <img
+              src={content.donation.imageUrl}
+              alt=""
+              className="h-238 w-full object-cover sm:h-330"
+            />
+          }
+        >
+          <p>{content.donation.popinDescription}</p>
+          <p>{content.donation.popinFiscalInfo}</p>
+        </InfoPopin>
       </div>
     </div>
   );

@@ -16,8 +16,9 @@ export const injectCountryField = (
   );
 
   const countryCodeField: FieldMetadata = {
+    group: 'address',
     name: 'country_code',
-    group: countryField.group,
+    path: 'billing_details.address.country_code',
     type: 'select',
     required: countryField.required,
     options: countries.map((country) => ({

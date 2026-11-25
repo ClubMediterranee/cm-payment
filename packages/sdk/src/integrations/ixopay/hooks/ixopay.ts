@@ -6,12 +6,3 @@ export const mapIxopayErrorsToObject = (
     {},
   );
 };
-
-export const removeErrorKey = (
-  errors: Record<string, string>,
-  key: string,
-): Record<string, string> => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { [key]: _, ...rest } = errors;
-  return rest;
-};

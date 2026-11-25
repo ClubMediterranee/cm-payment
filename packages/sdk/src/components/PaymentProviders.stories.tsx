@@ -253,7 +253,7 @@ export const CreditCard: Story = {
     const canvas = within(canvasElement);
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
-      expect(radios.length).toBe(1);
+      expect(radios.length).toBe(0);
       expect(canvas.getByText('Payer par carte bancaire')).toBeInTheDocument();
 
       expect(canvas.getByTestId('icon-Visa')).toBeInTheDocument();
@@ -287,7 +287,7 @@ export const BankTransfer: Story = {
     const canvas = within(canvasElement);
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
-      expect(radios.length).toBe(1);
+      expect(radios.length).toBe(0);
       expect(canvas.getByText('Payer par virement bancaire')).toBeInTheDocument();
 
       const creditCardIcon = canvasElement.querySelector('svg[data-icon-name="CreditCard"]');
@@ -319,7 +319,7 @@ export const Paypal: Story = {
     const canvas = within(canvasElement);
     await waitFor(() => {
       const radios = canvasElement.querySelectorAll('input[type="radio"]');
-      expect(radios.length).toBe(1);
+      expect(radios.length).toBe(0);
       expect(canvas.getByText('Payer avec Paypal')).toBeInTheDocument();
     });
   },
@@ -413,14 +413,14 @@ export const SelectedProviderPanel: Story = {
     await waitFor(() => {
       expect(canvas.getAllByTestId('panel')).toHaveLength(1);
     });
-    expect(radios[0].closest('[class*="border-black"]')).toContainElement(
+    expect(radios[0].closest('[class*="inset-ring-black"]')).toContainElement(
       canvas.getByTestId('panel'),
     );
 
     await userEvent.click(radios[2]);
 
     await waitFor(() => {
-      expect(radios[2].closest('[class*="border-black"]')).toContainElement(
+      expect(radios[2].closest('[class*="inset-ring-black"]')).toContainElement(
         canvas.getByTestId('panel'),
       );
     });

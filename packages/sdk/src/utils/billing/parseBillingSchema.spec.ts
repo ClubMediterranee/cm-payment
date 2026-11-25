@@ -47,6 +47,7 @@ describe('parseBillingSchema', () => {
     expect(result).toContainEqual({
       name: 'first_name',
       group: 'attendee',
+      path: 'billing_details.attendee.first_name',
       type: 'text',
       required: true,
       options: undefined,
@@ -57,6 +58,7 @@ describe('parseBillingSchema', () => {
     expect(result).toContainEqual({
       name: 'city',
       group: 'address',
+      path: 'billing_details.address.city',
       type: 'text',
       required: true,
       options: undefined,
@@ -64,6 +66,26 @@ describe('parseBillingSchema', () => {
       minLength: undefined,
       pattern: undefined,
     });
+  });
+
+  it('ignore les champs inconnus du formulaire', () => {
+    const schema: ClientSchemaModel = {
+      ...baseSchema,
+      properties: {
+        address: {
+          type: 'object',
+          required: ['not_in_form'],
+          properties: {
+            not_in_form: { type: 'string' },
+            city: { type: 'string' },
+          },
+        },
+      },
+    };
+
+    expect(parseBillingSchema(schema).map(({ path }) => path)).toEqual([
+      'billing_details.address.city',
+    ]);
   });
 
   it('parse un champ de type select avec enum', () => {
@@ -85,6 +107,7 @@ describe('parseBillingSchema', () => {
     expect(result[0]).toEqual({
       name: 'country',
       group: 'address',
+      path: 'billing_details.address.country',
       type: 'select',
       required: true,
       options: [
@@ -123,6 +146,7 @@ describe('parseBillingSchema', () => {
     expect(result[0]).toEqual({
       name: 'country',
       group: 'address',
+      path: 'billing_details.address.country',
       type: 'select',
       required: true,
       options: [
@@ -186,6 +210,7 @@ describe('parseBillingSchema', () => {
     expect(result[0]).toEqual({
       name: 'first_name',
       group: 'attendee',
+      path: 'billing_details.attendee.first_name',
       type: 'text',
       required: false,
       options: undefined,

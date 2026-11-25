@@ -47,7 +47,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",
     "@clubmed/trident-icons": "1.24.0",
-    "@clubmed/trident-ui": "2.1.0-beta.4",
+    "@clubmed/trident-ui": "2.1.0",
     "@cmflow/cli": "2.2.4",
     "@commitlint/cli": "19.8.1",
     "@commitlint/config-conventional": "19.8.1",

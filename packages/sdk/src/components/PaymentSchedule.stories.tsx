@@ -174,10 +174,10 @@ export const SinglePayment: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await waitFor(() => {
-      const radios = canvasElement.querySelectorAll('input[type="radio"]');
-      expect(radios).toHaveLength(1);
       expect(canvas.getByText(/3\s?079.*€/)).toBeInTheDocument();
     });
+    expect(canvas.queryByRole('button', { name: 'Select this option' })).toBeNull();
+    expect(canvas.queryByRole('heading')).toBeNull();
   },
   render(args: any) {
     return (
@@ -197,8 +197,8 @@ export const DepositChoice: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await waitFor(() => {
-      const radios = canvasElement.querySelectorAll('input[type="radio"]');
-      expect(radios).toHaveLength(2);
+      expect(canvas.getAllByRole('button', { name: /Select(ed)? (this )?option/ })).toHaveLength(2);
+      expect(canvas.getByRole('heading', { level: 3 })).toBeInTheDocument();
       expect(canvas.getByText(/2\s?000.*€/)).toBeInTheDocument();
       expect(canvas.getByText(/^500,00\s?€\s\+\s1\s?500,00\s?€$/)).toBeInTheDocument();
     });
@@ -241,36 +241,33 @@ export const DepositWithDonation: Story = {
 
 export const DepositInteraction: Story = {
   play: async ({ canvasElement }) => {
-    await waitFor(() => {
-      const radios = canvasElement.querySelectorAll('input[type="radio"]');
-      expect(radios).toHaveLength(2);
+    const canvas = within(canvasElement);
+    const [fullPayment, deposit] = await canvas.findAllByRole('button', {
+      name: /Select(ed)? (this )?option/,
     });
 
-    const radios = canvasElement.querySelectorAll('input[type="radio"]');
-    const firstRadio = radios[0] as HTMLInputElement;
-    const secondRadio = radios[1] as HTMLInputElement;
+    await waitFor(() => {
+      expect(fullPayment).toHaveAttribute('aria-pressed', 'true');
+    });
+    expect(fullPayment).toHaveAccessibleName('Selected option');
+    expect(fullPayment).toHaveAccessibleDescription('Pay in full today');
+    expect(deposit).toHaveAttribute('aria-pressed', 'false');
+    expect(deposit).toHaveAccessibleName('Select this option');
+    expect(deposit).toHaveAccessibleDescription('Pay in 2x');
+
+    await userEvent.click(deposit);
 
     await waitFor(() => {
-      expect(firstRadio).toBeChecked();
+      expect(deposit).toHaveAttribute('aria-pressed', 'true');
     });
+    expect(fullPayment).toHaveAttribute('aria-pressed', 'false');
 
-    expect(secondRadio).not.toBeChecked();
-
-    await userEvent.click(secondRadio);
+    await userEvent.click(fullPayment);
 
     await waitFor(() => {
-      expect(secondRadio).toBeChecked();
+      expect(fullPayment).toHaveAttribute('aria-pressed', 'true');
     });
-
-    expect(firstRadio).not.toBeChecked();
-
-    await userEvent.click(firstRadio);
-
-    await waitFor(() => {
-      expect(firstRadio).toBeChecked();
-    });
-
-    expect(secondRadio).not.toBeChecked();
+    expect(deposit).toHaveAttribute('aria-pressed', 'false');
   },
   render(args: any) {
     return (
@@ -470,8 +467,12 @@ export const BuyNowPayLaterOney: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await waitFor(() => {
-      expect(canvas.getByRole('radio', { name: /I pay in.*by credit card/ })).toBeInTheDocument();
+      expect(
+        canvas.getByRole('button', { name: 'Select this option', description: 'I pay in' }),
+      ).toBeInTheDocument();
     });
+    expect(canvas.getByText('by credit card')).toBeInTheDocument();
+    expect(canvas.getByRole('button', { name: /More information: Oney/ })).toBeInTheDocument();
   },
   render(args: any) {
     return (
@@ -544,7 +545,7 @@ export const BuyNowPayLaterUplift: Story = {
     const canvas = within(canvasElement);
     await waitFor(
       () => {
-        expect(canvas.getByRole('radio', { name: /Pay monthly from/ })).toBeInTheDocument();
+        expect(canvas.getByRole('button', { name: 'More information: Pay monthly' })).toBeInTheDocument();
       },
       { timeout: 5000 },
     );

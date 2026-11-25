@@ -1,7 +1,7 @@
 import { Button } from '@clubmed/trident-ui/ui/buttons/Button';
 
 import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
-import { Popin } from './Popin';
+import { InfoPopin } from './InfoPopin';
 
 type Props = {
   isOpen: boolean;
@@ -14,21 +14,23 @@ export const OverpaymentConfirmationPopin = ({ isOpen, onConfirm, onCancel }: Pr
   const { title, description, confirm, cancel } = content.freeDeposit.overpaymentConfirmation;
 
   return (
-    <Popin isVisible={isOpen} onClose={onCancel}>
-      <div className="p-20 flex flex-col gap-20">
-        <div className="flex flex-col gap-10">
-          <h3 className="text-b2 font-serif">{title}</h3>
-          <p className="text-b5 text-grey-dark">{description}</p>
-        </div>
-        <div className="flex justify-end gap-10">
-          <Button onClick={onCancel} size="medium" theme="outline">
+    <InfoPopin
+      isVisible={isOpen}
+      onClose={onCancel}
+      closeLabel={cancel}
+      title={title}
+      footer={
+        <div className="flex justify-center gap-12">
+          <Button onClick={onCancel} size="medium" theme="outline" color="black">
             {cancel}
           </Button>
           <Button onClick={onConfirm} size="medium">
             {confirm}
           </Button>
         </div>
-      </div>
-    </Popin>
+      }
+    >
+      <p className="text-darkGrey">{description}</p>
+    </InfoPopin>
   );
 };

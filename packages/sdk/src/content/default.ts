@@ -1,4 +1,5 @@
 import type { CapsTheme } from '../embed/shared';
+import wechatScanUrl from '../integrations/wechat/assets/wechat-scan.webp';
 import type { Content } from '../types/Content';
 import { mergeFromPattern } from '../utils/mergeFromPattern';
 
@@ -25,15 +26,17 @@ export const defaultContent: Content = {
     heading: 'Choose the payment schedule',
     select: 'Select this option',
     selected: 'Selected option',
+    moreInformation: 'More information',
+    close: 'Close',
     full: {
       title: 'Pay in full today',
-      description: 'I pay the total amount of',
+      description: 'I pay today the total amount of',
       caption: 'Total price',
     },
     deposit: {
       title: 'Pay in 2x',
-      description:
-        'I pay by credit card the deposit of {deposit}, and I agree to an automatic withdrawal of the remaining balance of {balance} on {deadline}',
+      description: 'I pay a {deposit} deposit today followed by {balance} on {deadline}',
+      info: 'The due date for the balance is indicated on your booking confirmation, and free payment options are available until this payment',
     },
     monthly: {
       title: 'Pay monthly',
@@ -49,14 +52,16 @@ export const defaultContent: Content = {
     },
     installments: {
       title: 'I pay in {icon} by credit card',
+      cardTitle: 'I pay in',
+      cardDescription: 'by credit card',
     },
   },
   cgv: {
     heading: 'General Terms and Conditions of Sale',
     content:
-      'Validating my reservation implies a payment obligation. [FBL] I am informed of the obligation to present a negative test result or proof of complete vaccination for Covid-19 to access the Resort between May 21 and September 30, 2021 (details on the Resort page). I accept the General Conditions of Sale and declare that I have also read the Information Form.*',
+      'I acknowledge that confirming my booking entails a payment obligation. I accept the <a href="">General Terms and Conditions of Sale and confirm that I have also read the Information Form.</a>',
     validation: {
-      mustAccept: 'You must accept the T&C',
+      mustAccept: 'Please accept the terms and conditions of sale',
     },
   },
   comments: {
@@ -99,10 +104,23 @@ export const defaultContent: Content = {
   creditCardForm: {
     fullName: 'Cardholder name',
     cardNumber: 'Card number',
-    expiryDate: 'Expiry date',
-    cvc: 'Security code',
+    expiryDate: 'Expiration',
+    cvc: 'Security code (CVV)',
+    placeholders: {
+      cardHolder: 'Surname Name',
+      cardNumber: 'XXXX XXXX XXXX XXXX',
+      expiryDate: 'YYYY / MM',
+      cvc: 'XXX',
+    },
+    hints: {
+      cardHolder: 'As written on the card',
+      cardNumber: '16 digits',
+      expiryDate: 'YYYY / MM',
+      cvc: '3 or 4 digits',
+    },
     validation: {
       expiryDate: 'Expiry date is required',
+      expiryDateInvalid: 'Enter a valid expiration date',
       expired: 'Card is expired',
       cardHolder: 'Cardholder name is required',
       cardNumber: 'Invalid card number',
@@ -141,6 +159,8 @@ export const defaultContent: Content = {
   billingAddress: {
     heading: 'Billing address',
     additionalInformation: 'Additional information',
+    sameAsMainTraveler: 'Same as main traveler',
+    mandatoryField: '*Mandatory field',
     hints: {
       first_name: 'Matching Passport/ID',
       last_name: 'Matching Passport/ID',
@@ -170,14 +190,13 @@ export const defaultContent: Content = {
     },
   },
   wechat: {
+    instruction:
+      'After you press continue, please scan the QR code with the WeChat Pay scanner. Total amount due {amount}',
     payLabel: 'Scan now to pay:',
-    scanLabel: 'Please scan',
-    tutorial: {
-      title: 'After you press continue',
-      subtitle: 'please scan the QRCode within the WeChat to pay scanner',
-      imageUrl: 'https://ns.clubmed.com/it/2018/be/payment/wechat.png',
-      expiredMessage: 'Transaction expired',
-    },
+    imageUrl: wechatScanUrl,
+    imageAlt: 'Scanning the QR code on the screen with WeChat on a phone',
+    qrCodeLabel: 'WeChat Pay QR code',
+    expiredMessage: 'Transaction expired',
   },
   donation: {
     heading: 'Make a donation',
@@ -195,6 +214,18 @@ export const defaultContent: Content = {
     acceptCGU: 'I accept the donation terms and conditions',
     donationTerms: 'donation terms and conditions',
     linkDonationTerms: '',
+    otherAmount: 'Other amount',
+    otherAmountPlaceholder: 'Enter an amount',
+    consent: 'I accept the <a href="">terms and conditions</a> of my donation',
+    confirm: 'Confirm',
+    remove: 'Remove -{amount}',
+    infoLabel: 'Information about donation',
+    closeLabel: 'Close',
+    errors: {
+      consent: 'Please accept the terms and conditions of your donation',
+      noAmount: 'Select an amount',
+      invalidAmount: 'Enter a valid amount',
+    },
   },
   paymentWidget: {
     heading: 'Payment details',
@@ -203,6 +234,7 @@ export const defaultContent: Content = {
     label: 'Pay',
     pay: 'Pay {amount} now',
     redirect: 'Go to our payment partner',
+    continue: 'Continue',
   },
 };
 

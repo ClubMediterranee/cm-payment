@@ -5,5 +5,7 @@ import integration from '../integration.config.js';
 export const HipayPaypalButton = () => {
   useHipayPaypal();
 
-  return <PspMountPoint id={integration.mountPoints.button} className="h-45" />;
+  return (
+    <PspMountPoint id={integration.mountPoints.button} className="h-45 min-w-240 self-center" />
+  );
 };

@@ -132,24 +132,28 @@ export function PaymentPage() {
   }
 
   return (
-    <div className="row-start-2 mx-auto w-10/12 md:max-w-1200">
+    <div className="row-start-2 w-full px-20 pt-40">
       {isPaymentLoading && <LoadingPage />}
-      <div className="mb-40 flex items-center gap-64 pt-40">
-        <hr className="m-0 h-px flex-1 border-0 bg-black" />
-        <h1 className="text-h3 font-serif font-bold italic">{app.payment.title}</h1>
-        <hr className="m-0 h-px flex-1 border-0 bg-black" />
-      </div>
-      <div className="grid grid-cols-1 gap-20 md:grid-cols-4 md:items-start">
-        <aside className="md:order-2 md:sticky md:top-20">
+      <div className="mx-auto flex w-full max-w-1180 flex-col gap-20 md:flex-row md:items-start">
+        <aside className="md:order-2 md:sticky md:top-20 md:w-380 md:shrink-0">
           <Suspense fallback={<StayPlaceholder />}>
             <StayV2 stay={stay!} donationSlotRef={setDonationSlot} />
           </Suspense>
         </aside>
 
-        <div className="flex flex-col gap-8 items-center md:order-1 md:col-span-3">
-          {form}
-          {errorMessage}
-        </div>
+        <section className="flex min-w-0 flex-1 flex-col gap-20 md:order-1 md:max-w-780 md:gap-40">
+          <div className="flex items-center gap-12 md:gap-20">
+            <div aria-hidden="true" className="h-1 flex-1 bg-black" />
+            <h2 className="text-center font-serif text-h4 font-bold italic text-black md:text-h1">
+              {app.payment.title}
+            </h2>
+            <div aria-hidden="true" className="h-1 flex-1 bg-black" />
+          </div>
+          <div className="flex flex-col items-center gap-8">
+            {form}
+            {errorMessage}
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -1,87 +1,112 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import type { ReactNode } from 'react';
-import { FormProvider, useForm, type UseFormReturn } from 'react-hook-form';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import type { FieldErrors, Resolver } from 'react-hook-form';
 
-import { MonthField } from './MonthField';
+import { createFormWrapper } from '../../__fixtures__/createFormWrapper';
+import type { CapsFormSchema } from '../../schemas/capsFormSchema';
+import { parseExpiryDate } from '../../schemas/validations/validateExpiryDate';
+import { formatMonth, MonthField } from './MonthField';
 
 vi.mock('@clubmed/trident-icons', () => ({ Icon: () => null }));
 
-const NAME = 'creditCard.expiryDate';
+const INVALID_DATE: FieldErrors<CapsFormSchema> = {
+  creditCard: { expiryDate: { type: 'custom', message: 'Invalid date' } },
+};
+
+const resolver: Resolver<CapsFormSchema> = async (values) =>
+  parseExpiryDate(values.creditCard?.expiryDate)
+    ? { values, errors: {} }
+    : { values: {}, errors: INVALID_DATE };
 
 function setup(props: Partial<React.ComponentProps<typeof MonthField>> = {}) {
-  let methods!: UseFormReturn;
+  const { wrapper, getValues, submit } = createFormWrapper({ resolver });
 
-  const Wrapper = ({ children }: { children: ReactNode }) => {
-    methods = useForm();
-    return <FormProvider {...methods}>{children}</FormProvider>;
-  };
+  render(<MonthField label="Expiration" placeholder="YYYY / MM" hint="YYYY / MM" {...props} />, {
+    wrapper,
+  });
 
-  render(<MonthField label="Expiry date" name={NAME} {...props} />, { wrapper: Wrapper });
+  const input = screen.getByRole<HTMLInputElement>('textbox');
 
   return {
-    input: screen.getByRole('textbox') as HTMLInputElement,
-    getValue: () => methods.getValues(NAME),
+    input,
+    submit,
+    getValue: () => getValues().creditCard?.expiryDate,
+    type: (value: string) => act(async () => fireEvent.change(input, { target: { value } })),
+    blur: () => act(async () => fireEvent.blur(input)),
   };
 }
 
+describe('formatMonth', () => {
+  it.each([
+    ['2030', '2030'],
+    ['20301', '2030 / 1'],
+    ['203012', '2030 / 12'],
+    ['2a03/0129', '2030 / 12'],
+    ['2030/', '2030 / '],
+    ['2030 / ', '2030 / '],
+    ['2030 /', '2030'],
+    ['', ''],
+  ])('formats %j as %j', (input, expected) => {
+    expect(formatMonth(input)).toBe(expected);
+  });
+});
+
 describe('MonthField', () => {
-  it('formats the input as MM / YYYY and stores YYYY-MM', () => {
-    const { input, getValue } = setup();
+  it('formats the input as YYYY / MM and stores the formatted value', async () => {
+    const { input, getValue, type } = setup();
 
-    fireEvent.change(input, { target: { value: '122030' } });
+    await type('203012');
 
-    expect(input.value).toBe('12 / 2030');
-    expect(getValue()).toBe('2030-12');
+    expect(input.value).toBe('2030 / 12');
+    expect(getValue()).toBe('2030 / 12');
   });
 
-  it('ignores non digits and extra characters', () => {
-    const { input, getValue } = setup();
+  it('is labelled by its visible label', () => {
+    setup();
 
-    fireEvent.change(input, { target: { value: '1a2/20309' } });
-
-    expect(input.value).toBe('12 / 2030');
-    expect(getValue()).toBe('2030-12');
+    expect(screen.getByRole('textbox', { name: 'Expiration' })).toBeTruthy();
   });
 
-  it('keeps the form value empty while the date is incomplete', () => {
-    const { input, getValue } = setup();
+  it('shows the expected format beside the label while focused or filled', async () => {
+    const { input, type, blur } = setup();
 
-    fireEvent.change(input, { target: { value: '12' } });
-    expect(input.value).toBe('12');
-    expect(getValue()).toBe('');
+    expect(screen.queryAllByText('YYYY / MM', { selector: 'span' })).toHaveLength(0);
 
-    fireEvent.change(input, { target: { value: '1220' } });
-    expect(input.value).toBe('12 / 20');
-    expect(getValue()).toBe('');
+    act(() => input.focus());
+    expect(screen.getByText('YYYY / MM', { selector: 'span' })).toBeTruthy();
 
-    fireEvent.change(input, { target: { value: '' } });
-    expect(input.value).toBe('');
+    await type('2030');
+    await blur();
+
+    expect(screen.getByText('YYYY / MM', { selector: 'span' })).toBeTruthy();
   });
 
-  it('validates the value on blur', () => {
-    const { input, getValue } = setup();
+  it('keeps an incomplete date neutral while typing, then shows its error on blur', async () => {
+    const { type, blur } = setup();
 
-    fireEvent.change(input, { target: { value: '012031' } });
-    fireEvent.blur(input);
+    await type('20301');
+    expect(screen.queryByText('Invalid date')).toBeNull();
 
-    expect(getValue()).toBe('2031-01');
+    await blur();
+    expect(screen.getByText('Invalid date')).toBeTruthy();
+
+    await type('203012');
+    expect(screen.queryByText('Invalid date')).toBeNull();
   });
 
-  it('shows the default placeholder, or a custom one', () => {
-    expect(setup().input.placeholder).toBe('MM / YYYY');
+  it('leaves an empty field neutral on blur and shows its error once submitted', async () => {
+    const { blur, submit } = setup();
+
+    await blur();
+    expect(screen.queryByText('Invalid date')).toBeNull();
+
+    await submit();
+    expect(screen.getByText('Invalid date')).toBeTruthy();
   });
 
   it('is disabled without placeholder while loading', () => {
-    const { input } = setup({ isLoading: true, placeholder: 'Expiry' });
+    const { input } = setup({ isLoading: true });
 
     expect(input.disabled).toBe(true);
     expect(input.placeholder).toBe('');
-  });
-
-  it('displays the error', () => {
-    setup({ error: 'Invalid date', placeholder: 'Expiry' });
-
-    expect(screen.getByRole('alert').textContent).toBe('Invalid date');
-    expect((screen.getByRole('textbox') as HTMLInputElement).placeholder).toBe('Expiry');
   });
 });

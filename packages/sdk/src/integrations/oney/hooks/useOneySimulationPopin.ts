@@ -7,7 +7,7 @@ import { usePaymentProviderSettings } from '../../../hooks/utils/usePaymentProvi
 import { useScriptLoader } from '../../../hooks/utils/useScriptLoader.js';
 import { getOneyPopinOptions, loadOneySimulationPopin } from './oney.js';
 
-export const useOneySimulationPopin = () => {
+export const useOneySimulationPopin = ({ paymentAmount }: { paymentAmount?: number } = {}) => {
   const { language, country } = useCapsConfigContext();
   const watchedAmount = useWatch('amount');
   const { merchant_id, payment_mode, script_url, is_free } = usePaymentProviderSettings<{
@@ -23,7 +23,7 @@ export const useOneySimulationPopin = () => {
     if (!isLoaded) return;
 
     const options = getOneyPopinOptions({
-      payment_amount: Number(watchedAmount),
+      payment_amount: paymentAmount ?? Number(watchedAmount),
       merchant_id,
       country,
       language,
@@ -32,7 +32,16 @@ export const useOneySimulationPopin = () => {
     });
 
     loadOneySimulationPopin(options);
-  }, [isLoaded, watchedAmount, merchant_id, country, language, payment_mode, is_free]);
+  }, [
+    isLoaded,
+    paymentAmount,
+    watchedAmount,
+    merchant_id,
+    country,
+    language,
+    payment_mode,
+    is_free,
+  ]);
 
   return { handlePopinClick };
 };

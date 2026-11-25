@@ -9,7 +9,12 @@ export function Form({ children }: PropsWithChildren) {
 
   return (
     <FormSubmitContext.Provider value={{ onSubmit }}>
-      <form id="payment-form" onSubmit={onSubmit} className="w-full flex flex-col gap-24 text-b4">
+      <form
+        id="payment-form"
+        noValidate
+        onSubmit={onSubmit}
+        className="w-full flex flex-col gap-24 text-b3"
+      >
         {children}
       </form>
       <OverpaymentConfirmationPopin

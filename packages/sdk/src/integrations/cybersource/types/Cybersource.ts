@@ -24,11 +24,17 @@ export type CybersourceChangeData = {
 
 export type CybersourceField = {
   load: (selector: string) => void;
-  on: (
-    event: 'change' | 'load' | 'blur' | 'focus',
-    callback: (data: CybersourceChangeData) => void,
-  ) => void;
+  on(event: 'change', callback: (data: CybersourceChangeData) => void): void;
+  on(event: 'load' | 'focus' | 'blur', callback: () => void): void;
 };
+
+export type CybersourceStyle = Partial<
+  Record<'font-family' | 'font-size' | 'line-height' | 'color', string>
+>;
+
+export type CybersourceStyles = Partial<
+  Record<'input' | '::placeholder' | ':focus' | ':disabled' | 'valid' | 'invalid', CybersourceStyle>
+>;
 
 export type CybersourceMicroform = {
   createField: (
@@ -48,8 +54,14 @@ export type CybersourceFlex = {
     container: string;
     label: string;
     placeholder: string;
-    styles: Record<string, unknown>;
+    styles: CybersourceStyles;
   }) => CybersourceMicroform;
 };
 
 export type Cybersource = (token: string) => CybersourceFlex;
+
+declare global {
+  interface Window {
+    Flex: new (token: string) => CybersourceFlex;
+  }
+}

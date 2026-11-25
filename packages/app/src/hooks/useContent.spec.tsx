@@ -4,7 +4,7 @@ import { type PropsWithChildren, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { content } from '../__fixtures__/content';
-import { useContent } from './useContent';
+import { defaultAppContent, useContent } from './useContent';
 
 const getPaymentContent = vi.hoisted(() => vi.fn());
 
@@ -41,15 +41,25 @@ describe('useContent', () => {
     await waitFor(() => expect(result.current).toEqual(content));
   });
 
-  it('rejects an app content with a malformed template', async () => {
+  it('falls back to the default app content when a template is malformed', async () => {
     getPaymentContent.mockResolvedValue({
+      ...content.content,
       app: { ...content.app, stay: { ...content.app.stay, dates: 'From {start}' } },
     });
 
-    renderContent();
+    const { result } = renderContent();
 
-    expect((await screen.findByRole('alert')).textContent).toContain(
-      'Expected a template with {start}, {end}',
+    await waitFor(() =>
+      expect(result.current).toEqual({ app: defaultAppContent, content: content.content }),
     );
+  });
+
+  it('falls back to the default content when caps_content is unavailable', async () => {
+    getPaymentContent.mockRejectedValue(new Error('Internal Server Error'));
+
+    const { result } = renderContent();
+
+    await waitFor(() => expect(result.current).toEqual({ app: defaultAppContent, content: {} }));
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });

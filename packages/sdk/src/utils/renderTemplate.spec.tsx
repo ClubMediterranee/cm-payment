@@ -123,6 +123,45 @@ describe('renderTemplate', () => {
       expect(container.textContent).toBe('Value: 0');
     });
   });
+
+  describe('links', () => {
+    it('renders an anchor tag as a link opening in a new tab', () => {
+      const { container } = render(
+        renderTemplate('Read the <a href="https://example.com/terms">terms</a> now', {})!,
+      );
+
+      const link = container.querySelector('a')!;
+
+      expect(container.textContent).toBe('Read the terms now');
+      expect(link.getAttribute('href')).toBe('https://example.com/terms');
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+    });
+
+    it('renders several links around a placeholder', () => {
+      const { container } = render(
+        renderTemplate('<a href="/a">A</a> {name} <a href=\'/b\'>B</a>', { name: 'and' })!,
+      );
+
+      expect([...container.querySelectorAll('a')].map((link) => link.textContent)).toEqual([
+        'A',
+        'B',
+      ]);
+      expect(container.textContent).toBe('A and B');
+    });
+
+    it('keeps only the label when the link is missing or unsafe', () => {
+      const { container } = render(
+        renderTemplate(
+          '<a href="javascript:alert(1)">unsafe</a> <a class="x">none</a> <a href="">empty</a>',
+          {},
+        )!,
+      );
+
+      expect(container.querySelector('a')).toBeNull();
+      expect(container.textContent).toBe('unsafe none empty');
+    });
+  });
 });
 
 describe('formatTemplate', () => {

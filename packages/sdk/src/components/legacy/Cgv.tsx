@@ -3,6 +3,7 @@ import { PropsWithChildren } from 'react';
 import { useCapsConfigContext } from '../../hooks/utils/useCapsConfigContext';
 import { useWatch } from '../../hooks/utils/useForm';
 import { TOKENS } from '../../types/Tokens';
+import { renderTemplate } from '../../utils/renderTemplate';
 import { CheckboxField } from '../ui/Form/CheckboxField';
 import { FormPanel } from '../ui/FormPanel';
 import { CheckboxSkeleton, TitleSkeleton } from '../ui/skeletons';
@@ -18,7 +19,9 @@ export const Cgv = ({ className, children }: PropsWithChildren<{ className?: str
       <FormPanel className="w-full">
         <div className="flex flex-col gap-20">
           <CheckboxField name="cgv">
-            <span className="text-b4 font-bold">{content.cgv.content}</span>
+            <span className="text-b4 font-bold">
+              {renderTemplate(content.cgv.content, {}, { asFragment: true })}
+            </span>
           </CheckboxField>
 
           {hasDonation && (

@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
-import type { Hipay } from '../../ixopay/types/Hipay.js';
+import type { Hipay } from '../../hipay/types/Hipay.js';
 import * as usePaymentSubmit from '../../../hooks/usePaymentSubmit.js';
 import * as useCapsConfigContext from '../../../hooks/utils/useCapsConfigContext.js';
 import * as useFormContext from '../../../hooks/utils/useForm.js';

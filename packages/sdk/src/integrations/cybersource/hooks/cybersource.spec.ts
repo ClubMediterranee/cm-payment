@@ -1,4 +1,4 @@
-import { createCybersourceMicroform } from './cybersource.js';
+import { createCybersourceMicroform, CYBERSOURCE_STYLES } from './cybersource.js';
 
 describe('createCybersourceMicroform', () => {
   let microformSpy: ReturnType<typeof vi.fn>;
@@ -27,6 +27,7 @@ describe('createCybersourceMicroform', () => {
         container: '#card-number',
         label: '.HostedField-label',
         placeholder: 'Card number',
+        styles: CYBERSOURCE_STYLES,
       }),
     );
     expect(result).toEqual({ token: 'microform-instance' });

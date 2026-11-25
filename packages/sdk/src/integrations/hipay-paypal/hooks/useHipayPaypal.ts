@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import integration from '../integration.config.js';
-import { HipayInstance } from '../../ixopay/types/Hipay.js';
+import { HipayInstance } from '../../hipay/types/Hipay.js';
 import { PspProviders } from '../../../types/PspProviders.js';
 import { usePaymentSubmit } from '../../../hooks/usePaymentSubmit.js';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext.js';

@@ -1,56 +1,54 @@
-import { get } from 'react-hook-form';
 import integration from '../integration.config.js';
 import { useCybersource } from '../hooks/useCybersource.js';
 import { useCapsConfigContext } from '../../../hooks/utils/useCapsConfigContext.js';
-import { useFormContext } from '../../../hooks/utils/useForm.js';
 import { FormPanel } from '../../../components/ui/FormPanel.js';
 import { HostedField } from '../../../components/ui/HostedField.js';
 import { MonthField } from '../../../components/ui/MonthField.js';
 
 export const CybersourceForm = () => {
   const { content } = useCapsConfigContext();
-  const { formState } = useFormContext();
+  const { cardNumber, expiryDate, cvc, placeholders, hints } = content.creditCardForm;
 
   const fields = {
     cardNumber: {
       selector: integration.mountPoints.cardNumber,
-      placeholder: content.creditCardForm.cardNumber,
+      placeholder: placeholders.cardNumber,
     },
-    cvc: {
-      selector: integration.mountPoints.cvc,
-      placeholder: content.creditCardForm.cvc,
-    },
+    cvc: { selector: integration.mountPoints.cvc, placeholder: placeholders.cvc },
   };
 
-  const { errors, isReady } = useCybersource({ fields });
+  const { fields: states, isReady } = useCybersource({ fields });
 
-  const fieldProps = { isLoading: !isReady };
+  const isLoading = !isReady;
 
   return (
     <FormPanel className="w-full">
-      <div className="flex flex-wrap gap-28">
+      <div className="flex flex-col gap-20">
         <HostedField
-          {...fieldProps}
-          error={errors.number}
-          label={content.creditCardForm.cardNumber}
           id={fields.cardNumber.selector}
+          label={cardNumber}
+          hint={hints.cardNumber}
+          state={states.cardNumber}
+          isLoading={isLoading}
+          icon="CreditCard"
         />
 
-        <div className="w-full flex flex-col md:flex-row gap-28">
-          <MonthField
-            {...fieldProps}
-            label={content.creditCardForm.expiryDate}
-            name="creditCard.expiryDate"
-            error={get(formState.errors, 'creditCard.expiryDate')?.message}
-          />
+        <MonthField
+          label={expiryDate}
+          placeholder={placeholders.expiryDate}
+          hint={hints.expiryDate}
+          isLoading={isLoading}
+          className="md:w-315"
+        />
 
-          <HostedField
-            {...fieldProps}
-            error={errors.securityCode}
-            label={content.creditCardForm.cvc}
-            id={fields.cvc.selector}
-          />
-        </div>
+        <HostedField
+          id={fields.cvc.selector}
+          label={cvc}
+          hint={hints.cvc}
+          state={states.cvc}
+          isLoading={isLoading}
+          className="md:w-315"
+        />
       </div>
     </FormPanel>
   );

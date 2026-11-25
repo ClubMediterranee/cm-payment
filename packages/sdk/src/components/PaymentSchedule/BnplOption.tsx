@@ -10,19 +10,16 @@ const BNPL_OPTION_COMPONENTS = {
 
 type BnplOptionProps = {
   provider: PaymentProvidersControllerGetPaymentProviders200BuyNowPayLaterProvidersItem;
-  name: string;
   checked: boolean;
   onChange: (value: string) => void;
 };
 
-export const BnplOption = ({ provider, name, checked, onChange }: BnplOptionProps) => {
+export const BnplOption = ({ provider, checked, onChange }: BnplOptionProps) => {
   const OptionComponent =
     BNPL_OPTION_COMPONENTS[provider.id as keyof typeof BNPL_OPTION_COMPONENTS];
 
   if (OptionComponent) {
-    return (
-      <OptionComponent provider={provider} name={name} checked={checked} onChange={onChange} />
-    );
+    return <OptionComponent provider={provider} checked={checked} onChange={onChange} />;
   }
 
   return null;

@@ -26,13 +26,13 @@ export const IframeView = () => {
   });
 
   const {
-    formState: { isValid, errors },
-    triggerAndTouch,
+    formState: { isValid },
     setValue,
   } = useFormContext();
 
   const watchedPaymentConditionId = useWatch('payment_condition_id');
   const watchedProviderId = useWatch('provider_id');
+  const watchedCgv = useWatch('cgv');
 
   const { thirdPartyIframe } = useProviderIntegrationMode();
 
@@ -63,14 +63,10 @@ export const IframeView = () => {
     }
   }, [isValid, watchedPaymentConditionId]);
 
-  useEffect(() => {
-    triggerAndTouch();
-  }, []);
-
   const ThirdPartyIframeComponent =
     thirdPartyIframeRegistry[watchedProviderId as keyof typeof thirdPartyIframeRegistry];
 
-  if (ThirdPartyIframeComponent && !errors.cgv?.message) {
+  if (ThirdPartyIframeComponent && watchedCgv) {
     return <ThirdPartyIframeComponent />;
   }
 
@@ -79,7 +75,7 @@ export const IframeView = () => {
   }
 
   return (
-    <div className="w-full flex justify-center flex-col items-center mt-24">
+    <div className="w-full flex justify-center flex-col items-center">
       <Spinner
         className={classNames('w-48', {
           hidden: !isPending,

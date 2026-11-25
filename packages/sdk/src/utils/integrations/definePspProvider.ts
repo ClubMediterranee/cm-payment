@@ -4,6 +4,8 @@ import type { PspProviders } from '../../types/PspProviders.js';
 
 export type PspProviderKind = 'form' | 'button';
 
+export type PspComponentProps = { className?: string };
+
 export type DefinePspProviderOpts = {
   /**
    * Id of the payment provider, as returned by the payment providers API.
@@ -13,7 +15,7 @@ export type DefinePspProviderOpts = {
    * `form`: rendered by the payment widget (default). `button`: replaces the submit button.
    */
   kind?: PspProviderKind;
-  component: ComponentType;
+  component: ComponentType<PspComponentProps>;
 };
 
 const container = new Map<string, DefinePspProviderOpts>();
@@ -31,6 +33,6 @@ export function definePspProvider(opts: DefinePspProviderOpts): DefinePspProvide
 export function getPspComponent(
   id: PspProviders | string | undefined,
   kind: PspProviderKind = 'form',
-): ComponentType | undefined {
+): ComponentType<PspComponentProps> | undefined {
   return id ? container.get(getKey(id, kind))?.component : undefined;
 }

@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -7,6 +7,9 @@ import { FormSubmitContext } from '../contexts/FormSubmitContext';
 import { PaymentPanel, type PaymentPanelProps } from './PaymentPanel';
 
 const watchedProvider = vi.hoisted(() => vi.fn());
+const CARD = { id: 'CARD', description: 'Pay by card', category_payment_method: 'CreditCard' };
+const PAYPAL = { id: 'PAYPAL', description: 'Pay with PayPal', category_payment_method: 'Paypal' };
+const providers = vi.hoisted(() => ({ current: [] as { id: string }[] }));
 
 vi.mock('../hooks/utils/useCapsConfigContext', () => ({
   useCapsConfigContext: () => ({ content: defaultContent }),
@@ -20,20 +23,17 @@ vi.mock('../hooks/utils/useProviderIntegrationMode', () => ({
 vi.mock('../hooks/data/usePaymentProviders', () => ({
   usePaymentProviders: () => ({
     data: {
-      paymentProviders: [
-        { id: 'CARD', description: 'Pay by card', category_payment_method: 'CreditCard' },
-        { id: 'PAYPAL', description: 'Pay with PayPal', category_payment_method: 'Paypal' },
-      ],
+      paymentProviders: providers.current,
       buyNowPayLaterProviders: [],
     },
   }),
 }));
 
-const { step, submit } = await vi.hoisted(async () => {
+const { block, submit } = await vi.hoisted(async () => {
   const { createElement } = await import('react');
 
   return {
-    step:
+    block:
       (name: string) =>
       ({ children, ...props }: { children?: ReactNode }) =>
         createElement(
@@ -46,24 +46,37 @@ const { step, submit } = await vi.hoisted(async () => {
   };
 });
 
-vi.mock('./BillingAddress', () => ({ BillingAddress: step('billing-address') }));
-vi.mock('./CardInstallments', () => ({ CardInstallments: step('card-installments') }));
-vi.mock('./Cgv', () => ({ Cgv: step('cgv') }));
-vi.mock('./Comments', () => ({ Comments: step('comments') }));
-vi.mock('./ContactChoice', () => ({ ContactChoice: step('contact-choice') }));
-vi.mock('./Donation', () => ({ Donation: step('donation') }));
-vi.mock('./PaymentWidget', () => ({ PaymentWidget: step('payment-widget') }));
-vi.mock('./PaymentPanel/Step', () => ({ Step: step('step') }));
+vi.mock('./BillingAddress', () => ({ BillingAddress: block('billing-address') }));
+vi.mock('./CardInstallments', () => ({ CardInstallments: block('card-installments') }));
+vi.mock('./Cgv', () => ({ Cgv: block('cgv') }));
+vi.mock('./Comments', () => ({ Comments: block('comments') }));
+vi.mock('./ContactChoice', () => ({ ContactChoice: block('contact-choice') }));
+vi.mock('./Donation', () => ({ Donation: block('donation') }));
+vi.mock('./PaymentWidget', () => ({ PaymentWidget: block('payment-widget') }));
+vi.mock('./PaymentSchedule/FreeDepositField', () => ({ FreeDepositField: block('free-deposit') }));
+vi.mock('./PaymentPanel/Step', () => ({ Step: block('step') }));
 vi.mock('./SubmitButton', () => ({ SubmitButton: submit }));
 
-const Harness = (props: PaymentPanelProps) => {
-  const methods = useForm({ defaultValues: { provider_id: 'CARD' } });
+type FormHandle = {
+  current: { setValue: (name: 'amount' | 'provider_id', value: string) => void } | null;
+};
+
+type HarnessProps = PaymentPanelProps & {
+  action?: string;
+  amount?: string;
+  formRef?: FormHandle;
+};
+
+const Harness = ({ action, amount = '', formRef, ...panelProps }: HarnessProps) => {
+  const methods = useForm({ defaultValues: { provider_id: 'CARD', action, amount } });
+
+  if (formRef) formRef.current = methods;
 
   return (
     <FormSubmitContext.Provider value={{ onSubmit: () => {} }}>
       <FormProvider {...methods}>
         <form id="payment-form">
-          <PaymentPanel {...props} />
+          <PaymentPanel {...panelProps} />
         </form>
       </FormProvider>
     </FormSubmitContext.Provider>
@@ -78,6 +91,7 @@ const stepsOf = (container: HTMLElement) =>
 describe('PaymentPanel', () => {
   beforeEach(() => {
     watchedProvider.mockReturnValue({ id: 'CARD', category_payment_method: 'CreditCard' });
+    providers.current = [CARD, PAYPAL];
   });
 
   it('lists the providers under their heading and expands only the selected one', () => {
@@ -102,20 +116,84 @@ describe('PaymentPanel', () => {
     expect(getByRole('button').className).toBe('self-center');
   });
 
-  it('reveals the providers, the blocks and the donation step by step', () => {
+  it('reveals the panel and the donation once a schedule is chosen, and every block at once', () => {
     const { container } = render(<Harness />);
 
-    expect(stepsOf(container)).toEqual([
-      'amount',
-      'amount',
-      'provider_id',
-      ['payment_condition_id', 'billing_details.attendee', 'billing_details.address'],
-      'billing_details.address',
-      ['template_id', 'billing_details.mobile_phone', 'billing_details.email'],
-      'comments',
-      'comments',
-      undefined,
-    ]);
+    expect(stepsOf(container)).toEqual(['amount']);
+    expect(
+      container.querySelector('[data-testid=step]')!.querySelectorAll('[data-testid]'),
+    ).toHaveLength(7);
+  });
+
+  describe('scroll', () => {
+    const scrollIntoView = vi.fn();
+
+    beforeEach(() => {
+      scrollIntoView.mockClear();
+      Element.prototype.scrollIntoView = scrollIntoView;
+      vi.stubGlobal('matchMedia', () => ({ matches: false }));
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    const pickSchedule = (form: FormHandle, amount = '100') =>
+      act(() => form.current!.setValue('amount', amount));
+
+    it('scrolls to the providers once a schedule is picked', () => {
+      const form: FormHandle = { current: null };
+      const { container } = render(<Harness formRef={form} />);
+
+      expect(scrollIntoView).not.toHaveBeenCalled();
+
+      pickSchedule(form);
+
+      expect(scrollIntoView).toHaveBeenCalledTimes(1);
+      expect(scrollIntoView.mock.contexts[0]).toBe(container.querySelector('.scroll-mt-40'));
+      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+    });
+
+    it('scrolls again on every schedule change', () => {
+      const form: FormHandle = { current: null };
+      const { rerender } = render(<Harness amount="100" formRef={form} />);
+
+      pickSchedule(form, '200');
+
+      expect(scrollIntoView).toHaveBeenCalledTimes(1);
+
+      watchedProvider.mockReturnValue({ id: 'ONEY', category_payment_method: 'BuyNowPayLater' });
+      rerender(<Harness amount="100" formRef={form} />);
+
+      expect(scrollIntoView).toHaveBeenCalledTimes(2);
+    });
+
+    it('scrolls instantly when the user prefers reduced motion', () => {
+      vi.stubGlobal('matchMedia', (query: string) => ({
+        matches: query === '(prefers-reduced-motion: reduce)',
+      }));
+      const form: FormHandle = { current: null };
+      render(<Harness formRef={form} />);
+
+      pickSchedule(form);
+
+      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'instant', block: 'start' });
+    });
+
+    it('does not scroll when the schedule is already chosen on load', () => {
+      render(<Harness amount="100" />);
+
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    });
+
+    it('does not scroll while typing a free deposit', () => {
+      const form: FormHandle = { current: null };
+      render(<Harness action="PAYMENT_PARTIAL" formRef={form} />);
+
+      pickSchedule(form);
+
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    });
   });
 
   it('renders the donation and the submit button in the host slots', () => {
@@ -128,7 +206,6 @@ describe('PaymentPanel', () => {
     expect(container.querySelector('button')).toBeNull();
     expect(donation.querySelector('[data-testid=donation]')).toBeTruthy();
     expect(submitSlot.querySelector('button')!.className).toBe('w-full');
-    expect(stepsOf(container)).toHaveLength(8);
 
     donation.remove();
     submitSlot.remove();
@@ -175,10 +252,32 @@ describe('PaymentPanel', () => {
   it('renders its children after the panel, inside the same step', () => {
     const { container, getByText } = render(<Harness>{() => <p>Extra</p>}</Harness>);
 
-    const firstStep = container.querySelector('[data-testid=step]')!;
+    const step = container.querySelector('[data-testid=step]')!;
 
-    expect(firstStep.contains(getByText('Extra'))).toBe(true);
-    expect(firstStep.lastElementChild).toBe(getByText('Extra'));
+    expect(step.contains(getByText('Extra'))).toBe(true);
+    expect(
+      step.querySelector('[data-testid=cgv]')!.compareDocumentPosition(getByText('Extra')),
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+
+  describe('single provider', () => {
+    beforeEach(() => {
+      providers.current = [CARD];
+    });
+
+    it('shows no radio and keeps the panel open', () => {
+      const { container, queryAllByRole } = render(<Harness />);
+
+      expect(queryAllByRole('radio')).toHaveLength(0);
+      expect(container.textContent).toContain('Pay by card');
+      expect(container.querySelector('[data-testid=cgv]')).toBeTruthy();
+    });
+
+    it('keeps the radio when children are passed', () => {
+      const { getAllByRole } = render(<Harness>{() => <p>Extra</p>}</Harness>);
+
+      expect(getAllByRole('radio')).toHaveLength(1);
+    });
   });
 
   it('shows only the blocks, without the provider list, for a buy now pay later provider', () => {

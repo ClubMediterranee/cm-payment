@@ -459,16 +459,16 @@ export const ShowsValidationStatus: Story = {
     const email = await canvas.findByLabelText('Email address', {}, { timeout: 10000 });
 
     await userEvent.type(email, 'abc');
-    expect(email.className).not.toContain('border-red');
+    expect(email.className).not.toContain('inset-ring-red');
 
     await userEvent.tab();
-    await waitFor(() => expect(email.className).toContain('border-red'));
+    await waitFor(() => expect(email.className).toContain('inset-ring-red'));
     expect(canvas.getByText('Invalid email')).toBeInTheDocument();
 
     await userEvent.clear(email);
     await userEvent.type(email, 'jean@example.com');
     await userEvent.tab();
-    await waitFor(() => expect(email.className).toContain('border-green'));
+    await waitFor(() => expect(email.className).toContain('inset-ring-green'));
     expect(canvas.queryByText('Invalid email')).toBeNull();
   },
 };

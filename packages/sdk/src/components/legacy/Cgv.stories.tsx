@@ -73,7 +73,7 @@ export const WithInteractions: Story = {
 
     // Vérifier que le texte des CGV est présent
     await waitFor(() => {
-      expect(canvas.getByText(/Validating my reservation implies/)).toBeInTheDocument();
+      expect(canvas.getByText(/payment obligation/)).toBeInTheDocument();
     });
 
     // Trouver le checkbox principal CGV
@@ -121,7 +121,9 @@ export const ValidationTest: Story = {
 
     // Attendre que le message d'erreur apparaisse
     await waitFor(() => {
-      expect(canvas.getByText('You must accept the T&C')).toBeInTheDocument();
+      expect(
+        canvas.getByText('Please accept the terms and conditions of sale'),
+      ).toBeInTheDocument();
     });
   },
 };
@@ -139,7 +141,7 @@ export const AccessibilityTest: Story = {
 
     // Attendre que le composant soit rendu
     await waitFor(() => {
-      expect(canvas.getByText(/Validating my reservation implies/)).toBeInTheDocument();
+      expect(canvas.getByText(/payment obligation/)).toBeInTheDocument();
     });
 
     // Vérifier que le checkbox est accessible via le clavier
@@ -177,7 +179,7 @@ export const WithDonation: Story = {
 
     // Attendre que le composant soit rendu
     await waitFor(() => {
-      expect(canvas.getByText(/Validating my reservation implies/)).toBeInTheDocument();
+      expect(canvas.getByText(/payment obligation/)).toBeInTheDocument();
     });
 
     // Vérifier que les deux checkboxes sont présents (CGV principale + CGV donation)

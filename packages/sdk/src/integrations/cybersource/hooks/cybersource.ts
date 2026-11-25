@@ -1,4 +1,17 @@
-import type { CybersourceMicroform } from '../types/Cybersource.js';
+import type { CybersourceMicroform, CybersourceStyles } from '../types/Cybersource.js';
+import { HOSTED_FIELD_THEME } from '../../../utils/integrations/hostedFieldTheme.js';
+
+export const CYBERSOURCE_STYLES: CybersourceStyles = {
+  input: {
+    'font-family': HOSTED_FIELD_THEME.fontFamily,
+    'font-size': HOSTED_FIELD_THEME.fontSize,
+    'line-height': HOSTED_FIELD_THEME.lineHeight,
+    color: HOSTED_FIELD_THEME.color,
+  },
+  '::placeholder': { color: HOSTED_FIELD_THEME.placeholderColor },
+  valid: { color: HOSTED_FIELD_THEME.color },
+  invalid: { color: HOSTED_FIELD_THEME.color },
+};
 
 export const createCybersourceMicroform = (
   token: string,
@@ -7,26 +20,14 @@ export const createCybersourceMicroform = (
     cvc: { selector: string; placeholder: string };
   },
 ): CybersourceMicroform => {
-  const Flex = (window as unknown as Window & { Flex: any }).Flex;
+  const flex = new window.Flex(token);
 
-  const flex = new Flex(token);
-
-  const microform = flex.microform({
+  return flex.microform({
     keyId: token,
     keystore: token,
     container: `#${fields.cardNumber.selector}`,
     label: '.HostedField-label',
     placeholder: fields.cardNumber.placeholder,
-    styles: {
-      input: {
-        'font-size': '14px',
-        color: '#000',
-      },
-      '::placeholder': {
-        color: '#9ca3af',
-      },
-    },
+    styles: CYBERSOURCE_STYLES,
   });
-
-  return microform;
 };

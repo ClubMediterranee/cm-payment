@@ -1,10 +1,11 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 
+import { defaultContent } from '../../../content/default.js';
 import * as useCapsConfigContext from '../../../hooks/utils/useCapsConfigContext.js';
 import * as useFormContext from '../../../hooks/utils/useForm.js';
 import * as useScriptLoader from '../../../hooks/utils/useScriptLoader.js';
 import * as useWatchedPaymentProvider from '../../../hooks/utils/useWatchedPaymentProvider.js';
-import { useIxopayHostedFields } from './useIxopayHostedFields.js';
+import { IXOPAY_STYLE, useIxopayHostedFields } from './useIxopayHostedFields.js';
 
 vi.mock('react-hook-form', async () => {
   const actual = await vi.importActual('react-hook-form');
@@ -36,22 +37,8 @@ describe('useIxopayHostedFields', () => {
     cvc: 'ixopay-card-cvc',
   };
 
-  const mockContent = {
-    creditCardForm: {
-      title: 'Carte bancaire',
-      cardNumber: 'Numéro de carte',
-      fullName: 'Nom complet',
-      expiryDate: "Date d'expiration",
-      cvc: 'CVV',
-      validation: {
-        cardNumber: 'Numéro de carte invalide',
-        cvc: 'CVV invalide',
-      },
-    },
-  };
-
   let mockSetValue: ReturnType<typeof vi.fn>;
-  let mockFormState: { isSubmitting: boolean };
+  let mockFormState: { isSubmitting: boolean; submitCount: number };
   let formContextSpy: any;
 
   beforeEach(() => {
@@ -59,10 +46,10 @@ describe('useIxopayHostedFields', () => {
     vi.clearAllMocks();
 
     mockSetValue = vi.fn();
-    mockFormState = { isSubmitting: false };
+    mockFormState = { isSubmitting: false, submitCount: 0 };
 
     vi.spyOn(useCapsConfigContext, 'useCapsConfigContext').mockReturnValue({
-      content: mockContent as any,
+      content: defaultContent,
     } as any);
 
     formContextSpy = vi.spyOn(useFormContext, 'useFormContext');
@@ -144,82 +131,79 @@ describe('useIxopayHostedFields', () => {
     expect(mockPaymentJsInit).not.toHaveBeenCalled();
   });
 
-  it('should update field errors on number input change', async () => {
-    let onNumberInputCallback: (data: any) => void = () => {};
+  const listenersOf = (on: ReturnType<typeof vi.fn>) => (event: string) =>
+    on.mock.calls.find(([name]) => name === event)?.[1];
 
-    mockNumberOn.mockImplementation((event, callback) => {
-      if (event === 'input') {
-        onNumberInputCallback = callback;
-      }
-    });
+  const renderReady = async () => {
+    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({ isLoaded: true });
 
-    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
-      isLoaded: true,
-    });
+    const hook = renderHook(() => useIxopayHostedFields({ fieldSelectors: mockFieldSelectors }));
 
-    const { result } = renderHook(() =>
-      useIxopayHostedFields({ fieldSelectors: mockFieldSelectors }),
+    await waitFor(() => expect(hook.result.current.isReady).toBe(true));
+
+    return { ...hook, number: listenersOf(mockNumberOn), cvv: listenersOf(mockCvvOn) };
+  };
+
+  it('styles both hosted fields and sets their placeholders', async () => {
+    await renderReady();
+
+    expect(mockSetNumberStyle).toHaveBeenCalledWith(IXOPAY_STYLE);
+    expect(mockSetCvvStyle).toHaveBeenCalledWith(IXOPAY_STYLE);
+    expect(mockSetNumberPlaceholder).toHaveBeenCalledWith(
+      defaultContent.creditCardForm.placeholders.cardNumber,
     );
-
-    await waitFor(() => {
-      expect(result.current.isReady).toBe(true);
-      expect(mockNumberOn).toHaveBeenCalledWith('input', expect.any(Function));
-    });
-
-    await act(async () => {
-      onNumberInputCallback({ validNumber: false });
-    });
-
-    await waitFor(() => {
-      expect(result.current.errors.number).toBeDefined();
-    });
-
-    await act(async () => {
-      onNumberInputCallback({ validNumber: true });
-    });
-
-    await waitFor(() => {
-      expect(result.current.errors.number).toBeUndefined();
-    });
+    expect(mockSetCvvPlaceholder).toHaveBeenCalledWith(
+      defaultContent.creditCardForm.placeholders.cvc,
+    );
   });
 
-  it('should update field errors on cvv input change', async () => {
-    let onCvvInputCallback: (data: any) => void = () => {};
+  it('keeps an incorrect card number neutral while typing and shows its error on blur', async () => {
+    const { result, number } = await renderReady();
 
-    mockCvvOn.mockImplementation((event, callback) => {
-      if (event === 'input') {
-        onCvvInputCallback = callback;
-      }
+    await act(async () => {
+      number('focus')({ validNumber: false, numberLength: 0 });
+      number('input')({ validNumber: false, numberLength: 4 });
     });
 
-    vi.spyOn(useScriptLoader, 'useScriptLoader').mockReturnValue({
-      isLoaded: true,
-    });
-
-    const { result } = renderHook(() =>
-      useIxopayHostedFields({ fieldSelectors: mockFieldSelectors }),
-    );
-
-    await waitFor(() => {
-      expect(result.current.isReady).toBe(true);
-      expect(mockCvvOn).toHaveBeenCalledWith('input', expect.any(Function));
+    expect(result.current.fields.number).toEqual({
+      status: 'default',
+      focused: true,
+      filled: true,
+      error: undefined,
     });
 
     await act(async () => {
-      onCvvInputCallback({ validCvv: false });
+      number('blur')({ validNumber: false, numberLength: 4 });
     });
 
-    await waitFor(() => {
-      expect(result.current.errors.cvv).toBeDefined();
+    expect(result.current.fields.number).toMatchObject({
+      status: 'error',
+      focused: false,
+      error: defaultContent.creditCardForm.validation.cardNumber,
     });
 
     await act(async () => {
-      onCvvInputCallback({ validCvv: true });
+      number('input')({ validNumber: true, numberLength: 16 });
     });
 
-    await waitFor(() => {
-      expect(result.current.errors.cvv).toBeUndefined();
+    expect(result.current.fields.number.status).toBe('success');
+  });
+
+  it('tracks the cvv validity and focus', async () => {
+    const { result, cvv } = await renderReady();
+
+    await act(async () => {
+      cvv('focus')({ validCvv: false, cvvLength: 0 });
     });
+
+    expect(result.current.fields.cvv.focused).toBe(true);
+
+    await act(async () => {
+      cvv('input')({ validCvv: true, cvvLength: 3 });
+      cvv('blur')({ validCvv: true, cvvLength: 3 });
+    });
+
+    expect(result.current.fields.cvv).toMatchObject({ status: 'success', focused: false });
   });
 
   it('should generate token on form submission when ready', async () => {
@@ -227,7 +211,7 @@ describe('useIxopayHostedFields', () => {
     mockUseWatch.mockImplementation((field: string) => {
       if (field === 'token.value') return undefined;
       if (field === 'token.status') return 'idle';
-      if (field === 'creditCard.expiryDate') return '2025-12-01';
+      if (field === 'creditCard.expiryDate') return '2025 / 12';
       if (field === 'creditCard.cardHolder') return 'John Doe';
       return undefined;
     });
@@ -251,7 +235,7 @@ describe('useIxopayHostedFields', () => {
     });
 
     formContextSpy.mockReturnValue({
-      formState: { isSubmitting: true },
+      formState: { isSubmitting: true, submitCount: 0 },
       setValue: mockSetValue,
       control: {} as any,
     } as any);
@@ -286,7 +270,7 @@ describe('useIxopayHostedFields', () => {
     mockUseWatch.mockImplementation((field: string) => {
       if (field === 'token.value') return undefined;
       if (field === 'token.status') return 'idle';
-      if (field === 'creditCard.expiryDate') return '2025-12-01';
+      if (field === 'creditCard.expiryDate') return '2025 / 12';
       if (field === 'creditCard.cardHolder') return 'John Doe';
       return undefined;
     });
@@ -301,6 +285,7 @@ describe('useIxopayHostedFields', () => {
       onError([
         { attribute: 'number', message: 'Invalid card number' },
         { attribute: 'cvv', message: 'Invalid CVV' },
+        { attribute: 'card_holder', message: 'Invalid card holder' },
       ]);
     });
 
@@ -313,7 +298,7 @@ describe('useIxopayHostedFields', () => {
     });
 
     formContextSpy.mockReturnValue({
-      formState: { isSubmitting: true },
+      formState: { isSubmitting: true, submitCount: 0 },
       setValue: mockSetValue,
       control: {} as any,
     } as any);
@@ -329,8 +314,8 @@ describe('useIxopayHostedFields', () => {
       });
     });
 
-    expect(result.current.errors.number).toBe('Invalid card number');
-    expect(result.current.errors.cvv).toBe('Invalid CVV');
+    expect(result.current.fields.number.error).toBe('Invalid card number');
+    expect(result.current.fields.cvv.error).toBe('Invalid CVV');
   });
 
   it('should not generate token if expiry date is missing', async () => {
@@ -360,7 +345,7 @@ describe('useIxopayHostedFields', () => {
     });
 
     formContextSpy.mockReturnValue({
-      formState: { isSubmitting: true },
+      formState: { isSubmitting: true, submitCount: 0 },
       setValue: mockSetValue,
       control: {} as any,
     } as any);
@@ -373,6 +358,28 @@ describe('useIxopayHostedFields', () => {
       expect(mockPaymentJsInit).toHaveBeenCalled();
     });
 
+    expect(mockPaymentJsTokenize).not.toHaveBeenCalled();
+  });
+
+  it('flags the token in error when the expiry date is malformed', async () => {
+    vi.spyOn(useFormContext, 'useWatch').mockImplementation((field: string) => {
+      if (field === 'creditCard.expiryDate') return '2025 / 1';
+      if (field === 'creditCard.cardHolder') return 'John Doe';
+      return undefined;
+    });
+
+    const { rerender } = await renderReady();
+
+    formContextSpy.mockReturnValue({
+      formState: { isSubmitting: true, submitCount: 0 },
+      setValue: mockSetValue,
+      control: {} as any,
+    } as any);
+    act(() => rerender());
+
+    await waitFor(() => {
+      expect(mockSetValue).toHaveBeenCalledWith('token', { value: '', status: 'error' });
+    });
     expect(mockPaymentJsTokenize).not.toHaveBeenCalled();
   });
 });

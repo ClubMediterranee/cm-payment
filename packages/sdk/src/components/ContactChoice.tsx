@@ -1,14 +1,14 @@
 import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
-import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
 import clsx from 'clsx';
 
 import { useContactChoice } from '../hooks/useContactChoice';
-import { useProfilePrefill } from '../hooks/useProfilePrefill';
+import { CONTACT_MAPPING, useProfilePrefill } from '../hooks/useProfilePrefill';
 import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext, useWatch } from '../hooks/utils/useForm';
 import { TOKENS } from '../types/Tokens';
 import { renderTemplate } from '../utils/renderTemplate';
 import { RadioSkeleton, TextFieldSkeleton } from './ui/skeletons';
+import { ValidatedTextField } from './ui/ValidatedTextField';
 
 type Props = {
   className?: string;
@@ -18,15 +18,14 @@ type Props = {
 
 export const ContactChoice = ({ className, reference, uuid }: Props) => {
   const { content } = useCapsConfigContext();
-  const { setValue, formState } = useFormContext();
+  const { setValue } = useFormContext();
   const templateId = useWatch('template_id');
-  const billingDetails = useWatch('billing_details') || {};
 
   const { contactChoices, shouldDisplay, templateIds } = useContactChoice({
     reference,
     uuid,
   });
-  useProfilePrefill(!!shouldDisplay);
+  useProfilePrefill(!!shouldDisplay, CONTACT_MAPPING);
 
   if (!shouldDisplay) {
     return null;
@@ -44,15 +43,15 @@ export const ContactChoice = ({ className, reference, uuid }: Props) => {
           const isCurrentTemplate = choice.templateId === templateId;
           const { input } = choice;
           const field = input && content.contactChoice.fields[input.name];
-          const fieldError = input && formState.errors.billing_details?.[input.name];
-          const isTouched = input && formState.touchedFields.billing_details?.[input.name];
 
           return (
             <div
               key={choice.templateId}
               className={clsx(
-                'flex min-w-256 flex-1 flex-col gap-16 rounded-16 border-2 bg-white p-16',
-                isCurrentTemplate ? 'border-black' : 'border-lightGrey',
+                'flex min-w-256 flex-1 flex-col gap-16 rounded-32 bg-white p-20',
+                isCurrentTemplate
+                  ? 'inset-ring-2 inset-ring-black'
+                  : 'inset-ring inset-ring-lightGrey',
               )}
             >
               <Radio
@@ -63,34 +62,20 @@ export const ContactChoice = ({ className, reference, uuid }: Props) => {
                 onChange={() => setValue('template_id', choice.templateId)}
                 data-testid={`radio-${choice.templateId}`}
               >
-                <span className="font-bold" data-textid="ContactChoicesLabel">
+                <span className="font-semibold" data-textid="ContactChoicesLabel">
                   {renderTemplate(content.contactChoice.choiceLabel, {
                     label: choice.radio.label,
                   })}
                 </span>
               </Radio>
               {input && field && (
-                <TextField
+                <ValidatedTextField
                   type={input.type}
-                  value={billingDetails[input.name] || ''}
-                  onChange={(_, value) =>
-                    setValue(`billing_details.${input.name}`, value, {
-                      shouldValidate: !!isTouched,
-                    })
-                  }
-                  onBlur={() =>
-                    setValue(`billing_details.${input.name}`, billingDetails[input.name] || '', {
-                      shouldTouch: true,
-                      shouldValidate: true,
-                    })
-                  }
-                  disabled={!isCurrentTemplate}
-                  data-name={`InputFor_${input.name}`}
-                  data-testid={`InputFor_${input.name}`}
+                  name={`billing_details.${input.name}`}
                   label={field.label}
                   placeholder={field.placeholder}
-                  errorMessage={fieldError?.message}
-                  validationStatus={fieldError ? 'error' : isTouched ? 'success' : 'default'}
+                  disabled={!isCurrentTemplate}
+                  data-testid={`InputFor_${input.name}`}
                 />
               )}
             </div>
@@ -106,7 +91,7 @@ const ContactChoiceSkeleton = () => (
     {[1, 2].map((i) => (
       <div
         key={i}
-        className="flex min-w-256 flex-1 flex-col gap-16 rounded-16 border-2 border-lightGrey p-16"
+        className="flex min-w-256 flex-1 flex-col gap-16 rounded-32 bg-white p-20 inset-ring inset-ring-lightGrey"
       >
         <RadioSkeleton />
         <TextFieldSkeleton />

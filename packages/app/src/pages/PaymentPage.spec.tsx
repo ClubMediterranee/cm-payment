@@ -51,9 +51,8 @@ describe('PaymentPage', () => {
     theme.current = 'current';
     render(<PaymentPage />);
 
-    expect(
-      screen.getByRole('heading', { name: 'Payment' }).parentElement!.querySelectorAll('hr'),
-    ).toHaveLength(2);
+    const title = screen.getByRole('heading', { level: 2, name: 'Payment' });
+    expect(title.parentElement!.querySelectorAll('[aria-hidden="true"]')).toHaveLength(2);
     expect(screen.getByTestId('stay-v2')).toBeTruthy();
     expect(screen.queryByTestId('stay')).toBeNull();
     expect(formProps.mock.lastCall![0]).toEqual(
@@ -64,9 +63,7 @@ describe('PaymentPage', () => {
   it('keeps the legacy stay card and the form in the legacy theme', () => {
     render(<PaymentPage />);
 
-    expect(
-      screen.getByRole('heading', { name: 'Payment' }).parentElement!.querySelectorAll('hr'),
-    ).toHaveLength(0);
+    expect(screen.getByRole('heading', { level: 1, name: 'Payment' })).toBeTruthy();
     expect(screen.getByTestId('stay')).toBeTruthy();
     expect(screen.queryByTestId('stay-v2')).toBeNull();
     expect(formProps.mock.lastCall![0]).toEqual(

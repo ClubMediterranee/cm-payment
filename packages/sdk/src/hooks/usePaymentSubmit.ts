@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 
 import { useFormCallbacks } from '../contexts/FormCallbacksContext';
 import { errorEvent, loadEndEvent, loadEvent, submitEvent } from '../embed/shared/events';
+import { focusFirstError } from '../utils/focusFirstError';
 import { loadPaymentProviderUrl } from '../utils/loadPaymentProviderUrl';
 import { usePaymentRedirect } from './data/usePaymentRedirect';
 import { useTokenRetry } from './useTokenRetry';
@@ -46,16 +47,24 @@ export const usePaymentSubmit = ({ targetIframe }: UsePaymentSubmitParams = {}) 
   }, [iframe, isPending]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    await methods.handleSubmit((data) => {
-      onEvent?.(
-        submitEvent({
-          provider_id: data.provider_id,
-          amount: Number(data.amount),
-          currency: data.currency,
-        }),
-      );
-      mutate(data);
-    }, handleTokenValidationError)(e);
+    const root = e?.target instanceof Element ? e.target : document;
+
+    await methods.handleSubmit(
+      (data) => {
+        onEvent?.(
+          submitEvent({
+            provider_id: data.provider_id,
+            amount: Number(data.amount),
+            currency: data.currency,
+          }),
+        );
+        mutate(data);
+      },
+      (errors) => {
+        handleTokenValidationError(errors);
+        focusFirstError(root);
+      },
+    )(e);
   };
 
   return { handleSubmit, ...mutationProps };

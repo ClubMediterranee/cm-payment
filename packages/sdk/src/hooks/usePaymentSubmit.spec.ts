@@ -4,6 +4,7 @@ import type { Mock } from 'vitest';
 import * as FormCallbacksContextModule from '../contexts/FormCallbacksContext';
 import type { CapsEvent } from '../embed/shared';
 import { CapsFormSchema } from '../schemas/capsFormSchema';
+import * as focusFirstErrorModule from '../utils/focusFirstError';
 import * as usePaymentRedirectModule from './data/usePaymentRedirect';
 import { usePaymentSubmit } from './usePaymentSubmit';
 import * as useTokenRetryModule from './useTokenRetry';
@@ -233,6 +234,22 @@ describe('usePaymentSubmit', () => {
     expect(mockHandleTokenValidationError).toHaveBeenCalledWith({
       token: { value: 'Token is required' },
     });
+  });
+
+  it('should focus the first error inside the submitted form on an invalid submit', async () => {
+    const focusFirstError = vi.spyOn(focusFirstErrorModule, 'focusFirstError').mockReturnValue();
+    mockHandleSubmit.mockImplementation(
+      (_onValid?: unknown, onInvalid?: (errors: any) => void) => async () => onInvalid?.({}),
+    );
+    const form = document.createElement('form');
+
+    const { result } = renderHook(() => usePaymentSubmit());
+
+    await result.current.handleSubmit({ target: form } as any);
+    expect(focusFirstError).toHaveBeenLastCalledWith(form);
+
+    await result.current.handleSubmit();
+    expect(focusFirstError).toHaveBeenLastCalledWith(document);
   });
 
   it('should retry with getValues when token retry is triggered', () => {

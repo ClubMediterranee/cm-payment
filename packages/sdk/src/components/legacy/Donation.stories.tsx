@@ -196,8 +196,9 @@ export const InformationModal: Story = {
 
     await waitFor(() => {
       expect(canvas.getByText(/Your donation is tax deductible/i)).toBeInTheDocument();
-      const modalImage = canvas.getByAltText(/Friends of the Foundation/i);
-      expect(modalImage).toBeInTheDocument();
+      expect(
+        canvas.getByRole('dialog', { name: /Friends of the Foundation/i }),
+      ).toBeInTheDocument();
     });
 
     const closeButtons = canvas.getAllByRole('button', { name: /close/i });

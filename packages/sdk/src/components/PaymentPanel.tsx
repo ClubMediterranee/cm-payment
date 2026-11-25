@@ -1,4 +1,6 @@
-import type { ReactNode } from 'react';
+import clsx from 'clsx';
+import { type ReactNode, useEffect, useRef } from 'react';
+import { useWatch } from 'react-hook-form';
 
 import { Action, PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import type { CapsFormSlots } from '../embed/shared';
@@ -6,6 +8,7 @@ import { useCapsConfigContext } from '../hooks/utils/useCapsConfigContext';
 import { useFormContext } from '../hooks/utils/useForm';
 import { useProviderIntegrationMode } from '../hooks/utils/useProviderIntegrationMode';
 import { useWatchedPaymentProvider } from '../hooks/utils/useWatchedPaymentProvider';
+import type { CapsFormSchema } from '../schemas/capsFormSchema';
 import { TOKENS } from '../types/Tokens';
 import { BillingAddress } from './BillingAddress';
 import { FormSlot, SubmitSlot } from './CapsPaymentForm/FormSlots';
@@ -48,51 +51,50 @@ const PaymentDetails = ({
   isPartialPayment,
 }: PaymentDetailsProps) => {
   const { content } = useCapsConfigContext();
-  const { iframe } = useProviderIntegrationMode();
+  const { iframe, custom, hostedField } = useProviderIntegrationMode();
+  const cgvFirst = isBuyNowPayLater || iframe || custom;
+
+  const cgv = (
+    <Cgv>
+      <Title
+        as="h4"
+        variant="label"
+        className={hostedField ? 'hidden md:block' : 'text-center md:text-left'}
+      >
+        {content.cgv.heading}
+      </Title>
+    </Cgv>
+  );
 
   return (
     <BorderlessFormPanels value={!isBuyNowPayLater}>
-      <div
-        data-cgv-first={isBuyNowPayLater || iframe || undefined}
-        className="group/panel flex flex-col gap-40"
-      >
+      <div className="flex w-full flex-col gap-40">
         {isPartialPayment && <FreeDepositField />}
-        <Step after="amount">
-          <CardInstallments />
-        </Step>
-        <Step after="provider_id">
-          <BillingAddress>
-            <Title className="mb-20 text-center">{content.billingAddress.heading}</Title>
-          </BillingAddress>
-        </Step>
-        <Step
-          after={['payment_condition_id', 'billing_details.attendee', 'billing_details.address']}
+        <CardInstallments />
+        <BillingAddress>
+          <Title as="h4" variant="section" className="text-h5 md:text-h4">
+            {content.billingAddress.heading}
+          </Title>
+        </BillingAddress>
+        <ContactChoice reference={reference} uuid={uuid} />
+        <Comments>
+          <Title as="h4" variant="label">
+            {content.comments.heading}
+          </Title>
+        </Comments>
+        <div
+          className={clsx(
+            'flex w-full flex-col self-center',
+            isBuyNowPayLater ? 'gap-40' : 'gap-20 md:max-w-700',
+          )}
         >
+          {cgvFirst && cgv}
           <PaymentWidget />
-        </Step>
-        <Step after="billing_details.address">
-          <ContactChoice reference={reference} uuid={uuid} />
-        </Step>
-        <Step after={['template_id', 'billing_details.mobile_phone', 'billing_details.email']}>
-          <Comments>
-            <Title variant="label">{content.comments.heading}</Title>
-          </Comments>
-        </Step>
-        {!slots?.donation && (
-          <Step after="comments">
-            <Donation />
-          </Step>
-        )}
-        <Step after="comments">
-          <Cgv className="group-data-cgv-first/panel:-order-1">
-            <Title variant="label">{content.cgv.heading}</Title>
-          </Cgv>
-        </Step>
-        <Step>
-          <SubmitSlot target={slots?.submit}>
-            <SubmitButton className={slots?.submit ? 'w-full' : 'self-center'} />
-          </SubmitSlot>
-        </Step>
+          {!cgvFirst && cgv}
+        </div>
+        <SubmitSlot target={slots?.submit}>
+          <SubmitButton className={slots?.submit ? 'w-full' : 'self-center'} />
+        </SubmitSlot>
       </div>
     </BorderlessFormPanels>
   );
@@ -119,6 +121,22 @@ export const PaymentPanel = ({
     watchedProvider?.category_payment_method ===
     PaymentProvider1CategoryPaymentMethod.BuyNowPayLater;
 
+  const amount = useWatch<CapsFormSchema, 'amount'>({ name: 'amount', disabled: isPartialPayment });
+  const schedule = isBuyNowPayLater ? watchedProvider?.id : amount;
+  const panelRef = useRef<HTMLDivElement>(null);
+  const previousSchedule = useRef(schedule);
+
+  useEffect(() => {
+    if (schedule && schedule !== previousSchedule.current) {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      panelRef.current?.scrollIntoView({
+        behavior: reducedMotion ? 'instant' : 'smooth',
+        block: 'start',
+      });
+    }
+    previousSchedule.current = schedule;
+  }, [schedule]);
+
   const details = (
     <PaymentDetails
       reference={reference}
@@ -129,20 +147,23 @@ export const PaymentPanel = ({
     />
   );
 
-  const panel = (
-    <>
-      {isBuyNowPayLater ? (
-        <div className={className}>{details}</div>
-      ) : (
-        <PaymentProviders className={className}>{details}</PaymentProviders>
-      )}
+  const content = (
+    <div className="flex flex-col gap-24">
+      <div ref={panelRef} className={clsx('scroll-mt-40', className)}>
+        {isBuyNowPayLater ? (
+          details
+        ) : (
+          <PaymentProviders alwaysSelectable={!!children}>{details}</PaymentProviders>
+        )}
+      </div>
       {children?.({ isProviderSelected: !!watchedProvider, deselectProvider })}
-    </>
+      {!slots?.donation && <Donation />}
+    </div>
   );
 
   return (
     <>
-      {isPartialPayment ? panel : <Step after="amount">{panel}</Step>}
+      {isPartialPayment ? content : <Step after="amount">{content}</Step>}
       {slots?.donation && (
         <FormSlot target={slots.donation}>
           <Donation />

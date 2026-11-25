@@ -36,9 +36,26 @@ export type IxopayEventType =
   | 'tab'
   | 'shift-tab';
 
+export type IxopayStyle = Partial<
+  Record<
+    | 'border'
+    | 'width'
+    | 'height'
+    | 'outline'
+    | 'box-shadow'
+    | 'font-family'
+    | 'font-size'
+    | 'line-height'
+    | 'color',
+    string
+  >
+> & {
+  '::placeholder'?: { color: string };
+};
+
 export interface IxopayPayment {
-  setNumberStyle(style: Record<string, string>): void;
-  setCvvStyle(style: Record<string, string>): void;
+  setNumberStyle(style: IxopayStyle): void;
+  setCvvStyle(style: IxopayStyle): void;
   setNumberPlaceholder(text: string): void;
   setCvvPlaceholder(text: string): void;
   numberOn(event: IxopayEventType, callback: (data: IxopayEventData) => void): void;

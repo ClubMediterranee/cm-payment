@@ -90,6 +90,16 @@ describe('useOneySimulationPopin', () => {
     });
   });
 
+  it('should use the given payment amount instead of the form amount', () => {
+    const { result } = renderHook(() => useOneySimulationPopin({ paymentAmount: 2808 }));
+
+    result.current.handlePopinClick();
+
+    expect(mockGetOneyPopinOptions).toHaveBeenCalledWith(
+      expect.objectContaining({ payment_amount: 2808 }),
+    );
+  });
+
   it('should call loadOneySimulationPopin with options', () => {
     const { result } = renderHook(() => useOneySimulationPopin());
 
