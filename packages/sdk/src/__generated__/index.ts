@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3473.0
+ * OpenAPI spec version: 0.3524.0
  */
 import type {
   BookingTransportDetailsListModelV2,
@@ -28,623 +28,192 @@ import type {
   ProposalTransportDetailsListModelV5,
   ProviderParametersModel,
   TokenHolderModel,
-  TokenRequestModel,
+  TokenRequestModel
 } from './index.schemas';
 
 import { fetcher } from '../utils/fetcher';
 
-/**
+
+
+  /**
  * @summary Get list of available countries
  */
-export const getV0Countries = (params?: GetV0CountriesParams) => {
-  return fetcher<CountriesModel>({ url: `/api/v0/countries`, method: 'GET', params });
-};
-
+export const getV0Countries = (
+    params?: GetV0CountriesParams,
+ ) => {
+      return fetcher<CountriesModel>(
+      {url: `/api/v0/countries`, method: 'GET',
+        params
+    },
+      );
+    }
+  
 /**
  * @summary Returns the list of payment providers for this locale (<em>accept-language</em>).
  */
-export const getV1PaymentProviders = () => {
-  return fetcher<PaymentProviderListModel2>({ url: `/api/v1/payment_providers`, method: 'GET' });
-};
-
+export const getV1PaymentProviders = (
+    
+ ) => {
+      return fetcher<PaymentProviderListModel2>(
+      {url: `/api/v1/payment_providers`, method: 'GET'
+    },
+      );
+    }
+  
 /**
  * @summary Returns the proposal corresponding to the given proposal_id
  */
-export const getV2ProposalsProposalId = (proposalId: string) => {
-  return fetcher<ProposalResponseModelV1>({
-    url: `/api/v2/proposals/${proposalId}`,
-    method: 'GET',
-  });
-};
-
+export const getV2ProposalsProposalId = (
+    proposalId: string,
+ ) => {
+      return fetcher<ProposalResponseModelV1>(
+      {url: `/api/v2/proposals/${proposalId}`, method: 'GET'
+    },
+      );
+    }
+  
 /**
  * The response follow the model of an xmResponse with a finalisePaymentResponse.
  * @deprecated
  * @summary Retrieves the status of a payment
  */
-export const getV0PaymentsPaymentIdStatus = (paymentId: string) => {
-  return fetcher<PaymentStatusModel>({
-    url: `/api/v0/payments/${paymentId}/status`,
-    method: 'GET',
-  });
-};
-
+export const getV0PaymentsPaymentIdStatus = (
+    paymentId: string,
+ ) => {
+      return fetcher<PaymentStatusModel>(
+      {url: `/api/v0/payments/${paymentId}/status`, method: 'GET'
+    },
+      );
+    }
+  
 /**
  * This resource lists detailed information about a given account.
  * @summary Comprehensive information about a customer
  */
-export const getV2CustomersCustomerIdProfile = (customerId: string) => {
-  return fetcher<ProfileModelV2>({ url: `/api/v2/customers/${customerId}/profile`, method: 'GET' });
-};
-
+export const getV2CustomersCustomerIdProfile = (
+    customerId: string,
+ ) => {
+      return fetcher<ProfileModelV2>(
+      {url: `/api/v2/customers/${customerId}/profile`, method: 'GET'
+    },
+      );
+    }
+  
 /**
  * @summary Retrieve the validation schema of a resource (use json-schema).
 Some resources need to be validated by a json schema, they have an embedded link to this route to retrieve the correct json validation schema
  */
 export const getV3SchemasResourceLocaleorcountry = (
-  resource: 'profile' | 'billing',
-  localeOrCountry:
-    | 'AD'
-    | 'AE'
-    | 'AF'
-    | 'AG'
-    | 'AL'
-    | 'AM'
-    | 'AO'
-    | 'AR'
-    | 'AT'
-    | 'AU'
-    | 'AZ'
-    | 'BA'
-    | 'BB'
-    | 'BD'
-    | 'BE'
-    | 'BF'
-    | 'BG'
-    | 'BH'
-    | 'BI'
-    | 'BJ'
-    | 'BL'
-    | 'BM'
-    | 'BN'
-    | 'BO'
-    | 'BR'
-    | 'BS'
-    | 'BT'
-    | 'BW'
-    | 'BY'
-    | 'BZ'
-    | 'CA'
-    | 'CD'
-    | 'CF'
-    | 'CG'
-    | 'CH'
-    | 'CI'
-    | 'CK'
-    | 'CL'
-    | 'CM'
-    | 'CN'
-    | 'CO'
-    | 'CR'
-    | 'CU'
-    | 'CV'
-    | 'CY'
-    | 'CZ'
-    | 'DE'
-    | 'DJ'
-    | 'DK'
-    | 'DM'
-    | 'DO'
-    | 'DZ'
-    | 'EC'
-    | 'EE'
-    | 'EG'
-    | 'ES'
-    | 'ET'
-    | 'FI'
-    | 'FJ'
-    | 'FM'
-    | 'FR'
-    | 'GA'
-    | 'GB'
-    | 'GD'
-    | 'GE'
-    | 'GF'
-    | 'GH'
-    | 'GI'
-    | 'GM'
-    | 'GN'
-    | 'GP'
-    | 'GQ'
-    | 'GR'
-    | 'GT'
-    | 'GW'
-    | 'GY'
-    | 'HK'
-    | 'HN'
-    | 'HR'
-    | 'HT'
-    | 'HU'
-    | 'ID'
-    | 'IE'
-    | 'IL'
-    | 'IN'
-    | 'IO'
-    | 'IQ'
-    | 'IR'
-    | 'IS'
-    | 'IT'
-    | 'JM'
-    | 'JO'
-    | 'JP'
-    | 'KE'
-    | 'KH'
-    | 'KI'
-    | 'KM'
-    | 'KN'
-    | 'KP'
-    | 'KR'
-    | 'KW'
-    | 'KY'
-    | 'KZ'
-    | 'LA'
-    | 'LB'
-    | 'LC'
-    | 'LI'
-    | 'LK'
-    | 'LR'
-    | 'LS'
-    | 'LT'
-    | 'LU'
-    | 'LV'
-    | 'LY'
-    | 'MA'
-    | 'MC'
-    | 'MD'
-    | 'ME'
-    | 'MF'
-    | 'MG'
-    | 'MH'
-    | 'MK'
-    | 'ML'
-    | 'MM'
-    | 'MN'
-    | 'MO'
-    | 'MQ'
-    | 'MR'
-    | 'MT'
-    | 'MU'
-    | 'MV'
-    | 'MW'
-    | 'MX'
-    | 'MY'
-    | 'MZ'
-    | 'NA'
-    | 'NC'
-    | 'NE'
-    | 'NG'
-    | 'NI'
-    | 'NL'
-    | 'NO'
-    | 'NP'
-    | 'NR'
-    | 'NZ'
-    | 'OM'
-    | 'PA'
-    | 'PE'
-    | 'PF'
-    | 'PG'
-    | 'PH'
-    | 'PK'
-    | 'PL'
-    | 'PM'
-    | 'PN'
-    | 'PR'
-    | 'PS'
-    | 'PT'
-    | 'PW'
-    | 'PY'
-    | 'QA'
-    | 'RE'
-    | 'RO'
-    | 'RS'
-    | 'RU'
-    | 'RW'
-    | 'SA'
-    | 'SB'
-    | 'SC'
-    | 'SD'
-    | 'SE'
-    | 'SG'
-    | 'SH'
-    | 'SI'
-    | 'SK'
-    | 'SL'
-    | 'SM'
-    | 'SN'
-    | 'SO'
-    | 'SR'
-    | 'ST'
-    | 'SV'
-    | 'SY'
-    | 'SZ'
-    | 'TC'
-    | 'TD'
-    | 'TF'
-    | 'TG'
-    | 'TH'
-    | 'TJ'
-    | 'TL'
-    | 'TM'
-    | 'TN'
-    | 'TO'
-    | 'TR'
-    | 'TT'
-    | 'TV'
-    | 'TW'
-    | 'TZ'
-    | 'UA'
-    | 'UG'
-    | 'US'
-    | 'UY'
-    | 'UZ'
-    | 'VA'
-    | 'VC'
-    | 'VE'
-    | 'VG'
-    | 'VN'
-    | 'VU'
-    | 'WF'
-    | 'WS'
-    | 'YE'
-    | 'YT'
-    | 'ZA'
-    | 'ZM'
-    | 'ZW'
-    | 'de-AT'
-    | 'de-CH'
-    | 'de-DE'
-    | 'en-AE'
-    | 'en-AF'
-    | 'en-AG'
-    | 'en-AL'
-    | 'en-AM'
-    | 'en-AO'
-    | 'en-AU'
-    | 'en-AZ'
-    | 'en-BA'
-    | 'en-BB'
-    | 'en-BD'
-    | 'en-BF'
-    | 'en-BG'
-    | 'en-BH'
-    | 'en-BI'
-    | 'en-BJ'
-    | 'en-BM'
-    | 'en-BN'
-    | 'en-BS'
-    | 'en-BT'
-    | 'en-BY'
-    | 'en-BZ'
-    | 'en-CA'
-    | 'en-CH'
-    | 'en-CM'
-    | 'en-CN'
-    | 'en-CO'
-    | 'en-CR'
-    | 'en-CU'
-    | 'en-CY'
-    | 'en-CZ'
-    | 'en-DJ'
-    | 'en-DK'
-    | 'en-DM'
-    | 'en-DO'
-    | 'en-EC'
-    | 'en-EE'
-    | 'en-EG'
-    | 'en-FI'
-    | 'en-FJ'
-    | 'en-GA'
-    | 'en-GB'
-    | 'en-GD'
-    | 'en-GE'
-    | 'en-GH'
-    | 'en-GI'
-    | 'en-GM'
-    | 'en-GN'
-    | 'en-GQ'
-    | 'en-GT'
-    | 'en-GY'
-    | 'en-HK'
-    | 'en-HN'
-    | 'en-HR'
-    | 'en-HT'
-    | 'en-HU'
-    | 'en-ID'
-    | 'en-IE'
-    | 'en-IL'
-    | 'en-IN'
-    | 'en-IR'
-    | 'en-IS'
-    | 'en-JM'
-    | 'en-JO'
-    | 'en-JP'
-    | 'en-KE'
-    | 'en-KH'
-    | 'en-KM'
-    | 'en-KN'
-    | 'en-KP'
-    | 'en-KR'
-    | 'en-KW'
-    | 'en-KY'
-    | 'en-KZ'
-    | 'en-LA'
-    | 'en-LB'
-    | 'en-LC'
-    | 'en-LI'
-    | 'en-LK'
-    | 'en-LR'
-    | 'en-LT'
-    | 'en-LV'
-    | 'en-LY'
-    | 'en-MD'
-    | 'en-MF'
-    | 'en-MG'
-    | 'en-MK'
-    | 'en-ML'
-    | 'en-MM'
-    | 'en-MN'
-    | 'en-MO'
-    | 'en-MR'
-    | 'en-MT'
-    | 'en-MU'
-    | 'en-MV'
-    | 'en-MW'
-    | 'en-MY'
-    | 'en-MZ'
-    | 'en-NA'
-    | 'en-NC'
-    | 'en-NE'
-    | 'en-NG'
-    | 'en-NI'
-    | 'en-NO'
-    | 'en-NP'
-    | 'en-NZ'
-    | 'en-OM'
-    | 'en-PA'
-    | 'en-PG'
-    | 'en-PH'
-    | 'en-PK'
-    | 'en-PR'
-    | 'en-QA'
-    | 'en-RS'
-    | 'en-RW'
-    | 'en-SA'
-    | 'en-SC'
-    | 'en-SE'
-    | 'en-SG'
-    | 'en-SH'
-    | 'en-SI'
-    | 'en-SK'
-    | 'en-SM'
-    | 'en-SN'
-    | 'en-SR'
-    | 'en-SV'
-    | 'en-SY'
-    | 'en-SZ'
-    | 'en-TC'
-    | 'en-TD'
-    | 'en-TG'
-    | 'en-TH'
-    | 'en-TT'
-    | 'en-TW'
-    | 'en-TZ'
-    | 'en-UG'
-    | 'en-US'
-    | 'en-UZ'
-    | 'en-VG'
-    | 'en-VN'
-    | 'en-VU'
-    | 'en-WF'
-    | 'en-WS'
-    | 'en-YE'
-    | 'en-YT'
-    | 'en-ZA'
-    | 'en-ZW'
-    | 'es-AR'
-    | 'es-BO'
-    | 'es-BW'
-    | 'es-CL'
-    | 'es-CO'
-    | 'es-DO'
-    | 'es-ES'
-    | 'es-MX'
-    | 'es-PA'
-    | 'es-PE'
-    | 'es-PY'
-    | 'es-UY'
-    | 'es-VE'
-    | 'et-EE'
-    | 'fr-AD'
-    | 'fr-BE'
-    | 'fr-BL'
-    | 'fr-CA'
-    | 'fr-CD'
-    | 'fr-CF'
-    | 'fr-CG'
-    | 'fr-CH'
-    | 'fr-CI'
-    | 'fr-CK'
-    | 'fr-CV'
-    | 'fr-DZ'
-    | 'fr-ET'
-    | 'fr-FM'
-    | 'fr-FR'
-    | 'fr-GF'
-    | 'fr-GP'
-    | 'fr-GW'
-    | 'fr-IO'
-    | 'fr-IQ'
-    | 'fr-KI'
-    | 'fr-LB'
-    | 'fr-LS'
-    | 'fr-LU'
-    | 'fr-MA'
-    | 'fr-MC'
-    | 'fr-ME'
-    | 'fr-MH'
-    | 'fr-MQ'
-    | 'fr-NR'
-    | 'fr-PF'
-    | 'fr-PM'
-    | 'fr-PN'
-    | 'fr-PS'
-    | 'fr-PW'
-    | 'fr-RE'
-    | 'fr-SB'
-    | 'fr-SD'
-    | 'fr-SL'
-    | 'fr-SO'
-    | 'fr-ST'
-    | 'fr-TF'
-    | 'fr-TJ'
-    | 'fr-TL'
-    | 'fr-TM'
-    | 'fr-TN'
-    | 'fr-TO'
-    | 'fr-TV'
-    | 'fr-VA'
-    | 'fr-VC'
-    | 'fr-YE'
-    | 'fr-ZM'
-    | 'gr-GR'
-    | 'he-IL'
-    | 'id-ID'
-    | 'it-IT'
-    | 'ja-JP'
-    | 'ko-KR'
-    | 'lv-LV'
-    | 'ma-MA'
-    | 'nl-BE'
-    | 'nl-NL'
-    | 'pl-PL'
-    | 'pt-BR'
-    | 'pt-PT'
-    | 'ro-RO'
-    | 'ru-RU'
-    | 'se-SE'
-    | 'sk-SK'
-    | 'th-TH'
-    | 'tr-TR'
-    | 'tu-TN'
-    | 'uk-UA'
-    | 'vn-VN'
-    | 'zh-CN'
-    | 'zh-HK'
-    | 'zh-TW',
-  params?: GetV3SchemasResourceLocaleorcountryParams,
-) => {
-  return fetcher<ClientSchemaModel>({
-    url: `/api/v3/schemas/${resource}/${localeOrCountry}`,
-    method: 'GET',
-    params,
-  });
-};
-
+    resource: 'profile' | 'billing',
+    localeOrCountry: 'AD' | 'AE' | 'AF' | 'AG' | 'AL' | 'AM' | 'AO' | 'AR' | 'AT' | 'AU' | 'AZ' | 'BA' | 'BB' | 'BD' | 'BE' | 'BF' | 'BG' | 'BH' | 'BI' | 'BJ' | 'BL' | 'BM' | 'BN' | 'BO' | 'BR' | 'BS' | 'BT' | 'BW' | 'BY' | 'BZ' | 'CA' | 'CD' | 'CF' | 'CG' | 'CH' | 'CI' | 'CK' | 'CL' | 'CM' | 'CN' | 'CO' | 'CR' | 'CU' | 'CV' | 'CY' | 'CZ' | 'DE' | 'DJ' | 'DK' | 'DM' | 'DO' | 'DZ' | 'EC' | 'EE' | 'EG' | 'ES' | 'ET' | 'FI' | 'FJ' | 'FM' | 'FR' | 'GA' | 'GB' | 'GD' | 'GE' | 'GF' | 'GH' | 'GI' | 'GM' | 'GN' | 'GP' | 'GQ' | 'GR' | 'GT' | 'GW' | 'GY' | 'HK' | 'HN' | 'HR' | 'HT' | 'HU' | 'ID' | 'IE' | 'IL' | 'IN' | 'IO' | 'IQ' | 'IR' | 'IS' | 'IT' | 'JM' | 'JO' | 'JP' | 'KE' | 'KH' | 'KI' | 'KM' | 'KN' | 'KP' | 'KR' | 'KW' | 'KY' | 'KZ' | 'LA' | 'LB' | 'LC' | 'LI' | 'LK' | 'LR' | 'LS' | 'LT' | 'LU' | 'LV' | 'LY' | 'MA' | 'MC' | 'MD' | 'ME' | 'MF' | 'MG' | 'MH' | 'MK' | 'ML' | 'MM' | 'MN' | 'MO' | 'MQ' | 'MR' | 'MT' | 'MU' | 'MV' | 'MW' | 'MX' | 'MY' | 'MZ' | 'NA' | 'NC' | 'NE' | 'NG' | 'NI' | 'NL' | 'NO' | 'NP' | 'NR' | 'NZ' | 'OM' | 'OTA' | 'PA' | 'PE' | 'PF' | 'PG' | 'PH' | 'PK' | 'PL' | 'PM' | 'PN' | 'PR' | 'PS' | 'PT' | 'PW' | 'PY' | 'QA' | 'RE' | 'RO' | 'RS' | 'RU' | 'RW' | 'SA' | 'SB' | 'SC' | 'SD' | 'SE' | 'SG' | 'SH' | 'SI' | 'SK' | 'SL' | 'SM' | 'SN' | 'SO' | 'SR' | 'ST' | 'SV' | 'SY' | 'SZ' | 'TC' | 'TD' | 'TF' | 'TG' | 'TH' | 'TJ' | 'TL' | 'TM' | 'TN' | 'TO' | 'TR' | 'TT' | 'TV' | 'TW' | 'TZ' | 'UA' | 'UG' | 'US' | 'UY' | 'UZ' | 'VA' | 'VC' | 'VE' | 'VG' | 'VN' | 'VU' | 'WF' | 'WS' | 'YE' | 'YT' | 'ZA' | 'ZM' | 'ZW' | 'de-AT' | 'de-CH' | 'de-DE' | 'en-AE' | 'en-AF' | 'en-AG' | 'en-AL' | 'en-AM' | 'en-AO' | 'en-AU' | 'en-AZ' | 'en-BA' | 'en-BB' | 'en-BD' | 'en-BF' | 'en-BG' | 'en-BH' | 'en-BI' | 'en-BJ' | 'en-BM' | 'en-BN' | 'en-BS' | 'en-BT' | 'en-BY' | 'en-BZ' | 'en-CA' | 'en-CH' | 'en-CM' | 'en-CN' | 'en-CO' | 'en-CR' | 'en-CU' | 'en-CY' | 'en-CZ' | 'en-DJ' | 'en-DK' | 'en-DM' | 'en-DO' | 'en-EC' | 'en-EE' | 'en-EG' | 'en-FI' | 'en-FJ' | 'en-GA' | 'en-GB' | 'en-GD' | 'en-GE' | 'en-GH' | 'en-GI' | 'en-GM' | 'en-GN' | 'en-GQ' | 'en-GT' | 'en-GY' | 'en-HK' | 'en-HN' | 'en-HR' | 'en-HT' | 'en-HU' | 'en-ID' | 'en-IE' | 'en-IL' | 'en-IN' | 'en-IR' | 'en-IS' | 'en-JM' | 'en-JO' | 'en-JP' | 'en-KE' | 'en-KH' | 'en-KM' | 'en-KN' | 'en-KP' | 'en-KR' | 'en-KW' | 'en-KY' | 'en-KZ' | 'en-LA' | 'en-LB' | 'en-LC' | 'en-LI' | 'en-LK' | 'en-LR' | 'en-LT' | 'en-LV' | 'en-LY' | 'en-MD' | 'en-MF' | 'en-MG' | 'en-MK' | 'en-ML' | 'en-MM' | 'en-MN' | 'en-MO' | 'en-MR' | 'en-MT' | 'en-MU' | 'en-MV' | 'en-MW' | 'en-MY' | 'en-MZ' | 'en-NA' | 'en-NC' | 'en-NE' | 'en-NG' | 'en-NI' | 'en-NO' | 'en-NP' | 'en-NZ' | 'en-OM' | 'en-OTA' | 'en-PA' | 'en-PG' | 'en-PH' | 'en-PK' | 'en-PR' | 'en-QA' | 'en-RS' | 'en-RW' | 'en-SA' | 'en-SC' | 'en-SE' | 'en-SG' | 'en-SH' | 'en-SI' | 'en-SK' | 'en-SM' | 'en-SN' | 'en-SR' | 'en-SV' | 'en-SY' | 'en-SZ' | 'en-TC' | 'en-TD' | 'en-TG' | 'en-TH' | 'en-TT' | 'en-TW' | 'en-TZ' | 'en-UG' | 'en-US' | 'en-UZ' | 'en-VG' | 'en-VN' | 'en-VU' | 'en-WF' | 'en-WS' | 'en-YE' | 'en-YT' | 'en-ZA' | 'en-ZW' | 'es-AR' | 'es-BO' | 'es-BW' | 'es-CL' | 'es-CO' | 'es-DO' | 'es-ES' | 'es-MX' | 'es-PA' | 'es-PE' | 'es-PY' | 'es-UY' | 'es-VE' | 'et-EE' | 'fr-AD' | 'fr-BE' | 'fr-BL' | 'fr-CA' | 'fr-CD' | 'fr-CF' | 'fr-CG' | 'fr-CH' | 'fr-CI' | 'fr-CK' | 'fr-CV' | 'fr-DZ' | 'fr-ET' | 'fr-FM' | 'fr-FR' | 'fr-GF' | 'fr-GP' | 'fr-GW' | 'fr-IO' | 'fr-IQ' | 'fr-KI' | 'fr-LB' | 'fr-LS' | 'fr-LU' | 'fr-MA' | 'fr-MC' | 'fr-ME' | 'fr-MH' | 'fr-MQ' | 'fr-NR' | 'fr-PF' | 'fr-PM' | 'fr-PN' | 'fr-PS' | 'fr-PW' | 'fr-RE' | 'fr-SB' | 'fr-SD' | 'fr-SL' | 'fr-SO' | 'fr-ST' | 'fr-TF' | 'fr-TJ' | 'fr-TL' | 'fr-TM' | 'fr-TN' | 'fr-TO' | 'fr-TV' | 'fr-VA' | 'fr-VC' | 'fr-YE' | 'fr-ZM' | 'gr-GR' | 'he-IL' | 'id-ID' | 'it-IT' | 'ja-JP' | 'ko-KR' | 'lv-LV' | 'ma-MA' | 'nl-BE' | 'nl-NL' | 'pl-PL' | 'pt-BR' | 'pt-PT' | 'ro-RO' | 'ru-RU' | 'se-SE' | 'sk-SK' | 'th-TH' | 'tr-TR' | 'tu-TN' | 'uk-UA' | 'vn-VN' | 'zh-CN' | 'zh-HK' | 'zh-TW',
+    params?: GetV3SchemasResourceLocaleorcountryParams,
+ ) => {
+      return fetcher<ClientSchemaModel>(
+      {url: `/api/v3/schemas/${resource}/${localeOrCountry}`, method: 'GET',
+        params
+    },
+      );
+    }
+  
 /**
  * @summary Returns the transportation description for the given proposal
  */
-export const getV5ProposalsProposalIdTransportDetails = (proposalId: string) => {
-  return fetcher<ProposalTransportDetailsListModelV5>({
-    url: `/api/v5/proposals/${proposalId}/transport_details`,
-    method: 'GET',
-  });
-};
-
+export const getV5ProposalsProposalIdTransportDetails = (
+    proposalId: string,
+ ) => {
+      return fetcher<ProposalTransportDetailsListModelV5>(
+      {url: `/api/v5/proposals/${proposalId}/transport_details`, method: 'GET'
+    },
+      );
+    }
+  
 /**
  * @summary details of one booking
  */
 export const getV3CustomersCustomerIdBookingsBookingId = (
-  customerId: string,
-  bookingId: string,
-) => {
-  return fetcher<CustomerBookingModelV3>({
-    url: `/api/v3/customers/${customerId}/bookings/${bookingId}`,
-    method: 'GET',
-  });
-};
-
+    customerId: string,
+    bookingId: string,
+ ) => {
+      return fetcher<CustomerBookingModelV3>(
+      {url: `/api/v3/customers/${customerId}/bookings/${bookingId}`, method: 'GET'
+    },
+      );
+    }
+  
 /**
  * @summary transport details of one booking
  */
 export const getV4CustomersCustomerIdBookingsBookingIdTransportDetails = (
-  customerId: string,
-  bookingId: string,
-) => {
-  return fetcher<BookingTransportDetailsListModelV2>({
-    url: `/api/v4/customers/${customerId}/bookings/${bookingId}/transport_details`,
-    method: 'GET',
-  });
-};
-
+    customerId: string,
+    bookingId: string,
+ ) => {
+      return fetcher<BookingTransportDetailsListModelV2>(
+      {url: `/api/v4/customers/${customerId}/bookings/${bookingId}/transport_details`, method: 'GET'
+    },
+      );
+    }
+  
 /**
+ * @deprecated
  * @summary Retrieves the accommodations a cart contains for a given booking.
  */
 export const getV0CustomersCustomerIdBookingsBookingIdCartAccommodations = (
-  customerId: string,
-  bookingId: string,
-) => {
-  return fetcher<CartUpgradeRoomModel>({
-    url: `/api/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`,
-    method: 'GET',
-  });
-};
-
+    customerId: string,
+    bookingId: string,
+ ) => {
+      return fetcher<CartUpgradeRoomModel>(
+      {url: `/api/v0/customers/${customerId}/bookings/${bookingId}/cart/accommodations`, method: 'GET'
+    },
+      );
+    }
+  
 /**
  * @summary Post the status of a payment
  */
-export const postV1Payments = (paymentOrderModel: PaymentOrderModel) => {
-  return fetcher<PaymentIdModel>({
-    url: `/api/v1/payments`,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    data: paymentOrderModel,
-  });
-};
-
+export const postV1Payments = (
+    paymentOrderModel: PaymentOrderModel,
+ ) => {
+      return fetcher<PaymentIdModel>(
+      {url: `/api/v1/payments`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: paymentOrderModel
+    },
+      );
+    }
+  
 /**
  * Behind the scene, this endpoint acts like calling the POST /v3/proposals/search and the PUT /v2/proposals/{proposal_id}/attendees before creating the booking. To create a booking, the proposal must contain attendees information. The booking can be created with different statuses impacting the booking life cycle. The booking creation will decrease Club Med stock. The booking creation is required to create a payment. The accept-language must be the same as the one in the proposal creation.
  * @summary Creates a booking
  */
 export const postV3Bookings = (
-  createDirectBookingRequestModel: CreateDirectBookingRequestModel,
-  params?: PostV3BookingsParams,
-) => {
-  return fetcher<CreateBookingResponseModel | CreateBookingResponseModel>({
-    url: `/api/v3/bookings`,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    data: createDirectBookingRequestModel,
-    params,
-  });
-};
-
+    createDirectBookingRequestModel: CreateDirectBookingRequestModel,
+    params?: PostV3BookingsParams,
+ ) => {
+      return fetcher<CreateBookingResponseModel | CreateBookingResponseModel>(
+      {url: `/api/v3/bookings`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createDirectBookingRequestModel,
+        params
+    },
+      );
+    }
+  
 /**
  * <p><strong>Should be called after :</strong></p><ul><li><code>GET /v0/payment_providers</code> &rArr; list of available <em>{provider_id}</em></li></ul>
  * @summary <em>RPC</em> &ndash; Obtains a token from a payment providers.
  */
 export const postV0PaymentProvidersProviderIdRequestToken = (
-  providerId: string,
-  tokenRequestModel: TokenRequestModel,
-) => {
-  return fetcher<TokenHolderModel>({
-    url: `/api/v0/payment_providers/${providerId}/request_token`,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    data: tokenRequestModel,
-  });
-};
-
+    providerId: string,
+    tokenRequestModel: TokenRequestModel,
+ ) => {
+      return fetcher<TokenHolderModel>(
+      {url: `/api/v0/payment_providers/${providerId}/request_token`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: tokenRequestModel
+    },
+      );
+    }
+  
 /**
  * The only required parameters is the return url, to which the payment service provider will redirect to after
               the payment is processed. Other parameters are to be provided on case by case basis, for a given provider, payment methods,
@@ -655,72 +224,49 @@ export const postV0PaymentProvidersProviderIdRequestToken = (
  * @summary Get a description of an HTTP redirection to apply to go to the payment page.
  */
 export const postV0PaymentsPaymentIdRedirectRequest = (
-  paymentId: string,
-  paymentRedirectRequestModel: PaymentRedirectRequestModel,
-) => {
-  return fetcher<ProviderParametersModel>({
-    url: `/api/v0/payments/${paymentId}/redirect_request`,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    data: paymentRedirectRequestModel,
-  });
-};
-
+    paymentId: string,
+    paymentRedirectRequestModel: PaymentRedirectRequestModel,
+ ) => {
+      return fetcher<ProviderParametersModel>(
+      {url: `/api/v0/payments/${paymentId}/redirect_request`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: paymentRedirectRequestModel
+    },
+      );
+    }
+  
 /**
  * @summary Update a payment order with notification from payment provider
  */
 export const postV1PaymentsPaymentIdNotify = (
-  paymentId: string,
-  paymentOrderNotificationModel: PaymentOrderNotificationModel,
-) => {
-  return fetcher<NotifyPaymentOrderNotificationStatus>({
-    url: `/api/v1/payments/${paymentId}/notify`,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    data: paymentOrderNotificationModel,
-  });
-};
+    paymentId: string,
+    paymentOrderNotificationModel: PaymentOrderNotificationModel,
+ ) => {
+      return fetcher<NotifyPaymentOrderNotificationStatus>(
+      {url: `/api/v1/payments/${paymentId}/notify`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: paymentOrderNotificationModel
+    },
+      );
+    }
+  
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+    type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-export type GetV0CountriesResult = NonNullable<Awaited<ReturnType<typeof getV0Countries>>>;
-export type GetV1PaymentProvidersResult = NonNullable<
-  Awaited<ReturnType<typeof getV1PaymentProviders>>
->;
-export type GetV2ProposalsProposalIdResult = NonNullable<
-  Awaited<ReturnType<typeof getV2ProposalsProposalId>>
->;
-export type GetV0PaymentsPaymentIdStatusResult = NonNullable<
-  Awaited<ReturnType<typeof getV0PaymentsPaymentIdStatus>>
->;
-export type GetV2CustomersCustomerIdProfileResult = NonNullable<
-  Awaited<ReturnType<typeof getV2CustomersCustomerIdProfile>>
->;
-export type GetV3SchemasResourceLocaleorcountryResult = NonNullable<
-  Awaited<ReturnType<typeof getV3SchemasResourceLocaleorcountry>>
->;
-export type GetV5ProposalsProposalIdTransportDetailsResult = NonNullable<
-  Awaited<ReturnType<typeof getV5ProposalsProposalIdTransportDetails>>
->;
-export type GetV3CustomersCustomerIdBookingsBookingIdResult = NonNullable<
-  Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingId>>
->;
-export type GetV4CustomersCustomerIdBookingsBookingIdTransportDetailsResult = NonNullable<
-  Awaited<ReturnType<typeof getV4CustomersCustomerIdBookingsBookingIdTransportDetails>>
->;
-export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = NonNullable<
-  Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartAccommodations>>
->;
-export type PostV1PaymentsResult = NonNullable<Awaited<ReturnType<typeof postV1Payments>>>;
-export type PostV3BookingsResult = NonNullable<Awaited<ReturnType<typeof postV3Bookings>>>;
-export type PostV0PaymentProvidersProviderIdRequestTokenResult = NonNullable<
-  Awaited<ReturnType<typeof postV0PaymentProvidersProviderIdRequestToken>>
->;
-export type PostV0PaymentsPaymentIdRedirectRequestResult = NonNullable<
-  Awaited<ReturnType<typeof postV0PaymentsPaymentIdRedirectRequest>>
->;
-export type PostV1PaymentsPaymentIdNotifyResult = NonNullable<
-  Awaited<ReturnType<typeof postV1PaymentsPaymentIdNotify>>
->;
+export type GetV0CountriesResult = NonNullable<Awaited<ReturnType<typeof getV0Countries>>>
+export type GetV1PaymentProvidersResult = NonNullable<Awaited<ReturnType<typeof getV1PaymentProviders>>>
+export type GetV2ProposalsProposalIdResult = NonNullable<Awaited<ReturnType<typeof getV2ProposalsProposalId>>>
+export type GetV0PaymentsPaymentIdStatusResult = NonNullable<Awaited<ReturnType<typeof getV0PaymentsPaymentIdStatus>>>
+export type GetV2CustomersCustomerIdProfileResult = NonNullable<Awaited<ReturnType<typeof getV2CustomersCustomerIdProfile>>>
+export type GetV3SchemasResourceLocaleorcountryResult = NonNullable<Awaited<ReturnType<typeof getV3SchemasResourceLocaleorcountry>>>
+export type GetV5ProposalsProposalIdTransportDetailsResult = NonNullable<Awaited<ReturnType<typeof getV5ProposalsProposalIdTransportDetails>>>
+export type GetV3CustomersCustomerIdBookingsBookingIdResult = NonNullable<Awaited<ReturnType<typeof getV3CustomersCustomerIdBookingsBookingId>>>
+export type GetV4CustomersCustomerIdBookingsBookingIdTransportDetailsResult = NonNullable<Awaited<ReturnType<typeof getV4CustomersCustomerIdBookingsBookingIdTransportDetails>>>
+export type GetV0CustomersCustomerIdBookingsBookingIdCartAccommodationsResult = NonNullable<Awaited<ReturnType<typeof getV0CustomersCustomerIdBookingsBookingIdCartAccommodations>>>
+export type PostV1PaymentsResult = NonNullable<Awaited<ReturnType<typeof postV1Payments>>>
+export type PostV3BookingsResult = NonNullable<Awaited<ReturnType<typeof postV3Bookings>>>
+export type PostV0PaymentProvidersProviderIdRequestTokenResult = NonNullable<Awaited<ReturnType<typeof postV0PaymentProvidersProviderIdRequestToken>>>
+export type PostV0PaymentsPaymentIdRedirectRequestResult = NonNullable<Awaited<ReturnType<typeof postV0PaymentsPaymentIdRedirectRequest>>>
+export type PostV1PaymentsPaymentIdNotifyResult = NonNullable<Awaited<ReturnType<typeof postV1PaymentsPaymentIdNotify>>>

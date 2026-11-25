@@ -433,17 +433,17 @@
   },
   {
     "status": "published",
-    "key": "cgv.content",
+    "key": "cgv.terms",
     "type": "string",
     "context": null,
     "translations": [
       {
         "languages_code": "en-US",
-        "value": "I accept the terms of sales"
+        "value": "I accept the [terms of sales](https://ns.clubmed.com/fbs/RWD/PDF/25-03-24-CGV-sans-CPV.pdf)"
       },
       {
         "languages_code": "fr-FR",
-        "value": "J'accepte les conditions générales de vente"
+        "value": "J'accepte les [conditions générales de vente](https://ns.clubmed.com/fbs/RWD/PDF/25-03-24-CGV-sans-CPV.pdf)"
       }
     ]
   },
@@ -1777,49 +1777,33 @@
   },
   {
     "status": "published",
-    "key": "donation.acceptCGU",
+    "key": "donation.terms",
     "type": "string",
     "context": null,
     "translations": [
       {
         "languages_code": "en-US",
-        "value": "I accept the donation terms and conditions"
+        "value": "I accept the [donation terms and conditions](https://ns.clubmed.com/fbs/RWD/PDF/25-03-24-CGV-sans-CPV.pdf)"
       },
       {
         "languages_code": "fr-FR",
-        "value": "J'accepte les conditions générales du don"
+        "value": "J'accepte les [conditions générales du don](https://ns.clubmed.com/fbs/RWD/PDF/25-03-24-CGV-sans-CPV.pdf)"
       }
     ]
   },
   {
     "status": "published",
-    "key": "donation.donationTerms",
+    "key": "donation.validation.mustAccept",
     "type": "string",
     "context": null,
     "translations": [
       {
         "languages_code": "en-US",
-        "value": "donation terms and conditions"
+        "value": "You must accept the donation terms and conditions"
       },
       {
         "languages_code": "fr-FR",
-        "value": "conditions générales du don"
-      }
-    ]
-  },
-  {
-    "status": "published",
-    "key": "donation.linkDonationTerms",
-    "type": "string",
-    "context": null,
-    "translations": [
-      {
-        "languages_code": "en-US",
-        "value": ""
-      },
-      {
-        "languages_code": "fr-FR",
-        "value": ""
+        "value": "Vous devez accepter les conditions générales du don"
       }
     ]
   },

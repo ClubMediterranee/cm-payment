@@ -69,7 +69,7 @@ describe('PaymentConfigProvider', () => {
     });
 
     expect(result.current.content.cgv.heading).toBe('Custom Terms');
-    expect(result.current.content.cgv.content).toBe(contentByTheme.legacy.cgv.content);
+    expect(result.current.content.cgv.terms).toBe(contentByTheme.legacy.cgv.terms);
   });
 
   it('should handle undefined content by using default content', () => {

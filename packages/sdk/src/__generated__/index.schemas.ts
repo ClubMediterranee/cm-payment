@@ -3,7 +3,7 @@
  * Do not edit manually.
  * ClubMed API
  * Club Med, renowned for its luxury resort experiences, proudly introduces its dedicated API. This tool offers developers a gateway to the diverse services and information provided by Club Med, from vacation bookings to on-site activity details. By using this interface, partners and developers can effortlessly integrate Club Med's offerings into their platforms. Whether you're looking for destination details, making reservations, or discovering the latest promotions, the Club Med API ensures a streamlined user experience. Step into this digital realm and amplify your platforms with the Club Med API.
- * OpenAPI spec version: 0.3473.0
+ * OpenAPI spec version: 0.3524.0
  */
 export interface LinkModel {
   /** Name of the relationship */
@@ -128,7 +128,8 @@ export type CountriesModel = CountryModel[];
 /**
  * type of product
  */
-export type ProductTypeModel = (typeof ProductTypeModel)[keyof typeof ProductTypeModel];
+export type ProductTypeModel = typeof ProductTypeModel[keyof typeof ProductTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductTypeModel = {
@@ -152,7 +153,8 @@ export type DiscountsModelV3 = DiscountModelV3[];
 /**
  * Phone type
  */
-export type PhoneTypeModel = (typeof PhoneTypeModel)[keyof typeof PhoneTypeModel];
+export type PhoneTypeModel = typeof PhoneTypeModel[keyof typeof PhoneTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PhoneTypeModel = {
@@ -172,8 +174,8 @@ export type PhonesModel = PhoneModel[];
 /**
  * Type of national identifier code, null if not recognized
  */
-export type NationalIdentifierCodeTypeModel =
-  (typeof NationalIdentifierCodeTypeModel)[keyof typeof NationalIdentifierCodeTypeModel];
+export type NationalIdentifierCodeTypeModel = typeof NationalIdentifierCodeTypeModel[keyof typeof NationalIdentifierCodeTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NationalIdentifierCodeTypeModel = {
@@ -273,8 +275,8 @@ export type PaymentMethodListModel2 = PaymentMethodModel4[];
 /**
  * Codified value, looking like a bank card brand, required by accountant department.
  */
-export type PaymentProvider1CategoryPaymentMethod =
-  (typeof PaymentProvider1CategoryPaymentMethod)[keyof typeof PaymentProvider1CategoryPaymentMethod];
+export type PaymentProvider1CategoryPaymentMethod = typeof PaymentProvider1CategoryPaymentMethod[keyof typeof PaymentProvider1CategoryPaymentMethod];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PaymentProvider1CategoryPaymentMethod = {
@@ -327,7 +329,8 @@ export type PaymentProviderListModel2 = PaymentProvider1[];
 /**
  * booking's status
  */
-export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus];
+export type BookingStatus = typeof BookingStatus[keyof typeof BookingStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingStatus = {
@@ -351,7 +354,8 @@ export const BookingStatus = {
 /**
  * define if this booking was sold by CLUBMED or PARTNERS
  */
-export type SoldBy = (typeof SoldBy)[keyof typeof SoldBy];
+export type SoldBy = typeof SoldBy[keyof typeof SoldBy];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SoldBy = {
@@ -362,7 +366,8 @@ export const SoldBy = {
 /**
  * type of the vendor
  */
-export type VendorTypeModel = (typeof VendorTypeModel)[keyof typeof VendorTypeModel];
+export type VendorTypeModel = typeof VendorTypeModel[keyof typeof VendorTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const VendorTypeModel = {
@@ -403,7 +408,8 @@ export type VendorModel = VendorModelAnyOf | null;
 /**
  * The room status
  */
-export type Status = (typeof Status)[keyof typeof Status];
+export type Status = typeof Status[keyof typeof Status];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Status = {
@@ -448,7 +454,8 @@ export interface RoomModel {
 /**
  * Automatic Option Status: Set as NONE when the proposal is not tagged as to be converted automatically. Displayed as SCHEDULED when the proposal is tagged as to be converted automatically. CONVERTED indicates that the proposal was tagged as to be converted and has been done successfully. On the contrary, FAILED indicates that the proposal was tagged as to be converted but has failed.
  */
-export type AutoOptionableStatus = (typeof AutoOptionableStatus)[keyof typeof AutoOptionableStatus];
+export type AutoOptionableStatus = typeof AutoOptionableStatus[keyof typeof AutoOptionableStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AutoOptionableStatus = {
@@ -461,8 +468,8 @@ export const AutoOptionableStatus = {
 /**
  * Communication channel
  */
-export type ValidOptinChanelModel =
-  (typeof ValidOptinChanelModel)[keyof typeof ValidOptinChanelModel];
+export type ValidOptinChanelModel = typeof ValidOptinChanelModel[keyof typeof ValidOptinChanelModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidOptinChanelModel = {
@@ -483,8 +490,8 @@ export const ValidOptinChanelModel = {
 /**
  * type of fees
  */
-export type ProposalPriceFeeModel =
-  (typeof ProposalPriceFeeModel)[keyof typeof ProposalPriceFeeModel];
+export type ProposalPriceFeeModel = typeof ProposalPriceFeeModel[keyof typeof ProposalPriceFeeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalPriceFeeModel = {
@@ -528,7 +535,8 @@ export type IncludedServicesModel = IncludedServiceModel[];
 /**
  * Package option type
  */
-export type ProposalServiceTypes = (typeof ProposalServiceTypes)[keyof typeof ProposalServiceTypes];
+export type ProposalServiceTypes = typeof ProposalServiceTypes[keyof typeof ProposalServiceTypes];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalServiceTypes = {
@@ -573,7 +581,8 @@ export type PackageOptionsModel = PackageOptionModel[];
 /**
  * Discount type. Possible values: OFFER or SPECIFIC or RATE or SERVICE_OFFER
  */
-export type DiscountTypeModel = (typeof DiscountTypeModel)[keyof typeof DiscountTypeModel];
+export type DiscountTypeModel = typeof DiscountTypeModel[keyof typeof DiscountTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DiscountTypeModel = {
@@ -635,8 +644,8 @@ export interface ProposalPriceModelV1 {
 /**
  * Discount type. Possible value: OFFER, SPECIFIC or SERVICE_OFFER
  */
-export type ProposalPriceDiscountModel =
-  (typeof ProposalPriceDiscountModel)[keyof typeof ProposalPriceDiscountModel];
+export type ProposalPriceDiscountModel = typeof ProposalPriceDiscountModel[keyof typeof ProposalPriceDiscountModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalPriceDiscountModel = {
@@ -717,8 +726,8 @@ export type ProposalOptionDurationModelV1 = ProposalOptionDurationModelV1AnyOf |
 /**
  * customer's status
  */
-export type ProposalResponseCustomerTypeModel =
-  (typeof ProposalResponseCustomerTypeModel)[keyof typeof ProposalResponseCustomerTypeModel];
+export type ProposalResponseCustomerTypeModel = typeof ProposalResponseCustomerTypeModel[keyof typeof ProposalResponseCustomerTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalResponseCustomerTypeModel = {
@@ -752,7 +761,8 @@ export type ProposalHouseholdsModelV1 = HouseholdModel[];
 /**
  * transportation way
  */
-export type Way = (typeof Way)[keyof typeof Way];
+export type Way = typeof Way[keyof typeof Way];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Way = {
@@ -763,7 +773,8 @@ export const Way = {
 /**
  * transportation type. First one if many
  */
-export type TransportationType = (typeof TransportationType)[keyof typeof TransportationType];
+export type TransportationType = typeof TransportationType[keyof typeof TransportationType];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TransportationType = {
@@ -776,8 +787,8 @@ export const TransportationType = {
 /**
  * used to determine which cancellation policy is to be applied to this travel
  */
-export type CancellationPolicyTypeModel =
-  (typeof CancellationPolicyTypeModel)[keyof typeof CancellationPolicyTypeModel];
+export type CancellationPolicyTypeModel = typeof CancellationPolicyTypeModel[keyof typeof CancellationPolicyTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CancellationPolicyTypeModel = {
@@ -873,6 +884,8 @@ export interface ProposalResponseModelV1 {
   /** if true means that the proposal will exist during 6 months (15 days if false) */
   extend_persistence?: boolean;
   auto_optionable_status: AutoOptionableStatus;
+  /** Reason why automatic option conversion failed; empty when status is not FAILED */
+  auto_optionable_failure_reason: string;
   /** Indicates wether the proposal can be transformed into a booking or not. Always displayed as false when attendees are not added. */
   is_bookable: boolean;
   /** proposal creation date time */
@@ -883,7 +896,8 @@ export interface ProposalResponseModelV1 {
 /**
  * What is paid : booking, upsale, option,...
  */
-export type ActionCode = (typeof ActionCode)[keyof typeof ActionCode];
+export type ActionCode = typeof ActionCode[keyof typeof ActionCode];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ActionCode = {
@@ -903,7 +917,8 @@ export const ActionCode = {
 /**
  * Payment status
  */
-export type StatutPaiement = (typeof StatutPaiement)[keyof typeof StatutPaiement];
+export type StatutPaiement = typeof StatutPaiement[keyof typeof StatutPaiement];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const StatutPaiement = {
@@ -1014,8 +1029,8 @@ export type LegacyOptinsModel = LegacyOptinModel[];
 /**
  * INBOUND, OUTBOUND or WITHIN_TOUR
  */
-export type BookingTransportDetailsTripWayModel =
-  (typeof BookingTransportDetailsTripWayModel)[keyof typeof BookingTransportDetailsTripWayModel];
+export type BookingTransportDetailsTripWayModel = typeof BookingTransportDetailsTripWayModel[keyof typeof BookingTransportDetailsTripWayModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingTransportDetailsTripWayModel = {
@@ -1024,8 +1039,8 @@ export const BookingTransportDetailsTripWayModel = {
   WITHIN_TOUR: 'WITHIN_TOUR',
 } as const;
 
-export type TravelSectionTransportTypeModel =
-  (typeof TravelSectionTransportTypeModel)[keyof typeof TravelSectionTransportTypeModel];
+export type TravelSectionTransportTypeModel = typeof TravelSectionTransportTypeModel[keyof typeof TravelSectionTransportTypeModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TravelSectionTransportTypeModel = {
@@ -1061,14 +1076,13 @@ export type TravelSectionTransportCompanyOperatorAnyOf = {
 /**
  * The value can sometimes be "null". It means that we currently don't have the information. The flight company is unknown at the time being.
  */
-export type TravelSectionTransportCompanyOperator =
-  TravelSectionTransportCompanyOperatorAnyOf | null;
+export type TravelSectionTransportCompanyOperator = TravelSectionTransportCompanyOperatorAnyOf | null;
 
 /**
  * Customer loyalty program status (not editable)
  */
-export type CustomerLoyaltyProgramStatusV2Model =
-  (typeof CustomerLoyaltyProgramStatusV2Model)[keyof typeof CustomerLoyaltyProgramStatusV2Model];
+export type CustomerLoyaltyProgramStatusV2Model = typeof CustomerLoyaltyProgramStatusV2Model[keyof typeof CustomerLoyaltyProgramStatusV2Model];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerLoyaltyProgramStatusV2Model = {
@@ -1085,8 +1099,8 @@ export const CustomerLoyaltyProgramStatusV2Model = {
 /**
  * Indicates the status of the GM before the overhaul of the loyalty program (not editable)
  */
-export type CustomerLoyaltyProgramPreviousStatusModel =
-  (typeof CustomerLoyaltyProgramPreviousStatusModel)[keyof typeof CustomerLoyaltyProgramPreviousStatusModel];
+export type CustomerLoyaltyProgramPreviousStatusModel = typeof CustomerLoyaltyProgramPreviousStatusModel[keyof typeof CustomerLoyaltyProgramPreviousStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerLoyaltyProgramPreviousStatusModel = {
@@ -1442,8 +1456,8 @@ export interface ProfileModelV2 {
   _links?: NullableLinksModel;
 }
 
-export type TravelSectionAttendeeStatusModel =
-  (typeof TravelSectionAttendeeStatusModel)[keyof typeof TravelSectionAttendeeStatusModel];
+export type TravelSectionAttendeeStatusModel = typeof TravelSectionAttendeeStatusModel[keyof typeof TravelSectionAttendeeStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TravelSectionAttendeeStatusModel = {
@@ -1530,7 +1544,8 @@ Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `YYYYMM` */
 /**
  * Transport information indicating its class
  */
-export type Class = (typeof Class)[keyof typeof Class];
+export type Class = typeof Class[keyof typeof Class];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Class = {
@@ -1551,7 +1566,8 @@ export interface TravelSectionTransportCompaniesV2 {
 /**
  * unit of the weight
  */
-export type BaggageUnitModel = (typeof BaggageUnitModel)[keyof typeof BaggageUnitModel];
+export type BaggageUnitModel = typeof BaggageUnitModel[keyof typeof BaggageUnitModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BaggageUnitModel = {
@@ -1614,13 +1630,7 @@ export interface TravelSectionTransportModelV5 {
 /**
  * used to determine which cancellation policy is to be applied to this travel
  */
-export type FlightCodeTravelSectionModelV2ForBooking =
-  | 'AUCUN'
-  | 'THEO'
-  | 'WEBTHEO'
-  | 'NDC'
-  | 'NDCx'
-  | null;
+export type FlightCodeTravelSectionModelV2ForBooking = 'AUCUN' | 'THEO' | 'WEBTHEO' | 'NDC' | 'NDCx' | null;
 
 /**
  * true if the transport has been purchased by ClubMed
@@ -1721,8 +1731,8 @@ export type CustomerBookingRenewalModel = CustomerBookingRenewalModelAnyOf | nul
 /**
  * booking payment's status
  */
-export type CustomerBookingPaymentStatusModel =
-  (typeof CustomerBookingPaymentStatusModel)[keyof typeof CustomerBookingPaymentStatusModel];
+export type CustomerBookingPaymentStatusModel = typeof CustomerBookingPaymentStatusModel[keyof typeof CustomerBookingPaymentStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingPaymentStatusModel = {
@@ -1751,8 +1761,8 @@ export type StayAttendeeIdsModel = string[];
 /**
  * adult attendees number
  */
-export type BookingStayAttendeeAdultsCount =
-  (typeof BookingStayAttendeeAdultsCount)[keyof typeof BookingStayAttendeeAdultsCount];
+export type BookingStayAttendeeAdultsCount = typeof BookingStayAttendeeAdultsCount[keyof typeof BookingStayAttendeeAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingStayAttendeeAdultsCount = {
@@ -1762,8 +1772,8 @@ export const BookingStayAttendeeAdultsCount = {
 /**
  * children attendees number
  */
-export type BookingStayAttendeeChildrenCount =
-  (typeof BookingStayAttendeeChildrenCount)[keyof typeof BookingStayAttendeeChildrenCount];
+export type BookingStayAttendeeChildrenCount = typeof BookingStayAttendeeChildrenCount[keyof typeof BookingStayAttendeeChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BookingStayAttendeeChildrenCount = {
@@ -1798,8 +1808,8 @@ export type BookingStayAttendees = BookingStayAttendee[];
 /**
  * Transportation mode
  */
-export type CustomerBookingStayOutwardTripTransportationModeModelV2 =
-  (typeof CustomerBookingStayOutwardTripTransportationModeModelV2)[keyof typeof CustomerBookingStayOutwardTripTransportationModeModelV2];
+export type CustomerBookingStayOutwardTripTransportationModeModelV2 = typeof CustomerBookingStayOutwardTripTransportationModeModelV2[keyof typeof CustomerBookingStayOutwardTripTransportationModeModelV2];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingStayOutwardTripTransportationModeModelV2 = {
@@ -1913,8 +1923,8 @@ export type CustomerBookingStayModelV2ResortLeavingDate = string | null;
 /**
  * Total number of adults for the stay
  */
-export type CustomerBookingStayModelV2TotalAdultsCount =
-  (typeof CustomerBookingStayModelV2TotalAdultsCount)[keyof typeof CustomerBookingStayModelV2TotalAdultsCount];
+export type CustomerBookingStayModelV2TotalAdultsCount = typeof CustomerBookingStayModelV2TotalAdultsCount[keyof typeof CustomerBookingStayModelV2TotalAdultsCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingStayModelV2TotalAdultsCount = {
@@ -1924,8 +1934,8 @@ export const CustomerBookingStayModelV2TotalAdultsCount = {
 /**
  * Total number of children for the stay
  */
-export type CustomerBookingStayModelV2TotalChildrenCount =
-  (typeof CustomerBookingStayModelV2TotalChildrenCount)[keyof typeof CustomerBookingStayModelV2TotalChildrenCount];
+export type CustomerBookingStayModelV2TotalChildrenCount = typeof CustomerBookingStayModelV2TotalChildrenCount[keyof typeof CustomerBookingStayModelV2TotalChildrenCount];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerBookingStayModelV2TotalChildrenCount = {
@@ -2075,8 +2085,8 @@ export interface ClientSchemaModel {
 /**
  * INBOUND, OUTBOUND or WITHIN_TOUR
  */
-export type ProposalTransportDetailsTripWayModel =
-  (typeof ProposalTransportDetailsTripWayModel)[keyof typeof ProposalTransportDetailsTripWayModel];
+export type ProposalTransportDetailsTripWayModel = typeof ProposalTransportDetailsTripWayModel[keyof typeof ProposalTransportDetailsTripWayModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProposalTransportDetailsTripWayModel = {
@@ -2153,27 +2163,18 @@ export type ProposalTransportDetailsJourneysListModelV5 = ProposalTransportDetai
 
 /**
  * Date and time until which the proposed transport is valid. If null, the transport may or may not expire but the time validity is unknown 
-Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]`
+Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ssZ`, `YYYY-MM-DD HH:mm:ssZ`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]`
  */
 export type ProposalTransportDetailsListModelV5TimeValidityLimit = string | null;
 
 export interface ProposalTransportDetailsListModelV5 {
   /** Date and time until which the proposed transport is valid. If null, the transport may or may not expire but the time validity is unknown 
-Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]` */
+Supported formats: `YYYYMMDDTHH:mm:ss.SSS[Z]`, `YYYYMMDDTHH:mm:ss.SSS`, `YYYYMMDD HH:mm:ss.SSS`, `YYYYMMDDTHH:mm:ss`, `YYYYMMDD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss.SSS`, `YYYY-MM-DD HH:mm:ss`, `YYYY-MM-DDTHH:mm:ss`, `YYYY-MM-DDTHH:mm:ss.SSSSSSS`, `YYYY-MM-DD HH:mm:ss.SSSSSSS`, `YYYY-MM-DDTHH:mm:ssZ`, `YYYY-MM-DD HH:mm:ssZ`, `YYYY-MM-DDTHH:mm:ss.SSSZ`, `YYYY-MM-DDTHH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss.SSS[Z]`, `YYYY-MM-DD HH:mm:ss[Z]` */
   time_validity_limit?: ProposalTransportDetailsListModelV5TimeValidityLimit;
   journeys?: ProposalTransportDetailsJourneysListModelV5;
 }
 
-export type CartUpgradeRoomPriceModelAnyOf = {
-  /** Room price amount */
-  amount: number;
-  /** Price currency */
-  currency: string;
-};
-
-export type CartUpgradeRoomPriceModel = CartUpgradeRoomPriceModelAnyOf | null;
-
-export interface CartUpgradeRoomAttendeeModel {
+export interface PaymentSchedulesAccommodationAttendeeModel {
   /** Attendee id in this booking */
   id: string;
   /** Attendee type [MAIN, KID, ADULT] */
@@ -2186,29 +2187,39 @@ export interface CartUpgradeRoomAttendeeModel {
  * List of the attendees
  * @minItems 1
  */
-export type CartUpgradeRoomAttendeesModel = CartUpgradeRoomAttendeeModel[];
+export type PaymentSchedulesAccommodationAttendeesModel = PaymentSchedulesAccommodationAttendeeModel[];
 
-export interface CartUpgradeRoomAccommodationModel {
+export interface PaymentSchedulesAccommodationModel {
   /** Id of the accommodation */
   id: string;
-  attendees: CartUpgradeRoomAttendeesModel;
+  attendees: PaymentSchedulesAccommodationAttendeesModel;
   /** Number of accommodations where the attendees will be allocated */
   quantity: number;
   /** Number of occupants in the accommodation */
   occupancy: number;
 }
 
-export type CartUpgradeRoomAccommodationsModel = CartUpgradeRoomAccommodationModel[];
+export type PaymentSchedulesAccommodationsModel = PaymentSchedulesAccommodationModel[];
+
+export type CartUpgradeRoomPriceModelAnyOf = {
+  /** Room price amount */
+  amount: number;
+  /** Price currency */
+  currency: string;
+};
+
+export type CartUpgradeRoomPriceModel = CartUpgradeRoomPriceModelAnyOf | null;
 
 export interface CartUpgradeRoomModel {
   price?: CartUpgradeRoomPriceModel;
-  accommodations?: CartUpgradeRoomAccommodationsModel;
+  accommodations?: PaymentSchedulesAccommodationsModel;
 }
 
 /**
  * Payment reason
  */
-export type Action = (typeof Action)[keyof typeof Action];
+export type Action = typeof Action[keyof typeof Action];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Action = {
@@ -2270,8 +2281,8 @@ export interface PaymentIdModel {
 /**
  * Booking status. If not provided, the booking status will be PENDING_PAYMENT for GM
  */
-export type CreateBookingRequestBookingStatusModel =
-  (typeof CreateBookingRequestBookingStatusModel)[keyof typeof CreateBookingRequestBookingStatusModel];
+export type CreateBookingRequestBookingStatusModel = typeof CreateBookingRequestBookingStatusModel[keyof typeof CreateBookingRequestBookingStatusModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateBookingRequestBookingStatusModel = {
@@ -2283,8 +2294,8 @@ export const CreateBookingRequestBookingStatusModel = {
 /**
  * Attendee type
  */
-export type CreateBookingResponseTypesModel =
-  (typeof CreateBookingResponseTypesModel)[keyof typeof CreateBookingResponseTypesModel];
+export type CreateBookingResponseTypesModel = typeof CreateBookingResponseTypesModel[keyof typeof CreateBookingResponseTypesModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateBookingResponseTypesModel = {
@@ -2442,8 +2453,7 @@ export interface ProposalAttendeeInputTravelDocumentV2Model {
   authority?: string;
 }
 
-export type ProposalAttendeeInputTravelDocumentsModel =
-  ProposalAttendeeInputTravelDocumentV2Model[];
+export type ProposalAttendeeInputTravelDocumentsModel = ProposalAttendeeInputTravelDocumentV2Model[];
 
 export interface ProposalAttendeeInputOptin {
   channel: ValidOptinChanelModel;
@@ -2644,7 +2654,8 @@ export interface TokenHolderModel {
 /**
  * device type
  */
-export type Device = (typeof Device)[keyof typeof Device];
+export type Device = typeof Device[keyof typeof Device];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Device = {
@@ -2728,9 +2739,7 @@ export type BillingDetailsModel = BillingDetailsModelAnyOf | null;
 /**
  * Map of values, browser information transmitted to PSP (PSD2)
  */
-export interface BrowserInfo {
-  [key: string]: unknown;
-}
+export interface BrowserInfo { [key: string]: unknown }
 
 export interface PaymentRedirectRequestModel {
   device?: Device;
@@ -2798,7 +2807,8 @@ export interface PaymentOrderNotificationModel {
 /**
  * Payment status
  */
-export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
+export type PaymentStatus = typeof PaymentStatus[keyof typeof PaymentStatus];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PaymentStatus = {
@@ -2836,8 +2846,8 @@ export interface NotifyPaymentOrderNotificationStatus {
 /**
  * Language/Country, as returned by <code>GET&nbsp;/v0/locales</code> ; e.g. "en-US", "fr-FR", "ja-JP"
  */
-export type AcceptLanguageParamModel =
-  (typeof AcceptLanguageParamModel)[keyof typeof AcceptLanguageParamModel];
+export type AcceptLanguageParamModel = typeof AcceptLanguageParamModel[keyof typeof AcceptLanguageParamModel];
+
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AcceptLanguageParamModel = {
@@ -3079,6 +3089,7 @@ export const AcceptLanguageParamModel = {
   'en-GE': 'en-GE',
   'en-AZ': 'en-AZ',
   'es-DO': 'es-DO',
+  'en-OTA': 'en-OTA',
   'fr-TM': 'fr-TM',
   'fr-TN': 'fr-TN',
   'sk-SK': 'sk-SK',
@@ -3112,23 +3123,24 @@ export interface CybersourceTokenRequestParams {
 }
 
 export type GetV0CountriesParams = {
-  /**
-   * string composed of a field name (can be a path), a comparison operator (>, >=, <=, <, ==, !=) and a value. Logical operator AND applies between filters
-   */
-  filter?: FilterArrayParamModel;
+/**
+ * string composed of a field name (can be a path), a comparison operator (>, >=, <=, <, ==, !=) and a value. Logical operator AND applies between filters
+ */
+filter?: FilterArrayParamModel;
 };
 
 export type GetV3SchemasResourceLocaleorcountryParams = {
-  /**
-   * Proposal identifier
-   * @pattern ^\d+$
-   */
-  proposal_id?: string;
+/**
+ * Proposal identifier
+ * @pattern ^\d+$
+ */
+proposal_id?: string;
 };
 
 export type PostV3BookingsParams = {
-  /**
-   * Technical information provided, if needed, by Club Med to the partner
-   */
-  partner_type?: string;
+/**
+ * Technical information provided, if needed, by Club Med to the partner
+ */
+partner_type?: string;
 };
+

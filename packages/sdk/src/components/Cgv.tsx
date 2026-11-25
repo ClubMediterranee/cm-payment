@@ -10,12 +10,14 @@ import { CheckboxSkeleton, TitleSkeleton } from './ui/skeletons';
 export const Cgv = ({ children }: PropsWithChildren) => {
   const { content } = useCapsConfigContext();
 
+  console.log({ cgv: content.cgv.terms });
+
   return (
     <FormPanel className="w-full rounded-32 bg-white">
       {children}
       <CheckboxField name="cgv">
         <span className="text-b4 md:text-b3">
-          {renderTemplate(content.cgv.content, {}, { asFragment: true })}
+          {renderTemplate(content.cgv.terms, {}, { asFragment: true })}
         </span>
       </CheckboxField>
     </FormPanel>
