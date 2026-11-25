@@ -1,5 +1,7 @@
 import { Inject, Service } from '@tsed/di';
+import set from 'lodash/set.js';
 
+import { FALLBACK_CONTENT_LOCALE } from './constants.js';
 import { PaymentConfigRepository } from './PaymentConfigRepository.js';
 import { configMatchRules, findByRules, providerMatchRules } from './resolvers.js';
 import {
@@ -48,12 +50,24 @@ export class PaymentConfigService {
   }
 
   async getContent(locale: string): Promise<Record<string, unknown>> {
-    const contents = await this.paymentConfigRepository.getContents(locale);
+    const contents = await this.paymentConfigRepository.getContents([
+      locale,
+      FALLBACK_CONTENT_LOCALE,
+    ]);
 
-    const content =
-      contents.find((c) => c.locale === locale) ?? contents.find((c) => c.locale === null);
+    return contents.reduce<Record<string, unknown>>((content, { key, type, values }) => {
+      const value = values[locale] ?? values[FALLBACK_CONTENT_LOCALE];
 
-    return content?.content ?? {};
+      if (value == null) {
+        return content;
+      }
+
+      return set(
+        content,
+        key,
+        type === 'boolean' ? value === 'true' : type === 'number' ? Number(value) : value,
+      );
+    }, {});
   }
 
   async getPaymentProvidersConfig({
