@@ -107,6 +107,7 @@ export const capsFormSchema = ({
       sales_network_id: z.string().optional(),
       salesman_id: z.string().optional(),
       opportunity_id: z.string().optional(),
+      seller_email: z.string().optional(),
     })
     .superRefine((data, ctx) => {
       const config = { isSeller, content, getProviderConfiguration, requiresPaymentCondition };

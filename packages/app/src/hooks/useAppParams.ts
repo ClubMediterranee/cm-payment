@@ -32,6 +32,7 @@ const ParamsSchema = z.object({
   salesNetworkId: z.string().optional(),
   salesmanId: z.string().optional(),
   opportunityId: z.string().optional(),
+  sellerEmail: z.string().email().optional(),
 });
 
 export function useAppParams() {
@@ -51,6 +52,7 @@ export function useAppParams() {
     sales_network_id: salesNetworkId,
     salesman_id: salesmanIdParam,
     opportunity_id: opportunityId,
+    seller_email: sellerEmail,
     ...confirmationParams
   } = useQueryParams<any>();
 
@@ -83,6 +85,7 @@ export function useAppParams() {
       salesNetworkId,
       salesmanId,
       opportunityId,
+      sellerEmail,
     };
 
     const validationResult = ParamsSchema.safeParse(values);

@@ -117,6 +117,7 @@ export interface PaymentRedirectRequestBody {
   sales_network_id?: string;
   salesman_id?: string;
   opportunity_id?: string;
+  seller_email?: string;
 }
 
 export interface OverpaymentAllowanceOutputModel {

@@ -72,6 +72,9 @@ export class PaymentRedirectRequestBody {
 
   @Property()
   opportunity_id?: string;
+
+  @Property()
+  seller_email?: string;
 }
 
 export class RedirectCallbacksModel {

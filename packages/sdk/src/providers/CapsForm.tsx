@@ -48,6 +48,7 @@ function CapsFormProvider({ children, action, onEvent, ...props }: CapsFormProps
     salesNetworkId,
     salesmanId,
     opportunityId,
+    sellerEmail,
   } = useCapsConfigContext();
   const isCurrentTheme = theme === 'current';
   const { isSeller } = useOidcContext();
@@ -117,6 +118,7 @@ function CapsFormProvider({ children, action, onEvent, ...props }: CapsFormProps
       sales_network_id: salesNetworkId,
       salesman_id: salesmanId,
       opportunity_id: opportunityId,
+      seller_email: sellerEmail,
     },
   });
 
