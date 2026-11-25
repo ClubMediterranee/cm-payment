@@ -108,6 +108,9 @@ noteworthy results are copied into `README.md` (baseline table with date, commit
   0 failures, median 89 ms, p95 224 ms, p99 854 ms. A single request takes 35–900 ms depending on Directus; the p99
   threshold already fails at 2 rps, which confirms Directus latency dominates (D4). Thresholds are kept until the full
   profile has run.
+- **Preflight.** The first full run was launched with the server stopped: 12 255 `ECONNREFUSED` over 4 minutes.
+  `scripts/run.mjs` now checks `/rest/health` then `/rest/payment_config` on the resolved target (`STRESS_ENV` or
+  `--target`) before spawning `artillery run`, and exits `1` with the cause when either fails.
 - **Checks done:** the run exits `1` on a failed threshold (p99 in the smoke run) and counts a `400` (invalid
   `x-issuer-type`) as a failed user; `STRESS_ENV=docker` switches the target to `8080`.
 

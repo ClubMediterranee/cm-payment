@@ -16,6 +16,21 @@ the payment server, isolated from the server dependencies and never published.
 - **WHEN** a developer runs the scenario with the `docker` environment or an explicit `--target`
 - **THEN** the requests go to that target instead of the local server
 
+### Requirement: Preflight check
+
+The run SHALL check that the target server and its Directus dependency answer before starting the load, and SHALL stop
+with a non-zero exit code and the cause otherwise.
+
+#### Scenario: Server not started
+
+- **WHEN** a developer runs the scenario while nothing listens on the target
+- **THEN** the command exits with a non-zero code before any load phase, telling to start the server
+
+#### Scenario: Directus unavailable
+
+- **WHEN** the server answers `/rest/health` but `/rest/payment_config` fails
+- **THEN** the command exits with a non-zero code before any load phase, telling to check the Directus settings
+
 ### Requirement: Payment config load profile
 
 The `payment-config` scenario SHALL load `GET /rest/payment_config` through warm-up, ramp-up, sustained and spike
