@@ -73,6 +73,8 @@
             "value": "UP-75709538-99"
           }
         ],
+        "requires_token": true,
+        "requires_expiry_date": false,
         "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"],
         "logos": []
       },
@@ -91,6 +93,8 @@
             "value": "UP-75709538-99"
           }
         ],
+        "requires_token": true,
+        "requires_expiry_date": false,
         "allowed_actions": ["PAYMENT_RESA", "PAYMENT_OPTION"],
         "logos": []
       },
@@ -109,6 +113,8 @@
             "value": "UP-75709538-99"
           }
         ],
+        "requires_token": true,
+        "requires_expiry_date": false,
         "allowed_actions": [
           "PAYMENT_CART",
           "PAYMENT_RESA",
@@ -389,6 +395,8 @@
         "locale": "en-US",
         "status": "published",
         "settings": [],
+        "requires_token": true,
+        "requires_expiry_date": true,
         "allowed_actions": [
           "PAYMENT_CART",
           "PAYMENT_RESA",
@@ -404,6 +412,8 @@
         "locale": "fr-CA",
         "status": "published",
         "settings": [],
+        "requires_token": true,
+        "requires_expiry_date": true,
         "allowed_actions": [
           "PAYMENT_CART",
           "PAYMENT_RESA",
