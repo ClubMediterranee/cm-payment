@@ -45,20 +45,26 @@ describe('DirectusClient', () => {
   });
 
   describe('getContents', () => {
-    it('fetches the published contents of the locale and the global one', async () => {
-      const contents = [{ locale: '*', content: { cgv: { heading: 'Terms' } } }];
+    it('fetches the published contents with their translations in the given locales', async () => {
+      const contents = [
+        {
+          key: 'cgv.heading',
+          type: 'string',
+          translations: [{ languages_code: 'fr-FR', value: 'CGV' }],
+        },
+      ];
       requestMock.mockResolvedValue(contents);
 
-      const result = await client.getContents('fr-FR');
+      const result = await client.getContents(['fr-FR', 'en-US']);
 
       expect(result).toEqual(contents);
       expect(requestMock).toHaveBeenCalledWith(
         expect.objectContaining({
           collection: 'caps_content',
           query: expect.objectContaining({
-            filter: {
-              status: { _eq: 'published' },
-              _or: [{ locale: { _eq: 'fr-FR' } }, { locale: { _eq: '*' } }],
+            filter: { status: { _eq: 'published' } },
+            deep: {
+              translations: { _filter: { languages_code: { _in: ['fr-FR', 'en-US'] } } },
             },
           }),
         }),

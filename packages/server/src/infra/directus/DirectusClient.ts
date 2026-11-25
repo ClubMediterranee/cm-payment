@@ -9,7 +9,6 @@ import {
 import { Constant, Injectable } from '@tsed/di';
 
 import type { Schema } from './__generated__/schema.js';
-import { GLOBAL_LOCALE } from './constants.js';
 
 @Injectable()
 export class DirectusClient {
@@ -35,14 +34,12 @@ export class DirectusClient {
     );
   }
 
-  getContents(locale: string) {
+  getContents(locales: string[]) {
     return this.client.request(
       readItems('caps_content', {
-        fields: ['locale', 'content'],
-        filter: {
-          status: { _eq: 'published' },
-          _or: [{ locale: { _eq: locale } }, { locale: { _eq: GLOBAL_LOCALE } }],
-        },
+        fields: ['key', 'type', { translations: ['languages_code', 'value'] }],
+        filter: { status: { _eq: 'published' } },
+        deep: { translations: { _filter: { languages_code: { _in: locales } } } },
         limit: -1,
       }),
     );

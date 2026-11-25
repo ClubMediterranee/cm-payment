@@ -65,19 +65,24 @@ describe('PaymentConfigRepository', () => {
   });
 
   describe('getContents', () => {
-    it("translates Directus '*' locale to null", async () => {
+    it('indexes the translation values by locale', async () => {
       vi.spyOn(directusClient, 'getContents').mockResolvedValue([
-        { locale: '*', content: { cgv: { heading: 'Terms' } } },
-        { locale: 'fr-FR', content: { cgv: { heading: 'CGV' } } },
+        {
+          key: 'cgv.heading',
+          type: 'string',
+          translations: [
+            { languages_code: 'en-US', value: 'Terms' },
+            { languages_code: 'fr-FR', value: 'CGV' },
+          ],
+        },
       ]);
 
-      const contents = await repository.getContents('fr-FR');
+      const contents = await repository.getContents(['fr-FR', 'en-US']);
 
-      expect(directusClient.getContents).toHaveBeenCalledWith('fr-FR');
+      expect(directusClient.getContents).toHaveBeenCalledWith(['fr-FR', 'en-US']);
 
       expect(contents).toEqual([
-        { locale: null, content: { cgv: { heading: 'Terms' } } },
-        { locale: 'fr-FR', content: { cgv: { heading: 'CGV' } } },
+        { key: 'cgv.heading', type: 'string', values: { 'en-US': 'Terms', 'fr-FR': 'CGV' } },
       ]);
     });
   });
