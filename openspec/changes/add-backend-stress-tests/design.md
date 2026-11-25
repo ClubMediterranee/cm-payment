@@ -111,6 +111,19 @@ noteworthy results are copied into `README.md` (baseline table with date, commit
 - **Preflight.** The first full run was launched with the server stopped: 12 255 `ECONNREFUSED` over 4 minutes.
   `scripts/run.mjs` now checks `/rest/health` then `/rest/payment_config` on the resolved target (`STRESS_ENV` or
   `--target`) before spawning `artillery run`, and exits `1` with the cause when either fails.
+- **First full run, no cache** (2026-11-25, local server, staging Directus, stopped during `sustained`): fine up to
+  about 30 rps (median 50–60 ms), then saturation: at 39 rps median 1.3 s and p95 3.4 s, at 50 rps 46 % failed users
+  (`ERR_SOCKET_TIMEOUT` after 10 s, and `500` from Directus `SERVICE_UNAVAILABLE` "Under pressure"). Cause:
+  `PaymentConfigRepository` read Directus on every request, only `AllowedOriginsRepository` was cached. Fix:
+  `@UseCache({ ttl: 300, refreshThreshold: 240 })` on `getConfigurations`, `getContents` and `getProviders`.
+- **Full run with `ttl: 300`** (2026-11-25, same setup): 12 255 requests, 0 failures, median 1 ms, p95 98.5 ms, p99
+  1 620 ms (fail), with stalls of 1–4 s. Diagnosis: `/rest/health` stayed under 41 ms during the stalls (server-side
+  durations), so neither the event loop, GC nor logging; a `fetch` trace showed 461 Directus calls in 90 s at 50 rps.
+  `@tsed/platform-cache` 8.31 passes `ttl` as is to cache-manager 5.7, which reads milliseconds (the Ts.ED typings say
+  seconds): entries lived 300 ms, and every expiry sent the concurrent misses to Directus at once.
+- **Full run with `ttl: 5 * 60_000`, `refreshThreshold: 4 * 60_000`** (2026-11-25, same setup): 12 255 requests,
+  0 failures, median 0 ms, p95 1 ms, p99 3 ms, max 177 ms (cold start: 16 parallel Directus calls in the first 300 ms,
+  none after). All thresholds pass; the measured latency is now the server's, Directus is out of the hot path.
 - **Checks done:** the run exits `1` on a failed threshold (p99 in the smoke run) and counts a `400` (invalid
   `x-issuer-type`) as a failed user; `STRESS_ENV=docker` switches the target to `8080`.
 
