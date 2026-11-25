@@ -59,11 +59,17 @@ threshold fails (p95 < 300 ms, p99 < 800 ms, failed users < 1 %). The full metri
 
 ## Baseline
 
-| Date       | Commit    | Run                 | Target                                             | Requests | Median | p95    | p99    | Errors |
-| ---------- | --------- | ------------------- | -------------------------------------------------- | -------- | ------ | ------ | ------ | ------ |
-| 2026-11-24 | `5dbc7e7` | smoke, 2 rps × 20 s | local server (macOS dev machine), staging Directus | 40       | 89 ms  | 224 ms | 854 ms | 0      |
+| Date       | Commit                              | Run                                        | Target                                             | Requests | Median          | p95    | p99      | Errors                  |
+| ---------- | ----------------------------------- | ------------------------------------------ | -------------------------------------------------- | -------- | --------------- | ------ | -------- | ----------------------- |
+| 2026-11-24 | `5dbc7e7`                           | smoke, 2 rps × 20 s                        | local server (macOS dev machine), staging Directus | 40       | 89 ms           | 224 ms | 854 ms   | 0                       |
+| 2026-11-25 | `5186e83`                           | full, no cache, stopped during `sustained` | local server (macOS dev machine), staging Directus | ~1 900   | 1.6 s at 50 rps | 3.5 s  | 7.3 s    | 46 % of users at 50 rps |
+| 2026-11-25 | `5186e83` + `@UseCache` (ttl 300)   | full                                       | local server (macOS dev machine), staging Directus | 12 255   | 1 ms            | 98 ms  | 1 620 ms | 0                       |
+| 2026-11-25 | `5186e83` + `@UseCache` (ttl 5 min) | full                                       | local server (macOS dev machine), staging Directus | 12 255   | 0 ms            | 1 ms   | 3 ms     | 0                       |
 
-The full profile has not been run yet.
+Without cache, Directus throttles from about 30 rps (`SERVICE_UNAVAILABLE`, "Under pressure", returned as `500`) and
+requests time out at 50 rps. `@tsed/platform-cache` passes `ttl` to cache-manager 5 in milliseconds, so `ttl: 300`
+cached for 300 ms: Directus was still called about 4 times per second, with stalls of 1–4 s when it slowed down. With
+`ttl: 5 * 60_000` every threshold passes (max 177 ms, during the cold start). See `design.md` (Implementation notes).
 
 ## Next endpoints
 

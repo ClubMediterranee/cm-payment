@@ -1,7 +1,16 @@
 import { Inject, Injectable } from '@tsed/di';
+import { UseCache } from '@tsed/platform-cache';
 
 import { GLOBAL_LOCALE } from '../../infra/directus/constants.js';
 import { DirectusClient } from '../../infra/directus/DirectusClient.js';
+
+/**
+ * Directus reads are cached 5 minutes and refreshed in the background during their last minute: without it
+ * every request reaches Directus, which throttles from about 30 req/s ("Under pressure", see
+ * packages/stress-tests). Values are in milliseconds: `@tsed/platform-cache` passes them as is to
+ * cache-manager 5, so `ttl: 300` means 300 ms (tsedio/tsed#3547).
+ */
+const DIRECTUS_CACHE = { ttl: 5 * 60_000, refreshThreshold: 4 * 60_000 };
 
 type RawProvider = Awaited<ReturnType<DirectusClient['getProviders']>>[number];
 type RawVariant = NonNullable<RawProvider['settings']>[number];
@@ -11,6 +20,7 @@ export class PaymentConfigRepository {
   @Inject()
   protected directusClient!: DirectusClient;
 
+  @UseCache(DIRECTUS_CACHE)
   async getConfigurations() {
     const configurations = await this.directusClient.getConfigurations();
     return configurations.map(({ overrides, ...configuration }) => ({
@@ -22,6 +32,7 @@ export class PaymentConfigRepository {
     }));
   }
 
+  @UseCache(DIRECTUS_CACHE)
   async getContents(locales: string[]) {
     const contents = await this.directusClient.getContents(locales);
     return contents.map(({ key, type, translations }) => ({
@@ -33,6 +44,7 @@ export class PaymentConfigRepository {
     }));
   }
 
+  @UseCache(DIRECTUS_CACHE)
   async getProviders() {
     const providers = await this.directusClient.getProviders();
     return providers.map(({ settings, ...provider }) => ({

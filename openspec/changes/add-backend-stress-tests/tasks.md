@@ -13,7 +13,7 @@
 
 ## 3. Verification
 
-- [ ] 3.1 Warn the staging CMS owners, then run the full scenario against the local server and check the JSON report (smoke run done, see design)
+- [x] 3.1 Warn the staging CMS owners, then run the full scenario against the local server and check the JSON report (see design: cache added and TTL unit fixed)
 - [x] 3.2 Check a non-zero exit code when a threshold is exceeded (e.g. temporarily set p95 to 1 ms)
 - [x] 3.3 Check an invalid `x-issuer-type` row makes the run report failed requests (`400`), then remove it
 - [ ] 3.4 Run against the Docker container (`docker compose up`) and compare

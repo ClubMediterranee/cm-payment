@@ -11,6 +11,7 @@ describe('PaymentConfigRepository', () => {
     await PlatformTest.create({
       DIRECTUS_URL: 'http://localhost',
       DIRECTUS_API_TOKEN: 'test-token',
+      cache: { ttl: 300, store: 'memory' },
     });
 
     repository = await PlatformTest.invoke<PaymentConfigRepository>(PaymentConfigRepository);
@@ -174,6 +175,52 @@ describe('PaymentConfigRepository', () => {
       const [provider] = await repository.getProviders();
 
       expect(provider.variants[0].settings).toEqual([]);
+    });
+  });
+
+  describe('cache', () => {
+    it('caches getConfigurations with @UseCache', async () => {
+      const getConfigurations = vi
+        .spyOn(directusClient, 'getConfigurations')
+        .mockResolvedValue([] as never);
+
+      await repository.getConfigurations();
+      await repository.getConfigurations();
+
+      expect(getConfigurations).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps the cached configurations beyond 300 ms (ttl in milliseconds)', async () => {
+      const getConfigurations = vi
+        .spyOn(directusClient, 'getConfigurations')
+        .mockResolvedValue([] as never);
+
+      await repository.getConfigurations();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      await repository.getConfigurations();
+
+      expect(getConfigurations).toHaveBeenCalledTimes(1);
+    });
+
+    it('caches getContents per locale with @UseCache', async () => {
+      const getContents = vi.spyOn(directusClient, 'getContents').mockResolvedValue([] as never);
+
+      await repository.getContents(['fr-FR']);
+      await repository.getContents(['fr-FR']);
+      await repository.getContents(['en-GB']);
+
+      expect(getContents).toHaveBeenCalledTimes(2);
+      expect(getContents).toHaveBeenNthCalledWith(1, ['fr-FR']);
+      expect(getContents).toHaveBeenNthCalledWith(2, ['en-GB']);
+    });
+
+    it('caches getProviders with @UseCache', async () => {
+      const getProviders = vi.spyOn(directusClient, 'getProviders').mockResolvedValue([] as never);
+
+      await repository.getProviders();
+      await repository.getProviders();
+
+      expect(getProviders).toHaveBeenCalledTimes(1);
     });
   });
 });
