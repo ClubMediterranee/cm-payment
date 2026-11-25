@@ -54,6 +54,8 @@ export interface PaymentSettings {
   [key: string]: unknown;
  }
 
+export interface PaymentContent { [key: string]: unknown }
+
 export interface PaymentRedirectRequestResult {
   redirect: ProviderRedirectModel;
   payment?: PaymentInfoModel;
