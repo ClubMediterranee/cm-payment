@@ -37,6 +37,10 @@ Short smoke run (any Artillery flag is appended to the command):
 pnpm stress:payment-config --overrides '{"config":{"phases":[{"duration":20,"arrivalRate":2}]}}'
 ```
 
+Before starting Artillery, `scripts/run.mjs` checks the target: `GET /rest/health` (server up) then
+`GET /rest/payment_config` (Directus reachable). If either fails, the command stops right away with the cause and exits
+`1`, instead of running the whole profile against nothing.
+
 Run the server with the production log level to keep log I/O from skewing the numbers.
 
 ## Results
