@@ -8,12 +8,15 @@ overrides:
   content-disposition: 2.0.1
 
 allowBuilds:
+  "@playwright/browser-chromium": false
   "@scarf/scarf": false
   "@swc/core": false
   core-js: false
   core-js-pure: false
   esbuild: false
   msw: false
+  protobufjs: false
+  unix-dgram: false
 
 minimumReleaseAgeExclude:
   - vite@8.1.0
