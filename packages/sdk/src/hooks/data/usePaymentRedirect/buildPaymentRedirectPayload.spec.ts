@@ -40,6 +40,7 @@ describe('buildPaymentRedirectPayload', () => {
     const payload = buildPaymentRedirectPayload(formData, settings, {
       connection_type: 'E-commerce',
       category_payment_method: 'CreditCard',
+      configuration: { requires_contact_choice: true },
     } as any);
 
     expect(payload).toEqual({
@@ -90,6 +91,17 @@ describe('buildPaymentRedirectPayload', () => {
     expect(payload.connection_type).toBeUndefined();
     expect(payload.category_payment_method).toBeUndefined();
   });
+
+  it.each([false, undefined])(
+    'omits the template when requires_contact_choice is %s',
+    (requires_contact_choice) => {
+      const payload = buildPaymentRedirectPayload(formData, settings, {
+        configuration: { requires_contact_choice },
+      } as any);
+
+      expect(payload.template_id).toBeUndefined();
+    },
+  );
 
   it('forwards the seller email from the form data', () => {
     const payload = buildPaymentRedirectPayload(

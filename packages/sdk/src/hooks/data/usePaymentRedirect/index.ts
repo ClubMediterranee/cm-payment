@@ -54,7 +54,9 @@ export const buildPaymentRedirectPayload = (
     amount,
     currency,
     payment_condition_id,
-    template_id,
+    template_id: watchedPaymentProvider?.configuration?.requires_contact_choice
+      ? template_id
+      : undefined,
     donation_amount,
     uuid,
     reference,
