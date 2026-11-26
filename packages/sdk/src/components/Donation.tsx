@@ -7,7 +7,7 @@ import { Icon } from '@clubmed/trident-icons';
 import { PropsWithChildren, useCallback, useEffect, useId, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
+import { Action, PaymentProvider1CategoryPaymentMethod } from '../__generated__/index.schemas';
 import { GLOBAL_CAPS_SETTINGS } from '../config';
 import { usePaymentConfig } from '../hooks/data/usePaymentConfig';
 import { usePaymentSchedule } from '../hooks/data/usePaymentSchedule';
@@ -34,7 +34,7 @@ const FieldError = ({ id, message }: { id: string; message?: string }) =>
 
 export const Donation = ({ className, children }: PropsWithChildren<{ className?: string }>) => {
   const { content, locale } = useCapsConfigContext();
-  const { setValue, formState } = useFormContext();
+  const { setValue, getValues, formState } = useFormContext();
   const { data: paymentConfig } = usePaymentConfig();
   const watchedProvider = useWatchedPaymentProvider();
 
@@ -79,7 +79,11 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
     if (isSplitPayment) removeDonation();
   }, [isSplitPayment, removeDonation]);
 
-  if (!paymentConfig?.feature_flips?.is_donation_enabled || isSplitPayment) {
+  if (
+    !paymentConfig?.feature_flips?.is_donation_enabled ||
+    getValues('action') !== Action.PAYMENT_RESA ||
+    isSplitPayment
+  ) {
     return null;
   }
 

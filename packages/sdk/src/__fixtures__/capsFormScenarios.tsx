@@ -191,7 +191,8 @@ export const billingWidgetHandlers = [
 ];
 
 export const donationHandlers = [
-  ...handlers.slice(0, 3),
+  http.get('*/rest/action_resolver/*', () => Response.json({ action: Action.PAYMENT_RESA })),
+  ...handlers.slice(1, 3),
   http.get('*/rest/payment_config', () =>
     Response.json({ feature_flips: { is_donation_enabled: true }, settings: {} }),
   ),

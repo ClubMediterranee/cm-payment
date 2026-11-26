@@ -3,6 +3,7 @@ import { Radio } from '@clubmed/trident-ui/ui/forms/radios/index';
 import { TextField } from '@clubmed/trident-ui/ui/forms/TextField';
 import { PropsWithChildren, useState } from 'react';
 
+import { Action } from '../../__generated__/index.schemas';
 import { GLOBAL_CAPS_SETTINGS } from '../../config';
 import { usePaymentConfig } from '../../hooks/data/usePaymentConfig';
 import { usePaymentSchedule } from '../../hooks/data/usePaymentSchedule';
@@ -20,7 +21,7 @@ const FREE_AMOUNT = 'free';
 
 export const Donation = ({ className, children }: PropsWithChildren<{ className?: string }>) => {
   const { content, locale } = useCapsConfigContext();
-  const { setValue, formState } = useFormContext();
+  const { setValue, getValues, formState } = useFormContext();
   const { data: paymentConfig } = usePaymentConfig();
 
   const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
@@ -33,7 +34,10 @@ export const Donation = ({ className, children }: PropsWithChildren<{ className?
     paymentSchedule: [{ currency }],
   } = usePaymentSchedule();
 
-  if (!paymentConfig?.feature_flips?.is_donation_enabled) {
+  if (
+    !paymentConfig?.feature_flips?.is_donation_enabled ||
+    getValues('action') !== Action.PAYMENT_RESA
+  ) {
     return null;
   }
 

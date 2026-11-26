@@ -39,14 +39,16 @@ const defaultHandlers = [schedulesHandler, paymentProvidersHandler, paymentConfi
 
 const DonationWithProvider = ({
   defaultValues,
+  action = Action.PAYMENT_RESA,
 }: {
   defaultValues?: React.ComponentProps<typeof MockedProvider>['defaultValues'];
+  action?: Action;
 }) => {
   return (
     <MockedProvider
       bookingId="test-booking"
       customerId="test-customer"
-      action={Action.PAYMENT_OPTION}
+      action={action}
       defaultValues={{ donation_amount: undefined, ...defaultValues }}
     >
       <Donation />
@@ -310,6 +312,27 @@ export const RemovedWithSplitPayment: Story = {
 
     await waitFor(() => {
       expect(canvas.queryByRole('switch', { name: /Make a donation/i })).not.toBeInTheDocument();
+    });
+  },
+};
+
+export const WithoutPaymentResaAction: Story = {
+  parameters: {
+    msw: { handlers: defaultHandlers },
+    docs: {
+      description: {
+        story: "Le composant ne s'affiche que pour l'action `PAYMENT_RESA`.",
+      },
+    },
+  },
+  render() {
+    return <DonationWithProvider action={Action.PAYMENT_OPTION} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      expect(canvas.queryByText(/Make a donation/i)).not.toBeInTheDocument();
     });
   },
 };

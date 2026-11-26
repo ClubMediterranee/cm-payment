@@ -35,7 +35,7 @@ const DonationWithProvider = () => {
     <MockedProvider
       bookingId="test-booking"
       customerId="test-customer"
-      action={Action.PAYMENT_OPTION}
+      action={Action.PAYMENT_RESA}
       defaultValues={{ donation_amount: undefined }}
     >
       <Donation />
