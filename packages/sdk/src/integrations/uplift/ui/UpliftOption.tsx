@@ -22,14 +22,12 @@ type UpliftOptionProps = {
 
 export const UpliftOption = ({ provider, name, checked, onChange }: UpliftOptionProps) => {
   const { content, locale, language } = useCapsConfigContext();
-  const watchedAmount = useWatch('amount');
   const watchedCurrency = useWatch('currency');
-  const { status } = useUplift();
+  const { status, priceInCents } = useUplift();
   const { monthly } = content.paymentSchedule;
 
   const currencySymbol = getCurrencySymbol(locale, watchedCurrency);
   const isFrench = language === 'fr';
-  const priceInCents = Math.round(Number(watchedAmount) * 100);
 
   const isLoading = status === null;
   const isUnavailable =

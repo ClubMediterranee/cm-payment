@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
 
+import { usePaymentSchedule } from '../../../hooks/data/usePaymentSchedule/index.js';
 import { useStay } from '../../../hooks/data/useStay/index.js';
 import { useTransportDetails } from '../../../hooks/data/useTransportDetails/index.js';
-import { useWatch } from '../../../hooks/utils/useForm.js';
 import { useUpliftOrder } from './useUpliftOrder.js';
 
 vi.mock('../../../hooks/data/useStay', () => ({
@@ -13,13 +13,18 @@ vi.mock('../../../hooks/data/useTransportDetails', () => ({
   useTransportDetails: vi.fn(),
 }));
 
-vi.mock('../../../hooks/utils/useForm', () => ({
-  useWatch: vi.fn(),
+vi.mock('../../../hooks/data/usePaymentSchedule', () => ({
+  usePaymentSchedule: vi.fn(),
 }));
 
 const mockUseStay = vi.mocked(useStay);
 const mockUseTransportDetails = vi.mocked(useTransportDetails);
-const mockUseWatch = vi.mocked(useWatch);
+const mockUsePaymentSchedule = vi.mocked(usePaymentSchedule);
+
+const mockStayAmount = (amount?: number) =>
+  mockUsePaymentSchedule.mockReturnValue({
+    paymentSchedule: amount === undefined ? [] : [{ amount }],
+  } as any);
 
 describe('useUpliftOrder', () => {
   beforeEach(() => {
@@ -29,8 +34,8 @@ describe('useUpliftOrder', () => {
     } as any);
   });
 
-  it('should return order with zero amount when amount is missing', () => {
-    mockUseWatch.mockReturnValue('');
+  it('should return order with zero amount when the payment schedule is empty', () => {
+    mockStayAmount();
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -49,7 +54,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('should handle missing stay data gracefully', () => {
-    mockUseWatch.mockReturnValue('999.99');
+    mockStayAmount(999.99);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -66,7 +71,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('should build complete order with valid data', () => {
-    mockUseWatch.mockReturnValue('999.99');
+    mockStayAmount(999.99);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -101,7 +106,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('should calculate numberOfRooms correctly with adults only', () => {
-    mockUseWatch.mockReturnValue('1500');
+    mockStayAmount(1500);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -120,7 +125,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('should calculate numberOfRooms correctly with adults and children', () => {
-    mockUseWatch.mockReturnValue('1500');
+    mockStayAmount(1500);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -139,7 +144,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('should default to 1 room when totalGuests is 0', () => {
-    mockUseWatch.mockReturnValue('500');
+    mockStayAmount(500);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -158,7 +163,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('should handle missing dates with empty strings', () => {
-    mockUseWatch.mockReturnValue('750');
+    mockStayAmount(750);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -178,7 +183,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('should convert amount to cents correctly', () => {
-    mockUseWatch.mockReturnValue('1234.56');
+    mockStayAmount(1234.56);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -197,7 +202,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('returns null when a plane transport query yields no journeys yet', () => {
-    mockUseWatch.mockReturnValue('500');
+    mockStayAmount(500);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -217,7 +222,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('maps transport journeys to air_reservations when transport data is present', () => {
-    mockUseWatch.mockReturnValue('1500');
+    mockStayAmount(1500);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -273,7 +278,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('falls back to oneway trip_type when transport data is partially missing', () => {
-    mockUseWatch.mockReturnValue('900');
+    mockStayAmount(900);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -302,7 +307,7 @@ describe('useUpliftOrder', () => {
   });
 
   it('should update order when amount changes', () => {
-    mockUseWatch.mockReturnValue('500');
+    mockStayAmount(500);
     mockUseStay.mockReturnValue({
       data: {
         productId: 'PCAC',
@@ -319,7 +324,7 @@ describe('useUpliftOrder', () => {
 
     expect(result.current?.order_amount).toBe(50000);
 
-    mockUseWatch.mockReturnValue('750');
+    mockStayAmount(750);
     rerender();
 
     expect(result.current?.order_amount).toBe(75000);

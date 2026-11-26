@@ -69,5 +69,5 @@ export const useUplift = () => {
     };
   }, []);
 
-  return { status: data?.status ?? null };
+  return { status: data?.status ?? null, priceInCents: order?.order_amount };
 };

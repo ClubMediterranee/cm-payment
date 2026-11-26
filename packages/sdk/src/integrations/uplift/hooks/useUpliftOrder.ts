@@ -1,11 +1,11 @@
 import { UpliftOrder } from '../types/Uplift.js';
+import { usePaymentSchedule } from '../../../hooks/data/usePaymentSchedule/index.js';
 import { useStay } from '../../../hooks/data/useStay/index.js';
 import { useTransportDetails } from '../../../hooks/data/useTransportDetails/index.js';
-import { useWatch } from '../../../hooks/utils/useForm.js';
 import { computePriceInCents } from './uplift.js';
 
 export const useUpliftOrder = (): UpliftOrder | null => {
-  const amount = useWatch('amount');
+  const { paymentSchedule } = usePaymentSchedule();
   const { data: stay } = useStay();
 
   const enableTransportQuery = stay.transportTypes?.includes('PLANE');
@@ -17,7 +17,7 @@ export const useUpliftOrder = (): UpliftOrder | null => {
   if (enableTransportQuery && !transport?.journeys.length) return null;
 
   return {
-    order_amount: computePriceInCents(Number(amount)),
+    order_amount: computePriceInCents(paymentSchedule[0]?.amount ?? 0),
     travelers: [] as UpliftOrder['travelers'],
     billing_contact: {} as UpliftOrder['billing_contact'],
     air_reservations: (transport?.journeys || []).map((journey) => ({
