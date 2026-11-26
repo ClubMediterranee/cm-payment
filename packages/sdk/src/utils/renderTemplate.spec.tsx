@@ -86,6 +86,60 @@ describe('renderTemplate', () => {
     });
   });
 
+  describe('links', () => {
+    it('renders markdown links as anchors opening in a new tab', () => {
+      const result = renderTemplate(
+        'I accept the [Terms](https://clubmed.com/cgv) and the [Form](https://clubmed.com/form).',
+        {},
+      );
+      const { container } = render(result!);
+      const links = container.querySelectorAll('a');
+      expect(container.textContent).toBe('I accept the Terms and the Form.');
+      expect(Array.from(links, (a) => [a.textContent, a.getAttribute('href')])).toEqual([
+        ['Terms', 'https://clubmed.com/cgv'],
+        ['Form', 'https://clubmed.com/form'],
+      ]);
+      expect(links[0].getAttribute('target')).toBe('_blank');
+      expect(links[0].getAttribute('rel')).toBe('noopener noreferrer');
+    });
+
+    it('interpolates placeholders in the link label and url', () => {
+      const result = renderTemplate('See the [{label}]({url})', {
+        label: 'Information Form',
+        url: 'https://clubmed.com/form',
+      });
+      const { container } = render(result!);
+      const link = container.querySelector('a');
+      expect(link?.textContent).toBe('Information Form');
+      expect(link?.getAttribute('href')).toBe('https://clubmed.com/form');
+    });
+
+    it('renders the label as text when the url is empty', () => {
+      const result = renderTemplate('I accept the [terms]()', {});
+      const { container } = render(result!);
+      expect(container.querySelector('a')).toBeNull();
+      expect(container.textContent).toBe('I accept the terms');
+    });
+
+    it('renders the label as text when the url is unsafe', () => {
+      const result = renderTemplate('I accept the [terms](javascript:alert(1))', {});
+      const { container } = render(result!);
+      expect(container.querySelector('a')).toBeNull();
+    });
+
+    it('keeps brackets that are not followed by a url as text', () => {
+      const result = renderTemplate('Payment obligation. [FBL] I accept', {});
+      const { container } = render(result!);
+      expect(container.querySelector('a')).toBeNull();
+      expect(container.textContent).toBe('Payment obligation. [FBL] I accept');
+    });
+
+    it('requires the placeholders used in a link', () => {
+      // @ts-expect-error missing url value
+      expect(renderTemplate('See the [form]({url})', {})).not.toBeNull();
+    });
+  });
+
   describe('console output', () => {
     it('warns when value key is not used in template', () => {
       renderTemplate('Hello {name}', { name: 'John', unused: 'value' } as any);
@@ -121,45 +175,6 @@ describe('renderTemplate', () => {
       const result = renderTemplate('Value: {num}', { num: 0 });
       const { container } = render(result!);
       expect(container.textContent).toBe('Value: 0');
-    });
-  });
-
-  describe('links', () => {
-    it('renders an anchor tag as a link opening in a new tab', () => {
-      const { container } = render(
-        renderTemplate('Read the <a href="https://example.com/terms">terms</a> now', {})!,
-      );
-
-      const link = container.querySelector('a')!;
-
-      expect(container.textContent).toBe('Read the terms now');
-      expect(link.getAttribute('href')).toBe('https://example.com/terms');
-      expect(link.getAttribute('target')).toBe('_blank');
-      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
-    });
-
-    it('renders several links around a placeholder', () => {
-      const { container } = render(
-        renderTemplate('<a href="/a">A</a> {name} <a href=\'/b\'>B</a>', { name: 'and' })!,
-      );
-
-      expect([...container.querySelectorAll('a')].map((link) => link.textContent)).toEqual([
-        'A',
-        'B',
-      ]);
-      expect(container.textContent).toBe('A and B');
-    });
-
-    it('keeps only the label when the link is missing or unsafe', () => {
-      const { container } = render(
-        renderTemplate(
-          '<a href="javascript:alert(1)">unsafe</a> <a class="x">none</a> <a href="">empty</a>',
-          {},
-        )!,
-      );
-
-      expect(container.querySelector('a')).toBeNull();
-      expect(container.textContent).toBe('unsafe none empty');
     });
   });
 });
