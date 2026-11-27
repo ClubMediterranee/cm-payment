@@ -91,6 +91,9 @@ the team and the CMS owners, and watched (Datadog / Kibana staging). If the stag
   preflight fails in seconds when the host is unreachable).
 - **`STRESS_ARGS`.** Added to pass extra Artillery flags from "Run pipeline" (smoke run). Word-split by the shell, so the
   JSON of `--overrides` must have no spaces.
+- **Job image.** First pipeline: the runner could not pull `-bookworm}`. `.node_configure` sets
+  `image: ${NODE_IMG:-node:${NODE_VERSION}-bookworm}`, a nested default GitLab does not expand (the other jobs extend
+  `.node_install_dependencies`, which sets `image: $NODE_IMG`). The job sets `image: $NODE_IMG` itself.
 - **GitLab lint.** The local YAML parses and every other job's rules exclude `WORKFLOW=stress`; the included
   `clubmed/templates` files are only checked by GitLab itself (no `glab` here).
 

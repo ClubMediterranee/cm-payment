@@ -133,6 +133,8 @@ test:
 # with WORKFLOW=stress. Allowed targets are the ones of packages/stress-tests/config/environments.yml (no production).
 stress-test:
   extends: .node_configure
+  # `.node_configure` uses `${NODE_IMG:-node:${NODE_VERSION}-bookworm}`, which GitLab can't expand (nested default).
+  image: $NODE_IMG
   stage: stress
   variables:
     STRESS_ENV: staging
