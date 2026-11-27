@@ -1,4 +1,4 @@
-import { DITest } from '@tsed/di';
+import { DITest, logger } from '@tsed/di';
 
 import * as api from '../../infra/api/__generated__/index.js';
 import { PaymentConfigService } from '../payment_config/PaymentConfigService.js';
@@ -321,6 +321,43 @@ describe('PaymentRedirectService', () => {
 
       expect(api.getV0PaymentsPaymentIdStatus).toHaveBeenCalledTimes(2);
       expect(redirectUrl).toContain('payment_status=SUCCESS');
+    });
+
+    it('should stop polling at the wait budget when Directus asks for too many attempts', async () => {
+      const service = await invokeService();
+      mockStrategy('EVOXPAY', 'status');
+      getPaymentConfig.mockResolvedValue({
+        feature_flips: {},
+        settings: { payment_status_poll_attempts: 100, payment_status_poll_delay_ms: 9000 },
+      });
+      const warn = vi.spyOn(logger(), 'warn');
+      vi.mocked(api.getV0PaymentsPaymentIdStatus).mockResolvedValue({
+        finalisePaymentResponse: {
+          paiement: { statutPaiement: 'PENDING', montantVersement: '100.00', codeDevise: 'EUR' },
+          dossier: { numeroDossier: 'BOOK333' },
+        },
+      } as any);
+
+      vi.useFakeTimers();
+      const promise = service.handlePaymentRedirect('payment333', {
+        callback_url: 'https://example.com/callback',
+        provider_id: 'EVOXPAY',
+      });
+      await vi.runAllTimersAsync();
+      const redirectUrl = await promise;
+      vi.useRealTimers();
+
+      // Calls at 0, 9 and 18 s: a 4th one at 27 s would pass the 20 s budget.
+      expect(api.getV0PaymentsPaymentIdStatus).toHaveBeenCalledTimes(3);
+      expect(redirectUrl).toContain('payment_status=PENDING');
+      expect(warn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'PAYMENT_POLL_BUDGET_REACHED',
+          step: 'payment_status_poll',
+          payment_id: 'payment333',
+          attempts: 3,
+        }),
+      );
     });
   });
 

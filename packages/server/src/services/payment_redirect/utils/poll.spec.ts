@@ -88,4 +88,38 @@ describe('poll', () => {
     expect(result).toEqual({ status: 'SUCCESS' });
     expect(fn).toHaveBeenCalledTimes(1);
   });
+
+  it('stops polling once the wait budget is reached, whatever the attempts', async () => {
+    vi.useFakeTimers();
+    const fn = vi.fn(async () => ({ status: 'PENDING' }));
+    const onBudgetReached = vi.fn();
+
+    const promise = poll(fn, {
+      attempts: 10,
+      delay: 3000,
+      budgetMs: 7000,
+      onBudgetReached,
+      continue: (res) => res.status === 'PENDING',
+    });
+    await vi.runAllTimersAsync();
+
+    await expect(promise).resolves.toEqual({ status: 'PENDING' });
+    // 0 s, 3 s, 6 s: a 4th call at 9 s would pass the 7 s budget.
+    expect(fn).toHaveBeenCalledTimes(3);
+    expect(onBudgetReached).toHaveBeenCalledWith({ attempts: 3, elapsedMs: 6000 });
+    vi.useRealTimers();
+  });
+
+  it('caps the default settings at the default budget', async () => {
+    vi.useFakeTimers();
+    const fn = vi.fn(async () => ({ status: 'PENDING' }));
+
+    const promise = poll(fn, { attempts: 100, continue: (res) => res.status === 'PENDING' });
+    await vi.runAllTimersAsync();
+    await promise;
+
+    // Default delay 3 s, default budget 20 s: calls at 0, 3, ..., 18 s.
+    expect(fn).toHaveBeenCalledTimes(7);
+    vi.useRealTimers();
+  });
 });

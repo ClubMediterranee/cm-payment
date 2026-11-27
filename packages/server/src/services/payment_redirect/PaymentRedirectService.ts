@@ -1,4 +1,4 @@
-import { constant, Inject, Service } from '@tsed/di';
+import { constant, Inject, logger, Service } from '@tsed/di';
 
 import {
   Action,
@@ -22,6 +22,17 @@ import { mapBillingDetails } from './utils/mapBillingDetails.js';
 import { poll } from './utils/poll.js';
 import { resolveBooking } from './utils/resolveBooking.js';
 import { retry } from './utils/retry.js';
+
+const logBudgetReached =
+  (step: string, paymentId: string) =>
+  ({ attempts, elapsedMs }: { attempts: number; elapsedMs: number }) =>
+    logger().warn({
+      event: 'PAYMENT_POLL_BUDGET_REACHED',
+      step,
+      payment_id: paymentId,
+      attempts,
+      elapsed_ms: elapsedMs,
+    });
 
 const MANUAL_CONNECTION_TYPE = 'Manual';
 
@@ -130,6 +141,7 @@ export class PaymentRedirectService {
       {
         attempts: settings.dtmf_redirect_retry_attempts,
         delay: settings.dtmf_redirect_retry_delay_ms,
+        onBudgetReached: logBudgetReached('dtmf_redirect_retry', paymentId),
       },
     );
   }
@@ -243,6 +255,7 @@ export class PaymentRedirectService {
     const response = await poll(() => getV0PaymentsPaymentIdStatus(paymentId), {
       attempts: settings.payment_status_poll_attempts,
       delay: settings.payment_status_poll_delay_ms,
+      onBudgetReached: logBudgetReached('payment_status_poll', paymentId),
       continue: (res) => res.finalisePaymentResponse.paiement.statutPaiement === 'PENDING',
     });
 

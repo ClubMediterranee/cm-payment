@@ -35,4 +35,23 @@ describe('retry', () => {
     await expect(promise).resolves.toEqual(new Error('boom'));
     expect(fn).toHaveBeenCalledTimes(2);
   });
+
+  it('throws the last error once the wait budget is reached', async () => {
+    vi.useFakeTimers();
+    const fn = vi.fn().mockRejectedValue(new Error('boom'));
+    const onBudgetReached = vi.fn();
+
+    const promise = retry(fn, {
+      attempts: 10,
+      delay: 5000,
+      budgetMs: 12000,
+      onBudgetReached,
+    }).catch((error) => error);
+    await vi.runAllTimersAsync();
+
+    await expect(promise).resolves.toEqual(new Error('boom'));
+    // 0 s, 5 s, 10 s: a 4th call at 15 s would pass the 12 s budget.
+    expect(fn).toHaveBeenCalledTimes(3);
+    expect(onBudgetReached).toHaveBeenCalledWith({ attempts: 3, elapsedMs: 10000 });
+  });
 });
