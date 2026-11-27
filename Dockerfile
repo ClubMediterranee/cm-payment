@@ -45,8 +45,8 @@ COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=builder /app/patches/ ./patches/
 
 # Copy server metadata, build artifacts, and runtime dependencies from the builder
+# No packages/server/.env: deployed values come from the ECS task and the SSM Parameter Store.
 COPY packages/server/package.json ./packages/server/package.json
-COPY packages/server/.env ./packages/server/.env
 RUN pnpm install --frozen-lockfile --prod --filter @clubmed/server --ignore-scripts
 #COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/server/dist ./packages/server/dist
@@ -60,4 +60,7 @@ COPY --from=builder /app/storybook-static /app/storybook-static
 
 EXPOSE 8083
 
-CMD ["pnpm", "--filter", "@clubmed/server", "start:prod"]
+# Node is the main process so it receives SIGTERM and runs the graceful stop (`platform.stop()`); pnpm as PID 1 may
+# not forward it. The server reads ./package.json, so it runs from its package directory.
+WORKDIR /app/packages/server
+CMD ["node", "dist/index.js"]
