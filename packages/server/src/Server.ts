@@ -64,6 +64,12 @@ export class Server {
   }
 
   $onReady() {
+    logger().info({
+      event: 'SERVER_READY',
+      env_level: constant<string>('APP_ENV_LEVEL') || 'local',
+      node_env: process.env.NODE_ENV,
+    });
+
     const host = configuration().getBestHost();
 
     if (host && !this.disableRoutesSummary) {

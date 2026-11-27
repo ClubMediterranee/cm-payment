@@ -12,6 +12,10 @@ export class VersionController {
   @Constant('rootDir')
   private rootDir!: string;
 
+  /** integration / staging / production on the deployed servers (`APP_ENV_LEVEL`), `local` otherwise. */
+  @Constant('APP_ENV_LEVEL', 'local')
+  private envLevel!: string;
+
   @Get('/')
   @(Returns(200)
     .ContentType('application/json')
@@ -19,12 +23,14 @@ export class VersionController {
       object({
         branch: string().required(),
         version: string().required(),
+        env_level: string().required().description('integration, staging, production or local'),
       }).label('VersionInfo'),
     ))
   async get() {
     return {
       branch: await this.getCurrentBranch(),
       version: this.version,
+      env_level: this.envLevel || 'local',
     };
   }
 

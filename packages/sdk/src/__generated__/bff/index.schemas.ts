@@ -136,6 +136,11 @@ export interface VersionInfo {
   branch: string;
   /** @minLength 1 */
   version: string;
+  /**
+   * integration, staging, production or local
+   * @minLength 1
+   */
+  env_level: string;
 }
 
 export interface PaymentProvider1 {

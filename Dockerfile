@@ -34,6 +34,9 @@ FROM node:24.17.0-alpine
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
+# integration / staging / production, from .gitlab/envs; the ECS task may override it. Empty locally.
+ARG APP_ENV_LEVEL
+ENV APP_ENV_LEVEL=${APP_ENV_LEVEL}
 
 WORKDIR /app
 

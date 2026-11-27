@@ -26,6 +26,14 @@ describe('VersionController', () => {
     expect(await controller.get()).toEqual({
       branch: 'develop',
       version: '1.0.0',
+      env_level: 'local',
     });
+  });
+  it('should return the environment level of a deployed server', async () => {
+    await PlatformTest.reset();
+    await PlatformTest.create({ rootDir, version: '1.0.0', APP_ENV_LEVEL: 'staging' } as never);
+    const controller = PlatformTest.get<VersionController>(VersionController);
+
+    expect(await controller.get()).toMatchObject({ env_level: 'staging' });
   });
 });

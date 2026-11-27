@@ -47,7 +47,7 @@ export const getPaymentScheduleControllerGetOverpaymentAllowanceResponseMock = (
 
 export const getPaymentScheduleControllerGetPaymentSchedulesResponseMock = (): PaymentScheduleOutputModel[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({amount: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined]), currency: faker.string.alpha({length: {min: 1, max: 20}}), deadline: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), balance: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), undefined])})))
 
-export const getVersionControllerGetResponseMock = (overrideResponse: Partial< VersionInfo > = {}): VersionInfo => ({branch: faker.string.alpha({length: {min: 1, max: 20}}), version: faker.string.alpha({length: {min: 1, max: 20}}), ...overrideResponse})
+export const getVersionControllerGetResponseMock = (overrideResponse: Partial< VersionInfo > = {}): VersionInfo => ({branch: faker.string.alpha({length: {min: 1, max: 20}}), version: faker.string.alpha({length: {min: 1, max: 20}}), env_level: faker.string.alpha({length: {min: 1, max: 20}}), ...overrideResponse})
 
 
 export const getActionResolverControllerResolveActionMockHandler = (overrideResponse?: ResolvedActionModel | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ResolvedActionModel> | ResolvedActionModel), options?: RequestHandlerOptions) => {
