@@ -103,4 +103,13 @@ const child = spawn(
   ],
   { cwd: root, stdio: 'inherit' },
 );
-child.on('exit', (code) => process.exit(code ?? 1));
+child.on('error', (error) => {
+  console.error(`Unable to start Artillery: ${error.message}`);
+  process.exit(1);
+});
+child.on('exit', (code, signal) => {
+  if (code !== 0) {
+    console.error(`Artillery exited with ${signal ? `signal ${signal}` : `code ${code}`}.`);
+  }
+  process.exit(code ?? 1);
+});

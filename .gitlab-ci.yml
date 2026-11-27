@@ -142,8 +142,13 @@ stress-test:
     STRESS_ARGS: ""
     # Node's fetch (preflight) only honours HTTP(S)_PROXY / NO_PROXY with this flag.
     NODE_USE_ENV_PROXY: "1"
+    # Artillery debug logs (launcher, workers, plugins, phases; no per-request namespace). Empty it to turn them off.
+    DEBUG: "commands:run,platform:local,artillery:worker,core,runner,phases,telemetry"
   resource_group: stress-$STRESS_ENV
   script:
+    - |
+      echo "Runner: node $(node -v), $(nproc) CPUs, cgroup memory limit $(cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo unknown)"
+      echo "Proxy variables set: $(env | grep -ioE '^(https?|no)_proxy' | sort -u | tr '\n' ' ')"
     - pnpm install --frozen-lockfile --filter @clubmed/stress-tests
     # shellcheck disable=SC2086
     - pnpm stress:payment-config $STRESS_ARGS

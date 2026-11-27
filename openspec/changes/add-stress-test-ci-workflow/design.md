@@ -94,6 +94,13 @@ the team and the CMS owners, and watched (Datadog / Kibana staging). If the stag
 - **Job image.** First pipeline: the runner could not pull `-bookworm}`. `.node_configure` sets
   `image: ${NODE_IMG:-node:${NODE_VERSION}-bookworm}`, a nested default GitLab does not expand (the other jobs extend
   `.node_install_dependencies`, which sets `image: $NODE_IMG`). The job sets `image: $NODE_IMG` itself.
+- **Silent Artillery exit (open).** Second pipeline (#501725): the runner reaches staging (preflight OK,
+  `1.1.0-beta.5`), then Artillery exits `1` right after "Test run id" with no output. Not reproduced: Node 26 locally,
+  and an exact copy of the job in `node:24.17.0-bookworm` (pnpm 12.23, filtered install, `CI=true`, proxy flag) pass;
+  a wrong proxy or wrong `STRESS_ARGS` print their errors. Diagnostics added to the job: runner Node / CPUs / cgroup
+  memory and proxy variable names, Artillery `DEBUG` namespaces without per-request logs (`commands:run`,
+  `platform:local`, `artillery:worker`, `core`, `runner`, `phases`, `telemetry`; the `core` "Cannot find module
+  artillery-plugin-*" traces are its normal plugin lookup), and `run.mjs` prints Artillery's exit code or signal.
 - **GitLab lint.** The local YAML parses and every other job's rules exclude `WORKFLOW=stress`; the included
   `clubmed/templates` files are only checked by GitLab itself (no `glab` here).
 
