@@ -19,7 +19,7 @@
 
 - [x] 4.1 Warn the team and the CMS owners, then run a smoke pipeline (`--overrides` 2 rps × 20 s through a variable or a one-off edit) and check the report artifact
 - [x] 4.2 Run the full profile, watch the staging server in Datadog / Kibana, record the baseline (version, results, proxy or not) in the README
-- [ ] 4.3 Check the job fails when a threshold fails (temporary low p95) and when the preflight fails (wrong target)
+- [x] 4.3 ~~Check the job fails when a threshold fails (temporary low p95) and when the preflight fails (wrong target)~~ — dropped (team decision): the exit code of `run.mjs` on a failed threshold or preflight is covered locally
 
 ## 5. Documentation
 
