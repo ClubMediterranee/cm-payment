@@ -9,6 +9,7 @@ import formRawbody from 'fastify-raw-body';
 import * as rest from '../controllers/rest/index.js';
 import { embedHttpPlugin } from './embed/embedHttpPlugin.js';
 import { setMfeCacheHeaders } from './embed/mfeStatics.js';
+import { restCacheControlPlugin } from './http/restCacheControlPlugin.js';
 import loggerConfig from './logger/index.js';
 import { proxyConfig } from './proxy/index.js';
 import { envs } from './utils/index.js';
@@ -62,6 +63,7 @@ export const config: Partial<TsED.Configuration> = {
   plugins: [
     // Must be registered before the `/api` proxy so that CORS and framing hooks also apply to it.
     embedHttpPlugin,
+    restCacheControlPlugin,
     accepts,
     // cookie,
     {
