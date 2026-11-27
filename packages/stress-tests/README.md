@@ -76,11 +76,20 @@ The console prints a summary every 10 s and at the end, followed by the `ensure`
 threshold fails (p95 < 300 ms, p99 < 800 ms, failed users < 1 %). The full metrics are written to
 `reports/payment-config.json` (gitignored). Artillery 2 dropped the `artillery report` HTML command.
 
+## CloudFront
+
+The deployed servers are behind CloudFront. Each run counts where the responses come from, from the `x-cache` header:
+`cloudfront.miss` (forwarded to the Node server, the only case that measures it), `cloudfront.hit` (served from the
+CloudFront cache), `cloudfront.other` (`RefreshHit`, `Error`...) and `cloudfront.none` (no CloudFront: local or Docker
+server). On staging every response must be a miss; latencies then include the CloudFront hop, the load balancer and, in
+CI, the corporate proxy.
+
 ## Files
 
 | Path                              | Content                                                         |
 | --------------------------------- | --------------------------------------------------------------- |
 | `config/environments.yml`         | Shared targets: `local` (8083, default), `docker` (8080)        |
+| `processors/cloudfront.cjs`       | `cloudfront.*` counters from the `x-cache` response header      |
 | `data/payment-config-headers.csv` | `accept-language` × `x-issuer-type` combinations, one empty row |
 | `scenarios/payment-config.yml`    | Phases, checks (`expect`) and thresholds (`ensure`)             |
 
