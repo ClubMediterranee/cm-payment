@@ -195,6 +195,20 @@ describe('httpClient', () => {
       expect(error?.body).toBeUndefined();
       expect(!!error?.stack).toBe(true);
     });
+    it('should throw a 504 when the call times out', async () => {
+      const { client, ctx } = await createServiceFixture();
+
+      vi.spyOn(client, 'raw').mockRejectedValue(
+        Object.assign(new Error('timeout of 8000ms exceeded'), { code: 'ECONNABORTED' }),
+      );
+
+      const error = await catchAsyncError<Exception>(() =>
+        runInContext(ctx, () => client.get('/test')),
+      );
+
+      expect(error?.status).toBe(504);
+      expect(error?.message).toBe('Gateway Timeout');
+    });
     it('should throw error (with response information)', async () => {
       const { client, ctx } = await createServiceFixture();
 
@@ -485,7 +499,7 @@ describe('httpClient', () => {
       await client.raw({ url: '/second' });
 
       expect(axios.create).toHaveBeenCalledTimes(1);
-      expect(axios.create).toHaveBeenCalledWith({ baseURL: '', headers: undefined });
+      expect(axios.create).toHaveBeenCalledWith({ timeout: 8000, baseURL: '', headers: undefined });
       expect(axiosRetry).toHaveBeenCalledWith(axiosInstance, {
         retries: 0,
         retryDelay: axiosRetry.exponentialDelay,
