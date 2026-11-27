@@ -2,6 +2,7 @@
 import {
   useForm as useReactHookForm,
   useFormContext as useReactHookFormContext,
+  useFormState as useReactHookFormState,
   useWatch as useReactHookFormWatch,
   type FieldPath,
   type FieldPathValue,
@@ -21,6 +22,12 @@ export const useWatch = <
 >(
   name: TName,
 ): FieldPathValue<TFieldValues, TName> => useReactHookFormWatch<TFieldValues, TName>({ name });
+
+/**
+ * Form state read through its own subscription: unlike `useFormContext().formState`, it computes
+ * `isValid` when the component mounts, even after the form itself (e.g. behind a `Suspense`).
+ */
+export const useFormState = () => useReactHookFormState<CapsFormSchema>();
 
 export const useFormContext = () => {
   const methods = useReactHookFormContext<CapsFormSchema>();
