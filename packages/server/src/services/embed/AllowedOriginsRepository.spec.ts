@@ -43,4 +43,16 @@ describe('AllowedOriginsRepository', () => {
 
     expect(getAllowedOrigins).toHaveBeenCalledTimes(1);
   });
+
+  it('keeps the cached origins beyond 300 ms (ttl in milliseconds)', async () => {
+    const getAllowedOrigins = vi
+      .spyOn(directusClient, 'getAllowedOrigins')
+      .mockResolvedValue([{ origin: 'https://a.example' }]);
+
+    await repository.getAllowedOrigins();
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await repository.getAllowedOrigins();
+
+    expect(getAllowedOrigins).toHaveBeenCalledTimes(1);
+  });
 });

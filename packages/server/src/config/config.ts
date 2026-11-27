@@ -35,7 +35,8 @@ export const config: Partial<TsED.Configuration> = {
   },
   logger: loggerConfig,
   cache: {
-    ttl: 300,
+    // Milliseconds: @tsed/platform-cache passes it as is to cache-manager 5 (tsedio/tsed#3547).
+    ttl: 5 * 60_000,
     store: 'memory',
   },
   extends: [DotEnvsConfigSource],

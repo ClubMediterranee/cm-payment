@@ -2,6 +2,7 @@ import { PlatformTest } from '@tsed/platform-http/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Action } from '../../../infra/api/__generated__/index.js';
+import { BnplSimulationService } from '../../../services/bnpl/BnplSimulationService.js';
 import { OidcIssuerTypes } from '../../../services/payment_config/types.js';
 import { PaymentProvidersService } from '../../../services/payment_providers/PaymentProvidersService.js';
 import { PaymentProvidersController } from './PaymentProvidersController.js';
@@ -81,6 +82,21 @@ describe('PaymentProvidersController', () => {
         customerId: '789',
         userAgent: 'test-user-agent',
         action: Action.PAYMENT_SOLDE,
+      });
+    });
+  });
+
+  describe('GET /payment_providers/:providerId/simulation', () => {
+    it('simulates the BNPL loan of the provider for the payment amount', async () => {
+      const simulation = { installments: [] };
+      const bnplSimulationService = PlatformTest.get<BnplSimulationService>(BnplSimulationService);
+      vi.spyOn(bnplSimulationService, 'simulate').mockResolvedValue(simulation as never);
+
+      const result = await controller.getBnplSimulation('EHIPAYBNPL', 'fr-FR', 1200);
+
+      expect(result).toBe(simulation);
+      expect(bnplSimulationService.simulate).toHaveBeenCalledWith('EHIPAYBNPL', 'fr-FR', {
+        payment_amount: 1200,
       });
     });
   });

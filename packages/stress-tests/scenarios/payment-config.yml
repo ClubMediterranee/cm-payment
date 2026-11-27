@@ -1,0 +1,55 @@
+# GET /rest/payment_config: called by every CAPS form on load.
+# Each request reaches Directus (`caps_configurations`): see openspec/changes/add-backend-stress-tests/design.md (D4).
+config:
+  target: http://localhost:8083
+  http:
+    timeout: 10
+  phases:
+    - name: warm-up
+      duration: 30
+      arrivalRate: 2
+      rampTo: 5
+    - name: ramp-up
+      duration: 60
+      arrivalRate: 5
+      rampTo: 50
+    - name: sustained
+      duration: 120
+      arrivalRate: 50
+    - name: spike
+      duration: 30
+      arrivalRate: 150
+  payload:
+    # Empty columns (last row) send empty headers: the server falls back to fr-FR / GM.
+    path: ../data/payment-config-headers.csv
+    fields:
+      - locale
+      - issuerType
+    order: random
+    skipHeader: true
+  plugins:
+    expect:
+      reportFailuresAsErrors: true
+      outputFormat: silent
+    ensure: {}
+  ensure:
+    thresholds:
+      - http.response_time.p95: 300
+      - http.response_time.p99: 800
+    conditions:
+      - expression: "vusers.failed / vusers.created < 0.01"
+        strict: true
+
+scenarios:
+  - name: payment_config
+    flow:
+      - get:
+          url: /rest/payment_config
+          headers:
+            accept-language: "{{ locale }}"
+            x-issuer-type: "{{ issuerType }}"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: feature_flips
+            - hasProperty: settings

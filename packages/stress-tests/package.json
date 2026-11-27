@@ -1,0 +1,13 @@
+{
+  "name": "@clubmed/stress-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Artillery stress tests of the CAPS payment server (@clubmed/server).",
+  "type": "module",
+  "scripts": {
+    "payment-config": "node scripts/run.mjs payment-config"
+  },
+  "devDependencies": {
+    "artillery": "2.0.34"
+  }
+}
