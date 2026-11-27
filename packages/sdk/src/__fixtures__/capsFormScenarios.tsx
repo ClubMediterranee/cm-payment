@@ -173,8 +173,10 @@ const hostedFieldProvider = (overrides: object = {}) =>
   cardProvider('MHIPAY', 'Pay by card', {
     configuration: {
       display_type: 'hosted_field',
+      // No script: the real HiPay SDK rejects fake credentials with an uncaught error, which
+      // Chromatic reports as a component error. The hosted field labels render without it.
       settings: {
-        script_url: 'https://stage-libs.hipay.com/js/sdkjs.js',
+        script_url: '',
         environment: 'stage',
         username: 'storybook',
         password: 'storybook',

@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 
 import { useFormCallbacks } from '../../contexts/FormCallbacksContext';
 import { usePaymentSubmit } from '../../hooks/usePaymentSubmit';
-import { useFormContext, useWatch } from '../../hooks/utils/useForm';
+import { useFormContext, useFormState, useWatch } from '../../hooks/utils/useForm';
 import { useProviderIntegrationMode } from '../../hooks/utils/useProviderIntegrationMode';
 import { PspProviders } from '../../types/PspProviders';
 import { IframeMessageType } from '../../utils/iframe/constants';
@@ -25,10 +25,8 @@ export const IframeView = () => {
     targetIframe: iframeRef,
   });
 
-  const {
-    formState: { isValid },
-    setValue,
-  } = useFormContext();
+  const { setValue } = useFormContext();
+  const { isValid } = useFormState();
 
   const watchedPaymentConditionId = useWatch('payment_condition_id');
   const watchedProviderId = useWatch('provider_id');

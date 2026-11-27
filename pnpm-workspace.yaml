@@ -31,4 +31,5 @@ onlyBuiltDependencies:
   - msw
 
 patchedDependencies:
+  artillery@2.0.34: patches/artillery@2.0.34.patch
   directus-sdk-typegen@0.2.1: patches/directus-sdk-typegen@0.2.1.patch

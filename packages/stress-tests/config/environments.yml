@@ -1,8 +1,11 @@
 # Shared targets, merged into each scenario with `--config config/environments.yml --environment <name>`.
-# Never add production here. Staging is run on purpose only, with `--target`, after warning the team.
+# This is the list of allowed targets: never add production (or integration) here.
+# Staging is run on purpose only (`STRESS_ENV=staging`, CI `WORKFLOW=stress`), after warning the team.
 config:
   environments:
     local:
       target: http://localhost:8083
     docker:
       target: http://localhost:8080
+    staging:
+      target: https://staging.caps.api.clubmed

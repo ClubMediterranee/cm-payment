@@ -1,7 +1,10 @@
 # GET /rest/payment_config: called by every CAPS form on load.
-# Each request reaches Directus (`caps_configurations`): see openspec/changes/add-backend-stress-tests/design.md (D4).
+# The server reads Directus (`caps_configurations`) through a 5-minute cache: see
+# openspec/changes/archive/2026-11-27-add-backend-stress-tests/design.md (D4, Implementation notes).
 config:
   target: http://localhost:8083
+  # `cloudfront.*` counters: whether the deployed responses come from the server or from the CloudFront cache.
+  processor: ../processors/cloudfront.cjs
   http:
     timeout: 10
   phases:
@@ -48,6 +51,7 @@ scenarios:
           headers:
             accept-language: "{{ locale }}"
             x-issuer-type: "{{ issuerType }}"
+          afterResponse: countCloudFrontCache
           expect:
             - statusCode: 200
             - contentType: json
