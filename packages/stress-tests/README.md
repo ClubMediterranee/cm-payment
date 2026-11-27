@@ -86,19 +86,23 @@ threshold fails (p95 < 300 ms, p99 < 800 ms, failed users < 1 %). The full metri
 
 ## Baseline
 
-| Date       | Commit                              | Run                                         | Target                                             | Requests | Median          | p95    | p99      | Errors                  |
-| ---------- | ----------------------------------- | ------------------------------------------- | -------------------------------------------------- | -------- | --------------- | ------ | -------- | ----------------------- |
-| 2026-11-24 | `5dbc7e7`                           | smoke, 2 rps × 20 s                         | local server (macOS dev machine), staging Directus | 40       | 89 ms           | 224 ms | 854 ms   | 0                       |
-| 2026-11-25 | `5186e83`                           | full, no cache, stopped during `sustained`  | local server (macOS dev machine), staging Directus | ~1 900   | 1.6 s at 50 rps | 3.5 s  | 7.3 s    | 46 % of users at 50 rps |
-| 2026-11-25 | `5186e83` + `@UseCache` (ttl 300)   | full                                        | local server (macOS dev machine), staging Directus | 12 255   | 1 ms            | 98 ms  | 1 620 ms | 0                       |
-| 2026-11-25 | `5186e83` + `@UseCache` (ttl 5 min) | full                                        | local server (macOS dev machine), staging Directus | 12 255   | 0 ms            | 1 ms   | 3 ms     | 0                       |
-| 2026-11-27 | `2c89c96` + Ts.ED 8.50.0            | full                                        | local server (macOS dev machine), staging Directus | 12 255   | 1 ms            | 2 ms   | 3 ms     | 0                       |
-| 2026-11-27 | `2c89c96` + Ts.ED 8.50.0            | full, built server (`node dist`, port 8090) | local server (macOS dev machine), staging Directus | 12 255   | 0 ms            | 1 ms   | 2 ms     | 0                       |
+| Date       | Commit                              | Run                                            | Target                                             | Requests | Median          | p95    | p99      | Errors                  |
+| ---------- | ----------------------------------- | ---------------------------------------------- | -------------------------------------------------- | -------- | --------------- | ------ | -------- | ----------------------- |
+| 2026-11-24 | `5dbc7e7`                           | smoke, 2 rps × 20 s                            | local server (macOS dev machine), staging Directus | 40       | 89 ms           | 224 ms | 854 ms   | 0                       |
+| 2026-11-25 | `5186e83`                           | full, no cache, stopped during `sustained`     | local server (macOS dev machine), staging Directus | ~1 900   | 1.6 s at 50 rps | 3.5 s  | 7.3 s    | 46 % of users at 50 rps |
+| 2026-11-25 | `5186e83` + `@UseCache` (ttl 300)   | full                                           | local server (macOS dev machine), staging Directus | 12 255   | 1 ms            | 98 ms  | 1 620 ms | 0                       |
+| 2026-11-25 | `5186e83` + `@UseCache` (ttl 5 min) | full                                           | local server (macOS dev machine), staging Directus | 12 255   | 0 ms            | 1 ms   | 3 ms     | 0                       |
+| 2026-11-27 | `2c89c96` + Ts.ED 8.50.0            | full                                           | local server (macOS dev machine), staging Directus | 12 255   | 1 ms            | 2 ms   | 3 ms     | 0                       |
+| 2026-11-27 | `2c89c96` + Ts.ED 8.50.0            | full, built server (`node dist`, port 8090)    | local server (macOS dev machine), staging Directus | 12 255   | 0 ms            | 1 ms   | 2 ms     | 0                       |
+| 2026-11-27 | `1152cf6` (staging `1.1.0-beta.5`)  | full, GitLab CI (`WORKFLOW=stress`, 4 workers) | staging server, staging Directus                   | 12 255   | 24 ms           | 86 ms  | 87 ms    | 0                       |
 
 Without cache, Directus throttles from about 30 rps (`SERVICE_UNAVAILABLE`, "Under pressure", returned as `500`) and
 requests time out at 50 rps. `@tsed/platform-cache` passes `ttl` to cache-manager 5 in milliseconds, so `ttl: 300`
 cached for 300 ms: Directus was still called about 4 times per second, with stalls of 1–4 s when it slowed down. With
 `ttl: 5 * 60_000` every threshold passes (max 177 ms, during the cold start). See `design.md` (Implementation notes).
+
+On staging from CI (job 2702627, 32-CPU runner through the CI proxy) the latency includes the network, the load balancer
+and the proxy: median 24 ms, p95 86 ms, max 187 ms, every request `200`, 54 rps on average.
 
 ## Next endpoints
 

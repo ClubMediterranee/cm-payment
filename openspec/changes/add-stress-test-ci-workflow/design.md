@@ -85,10 +85,10 @@ the team and the CMS owners, and watched (Datadog / Kibana staging). If the stag
   `include-workspace-root=false`; it skips the other packages. Kept: the install stays frozen on the lockfile and the
   job is on demand. Installing Artillery alone (`npm i artillery@2.0.34` in the package) would be faster but would
   leave the lockfile.
-- **Reachability (T1.2, partial).** From a developer machine without proxy, `staging.caps.api.clubmed` answers
-  `/rest/health`, `/rest/version` (`1.1.0-beta.5`) and `/rest/payment_config` in 230–400 ms, and a one-request run
-  passes every threshold. From a CI runner: not checked yet, the first `WORKFLOW=stress` pipeline is the check (its
-  preflight fails in seconds when the host is unreachable).
+- **Reachability (T1.2).** The CI runners (32 CPUs, 2 GB containers, `HTTP(S)_PROXY` and `NO_PROXY` set) reach
+  `staging.caps.api.clubmed`: smoke run (2 rps × 20 s) then full profile (job 2702627, `1152cf6`, staging
+  `1.1.0-beta.5`): 12 255 requests, all `200`, 0 failed, median 24 ms, p95 86 ms, p99 87 ms, max 187 ms, every
+  threshold met. Thresholds left unchanged.
 - **`STRESS_ARGS`.** Added to pass extra Artillery flags from "Run pipeline" (smoke run). Word-split by the shell, so the
   JSON of `--overrides` must have no spaces.
 - **Job image.** First pipeline: the runner could not pull `-bookworm}`. `.node_configure` sets
@@ -102,6 +102,9 @@ the team and the CMS owners, and watched (Datadog / Kibana staging). If the stag
   passes out of 4 at 2 GB with 4 workers. Fix: `patches/artillery@2.0.34.patch` reads `ARTILLERY_WORKERS` (falls back
   to the CPU count), the job sets `ARTILLERY_WORKERS: "4"`. The job keeps a diagnostics line (Node, CPUs, cgroup
   memory, proxy variable names) and a `DEBUG` variable, empty by default.
+- **Pipelines (T3.3).** On the branch, the push and merge request pipelines run lint, format, build, test (and
+  chromatic) but no `stress-test`; the `WORKFLOW=stress` pipelines run only `stress-test`. `chromatic` fails on the
+  merge request pipelines with 3 Storybook component errors, as on `develop` (pipelines 501675, 501630): not related.
 - **GitLab lint.** The local YAML parses and every other job's rules exclude `WORKFLOW=stress`; the included
   `clubmed/templates` files are only checked by GitLab itself (no `glab` here).
 
