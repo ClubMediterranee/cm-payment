@@ -9,6 +9,11 @@ import { application, type PlatformStaticsOptions } from '@tsed/platform-http';
 
 import { config } from './config/config.js';
 import { checkMfeRoot, MFE_MOUNT_PATH } from './config/embed/mfeStatics.js';
+import {
+  NOT_FOUND_BODY,
+  registerNotFound,
+  toAssetsRoute,
+} from './config/statics/notFoundRoutes.js';
 import { isProduction } from './config/utils/index.js';
 import { ExternalRefResolver } from './infra/spec/ExternalRefResolver.js';
 
@@ -33,20 +38,29 @@ export class Server {
       this.app
         .getApp()
         .get(`${MFE_MOUNT_PATH}/*`, async (_: any, reply: any) =>
-          reply.code(404).send({ name: 'NOT_FOUND', message: 'Not Found', status: 404 }),
+          reply.code(404).send(NOT_FOUND_BODY),
         );
     }
 
     if (options.isApp) {
       const fallbackRoute = toSpaFallbackRoute(mountPath);
 
+      // A missing hashed file (e.g. an old chunk during a deploy) must not receive `index.html`.
+      registerNotFound(this.app.getApp(), toAssetsRoute(mountPath));
+
       async function handler(_: any, reply: any) {
         reply.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-        return reply.sendFile('index.html', { root: options.root });
+        // `cacheControl: false`, or @fastify/static replaces the header with the mount's `maxAge` (1 day on `/`).
+        return reply.sendFile('index.html', options.root, { cacheControl: false });
       }
 
       this.app.getApp().get(fallbackRoute, handler);
     }
+  }
+
+  $afterRoutesInit() {
+    // Unknown `/rest` paths answer a JSON 404 instead of the `/*` SPA fallback.
+    registerNotFound(this.app.getApp(), '/rest/*');
   }
 
   $onReady() {
