@@ -41,15 +41,36 @@ async function check(url, headers = {}) {
 }
 
 async function preflight(target) {
+  const local = /^https?:\/\/localhost[:/]/.test(`${target}/`);
   const server = await check(`${target}/rest/health`);
   if (server) {
-    return `the server does not answer on ${target}/rest/health (${server}). Start it with \`pnpm --filter @clubmed/server start\`.`;
+    const hint = local
+      ? ' Start it with `pnpm --filter @clubmed/server start`.'
+      : ' Check the deployment and that this machine reaches the host (proxy).';
+    return `the server does not answer on ${target}/rest/health (${server}).${hint}`;
   }
   const directus = await check(`${target}/rest/payment_config`);
   if (directus) {
-    return `${target}/rest/payment_config fails (${directus}): check DIRECTUS_URL and DIRECTUS_API_TOKEN in packages/server/.env.local.`;
+    const hint = local
+      ? ': check DIRECTUS_URL and DIRECTUS_API_TOKEN in packages/server/.env.local.'
+      : ': check the Directus the server points to.';
+    return `${target}/rest/payment_config fails (${directus})${hint}`;
   }
   return null;
+}
+
+// Names the measured build in the log. Not fatal: an older server may not expose the route.
+async function deployedVersion(target) {
+  try {
+    const response = await fetch(`${target}/rest/version`, { signal: AbortSignal.timeout(10_000) });
+    if (!response.ok) {
+      return `unknown (/rest/version: HTTP ${response.status})`;
+    }
+    const { version, branch } = await response.json();
+    return `${branch ?? '?'} (package ${version ?? '?'})`;
+  } catch (error) {
+    return `unknown (/rest/version: ${error.cause?.code ?? error.name ?? String(error)})`;
+  }
 }
 
 if (!scenario) {
@@ -63,7 +84,8 @@ if (failure) {
   console.error(`Preflight failed: ${failure}`);
   process.exit(1);
 }
-console.log(`Preflight OK on ${target}, starting the "${scenario}" scenario.`);
+console.log(`Preflight OK on ${target}, deployed version: ${await deployedVersion(target)}.`);
+console.log(`Starting the "${scenario}" scenario.`);
 
 mkdirSync(join(root, 'reports'), { recursive: true });
 const child = spawn(

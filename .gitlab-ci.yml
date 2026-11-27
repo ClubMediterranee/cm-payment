@@ -58,6 +58,7 @@ variables:
       - "deploy"
       - "rebase"
       - "rebase-all"
+      - "stress"
     description: "The workflow to be executed"
   BRANCH_DEV: "develop"
   BRANCH_MAIN: "main"
@@ -65,6 +66,7 @@ variables:
 
 stages:
   - test
+  - stress
   - storybook:dev
   - release
   - publish
@@ -124,6 +126,32 @@ test:
     - pnpm run test
   rules:
     - if: '$WORKFLOW == "build"'
+      when: always
+    - when: never
+
+# @Description Artillery stress test of a deployed server (packages/stress-tests), started by hand or by a schedule
+# with WORKFLOW=stress. Allowed targets are the ones of packages/stress-tests/config/environments.yml (no production).
+stress-test:
+  extends: .node_configure
+  stage: stress
+  variables:
+    STRESS_ENV: staging
+    # Extra Artillery flags, e.g. a smoke run: --overrides {"config":{"phases":[{"duration":20,"arrivalRate":2}]}}
+    STRESS_ARGS: ""
+    # Node's fetch (preflight) only honours HTTP(S)_PROXY / NO_PROXY with this flag.
+    NODE_USE_ENV_PROXY: "1"
+  resource_group: stress-$STRESS_ENV
+  script:
+    - pnpm install --frozen-lockfile --filter @clubmed/stress-tests
+    # shellcheck disable=SC2086
+    - pnpm stress:payment-config $STRESS_ARGS
+  artifacts:
+    when: always
+    paths:
+      - packages/stress-tests/reports/
+    expire_in: 30 days
+  rules:
+    - if: '$WORKFLOW == "stress"'
       when: always
     - when: never
 

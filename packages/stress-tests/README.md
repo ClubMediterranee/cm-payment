@@ -6,12 +6,13 @@ Design and decisions: [`openspec/changes/add-backend-stress-tests/design.md`](..
 
 ## Safety rules
 
-- **Never target production.** `config/environments.yml` only lists local targets on purpose.
+- **Never target production.** `config/environments.yml` is the list of allowed targets and never lists production
+  (nor integration): `STRESS_ENV=production` stops before any request.
 - **Never target a PSP** or a route that triggers a PSP call (`payment_redirect`...).
-- **Directus is loaded too.** `GET /rest/payment_config` reads Directus `caps_configurations` on every request (no cache
-  today), so the run loads the CMS the server points to (`DIRECTUS_URL`, the staging CMS by default). Warn the CMS
-  owners before a full run, start low, stop on `5xx`.
-- The staging server is targeted only on purpose, with `--target`, after warning the team.
+- **Directus is loaded too.** `GET /rest/payment_config` reads Directus through a 5-minute cache, so a run mostly loads
+  Directus during its cold start. Warn the CMS owners before a full run, start low, stop on `5xx`.
+- **Staging** (`STRESS_ENV=staging`, `https://staging.caps.api.clubmed`) is run on purpose only, after warning the team,
+  and watched in Datadog / Kibana staging.
 
 ## Run
 
@@ -28,6 +29,10 @@ STRESS_ENV=docker pnpm stress:payment-config
 ```
 
 ```bash
+STRESS_ENV=staging pnpm stress:payment-config
+```
+
+```bash
 pnpm stress:payment-config --target https://my-test-host
 ```
 
@@ -39,9 +44,27 @@ pnpm stress:payment-config --overrides '{"config":{"phases":[{"duration":20,"arr
 
 Before starting Artillery, `scripts/run.mjs` checks the target: `GET /rest/health` (server up) then
 `GET /rest/payment_config` (Directus reachable). If either fails, the command stops right away with the cause and exits
-`1`, instead of running the whole profile against nothing.
+`1`, instead of running the whole profile against nothing. It then prints the deployed version (`GET /rest/version`),
+so the log says which build was measured.
 
 Run the server with the production log level to keep log I/O from skewing the numbers.
+
+## Run in CI
+
+In GitLab, **Build > Pipelines > Run pipeline** on the branch to use (usually `develop`), with the variable
+`WORKFLOW=stress`. The pipeline runs only the `stress-test` job (stage `stress`); a GitLab schedule with the same
+variable works too.
+
+| Variable      | Default   | Use                                                                                                                       |
+| ------------- | --------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `STRESS_ENV`  | `staging` | Target, one of `config/environments.yml`                                                                                  |
+| `STRESS_ARGS` | empty     | Extra Artillery flags, e.g. `--overrides {"config":{"phases":[{"duration":20,"arrivalRate":2}]}}` (no spaces in the JSON) |
+
+- The job fails when the preflight or a threshold fails.
+- The report `reports/payment-config.json` is a job artifact (kept 30 days), even when the job fails.
+- One run at a time per target (`resource_group: stress-<STRESS_ENV>`): a second pipeline waits for the first.
+- The runner reaches the target through the CI proxy (`HTTP(S)_PROXY`, `NO_PROXY`; `NODE_USE_ENV_PROXY=1` for the
+  preflight).
 
 ## Results
 
