@@ -55,14 +55,18 @@ In GitLab, **Build > Pipelines > Run pipeline** on the branch to use (usually `d
 `WORKFLOW=stress`. The pipeline runs only the `stress-test` job (stage `stress`); a GitLab schedule with the same
 variable works too.
 
-| Variable      | Default   | Use                                                                                                                       |
-| ------------- | --------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `STRESS_ENV`  | `staging` | Target, one of `config/environments.yml`                                                                                  |
-| `STRESS_ARGS` | empty     | Extra Artillery flags, e.g. `--overrides {"config":{"phases":[{"duration":20,"arrivalRate":2}]}}` (no spaces in the JSON) |
+| Variable            | Default   | Use                                                                                                                       |
+| ------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `STRESS_ENV`        | `staging` | Target, one of `config/environments.yml`                                                                                  |
+| `ARTILLERY_WORKERS` | `4`       | Artillery worker threads (default without it: CPUs - 1, too many for the 2 GB CI containers)                              |
+| `DEBUG`             | empty     | Artillery debug namespaces, e.g. `commands:run,platform:local,artillery:worker,core,runner,phases`                        |
+| `STRESS_ARGS`       | empty     | Extra Artillery flags, e.g. `--overrides {"config":{"phases":[{"duration":20,"arrivalRate":2}]}}` (no spaces in the JSON) |
 
 - The job fails when the preflight or a threshold fails.
 - The report `reports/payment-config.json` is a job artifact (kept 30 days), even when the job fails.
 - One run at a time per target (`resource_group: stress-<STRESS_ENV>`): a second pipeline waits for the first.
+- `ARTILLERY_WORKERS` comes from `patches/artillery@2.0.34.patch` (pnpm `patchedDependencies`): Artillery 2.0.34 has
+  no setting for it. Keep the patch when upgrading Artillery, or drop it if a release adds one.
 - The runner reaches the target through the CI proxy (`HTTP(S)_PROXY`, `NO_PROXY`; `NODE_USE_ENV_PROXY=1` for the
   preflight).
 

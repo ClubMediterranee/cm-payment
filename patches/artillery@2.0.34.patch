@@ -1,0 +1,13 @@
+diff --git a/dist/lib/platform/local/index.js b/dist/lib/platform/local/index.js
+index 1b67e18541f3e830dcb1765514970a0f7dc6afbe..7d68d644a369ac6dbd42539ad84c7c07a0192d37 100644
+--- a/dist/lib/platform/local/index.js
++++ b/dist/lib/platform/local/index.js
+@@ -30,7 +30,7 @@ class PlatformLocal {
+             // Disable worker threads for Playwright-based load tests
+             const count = this.script.config.engines?.playwright
+                 ? 1
+-                : Math.max(1, os.cpus().length - 1);
++                : Math.max(1, Number.parseInt(process.env.ARTILLERY_WORKERS ?? '', 10) || os.cpus().length - 1);
+             this.workerScripts = divideWork(this.script, count);
+             this.count = this.workerScripts.length;
+         }

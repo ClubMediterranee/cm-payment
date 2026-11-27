@@ -11,6 +11,7 @@ overrides:
   content-disposition: 2.0.1
 
 patchedDependencies:
+  artillery@2.0.34: fc614003577ea9652d4d205e849e1e75cf64803300317f63fb287abe59006b40
   directus-sdk-typegen@0.2.1: bc7420fa7501d0292d1fdd94643c9a7f6ab9e9ce0dd6c548b4093001c1a38b88
 
 importers:
@@ -588,7 +589,7 @@ importers:
     devDependencies:
       artillery:
         specifier: 2.0.34
-        version: 2.0.34(@types/node@25.9.9)(encoding@0.1.13)(supports-color@8.1.1)
+        version: 2.0.34(patch_hash=fc614003577ea9652d4d205e849e1e75cf64803300317f63fb287abe59006b40)(@types/node@25.9.9)(encoding@0.1.13)(supports-color@8.1.1)
 
 packages:
 
@@ -15279,7 +15280,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  artillery@2.0.34(@types/node@25.9.9)(encoding@0.1.13)(supports-color@8.1.1):
+  artillery@2.0.34(patch_hash=fc614003577ea9652d4d205e849e1e75cf64803300317f63fb287abe59006b40)(@types/node@25.9.9)(encoding@0.1.13)(supports-color@8.1.1):
     dependencies:
       '@artilleryio/sketches-js': 2.1.1
       '@aws-sdk/client-cloudwatch': 3.1178.0

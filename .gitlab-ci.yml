@@ -142,8 +142,11 @@ stress-test:
     STRESS_ARGS: ""
     # Node's fetch (preflight) only honours HTTP(S)_PROXY / NO_PROXY with this flag.
     NODE_USE_ENV_PROXY: "1"
-    # Artillery debug logs (launcher, workers, plugins, phases; no per-request namespace). Empty it to turn them off.
-    DEBUG: "commands:run,platform:local,artillery:worker,core,runner,phases,telemetry"
+    # Artillery starts one worker per CPU minus one (31 on the 32-CPU runners), which runs out of the 2 GB of the job
+    # container at 150 rps and exits 1 without output. ARTILLERY_WORKERS comes from patches/artillery@2.0.34.patch.
+    ARTILLERY_WORKERS: "4"
+    # Artillery debug logs, e.g. commands:run,platform:local,artillery:worker,core,runner,phases (no per-request logs).
+    DEBUG: ""
   resource_group: stress-$STRESS_ENV
   script:
     - |
