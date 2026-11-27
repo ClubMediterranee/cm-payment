@@ -99,6 +99,32 @@ describe('PaymentRedirectController', () => {
       expect(mockContext.response.contentType).not.toHaveBeenCalled();
     });
 
+    it('should use the locale param as accept-language and forward it', async () => {
+      mockPaymentService.handlePaymentRedirect.mockResolvedValue('https://example.com/success');
+
+      const mockContext = {
+        request: { headers: {} as Record<string, string> },
+        response: { redirect: vi.fn(), contentType: vi.fn(), setHeader: vi.fn() },
+      };
+
+      await controller.redirect(
+        'payment123',
+        { provider_id: 'HIPAY', locale: 'en-GB' } as any,
+        {},
+        mockContext as any,
+      );
+
+      expect(mockContext.request.headers['accept-language']).toBe('en-GB');
+      expect(mockPaymentService.handlePaymentRedirect).toHaveBeenCalledWith('payment123', {
+        provider_id: 'HIPAY',
+        locale: 'en-GB',
+      });
+      expect(mockContext.response.redirect).toHaveBeenCalledWith(
+        302,
+        'https://example.com/success',
+      );
+    });
+
     it('should perform HTTP 302 redirect when mode is explicitly redirect', async () => {
       mockPaymentService.handlePaymentRedirect.mockResolvedValue(
         'https://example.com/success?status=ok',

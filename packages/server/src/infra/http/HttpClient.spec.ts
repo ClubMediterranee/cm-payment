@@ -1,6 +1,8 @@
 import { catchAsyncError } from '@tsed/core';
 import { DIContext, DITest, injectable, runInContext } from '@tsed/di';
 import { Exception } from '@tsed/exceptions';
+import axios from 'axios';
+import axiosRetry from 'axios-retry';
 
 import { HttpClient } from './HttpClient.js';
 import { serializeBulk } from './utils/serializeBulk.js';
@@ -467,6 +469,30 @@ describe('httpClient', () => {
           },
         }),
       );
+    });
+  });
+
+  describe('raw()', () => {
+    it('creates the axios instance once, with the base URL and no retry, then sends with it', async () => {
+      const { client } = await createServiceFixture();
+      const axiosInstance = vi.fn().mockResolvedValue({ data: 'ok' });
+      vi.mocked(axios.create)
+        .mockClear()
+        .mockReturnValueOnce(axiosInstance as never);
+      vi.mocked(axiosRetry).mockClear();
+
+      const first = await client.raw({ url: '/first' });
+      await client.raw({ url: '/second' });
+
+      expect(axios.create).toHaveBeenCalledTimes(1);
+      expect(axios.create).toHaveBeenCalledWith({ baseURL: '', headers: undefined });
+      expect(axiosRetry).toHaveBeenCalledWith(axiosInstance, {
+        retries: 0,
+        retryDelay: axiosRetry.exponentialDelay,
+      });
+      expect(axiosInstance).toHaveBeenNthCalledWith(1, { url: '/first' });
+      expect(axiosInstance).toHaveBeenNthCalledWith(2, { url: '/second' });
+      expect(first).toEqual({ data: 'ok' });
     });
   });
 });

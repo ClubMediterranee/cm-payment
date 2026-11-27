@@ -72,6 +72,21 @@ describe('DirectusClient', () => {
     });
   });
 
+  describe('getAllowedOrigins', () => {
+    it('fetches the published origins of the caps_allowed_origins collection', async () => {
+      const origins = [{ origin: 'https://seller.example' }];
+      requestMock.mockResolvedValue(origins);
+
+      const result = await client.getAllowedOrigins();
+
+      expect(result).toEqual(origins);
+      expect(requestMock).toHaveBeenCalledWith({
+        collection: 'caps_allowed_origins',
+        query: { fields: ['origin'], filter: { status: { _eq: 'published' } }, limit: -1 },
+      });
+    });
+  });
+
   describe('getProviders', () => {
     it('fetches providers from the caps_providers collection with nested settings', async () => {
       const providers = [
