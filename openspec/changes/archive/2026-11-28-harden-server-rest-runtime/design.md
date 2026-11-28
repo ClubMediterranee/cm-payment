@@ -89,6 +89,13 @@ stop` makes the server log "Stop server gracefully...". The process still exits 
 bff` against the local server only, so the Club Med API clients are not regenerated).
 - **Coverage.** `Server.ts` had no spec; `Server.spec.ts` runs its hooks on a plain Fastify app. Thresholds raised by
   `autoUpdate`.
+- **Simplify pass.** One source per setting: `config/utils` resolves `APP_ENV_LEVEL` (`local` when unset or empty)
+  and `HTTP_CLIENT_TIMEOUT_MS`, read by the HTTP client, the `/api` proxy, `/rest/version` and the bootstrap log.
+  `config/http/paths.ts` holds `REST_MOUNT_PATH` and the prefix matcher shared by the CORS and cache-control plugins;
+  `poll()` and `retry()` share `startWaitBudget()`; all the 404 and SPA routes are built with `toMountRoute()`. The
+  Dockerfile sets `APP_ENV_LEVEL` last so the runtime layers stay cached across environments.
+- **Not done.** Answering through Ts.ED's not-found handler (`reply.callNotFound()`) or serving `index.html` only to
+  HTML navigations would change the 404 bodies and routing: left for a separate change.
 
 ## Open Questions
 

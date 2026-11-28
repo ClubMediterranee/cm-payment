@@ -30,4 +30,4 @@
 ## 6. Verification
 
 - [x] 6.1 `pnpm check`, `pnpm lint`, `pnpm fmt:check`, server tests with coverage thresholds
-- [ ] 6.2 Update GPAY-423 with what is done here and link the MR
+- [x] 6.2 Update GPAY-423 with what is done here (comment of 2026-11-27); MR !92 opened
