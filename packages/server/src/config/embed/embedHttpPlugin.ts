@@ -2,8 +2,9 @@ import { inject } from '@tsed/di';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
 import { AllowedOriginsService } from '../../services/embed/AllowedOriginsService.js';
+import { getPath, matchesPrefix, REST_MOUNT_PATH } from '../http/paths.js';
 
-export const EMBED_CORS_PREFIXES = ['/api', '/rest', '/mfe'];
+export const EMBED_CORS_PREFIXES = ['/api', REST_MOUNT_PATH, '/mfe'];
 
 export const EMBED_CORS_ALLOWED_HEADERS = [
   'content-type',
@@ -24,11 +25,6 @@ export type EmbedHttpPluginOptions = {
    */
   getAllowedOriginsService?: () => OriginChecker;
 };
-
-const matchesPrefix = (path: string, prefixes: string[]) =>
-  prefixes.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
-
-const getPath = (request: FastifyRequest) => request.url.split('?')[0];
 
 const allowedCorsOrigins = new WeakMap<FastifyRequest, string>();
 

@@ -9,12 +9,9 @@ import { application, type PlatformStaticsOptions } from '@tsed/platform-http';
 
 import { config } from './config/config.js';
 import { checkMfeRoot, MFE_MOUNT_PATH } from './config/embed/mfeStatics.js';
-import {
-  NOT_FOUND_BODY,
-  registerNotFound,
-  toAssetsRoute,
-} from './config/statics/notFoundRoutes.js';
-import { isProduction } from './config/utils/index.js';
+import { REST_MOUNT_PATH } from './config/http/paths.js';
+import { registerNotFound, toMountRoute } from './config/statics/notFoundRoutes.js';
+import { APP_ENV_LEVEL, isProduction } from './config/utils/index.js';
 import { ExternalRefResolver } from './infra/spec/ExternalRefResolver.js';
 
 @Configuration(config)
@@ -35,18 +32,12 @@ export class Server {
   $staticsMounted(mountPath: string, options: PlatformStaticsOptions) {
     if (mountPath === MFE_MOUNT_PATH) {
       // Takes precedence over the `/*` SPA fallback: a missing remote file must never return the app.
-      this.app
-        .getApp()
-        .get(`${MFE_MOUNT_PATH}/*`, async (_: any, reply: any) =>
-          reply.code(404).send(NOT_FOUND_BODY),
-        );
+      registerNotFound(this.app.getApp(), toMountRoute(MFE_MOUNT_PATH, '*'));
     }
 
     if (options.isApp) {
-      const fallbackRoute = toSpaFallbackRoute(mountPath);
-
       // A missing hashed file (e.g. an old chunk during a deploy) must not receive `index.html`.
-      registerNotFound(this.app.getApp(), toAssetsRoute(mountPath));
+      registerNotFound(this.app.getApp(), toMountRoute(mountPath, 'assets/*'));
 
       async function handler(_: any, reply: any) {
         reply.header('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -54,19 +45,19 @@ export class Server {
         return reply.sendFile('index.html', options.root, { cacheControl: false });
       }
 
-      this.app.getApp().get(fallbackRoute, handler);
+      this.app.getApp().get(toMountRoute(mountPath, '*'), handler);
     }
   }
 
   $afterRoutesInit() {
     // Unknown `/rest` paths answer a JSON 404 instead of the `/*` SPA fallback.
-    registerNotFound(this.app.getApp(), '/rest/*');
+    registerNotFound(this.app.getApp(), toMountRoute(REST_MOUNT_PATH, '*'));
   }
 
   $onReady() {
     logger().info({
       event: 'SERVER_READY',
-      env_level: constant<string>('APP_ENV_LEVEL') || 'local',
+      env_level: APP_ENV_LEVEL,
       node_env: process.env.NODE_ENV,
     });
 
@@ -86,13 +77,3 @@ export class Server {
     return ExternalRefResolver.resolve(openSpec);
   }
 }
-
-const toSpaFallbackRoute = (mountPath: string) => {
-  if (mountPath === '/') {
-    return '/*';
-  }
-
-  const normalized = mountPath.endsWith('/') ? mountPath.slice(0, -1) : mountPath;
-
-  return `${normalized}/*`;
-};

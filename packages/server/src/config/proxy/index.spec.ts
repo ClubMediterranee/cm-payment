@@ -1,4 +1,4 @@
-import { DEFAULT_HTTP_CLIENT_TIMEOUT_MS } from '../../infra/http/HttpClient.js';
+import { DEFAULT_HTTP_CLIENT_TIMEOUT_MS } from '../utils/index.js';
 import { proxyConfig } from './index.js';
 
 describe('proxyConfig', () => {

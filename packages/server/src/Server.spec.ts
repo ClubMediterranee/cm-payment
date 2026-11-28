@@ -82,6 +82,14 @@ describe('Server', () => {
     expect(response.json()).toEqual({ status: 'OK' });
   });
 
+  it('warns when the embed remote is not built', () => {
+    const warn = vi.spyOn(logger(), 'warn');
+
+    createHooks(Fastify()).$beforeRoutesInit();
+
+    expect(warn).toHaveBeenCalledWith(expect.objectContaining({ event: 'EMBED_REMOTE_MISSING' }));
+  });
+
   it('logs the environment level when ready', () => {
     const info = vi.spyOn(logger(), 'info');
 

@@ -9,6 +9,7 @@ import formRawbody from 'fastify-raw-body';
 import * as rest from '../controllers/rest/index.js';
 import { embedHttpPlugin } from './embed/embedHttpPlugin.js';
 import { setMfeCacheHeaders } from './embed/mfeStatics.js';
+import { REST_MOUNT_PATH } from './http/paths.js';
 import { restCacheControlPlugin } from './http/restCacheControlPlugin.js';
 import loggerConfig from './logger/index.js';
 import { proxyConfig } from './proxy/index.js';
@@ -46,7 +47,7 @@ export const config: Partial<TsED.Configuration> = {
   httpPort: process.env['PORT'] || 8083,
   httpsPort: false, // CHANGE
   mount: {
-    '/rest': [...Object.values(rest)],
+    [REST_MOUNT_PATH]: [...Object.values(rest)],
   },
   views: {
     root: join(process.cwd(), '../views'),

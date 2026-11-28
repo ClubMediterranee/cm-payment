@@ -1,12 +1,8 @@
 import type { FastifyInstance } from 'fastify';
 
+import { getPath, matchesPrefix, REST_MOUNT_PATH } from './paths.js';
+
 export const REST_CACHE_CONTROL = 'private, no-store';
-
-const isRestPath = (url: string) => {
-  const path = url.split('?')[0];
-
-  return path === '/rest' || path.startsWith('/rest/');
-};
 
 /**
  * `/rest` responses depend on the user (`authorization`), the locale (`accept-language`) and the issuer type
@@ -15,7 +11,7 @@ const isRestPath = (url: string) => {
  */
 export async function restCacheControlPlugin(app: FastifyInstance) {
   app.addHook('onSend', async (request, reply, payload) => {
-    if (isRestPath(request.url) && !reply.hasHeader('cache-control')) {
+    if (matchesPrefix(getPath(request), [REST_MOUNT_PATH]) && !reply.hasHeader('cache-control')) {
       reply.header('cache-control', REST_CACHE_CONTROL);
     }
 

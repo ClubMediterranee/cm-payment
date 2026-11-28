@@ -1,57 +1,30 @@
 import Fastify from 'fastify';
 
-import { NOT_FOUND_BODY, registerNotFound, toAssetsRoute } from './notFoundRoutes.js';
+import { NOT_FOUND_BODY, registerNotFound, toMountRoute } from './notFoundRoutes.js';
 
-function createApp() {
-  const app = Fastify();
-
-  // Same layout as the server: controllers, static files, then the SPA fallback.
-  app.get('/rest/health', async () => ({ status: 'ok' }));
-  app.get('/rest/payment_providers/:type/:id', async () => ({ ok: true }));
-  app.get('/assets/index-abc123.js', async (_, reply) => reply.type('text/javascript').send(''));
-  app.get('/*', async (_, reply) => reply.type('text/html').send('<html>app</html>'));
-  registerNotFound(app, '/rest/*');
-  registerNotFound(app, toAssetsRoute('/'));
-
-  return app;
-}
-
+// The routing next to the SPA fallback is covered by `Server.spec.ts`, against the real hooks.
 describe('registerNotFound', () => {
-  it('answers a JSON 404 for an unknown /rest path', async () => {
-    const response = await createApp().inject({ url: '/rest/unknown' });
+  it('answers a JSON 404 under the pattern and keeps the more specific routes', async () => {
+    const app = Fastify();
+
+    app.get('/rest/health', async () => ({ status: 'ok' }));
+    registerNotFound(app, '/rest/*');
+
+    const response = await app.inject({ url: '/rest/unknown' });
 
     expect(response.statusCode).toBe(404);
     expect(response.json()).toEqual(NOT_FOUND_BODY);
-  });
-
-  it('answers a 404 for a missing asset', async () => {
-    const response = await createApp().inject({ url: '/assets/index-old.js' });
-
-    expect(response.statusCode).toBe(404);
-  });
-
-  it('keeps the existing routes and files', async () => {
-    const app = createApp();
-
     expect((await app.inject({ url: '/rest/health' })).json()).toEqual({ status: 'ok' });
-    expect((await app.inject({ url: '/rest/payment_providers/booking/42' })).statusCode).toBe(200);
-    expect((await app.inject({ url: '/assets/index-abc123.js' })).statusCode).toBe(200);
-  });
-
-  it('keeps the SPA fallback for app pages', async () => {
-    const response = await createApp().inject({ url: '/gm/booking/123' });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toContain('app');
   });
 });
 
-describe('toAssetsRoute', () => {
+describe('toMountRoute', () => {
   it.each([
-    ['/', '/assets/*'],
-    ['/storybook', '/storybook/assets/*'],
-    ['/storybook/', '/storybook/assets/*'],
-  ])('maps %s to %s', (mountPath, route) => {
-    expect(toAssetsRoute(mountPath)).toBe(route);
+    ['/', '*', '/*'],
+    ['/', 'assets/*', '/assets/*'],
+    ['/storybook', 'assets/*', '/storybook/assets/*'],
+    ['/storybook/', '*', '/storybook/*'],
+  ])('maps (%s, %s) to %s', (mountPath, suffix, route) => {
+    expect(toMountRoute(mountPath, suffix)).toBe(route);
   });
 });

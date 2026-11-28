@@ -15,21 +15,16 @@ import omit from 'lodash/omit.js';
 
 import type { HttpClientOptions } from './HttpClientOptions.js';
 import { HttpLogClient } from './HttpLogClient.js';
+import { HTTP_CLIENT_TIMEOUT_MS } from '../../config/utils/index.js';
 import { interpolate } from './utils/interpolate.js';
 import { serializeBulk } from './utils/serializeBulk.js';
 
-/**
- * Default timeout of the outgoing calls, below the 30 s origin timeout of CloudFront so a slow upstream fails with a
- * 504 from the server instead of a CloudFront error while the call keeps running. Overridden by `HTTP_CLIENT_TIMEOUT_MS`.
- */
-export const DEFAULT_HTTP_CLIENT_TIMEOUT_MS = 8000;
-
 export const getHttpClientTimeout = () =>
-  Number(constant<string | number>('HTTP_CLIENT_TIMEOUT_MS')) || DEFAULT_HTTP_CLIENT_TIMEOUT_MS;
+  Number(constant('HTTP_CLIENT_TIMEOUT_MS')) || HTTP_CLIENT_TIMEOUT_MS;
 
 // Axios error codes of a request that hit `timeout` (`ETIMEDOUT` with `transitional.clarifyTimeoutError`).
 const isTimeout = (error: AxiosError) =>
-  error?.code === 'ECONNABORTED' || error?.code === 'ETIMEDOUT';
+  error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT';
 
 @Injectable()
 export class HttpClient<
@@ -153,7 +148,7 @@ export class HttpClient<
     const { status, headers, data, statusText } = error?.response || {};
     const message = this.getErrorMessage(data);
 
-    const timedOut = !status && isTimeout(error);
+    const timedOut = isTimeout(error);
 
     const exception = new Exception(
       status || (timedOut ? 504 : 500),

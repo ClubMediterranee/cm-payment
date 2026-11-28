@@ -34,10 +34,6 @@ FROM node:24.17.0-alpine
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
-# integration / staging / production, from .gitlab/envs; the ECS task may override it. Empty locally.
-ARG APP_ENV_LEVEL
-ENV APP_ENV_LEVEL=${APP_ENV_LEVEL}
-
 WORKDIR /app
 
 RUN npm install -g pnpm
@@ -62,6 +58,11 @@ COPY --from=builder /app/packages/mfe/dist /app/packages/mfe/dist
 COPY --from=builder /app/storybook-static /app/storybook-static
 
 EXPOSE 8083
+
+# Last, so the layers above stay cached across environments. integration / staging / production, from .gitlab/envs;
+# the ECS task may override it. Empty locally (the server then reports `local`).
+ARG APP_ENV_LEVEL
+ENV APP_ENV_LEVEL=${APP_ENV_LEVEL}
 
 # Node is the main process so it receives SIGTERM and runs the graceful stop (`platform.stop()`); pnpm as PID 1 may
 # not forward it. The server reads ./package.json, so it runs from its package directory.

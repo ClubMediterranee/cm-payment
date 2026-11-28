@@ -12,6 +12,6 @@ export function registerNotFound(app: FastifyInstance, pattern: string) {
   app.get(pattern, async (_, reply) => reply.code(404).send(NOT_FOUND_BODY));
 }
 
-/** `/` → `/assets/*`, `/storybook` → `/storybook/assets/*`. */
-export const toAssetsRoute = (mountPath: string) =>
-  `${mountPath.endsWith('/') ? mountPath.slice(0, -1) : mountPath}/assets/*`;
+/** `('/', '*')` → `/*`, `('/storybook/', 'assets/*')` → `/storybook/assets/*`. */
+export const toMountRoute = (mountPath: string, suffix: string) =>
+  `${mountPath.replace(/\/$/, '')}/${suffix}`;

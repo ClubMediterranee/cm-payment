@@ -4,6 +4,8 @@ import { Constant, Controller } from '@tsed/di';
 import { Get, object, Returns, string } from '@tsed/schema';
 import fs from 'fs-extra';
 
+import { APP_ENV_LEVEL } from '../../../config/utils/index.js';
+
 @Controller('/version')
 export class VersionController {
   @Constant('version')
@@ -13,7 +15,7 @@ export class VersionController {
   private rootDir!: string;
 
   /** integration / staging / production on the deployed servers (`APP_ENV_LEVEL`), `local` otherwise. */
-  @Constant('APP_ENV_LEVEL', 'local')
+  @Constant('APP_ENV_LEVEL', APP_ENV_LEVEL)
   private envLevel!: string;
 
   @Get('/')
@@ -30,7 +32,7 @@ export class VersionController {
     return {
       branch: await this.getCurrentBranch(),
       version: this.version,
-      env_level: this.envLevel || 'local',
+      env_level: this.envLevel,
     };
   }
 
